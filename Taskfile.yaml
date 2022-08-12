@@ -1,0 +1,92 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  PROJECT: znayko
+
+tasks:
+  default:
+    desc: start dev
+    cmds:
+      - conda run --live-stream -n {{.PROJECT}} python -m "app"
+
+  logs:
+    desc: monitor logs
+    cmds:
+      - ssh $REMOTE_HOST 'source ~/.zshrc;journalctl --user -u znayko -f --all'
+
+  start:
+    desc: start the service
+    cmds:
+      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user start znayko'
+
+  restart:
+    desc: restart the service
+    cmds:
+      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user stop znayko'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;sleep 5'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user start znayko'
+
+
+  stop:
+    desc: stop the server
+    cmds:
+      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user stop znayko'
+
+  push:
+    desc: commit and pushes current changes
+    cmds:
+      - git add .  || true
+      - git commit -am "$(curl -s https://commit.cacko.net/index.txt)" || true
+      - git push || true
+
+  pull:
+    desc: pulls from git
+    cmds:
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/znayko;git reset --hard;git pull'
+
+  pp:
+    desc: push and pull
+    cmds:
+      - task: push
+      - task: pull
+
+  redis:
+    desc: open redis-cli
+    cmds:
+      - redis-cli $REDIS_CLI
+
+  systemd-exec:
+    desc: systemd exec
+    cmds:
+      - direnv exec . conda run --live-stream -n {{.PROJECT}} botyo serve
+
+  export:
+    desc: export env
+    cmds:
+      - conda env export --no-builds --ignore-channels  -n {{.PROJECT}} > environment.yml
+
+
+  exportpi:
+    desc: export env
+    cmds:
+      - conda env export --no-builds --ignore-channels  -n {{.PROJECT}} > environment-pi.yml
+      - task: push
+
+
+  install:
+    desc: calls poetry install and npm ci
+    cmds:
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/{{.PROJECT}}; conda env update -n {{.PROJECT}} -f environment-pi.yml --prune'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/{{.PROJECT}}; task exportpi'
+      - git pull
+
+
+  deploy:
+    desc: shortcut for stop -> push -> pull -> restart
+    cmds:
+      - task: stop
+      - task: push
+      - task: pull
+      - task: restart

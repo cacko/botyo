@@ -1,0 +1,9 @@
+[submodule "app/demographics/models/demographics_race"]
+	path = app/demographics/models/demographics_race
+	url = https://huggingface.co/liamliang/demographics_race
+[submodule "app/demographics/models/demographics_gender"]
+	path = app/demographics/models/demographics_gender
+	url = https://huggingface.co/liamliang/demographics_gender
+[submodule "app/demographics/models/bert_base_cased"]
+	path = app/demographics/models/bert_base_cased
+	url = https://huggingface.co/bert-base-cased
