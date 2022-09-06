@@ -19,3 +19,4 @@ t.py
 .cache/
 *.wav
 *.flac
+app/settings.yaml

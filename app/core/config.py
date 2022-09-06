@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 from dataclasses_json import dataclass_json, Undefined
-import toml
+from yaml import load, Loader
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -25,6 +25,7 @@ class ThreeSixFiveConfig:
 class MusicConfig:
     api_url: str
     storage: str
+    codec: str
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -154,5 +155,6 @@ class Config(object, metaclass=ConfigMeta):
     truct: ConfigStruct = None
 
     def __init__(self):
-        settings = Path(environ.get("SETTINGS_PATH", "app/settings.toml"))
-        self.struct = ConfigStruct.from_dict(toml.loads(settings.read_text()))
+        settings = Path(environ.get("SETTINGS_PATH", "app/settings.yaml"))
+        data = load(settings.read_text(), Loader=Loader)
+        self.struct = ConfigStruct.from_dict(data)

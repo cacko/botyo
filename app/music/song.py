@@ -5,6 +5,7 @@ from subprocess import PIPE, Popen, STDOUT
 from app.core.string import split_with_quotes
 from cachable import Cachable
 from app.music.encoder import Encoder, CODEC
+from app.core.config import Config as app_config
 
 
 class Song:
@@ -12,11 +13,11 @@ class Song:
     __query: str = None
     __found: Path = None
     __message: Path = None
-    __extension: str = "m4a"
-    __content_type: str = "audio/mp4"
+    __codec: CODEC = None
 
     def __init__(self, query: str):
         self.__query = query
+        self.__codec = CODEC[app_config.music.codec.upper()]
         self.load()
 
     def load(self):
@@ -87,7 +88,7 @@ class Song:
 
     def __encode(self):
         if not self.destination.exists():
-            encoder = Encoder(self.__found, codec=CODEC.AAC)
+            encoder = Encoder(self.__found)
             self.__content_type = encoder.content_type
             self.__extension = encoder.extension
             encoder.encode(self.destination)
@@ -111,7 +112,7 @@ class Song:
 
     @property
     def destination(self) -> Path:
-        return Cachable.storage / f"{alphanumcase(self.__query)}.{self.__extension}"
+        return Cachable.storage / f"{alphanumcase(self.__query)}.{self.extension}"
 
     @property
     def message(self) -> str:
@@ -122,5 +123,19 @@ class Song:
         return self.destination
 
     @property
+    def extension(self) -> str:
+        match (self.__codec):
+            case CODEC.OPUS:
+                return "opus"
+            case CODEC.AAC:
+                return "m4a"
+        return None
+
+    @property
     def content_type(self) -> str:
-        return self.__content_type
+        match (self.__codec):
+            case CODEC.OPUS:
+                return "audio/ogg"
+            case CODEC.AAC:
+                return "audio/mp4"
+        return None

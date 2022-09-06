@@ -37,24 +37,6 @@ class Encoder(object):
         )
 
     @property
-    def extension(self) -> str:
-        match (self.__codec):
-            case CODEC.OPUS:
-                return "opus"
-            case CODEC.AAC:
-                return "m4a"
-        return None
-
-    @property
-    def content_type(self) -> str:
-        match (self.__codec):
-            case CODEC.OPUS:
-                return "audio/ogg"
-            case CODEC.AAC:
-                return "audio/mp4"
-        return None
-
-    @property
     def cmd(self) -> list[str]:
         match (self.__codec):
             case CODEC.OPUS:
