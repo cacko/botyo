@@ -152,7 +152,7 @@ class ConfigMeta(type):
 
 class Config(object, metaclass=ConfigMeta):
 
-    truct: ConfigStruct = None
+    struct: ConfigStruct = None
 
     def __init__(self):
         settings = Path(environ.get("SETTINGS_PATH", "app/settings.yaml"))
