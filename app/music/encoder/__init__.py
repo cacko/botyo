@@ -3,6 +3,7 @@ from pathlib import Path
 from subprocess import call
 import shlex
 import os
+from app.core import logger
 
 
 class CODEC(IntEnum):
@@ -73,6 +74,7 @@ class Encoder:
                     "-y",
                     output_path.as_posix(),
                 )
+        logger.warning(shlex.join(cmd))
         retcode = call(shlex.join(cmd), shell=True, env=self.environment)
         if retcode:
             return None
