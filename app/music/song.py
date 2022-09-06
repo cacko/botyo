@@ -89,7 +89,7 @@ class Song:
     def __encode(self):
         if not self.destination.exists():
             encoder = Encoder(self.__found, codec=self.__codec)
-            encoder.encode(self.destination)
+            encoder.encode(output_path=self.destination)
         return self.destination
 
     @property

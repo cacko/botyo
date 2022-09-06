@@ -14,9 +14,9 @@ class CODEC(IntEnum):
 class Encoder(object):
 
     __input_path: Path = None
-    __codec: CODEC = CODEC.AAC
+    __codec: CODEC = None
 
-    def __init__(self, input_path: Path, codec: CODEC = None) -> None:
+    def __init__(self, input_path: Path, codec: CODEC = None):
         self.__input_path = input_path
         self.__codec = codec
 
@@ -36,11 +36,10 @@ class Encoder(object):
             ),
         )
 
-    @property
-    def cmd(self) -> list[str]:
+    def get_cmd(self, output_path: Path) -> tuple[str]:
         match (self.__codec):
             case CODEC.OPUS:
-                return [
+                return (
                     "ffmpeg",
                     "-loglevel",
                     "quiet",
@@ -55,9 +54,10 @@ class Encoder(object):
                     "+faststart",
                     "-vn",
                     "-y",
-                ]
+                    output_path.as_posix(),
+                )
             case CODEC.AAC:
-                return [
+                return (
                     "ffmpeg",
                     "-loglevel",
                     "quiet",
@@ -74,13 +74,14 @@ class Encoder(object):
                     "+faststart",
                     "-vn",
                     "-y",
-                ]
+                    output_path.as_posix(),
+                )
         return None
 
     def encode(self, output_path: Path):
-        exec_cmd = tuple(self.cmd + [output_path.as_posix()])
-        logger.warning(shlex.join(exec_cmd))
-        retcode = call(shlex.join(exec_cmd), shell=True, env=self.environment)
+        cmd = self.get_cmd(output_path=output_path)
+        logger.warning(shlex.join(cmd))
+        retcode = call(shlex.join(cmd), shell=True, env=self.environment)
         if retcode:
             return None
         return output_path
