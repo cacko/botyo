@@ -54,7 +54,7 @@ class Encoder:
                     "-y",
                     output_path.as_posix(),
                 )
-            case CODEC.AAC:
+            case _:
                 cmd = (
                     "ffmpeg",
                     "-loglevel",
