@@ -4,7 +4,7 @@ from stringcase import alphanumcase
 from subprocess import PIPE, Popen, STDOUT
 from app.core.string import split_with_quotes
 from cachable import Cachable
-from app.music.encoder import Encoder
+from app.music.encoder import Encoder, CODEC
 
 
 class Song:
@@ -86,7 +86,7 @@ class Song:
     def __encode(self):
         if not self.destination.exists():
             encoder = Encoder(self.__found)
-            encoder.encode(self.destination)
+            encoder.encode(self.destination, codec=CODEC.AAC)
         return self.destination
 
     @property

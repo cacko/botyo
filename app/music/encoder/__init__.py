@@ -34,7 +34,7 @@ class Encoder:
             ),
         )
 
-    def encode(self, output_path, codec: CODEC = CODEC.AAC):
+    def encode(self, output_path, codec: CODEC = None):
         match (codec):
             case CODEC.OPUS:
                 cmd = (
