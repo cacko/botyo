@@ -12,6 +12,8 @@ class Song:
     __query: str = None
     __found: Path = None
     __message: Path = None
+    __extension: str = "m4a"
+    __content_type: str = "audio/mp4"
 
     def __init__(self, query: str):
         self.__query = query
@@ -85,8 +87,10 @@ class Song:
 
     def __encode(self):
         if not self.destination.exists():
-            encoder = Encoder(self.__found)
-            encoder.encode(self.destination, codec=CODEC.AAC)
+            encoder = Encoder(self.__found, codec=CODEC.AAC)
+            self.__content_type = encoder.content_type
+            self.__extension = encoder.extension
+            encoder.encode(self.destination)
         return self.destination
 
     @property
@@ -107,7 +111,7 @@ class Song:
 
     @property
     def destination(self) -> Path:
-        return Cachable.storage / f"{alphanumcase(self.__query)}.m4a"
+        return Cachable.storage / f"{alphanumcase(self.__query)}.{self.__extension}"
 
     @property
     def message(self) -> str:
@@ -119,4 +123,4 @@ class Song:
 
     @property
     def content_type(self) -> str:
-        return "audio/mp4"
+        return self.__content_type

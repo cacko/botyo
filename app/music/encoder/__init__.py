@@ -14,9 +14,11 @@ class CODEC(IntEnum):
 class Encoder:
 
     __input_path: Path = None
+    __codec: CODEC = None
 
-    def __init__(self, input_path: Path) -> None:
+    def __init__(self, input_path: Path, codec: CODEC = None) -> None:
         self.__input_path = input_path
+        self.__codec = codec
 
     @property
     def environment(self):
@@ -34,10 +36,29 @@ class Encoder:
             ),
         )
 
-    def encode(self, output_path, codec: CODEC = None):
-        match (codec):
+    @property
+    def extension(self) -> str:
+        match (self.__codec):
             case CODEC.OPUS:
-                cmd = (
+                return "opus"
+            case CODEC.AAC:
+                return "m4a"
+        return None
+
+    @property
+    def content_type(self) -> str:
+        match (self.__codec):
+            case CODEC.OPUS:
+                return "audio/ogg"
+            case CODEC.AAC:
+                return "audio/mp4"
+        return None
+
+    @property
+    def cmd(self) -> list[str]:
+        match (self.__codec):
+            case CODEC.OPUS:
+                return [
                     "ffmpeg",
                     "-loglevel",
                     "quiet",
@@ -52,10 +73,9 @@ class Encoder:
                     "+faststart",
                     "-vn",
                     "-y",
-                    output_path.as_posix(),
-                )
-            case _:
-                cmd = (
+                ]
+            case CODEC.AAC:
+                return [
                     "ffmpeg",
                     "-loglevel",
                     "quiet",
@@ -72,10 +92,13 @@ class Encoder:
                     "+faststart",
                     "-vn",
                     "-y",
-                    output_path.as_posix(),
-                )
-        logger.warning(shlex.join(cmd))
-        retcode = call(shlex.join(cmd), shell=True, env=self.environment)
+                ]
+        return None
+
+    def encode(self, output_path: Path):
+        exec_cmd = tuple(self.cmd + [output_path.as_posix()])
+        logger.warning(shlex.join(exec_cmd))
+        retcode = call(shlex.join(exec_cmd), shell=True, env=self.environment)
         if retcode:
             return None
         return output_path
