@@ -88,9 +88,7 @@ class Song:
 
     def __encode(self):
         if not self.destination.exists():
-            encoder = Encoder(self.__found)
-            self.__content_type = encoder.content_type
-            self.__extension = encoder.extension
+            encoder = Encoder(self.__found, codec=self.__codec)
             encoder.encode(self.destination)
         return self.destination
 
