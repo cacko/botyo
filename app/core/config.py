@@ -155,6 +155,9 @@ class Config(object, metaclass=ConfigMeta):
     struct: ConfigStruct = None
 
     def __init__(self):
-        settings = Path(environ.get("SETTINGS_PATH", "app/settings.yaml"))
+
+        settings = Path(environ.get("SETTINGS_PATH", None))
+        if not settings:
+            settings = Path(__file__).parent.parent / "settings.yaml"
         data = load(settings.read_text(), Loader=Loader)
         self.struct = ConfigStruct.from_dict(data)
