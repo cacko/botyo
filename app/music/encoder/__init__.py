@@ -11,10 +11,10 @@ class CODEC(IntEnum):
     AAC = 2
 
 
-class Encoder:
+class Encoder(object):
 
     __input_path: Path = None
-    __codec: CODEC = None
+    __codec: CODEC = CODEC.AAC
 
     def __init__(self, input_path: Path, codec: CODEC = None) -> None:
         self.__input_path = input_path
