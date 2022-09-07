@@ -25,7 +25,7 @@ tasks:
     desc: restart the service
     cmds:
       - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user stop znayko'
-      - ssh $REMOTE_HOST 'source ~/.zshrc;sleep 5'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;sleep 1'
       - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user start znayko'
 
 

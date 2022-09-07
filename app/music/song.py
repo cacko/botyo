@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-from stringcase import alphanumcase
 from subprocess import PIPE, Popen, STDOUT
 from app.core.string import split_with_quotes
 from cachable import Cachable
@@ -88,7 +87,7 @@ class Song:
 
     def __encode(self):
         if not self.destination.exists():
-            encoder = Encoder(self.__found, codec=self.__codec)
+            encoder = Encoder(input_path=self.__found, codec=self.codec)
             encoder.encode(output_path=self.destination)
         return self.destination
 
