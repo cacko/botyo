@@ -122,20 +122,10 @@ class TV:
                 Column(size=36, align=Align.LEFT),
             )
             if group_by_league:
-                events = list(
-                    chain.from_iterable(
-                        [
-                            [
-                                [l.upper()],
-                                *[
-                                    [time_hhmm(ev.time, tz), ev.shortenEventName()]
-                                    for ev in g
-                                ],
-                            ]
-                            for l, g in reduce(to_groups, events, [])
-                        ]
+                for l, g in reduce(to_groups, events, []):
+                    TextOutput.addRows([[l.upper()]])
+                    TextOutput.addColumns(
+                        columns,
+                        [[time_hhmm(ev.time, tz), ev.shortenEventName()] for ev in g],
                     )
-                )
-                pprint(events)
-            TextOutput.addColumns(columns, events, with_header=True)
         return TextOutput.render()
