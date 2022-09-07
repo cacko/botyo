@@ -160,4 +160,3 @@ class Config(object, metaclass=ConfigMeta):
             settings = Path(__file__).parent.parent / "settings.yaml"
         data = load(settings.read_text(), Loader=Loader)
         self.struct = ConfigStruct.from_dict(data)
-        logger.info(self.struct)

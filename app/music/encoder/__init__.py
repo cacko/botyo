@@ -109,8 +109,8 @@ class Encoder(object, metaclass=EncodeMeta):
                 )
         return None
 
-    def do_encode(self, intput_path: Path, output_path: Path):
-        cmd = self.get_cmd(input_path=intput_path, output_path=output_path)
+    def do_encode(self, input_path: Path, output_path: Path):
+        cmd = self.get_cmd(input_path=input_path, output_path=output_path)
         logger.warning(shlex.join(cmd))
         retcode = call(shlex.join(cmd), shell=True, env=self.environment)
         if retcode:
