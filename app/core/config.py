@@ -1,3 +1,4 @@
+from asyncio.log import logger
 from os import environ
 from dataclasses import dataclass
 from pathlib import Path
@@ -64,14 +65,13 @@ class ApiConfig:
     host: str
     port: int
     daemon_threads: bool
-    nworkers: int    
+    nworkers: int
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class BeatsConfig:
     db_url: Optional[str]
-
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -107,7 +107,6 @@ class ConfigMeta(type):
     @property
     def geo(cls) -> GeoConfig:
         return cls().struct.geo
-
 
     @property
     def beats(cls) -> BeatsConfig:
@@ -160,4 +159,6 @@ class Config(object, metaclass=ConfigMeta):
         if not settings:
             settings = Path(__file__).parent.parent / "settings.yaml"
         data = load(settings.read_text(), Loader=Loader)
-        self.struct = ConfigStruct.from_dict(data)
+
+        self.struct = ConfigStruct(**data)
+        logger.info(self.struct)

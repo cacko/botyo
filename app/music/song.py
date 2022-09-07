@@ -6,6 +6,7 @@ from app.core.string import split_with_quotes
 from cachable import Cachable
 from app.music.encoder import Encoder, CODEC
 from app.core.config import Config as app_config
+from app.core.string import string_hash
 
 
 class Song:
@@ -13,11 +14,9 @@ class Song:
     __query: str = None
     __found: Path = None
     __message: Path = None
-    __codec: CODEC = None
 
     def __init__(self, query: str):
         self.__query = query
-        self.__codec = CODEC[app_config.music.codec.upper()]
         self.load()
 
     def load(self):
@@ -72,6 +71,7 @@ class Song:
                 "compact=item_sep='-':nokey=1:print_section=0",
                 self.__found.as_posix(),
             )
+
             with Popen(
                 cmd,
                 stdout=PIPE,
@@ -109,8 +109,17 @@ class Song:
         )
 
     @property
+    def codec(self) -> CODEC:
+        try:
+            k = app_config.music.codec.upper()
+            return CODEC[k]
+        except ValueError:
+            return CODEC.AAC
+
+    @property
     def destination(self) -> Path:
-        return Cachable.storage / f"{alphanumcase(self.__query)}.{self.extension}"
+        hash = string_hash(self.__query)
+        return Cachable.storage / f"{hash}.{self.extension}"
 
     @property
     def message(self) -> str:
@@ -122,7 +131,7 @@ class Song:
 
     @property
     def extension(self) -> str:
-        match (self.__codec):
+        match (self.codec):
             case CODEC.OPUS:
                 return "opus"
             case CODEC.AAC:
@@ -131,7 +140,7 @@ class Song:
 
     @property
     def content_type(self) -> str:
-        match (self.__codec):
+        match (self.codec):
             case CODEC.OPUS:
                 return "audio/ogg"
             case CODEC.AAC:

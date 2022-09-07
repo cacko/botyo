@@ -1,5 +1,5 @@
 from cachable import Cachable
-from app.core.config import Config
+from app.core.config import Config as app_config
 from app.api.footy import Footy
 from botyo_server.server import Server
 from os import environ
@@ -14,7 +14,7 @@ app.servers.append(APIServer())
 
 
 Cachable.register(
-    redis_url=environ.get("BOTYO_REDIS_URL"), storage_dir=Config.cachable.path
+    redis_url=environ.get("BOTYO_REDIS_URL"), storage_dir=app_config.cachable.path
 )
 Footy.register(app)
 
