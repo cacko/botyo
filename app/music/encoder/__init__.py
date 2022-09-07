@@ -4,6 +4,7 @@ from subprocess import call
 import shlex
 import os
 from app.core import logger
+from app.core.config import Config as app_config
 
 
 class CODEC(IntEnum):
@@ -11,15 +12,45 @@ class CODEC(IntEnum):
     AAC = 2
 
 
-class Encoder(object):
+class EncodeMeta(type):
+    __instance: "Encoder" = None
 
-    __input_path: Path = None
-    __codec: CODEC = None
+    def __call__(cls, *args, **kwds):
+        if not cls.__instance:
+            cls.__instance = type.__call__(cls, *args, **kwds)
+        return cls.__instance
 
-    def __init__(self, input_path: Path, codec: CODEC = None):
-        self.__input_path = input_path
-        self.__codec = codec
+    @property
+    def codec(cls) -> CODEC:
+        try:
+            k = app_config.music.codec.upper()
+            return CODEC[k]
+        except ValueError:
+            return CODEC.AAC
 
+    @property
+    def extension(cls) -> str:
+        match (cls.codec):
+            case CODEC.OPUS:
+                return "opus"
+            case CODEC.AAC:
+                return "m4a"
+        return None
+
+    @property
+    def content_type(cls) -> str:
+        match (cls.codec):
+            case CODEC.OPUS:
+                return "audio/ogg"
+            case CODEC.AAC:
+                return "audio/mp4"
+        return None
+
+    def encode(cls, input_path: Path, output_path: Path):
+        return cls().do_encode(input_path=input_path, output_path=output_path)
+
+
+class Encoder(object, metaclass=EncodeMeta):
     @property
     def environment(self):
         return dict(
@@ -36,8 +67,8 @@ class Encoder(object):
             ),
         )
 
-    def get_cmd(self, output_path: Path) -> tuple[str]:
-        match (self.__codec):
+    def get_cmd(self, input_path: Path, output_path: Path) -> tuple[str]:
+        match (__class__.codec):
             case CODEC.OPUS:
                 return (
                     "ffmpeg",
@@ -45,7 +76,7 @@ class Encoder(object):
                     "quiet",
                     "-stats",
                     "-i",
-                    self.__input_path.as_posix(),
+                    input_path.as_posix(),
                     "-c:a",
                     "libopus",
                     "-b:a",
@@ -63,7 +94,7 @@ class Encoder(object):
                     "quiet",
                     "-stats",
                     "-i",
-                    self.__input_path.as_posix(),
+                    input_path.as_posix(),
                     "-c:a",
                     "libfdk_aac",
                     "-profile:a",
@@ -78,8 +109,8 @@ class Encoder(object):
                 )
         return None
 
-    def encode(self, output_path: Path):
-        cmd = self.get_cmd(output_path=output_path)
+    def do_encode(self, intput_path: Path, output_path: Path):
+        cmd = self.get_cmd(input_path=intput_path, output_path=output_path)
         logger.warning(shlex.join(cmd))
         retcode = call(shlex.join(cmd), shell=True, env=self.environment)
         if retcode:

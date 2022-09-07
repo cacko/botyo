@@ -9,7 +9,8 @@ import pickle
 from cachable import Cachable
 from pathlib import Path
 from stringcase import alphanumcase
-from base64 import b16decode, b64decode
+from base64 import b64decode
+from app.music.encoder import Encoder
 
 from app.music.encoder import Encoder
 
@@ -86,7 +87,7 @@ class Track(metaclass=TrackMeta):
     def audio_destination(self) -> Path:
         song_path = Path(self.path)
         name = "/".join([song_path.parent.name, song_path.stem])
-        res = Cachable.storage / f"{alphanumcase(name)}.opus"
+        res = Cachable.storage / f"{alphanumcase(name)}.{Encoder.extension}"
         if not res.exists():
             encoder = Encoder(input_path=song_path)
             encoder.encode(res)
@@ -107,7 +108,7 @@ class Track(metaclass=TrackMeta):
 
     @property
     def audio_content_type(self) -> str:
-        return "audio/ogg"
+        return Encoder.content_type
 
     @property
     def art_content_type(self) -> str:

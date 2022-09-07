@@ -3,8 +3,7 @@ import os
 from subprocess import PIPE, Popen, STDOUT
 from app.core.string import split_with_quotes
 from cachable import Cachable
-from app.music.encoder import Encoder, CODEC
-from app.core.config import Config as app_config
+from app.music.encoder import Encoder
 from app.core.string import string_hash
 
 
@@ -87,8 +86,7 @@ class Song:
 
     def __encode(self):
         if not self.destination.exists():
-            encoder = Encoder(input_path=self.__found, codec=self.codec)
-            encoder.encode(output_path=self.destination)
+            Encoder.encode(self.__found, self.destination)
         return self.destination
 
     @property
@@ -108,17 +106,9 @@ class Song:
         )
 
     @property
-    def codec(self) -> CODEC:
-        try:
-            k = app_config.music.codec.upper()
-            return CODEC[k]
-        except ValueError:
-            return CODEC.AAC
-
-    @property
     def destination(self) -> Path:
         hash = string_hash(self.__query)
-        return Cachable.storage / f"{hash}.{self.extension}"
+        return Cachable.storage / f"{hash}.{Encoder.extension}"
 
     @property
     def message(self) -> str:
@@ -127,21 +117,3 @@ class Song:
     @property
     def filename(self) -> Path:
         return self.destination
-
-    @property
-    def extension(self) -> str:
-        match (self.codec):
-            case CODEC.OPUS:
-                return "opus"
-            case CODEC.AAC:
-                return "m4a"
-        return None
-
-    @property
-    def content_type(self) -> str:
-        match (self.codec):
-            case CODEC.OPUS:
-                return "audio/ogg"
-            case CODEC.AAC:
-                return "audio/mp4"
-        return None
