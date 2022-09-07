@@ -89,8 +89,7 @@ class Track(metaclass=TrackMeta):
         name = "/".join([song_path.parent.name, song_path.stem])
         res = Cachable.storage / f"{alphanumcase(name)}.{Encoder.extension}"
         if not res.exists():
-            encoder = Encoder(input_path=song_path)
-            encoder.encode(res)
+            Encoder.encode(song_path, res)
         return res
 
     @property
