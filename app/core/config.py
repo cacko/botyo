@@ -159,6 +159,5 @@ class Config(object, metaclass=ConfigMeta):
         if not settings:
             settings = Path(__file__).parent.parent / "settings.yaml"
         data = load(settings.read_text(), Loader=Loader)
-
-        self.struct = ConfigStruct(**data)
+        self.struct = ConfigStruct.from_dict(data)
         logger.info(self.struct)
