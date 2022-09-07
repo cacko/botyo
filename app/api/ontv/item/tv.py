@@ -125,7 +125,7 @@ class TV:
                     chain.from_iterable(
                         [
                             [
-                                l.upper(),
+                                [l.upper()],
                                 *[
                                     [time_hhmm(ev.time, tz), ev.shortenEventName()]
                                     for ev in g
@@ -135,5 +135,6 @@ class TV:
                         ]
                     )
                 )
+                pprint(events)
             TextOutput.addColumns(columns, events, with_header=True)
         return TextOutput.render()
