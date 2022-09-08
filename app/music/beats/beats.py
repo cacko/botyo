@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from app.core import logger
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 from app.music.beats.db import BeatsDb
 from cachable import Cachable
 from cachable.request import Request
@@ -17,10 +17,13 @@ from app.core.config import Config as app_config
 @dataclass_json
 @dataclass
 class BeatsStruct:
-    path: Path
+    path: Union[str, Path]
     beats: Optional[list[float]] = None
     tempo: Optional[float] = None
 
+    def __post_init__(self):
+        if isinstance(self.path, str):
+            self.path = Path(self.path)
 
 class Beats(Cachable):
 
