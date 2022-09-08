@@ -72,6 +72,7 @@ class ApiConfig:
 @dataclass
 class BeatsConfig:
     db_url: Optional[str]
+    extractor_url: Optional[str]
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
