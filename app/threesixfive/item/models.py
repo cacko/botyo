@@ -8,7 +8,7 @@ from enum import IntEnum, Enum
 from string import punctuation
 import re
 from zoneinfo import ZoneInfo
-from app.core.time import time_hhmm
+from coretime import time_hhmm
 from stringcase import constcase
 from hashlib import md5
 from app.core.config import Config as app_config

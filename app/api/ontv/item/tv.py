@@ -7,8 +7,7 @@ from dataclasses_json import dataclass_json, config, Undefined
 from datetime import datetime, timedelta, timezone
 from marshmallow import fields
 from botyo_server.output import TextOutput, Align, Column, shorten
-from app.core.time import time_hhmm
-from itertools import chain
+from coretime import time_hhmm
 from functools import reduce
 
 

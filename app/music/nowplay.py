@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from marshmallow import fields
 from dataclasses_json import dataclass_json, Undefined, config
 from typing import Optional
-from app.core.time import isodate_decoder, isodate_encoder
+from coretime import isodate_decoder, isodate_encoder
 from app.core.store import Storage
 import pickle
 from cachable import Cachable
