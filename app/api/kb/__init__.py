@@ -5,7 +5,7 @@ from botyo_server.socket.connection import Context
 from botyo_server.output import TextOutput
 from emoji import emojize
 from enum import Enum
-from app.core import logger
+
 from app.api import ZMethod
 
 bp = Blueprint("kb")
@@ -60,7 +60,7 @@ def ask_command(context: Context):
             method=ZMethod.KNOWLEDGE_ASK
         )
     except Exception as e:
-        logger.error(e)
+        logging.error(e)
 
 
 @bp.command(
@@ -82,7 +82,7 @@ def tell_command(context: Context):
             method=ZMethod.KNOWLEDGE_TELL
         )
     except Exception as e:
-        logger.error(e)
+        logging.error(e)
 
 
 @bp.command(

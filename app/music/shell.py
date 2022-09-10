@@ -1,4 +1,4 @@
-from app.core import logger
+
 from subprocess import PIPE, Popen, STDOUT, call
 import os
 from typing import Generator
@@ -48,7 +48,7 @@ class Shell(object, metaclass=ShellMeta):
 
     def getOutput(self) -> Generator[str, None, None]:
         cmd = (self.executable, *self.executable_arguments, *self.args)
-        logger.debug(cmd)
+        logging.debug(cmd)
         with Popen(
             cmd,
             stdout=PIPE,
@@ -70,5 +70,5 @@ class Shell(object, metaclass=ShellMeta):
 
     def execute(self):
         cmd = [self.executable, *self.executable_arguments, *self.args]
-        logger.debug(shlex.join(cmd))
+        logging.debug(shlex.join(cmd))
         return call(shlex.join(cmd), shell=True, env=self.environment)

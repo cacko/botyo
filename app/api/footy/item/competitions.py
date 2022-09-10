@@ -1,5 +1,5 @@
 from datetime import datetime, timezone, timedelta
-from app.core import logger
+
 from botyo_server.output import TextOutput, Column, Align
 from app.threesixfive.data import Data365
 from app.threesixfive.item.models import Game, LeagueItem, Competition

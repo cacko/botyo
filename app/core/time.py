@@ -5,7 +5,7 @@ import arrow
 import time
 from contextlib import contextmanager
 import logging
-from app.core import logger
+
 
 
 def seconds_to_duration(s):
@@ -45,4 +45,4 @@ def perftime(name):
         yield
     finally:
         total = time.perf_counter() - st
-        logger.info(f"{name} -> {total}s")
+        logging.info(f"{name} -> {total}s")

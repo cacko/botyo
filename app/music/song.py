@@ -1,10 +1,9 @@
 from pathlib import Path
 import os
 from subprocess import PIPE, Popen, STDOUT
-from app.core.string import split_with_quotes
+from corestring import split_with_quotes, string_hash
 from cachable import Cachable
 from app.music.encoder import Encoder
-from app.core.string import string_hash
 
 
 class Song:

@@ -13,7 +13,7 @@ from unidecode import unidecode
 from datetime import timezone
 from cachable.cacheable import TimeCacheable
 from cachable.models import TimeCache
-from app.core import logger
+
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
@@ -56,7 +56,7 @@ class ParserDetails(TimeCacheable):
             self._struct = self.tocache(res)
             Player.store(res.game)
         except Exception as e:
-            logger.exception(e)
+            logging.exception(e)
             self._struct = None
             raise GameNotFound
 

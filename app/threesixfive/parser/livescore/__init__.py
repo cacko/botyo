@@ -2,7 +2,7 @@ from app.threesixfive.item.models import Event
 from prokopiy import Progress
 from .parser import Parser, ParserResponse
 from hashlib import md5
-from app.core import logger
+
 
 class Livescores:
 

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from hashlib import blake2b
 from typing import Optional
 from uuid import uuid1
-from app.core import logger
+
 from cachable.request import Request
 from dataclasses_json import dataclass_json
 from cachable.models import BinaryStruct
@@ -52,7 +52,7 @@ class FakeFace(CachableFile):
             res = Request(photo_url)
             self.tocache(res.binary)
         except Exception as e:
-            logger.exception(e)
+            logging.exception(e)
             pass
 
     @property

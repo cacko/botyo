@@ -1,6 +1,6 @@
 from botyo_server.output import Align, Column, TextOutput
 from app.threesixfive.item.lineups import Lineups as LineupsData
-from app.core import logger
+
 class Lineups(LineupsData):
 
     @property
@@ -35,5 +35,5 @@ class Lineups(LineupsData):
             TextOutput.addColumns(cols, rows)
             return TextOutput.render()
         except Exception as e:
-            logger.exception(e, exc_info=True)
+            logging.exception(e, exc_info=True)
             return None

@@ -1,4 +1,4 @@
-from asyncio.log import logger
+import logging
 from typing import Optional
 from datetime import datetime, timezone
 from dataclasses import dataclass, field
@@ -666,7 +666,7 @@ class DetailsEventPixel:
     id: Optional[str] = None
 
     def __post_init__(self) -> None:
-        logger.warning(f"{self.event_name}")
+        logging.warning(f"{self.event_name}")
         self.id = md5(f"{self.event_name}".lower().encode()).hexdigest()
 
 

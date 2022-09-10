@@ -1,4 +1,3 @@
-from asyncio.log import logger
 from os import environ
 from dataclasses import dataclass
 from pathlib import Path

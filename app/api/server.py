@@ -1,4 +1,3 @@
-from app.core import logger
 from app.api.footy.footy import Footy
 from app.api.footy.item.subscription import Subscription
 from app.core.config import Config
@@ -13,6 +12,7 @@ from app.api.logo.team import TeamLogoPixel
 from requests import post
 from botyo_server.core import AppServer
 from butilka.server import Server, request, abort
+import logging 
 
 class _APIServer(Server):
 
@@ -135,5 +135,5 @@ class APIServer(AppServer):
         try:
             self.worker.terminate()
         except Exception as e:
-            logger.exception(e)
+            logging.exception(e)
         return super().stop()

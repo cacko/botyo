@@ -1,18 +1,17 @@
 from dataclasses import dataclass
-from app.core import logger
+
 from pathlib import Path
 from typing import Optional, Union
 from app.music.beats.db import BeatsDb
 from cachable import Cachable
 from cachable.request import Request
-from app.core.string import string_hash
+from corestring import string_hash
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
 from .models.beats import Beats as BeatsModel
-from app.core.time import perftime
 from app.core.bytes import nearest_bytes
 from app.core.config import Config as app_config
-
+import logging 
 
 @dataclass_json
 @dataclass
@@ -123,5 +122,5 @@ class Beats(Cachable):
         if not self.load():
             self._load()
         else:
-            logger.warning(f"Loading beats for {self.__path} from cache")
+            logging.warning(f"Loading beats for {self.__path} from cache")
         return self._struct.beats

@@ -3,7 +3,7 @@ from pathlib import Path
 from subprocess import call
 import shlex
 import os
-from app.core import logger
+
 from app.core.config import Config as app_config
 
 
@@ -111,7 +111,7 @@ class Encoder(object, metaclass=EncodeMeta):
 
     def do_encode(self, input_path: Path, output_path: Path):
         cmd = self.get_cmd(input_path=input_path, output_path=output_path)
-        logger.warning(shlex.join(cmd))
+        logging.warning(shlex.join(cmd))
         retcode = call(shlex.join(cmd), shell=True, env=self.environment)
         if retcode:
             return None

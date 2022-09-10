@@ -1,4 +1,4 @@
-from app.core import logger
+
 from botyo_server.blueprint import Blueprint
 from botyo_server.output import to_mono
 from botyo_server.models import Attachment, EmptyResult, RenderResult
@@ -80,7 +80,7 @@ def nowplaying_song_command(context: Context) -> RenderResult:
             method=ZMethod.MUSIC_NOWPLAYING_SONG,
         )
     except Exception as e:
-        logger.exception(e)
+        logging.exception(e)
         return EmptyResult()
 
 @bp.command(method=ZMethod.MUSIC_NOWPLAYING_ART, desc="current album art playing")
@@ -96,6 +96,6 @@ def nowplaying_art_command(context: Context) -> RenderResult:
             method=ZMethod.MUSIC_NOWPLAYING_ART,
         )
     except Exception as e:
-        logger.exception(e)
+        logging.exception(e)
         return EmptyResult()
 

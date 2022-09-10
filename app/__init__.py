@@ -2,19 +2,43 @@ from cachable import Cachable
 from app.core.config import Config as app_config
 from app.api.footy import Footy
 from botyo_server.server import Server
-from os import environ
+import os
 from pathlib import Path
 from app.api.server import APIServer
-from app.core import logger
+import structlog
+import logging
 import signal
 import sys
+
+structlog.configure(
+    processors=[
+        structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+    ],
+    logger_factory=structlog.stdlib.LoggerFactory(),
+)
+
+formatter = structlog.stdlib.ProcessorFormatter(
+    processors=[
+        structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+        structlog.processors.StackInfoRenderer(),
+        structlog.dev.set_exc_info,
+        structlog.dev.ConsoleRenderer(),
+    ],
+)
+
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+root_logger = logging.getLogger()
+root_logger.addHandler(handler)
+root_logger.setLevel(getattr(logging, os.environ.get("ZNAYKO_LOG_LEVEL", "INFO")))
+
 
 app = Server(Path(__file__).parent.parent)
 app.servers.append(APIServer())
 
 
 Cachable.register(
-    redis_url=environ.get("BOTYO_REDIS_URL"), storage_dir=app_config.cachable.path
+    redis_url=os.environ.get("BOTYO_REDIS_URL"), storage_dir=app_config.cachable.path
 )
 Footy.register(app)
 
@@ -54,7 +78,7 @@ def create_app():
 
 
 def handler_stop_signals(signum, frame):
-    logger.warning("Stopping app")
+    logging.warning("Stopping app")
     app.terminate()
     sys.exit(0)
 

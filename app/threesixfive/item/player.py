@@ -17,7 +17,7 @@ from unidecode import unidecode
 from datetime import datetime
 from marshmallow import fields
 from hashlib import blake2b
-from app.core import logger
+
 from cachable.storage import Storage
 
 
@@ -191,7 +191,7 @@ class Player(Cachable):
         competition = next(
             filter(lambda x: x.id == game.competitionId, leagues), None)
         country_name = competition.country_name if competition else ""
-        logger.debug(f">> Country {country_name}")
+        logging.debug(f">> Country {country_name}")
         if not country_name:
             return False
         try:

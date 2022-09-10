@@ -11,7 +11,7 @@ from dataclasses_json import dataclass_json, Undefined
 from hashlib import blake2s
 from app.threesixfive.url import Url
 from datetime import timedelta
-from app.core import logger
+
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

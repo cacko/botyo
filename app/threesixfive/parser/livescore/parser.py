@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from botyo_server.scheduler import Scheduler
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
-from app.core import logger
+
 from app.threesixfive.url import Url
 from app.threesixfive.team import (
     normalize_team, DEFAULT_BADGE, store_key, AssetKey
@@ -90,7 +90,7 @@ class BadgeFetcher:
                 try:
                     future.result()
                 except Exception as e:
-                    logger.error(e, exc_info=True)
+                    logging.error(e, exc_info=True)
             self.isRunning = False
 
 

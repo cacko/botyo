@@ -1,4 +1,4 @@
-from app.core import logger
+
 from traceback import print_exc
 from botyo_server.cli import pass_environment, Environment
 import click
@@ -32,4 +32,4 @@ def cli(ctx: Environment, path):
                     pf.write(f"{f}\n".encode())
                 except Exception as e:
                     print_exc(e)
-                    logger.error(e)
+                    logging.error(e)

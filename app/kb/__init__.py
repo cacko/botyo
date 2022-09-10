@@ -4,7 +4,7 @@ from dataclasses_json import dataclass_json, Undefined
 from dataclasses import dataclass
 import wikipedia
 from wikipedia.exceptions import DisambiguationError
-from app.core import logger
+
 from typing import Optional
 from cachable.request import Request
 from app.chatyo import Response, getResponse, Payload
@@ -88,7 +88,7 @@ class KnowledgeBase(Cachable):
             options = "\n".join(e.options)
             return f"Maybe you mean: {options}"
         except Exception as e:
-            logger.exception(e)
+            logging.exception(e)
             return None
 
     @property

@@ -1,4 +1,4 @@
-from app.core import logger
+
 from app.api.footy.item.lineups import Lineups
 from app.threesixfive.exception import GameNotFound
 from app.threesixfive.item.league import LeagueImage
@@ -203,7 +203,7 @@ class Subscription(metaclass=SubscriptionMeta):
         if self._clientId.startswith("http"):
             return  self.trigger_()
         if not self.client:
-            logger.debug(
+            logging.debug(
                 f">> skip schedule {self._clientId}")
             return
         cache = Cache(
@@ -222,7 +222,7 @@ class Subscription(metaclass=SubscriptionMeta):
             if not content:
                 return  self.cancel(True)
             Player.store(content.game)
-            logger.debug(content.game.shortStatusText)
+            logging.debug(content.game.shortStatusText)
             if any(
                 [
                     GameStatus(content.game.shortStatusText)
@@ -241,11 +241,11 @@ class Subscription(metaclass=SubscriptionMeta):
                 except UnknownClientException:
                     pass
                 self.cancel()
-                logger.debug(f"subscription {self.event_name} in done")
+                logging.debug(f"subscription {self.event_name} in done")
         except ValueError:
             pass
         except Exception as e:
-            logger.exception(e)
+            logging.exception(e)
             return  self.cancel(True)
 
     def updates(self, updated: ResponseGame) -> list[str]:
@@ -315,7 +315,7 @@ class Subscription(metaclass=SubscriptionMeta):
         )]
 
     def start(self, announceStart=False):
-        logger.debug(f"subscriion in live mode {self.event_name}")
+        logging.debug(f"subscriion in live mode {self.event_name}")
         Scheduler.add_job(
             id=self.id,
             name=f"{self.event_name}",
@@ -372,17 +372,17 @@ class Subscription(metaclass=SubscriptionMeta):
 
     def beforeGameTrigger(self):
         if not self.client:
-            logger.debug(
+            logging.debug(
                 f">> skip schedule {self._clientId}")
             return
         try:
-            logger.debug(f"{self.event_name} check for lineups")
+            logging.debug(f"{self.event_name} check for lineups")
             lineups = Lineups(self._event)
             message =  lineups.message
             if not message:
-                logger.debug(f"{self.event_name} not lineups yet")
+                logging.debug(f"{self.event_name} not lineups yet")
                 return
-            logger.debug(f"{self.event_name} lineups available")
+            logging.debug(f"{self.event_name} lineups available")
             TextOutput.addRows([
                 f"{Headers.LINEUP_ANNOUNCED.value: ^ 42}\n".upper(),
                 message
@@ -393,11 +393,11 @@ class Subscription(metaclass=SubscriptionMeta):
             except UnknownClientException:
                 pass
             Scheduler.cancel_jobs(self.beforeGameId)
-            logger.debug(f"subscription before game {self.event_name} in done")
+            logging.debug(f"subscription before game {self.event_name} in done")
         except ValueError:
             pass
         except Exception as e:
-            logger.exception(e)
+            logging.exception(e)
 
     @property
     def isValid(self) -> bool:
@@ -455,7 +455,7 @@ class Subscription(metaclass=SubscriptionMeta):
             payload = [d.to_dict() for d in data]
         elif hasattr(data, 'to_dict'):
             payload = data.to_dict()
-        logger.debug(payload)
+        logging.debug(payload)
         try:
             resp = post(
                 f"{self._clientId}",
@@ -464,7 +464,7 @@ class Subscription(metaclass=SubscriptionMeta):
             )
             return resp.status_code
         except ConnectionError:
-            logger.error(f"Cannot send update to f{self._clientId}")
+            logging.error(f"Cannot send update to f{self._clientId}")
             pass
 
     @property
@@ -544,12 +544,12 @@ class Subscription(metaclass=SubscriptionMeta):
                 try:
                     self.sendUpdate( self.fulltimeAnnoucement)
                 except UnknownClientException as e:
-                    logger.error(e)
+                    logging.error(e)
                     pass
                 self.cancel()
-                logger.debug(f"subscription {self.event_name} in done")
+                logging.debug(f"subscription {self.event_name} in done")
         except ValueError:
             pass
         except Exception as e:
-            logger.exception(e)
+            logging.exception(e)
             return self.cancel(True)
