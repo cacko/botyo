@@ -3,7 +3,7 @@ import os
 from PIL import Image
 from stringcase import alphanumcase
 from subprocess import PIPE, Popen, STDOUT
-from app.core.string import split_with_quotes
+from corestring import split_with_quotes
 from cachable import Cachable
 
 
