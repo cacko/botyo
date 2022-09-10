@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 from uuid import uuid4
 from cachable import Cachable
 from cachable.request import Request, Method
@@ -6,7 +7,6 @@ from dataclasses_json import dataclass_json
 from app.core.config import Config
 from typing import Optional
 from botyo_server.models import Attachment
-from app.core import logger
 
 @dataclass_json()
 @dataclass()
@@ -38,7 +38,7 @@ def getResponse(path: str, payload: Payload) -> Response:
         multipart_data = req.multipart
         for part in multipart_data.parts:
             content_type = part.headers.get(b"content-type", b"").decode()
-            logger.debug(f"Multipart part content-type: {content_type}")
+            logging.debug(f"Multipart part content-type: {content_type}")
             if "image/png" in content_type:
                 fp = cp / f"{uuid4().hex}.png"
                 fp.write_bytes(part.content)
