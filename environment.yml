@@ -151,7 +151,6 @@ dependencies:
     - keras-preprocessing==1.1.2
     - langcodes==3.3.0
     - lxml==4.9.1
-    - madmom==0.17.1
     - markdown==3.4.1
     - markupsafe==2.1.1
     - marshmallow==3.17.1
