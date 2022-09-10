@@ -12,6 +12,7 @@ def cli(ctx: Environment):
     try:
         from app.music.beats.models.beats import Beats
         for beat in Beats.select():
+            logging.info(beat)
             pid = string_hash(beat.path)
             if pid != beat.path_id:
                 logging.info(f"pid differs {beat.path}")
