@@ -5,6 +5,7 @@ import click
 from app.commands import coro
 from app.music.beats import Beats
 from humanfriendly.tables import format_robust_table
+import logging
 
 
 @click.command("beats", short_help="beats info")

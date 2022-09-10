@@ -7,6 +7,7 @@ from app.music.beats import Beats
 from pathlib import Path
 from prokopiy import Progress
 import filetype
+import logging
 
 
 @click.command("importbeats", short_help="beats info")
