@@ -32,6 +32,7 @@ from app.core.otp import OTP
 import sys
 from pixelme import Pixelate
 import time
+import logging
 
 
 class Headers(Enum):
