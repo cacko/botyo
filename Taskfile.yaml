@@ -67,21 +67,10 @@ tasks:
     cmds:
       - conda env export --no-builds --ignore-channels  -n {{.PROJECT}} > environment.yml
 
-
-  exportpi:
-    desc: export env
-    cmds:
-      - conda env export --no-builds --ignore-channels  -n {{.PROJECT}} > environment-pi.yml
-      - task: push
-
-
   install:
     desc: calls poetry install and npm ci
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/{{.PROJECT}}; conda env update -n {{.PROJECT}} -f environment-pi.yml --prune'
-      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/{{.PROJECT}}; task exportpi'
-      - git pull
-
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/{{.PROJECT}}; conda env update -n {{.PROJECT}} -f environment.yml --prune'
 
   deploy:
     desc: shortcut for stop -> push -> pull -> restart
