@@ -1,6 +1,6 @@
 from zoneinfo import ZoneInfo
 from botyo_server.output import TextOutput, Align, Column
-from app.core.time import time_hhmm
+from coretime import time_hhmm
 from app.threesixfive.item.models import Competitor
 from app.threesixfive.item.team import Team as DataTeam, TeamStruct
 
