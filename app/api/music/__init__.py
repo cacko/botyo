@@ -8,6 +8,7 @@ from app.music.song import Song
 from app.music.albumart import AlbumArt
 from app.music.lyrics import Lyrics
 from app.music.nowplay import Track
+import logging
 
 bp = Blueprint("music")
 
