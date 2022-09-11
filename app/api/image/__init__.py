@@ -127,7 +127,7 @@ def image_polygon(context: Context):
     try:
         query = int(query)
     except ValueError:
-        query = 8
+        query = 800
     if not attachment:
         return EmptyResult(method=ZMethod.IMAGE_POLYGON)
     attachment, message = Image.polygon(attachment, query)
