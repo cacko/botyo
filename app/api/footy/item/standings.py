@@ -5,11 +5,14 @@ from itertools import groupby
 
 
 class Standings(StandingsData):
-    @property
-    def columns(self):
+    def columns(self, group_name=None):
         return (
             Column(size=2, align=Align.LEFT, title="#"),
-            Column(size=18, align=Align.LEFT, title="Team"),
+            Column(
+                size=18,
+                align=Align.LEFT,
+                title="Team" if not group_name else group_name,
+            ),
             Column(size=2, align=Align.RIGHT, title="PT"),
             Column(size=2, align=Align.RIGHT, title="PL"),
             Column(size=3, align=Align.RIGHT, title="GD"),
@@ -39,4 +42,4 @@ class Standings(StandingsData):
                     f"{gd:+d}",
                 ]
             )
-        TextOutput.addTable(self.columns, rows)
+        TextOutput.addTable(self.columns(name), rows)
