@@ -13,6 +13,7 @@ from unidecode import unidecode
 from datetime import timezone
 from cachable.cacheable import TimeCacheable
 from cachable.models import TimeCache
+import logging
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

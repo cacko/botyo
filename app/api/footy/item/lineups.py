@@ -1,5 +1,6 @@
 from botyo_server.output import Align, Column, TextOutput
 from app.threesixfive.item.lineups import Lineups as LineupsData
+import logging
 
 class Lineups(LineupsData):
 

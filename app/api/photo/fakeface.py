@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from hashlib import blake2b
 from typing import Optional
 from uuid import uuid1
-
+import logging
 from cachable.request import Request
 from dataclasses_json import dataclass_json
 from cachable.models import BinaryStruct

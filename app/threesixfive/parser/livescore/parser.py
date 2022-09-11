@@ -12,6 +12,7 @@ from app.threesixfive.url import Url
 from app.threesixfive.team import (
     normalize_team, DEFAULT_BADGE, store_key, AssetKey
 )
+import logging
 
 
 @dataclass

@@ -17,6 +17,7 @@ from unidecode import unidecode
 from datetime import datetime
 from marshmallow import fields
 from hashlib import blake2b
+import logging
 
 from cachable.storage import Storage
 

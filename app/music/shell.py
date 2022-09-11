@@ -3,7 +3,7 @@ from subprocess import PIPE, Popen, STDOUT, call
 import os
 from typing import Generator
 import shlex
-
+import logging
 
 class ShellMeta(type):
     def __call__(cls, *args, **kwargs):

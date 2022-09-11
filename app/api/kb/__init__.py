@@ -5,6 +5,7 @@ from botyo_server.socket.connection import Context
 from botyo_server.output import TextOutput
 from emoji import emojize
 from enum import Enum
+import logging
 
 from app.api import ZMethod
 

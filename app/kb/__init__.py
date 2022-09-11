@@ -4,7 +4,7 @@ from dataclasses_json import dataclass_json, Undefined
 from dataclasses import dataclass
 import wikipedia
 from wikipedia.exceptions import DisambiguationError
-
+import logging
 from typing import Optional
 from cachable.request import Request
 from app.chatyo import Response, getResponse, Payload
