@@ -26,9 +26,9 @@ class Standings(StandingsData):
             self.__renderGroup(data.rows)
         return TextOutput.render()
 
-    def __renderGroup(self, rows, name=None):
+    def __renderGroup(self, standing_rows, name=None):
         rows = []
-        for row in sorted(rows, key=lambda x: x.position):
+        for row in sorted(standing_rows, key=lambda x: x.position):
             gd = int(row.forward - row.against)
             rows.append(
                 [
