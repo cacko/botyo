@@ -3,7 +3,6 @@ from app.threesixfive.item.standings import Standings as StandingsData
 from app.threesixfive.item.models import Standing
 from itertools import groupby
 
-
 class Standings(StandingsData):
     def columns(self, group_name=None):
         return (
@@ -18,13 +17,18 @@ class Standings(StandingsData):
             Column(size=3, align=Align.RIGHT, title="GD"),
         )
 
-    def render(self) -> str:
+    def render(self, group_query=None) -> str:
         data: Standing = self.standing(True)
         if data.groups:
             data.rows.sort(key=lambda x: x.groupNum)
             for k, rows in groupby(data.rows, key=lambda x: x.groupNum):
                 group = next(filter(lambda g: g.num == k, data.groups), None)
-                self.__renderGroup(list(rows), group.name)
+                if (
+                    not group_query
+                    or group.name.lower().replace("group", "").strip()
+                    == group_query.lower()
+                ):
+                    self.__renderGroup(list(rows), group.name)
         else:
             self.__renderGroup(data.rows)
         return TextOutput.render()
