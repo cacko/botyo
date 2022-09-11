@@ -14,6 +14,7 @@ from hashlib import md5
 from app.core.config import Config as app_config
 from emoji import emojize
 
+
 class EventStatus(Enum):
     HT = "HT"
     FT = "FT"
@@ -32,7 +33,7 @@ STATUS_MAP = {
     "After ET": "AET",
     "After Pen": "AET",
     "Half Time": "HT",
-    "2nd Half": '2nd'
+    "2nd Half": "2nd",
 }
 
 
@@ -48,6 +49,7 @@ class GameStatus(Enum):
     CNL = "Canc."
     HT = "Half Time"
     _2ND = "2nd"
+
 
 class OrderWeight(Enum):
     INPLAY = 1
@@ -135,13 +137,13 @@ class Event:
         if self.strStatus in STATUS_MAP:
             self.strStatus = STATUS_MAP[self.strStatus]
 
-        delta = (datetime.now(timezone.utc) -
-                 self.startTime).total_seconds() / 60
+        delta = (datetime.now(timezone.utc) - self.startTime).total_seconds() / 60
         try:
             self.displayStatus = GameStatus(self.strStatus)
             if delta < 0 and self.displayStatus in [GameStatus.NS]:
                 self.displayStatus = self.startTime.astimezone(
-                    ZoneInfo("Europe/London")).strftime("%H:%M")
+                    ZoneInfo("Europe/London")
+                ).strftime("%H:%M")
             else:
                 self.displayStatus = self.displayStatus.value
         except Exception:
@@ -149,7 +151,7 @@ class Event:
         try:
             if re.match(r"^\d+", self.strStatus):
                 self.sort = OrderWeight.INPLAY.value * int(self.strStatus)
-                self.displayStatus = f"{self.strStatus}\""
+                self.displayStatus = f'{self.strStatus}"'
             else:
                 self.sort = OrderWeight[
                     self.strStatus.translate(punctuation).upper()
@@ -159,10 +161,9 @@ class Event:
         if any([self.intAwayScore == -1, self.intHomeScore == -1]):
             self.displayScore = ""
         else:
-            self.displayScore = ":".join([
-                f"{self.intHomeScore:.0f}",
-                f"{self.intAwayScore:.0f}"
-            ])
+            self.displayScore = ":".join(
+                [f"{self.intHomeScore:.0f}", f"{self.intAwayScore:.0f}"]
+            )
 
     @property
     def inProgress(self) -> bool:
@@ -204,6 +205,7 @@ class Competitor:
     symbolicName: Optional[str] = None
     imageVersion: Optional[int] = None
 
+
 @dataclass_json(undefined=Undefined.INCLUDE)
 @dataclass
 class StandingRow:
@@ -233,8 +235,16 @@ class StandingRow:
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
+class StandingGroup:
+    num: int
+    name: str
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
 class Standing:
     competitionId: int
+    groups: Optional[list[StandingGroup]] = None
     seasonNum: Optional[int] = None
     stageNum: Optional[int] = None
     isCurrentStage: Optional[bool] = None
@@ -358,7 +368,10 @@ class GameCompetitor:
     symbolicName: Optional[str] = None
 
     def __getattribute__(self, __name: str):
-        if __name == "name" and object.__getattribute__(self, "id") in app_config.favourites.teams:
+        if (
+            __name == "name"
+            and object.__getattribute__(self, "id") in app_config.favourites.teams
+        ):
             return f"{object.__getattribute__(self, __name).upper()}"
         return object.__getattribute__(self, __name)
 
@@ -370,7 +383,7 @@ class GameCompetitor:
     def shortName(self) -> str:
         if self.symbolicName:
             return self.symbolicName
-        parts = self.name.split(' ')
+        parts = self.name.split(" ")
         if len(parts) == 1:
             return self.name[:3].upper()
         return f"{parts[0][:1]}{parts[1][:2]}".upper()
@@ -450,8 +463,9 @@ class Game:
     def round(self) -> str:
         if self.roundNum is None:
             return ""
-        ' '.join(
-            list(filter(lambda x: x, [f"{self.roundName}", f"{self.roundNum:,0f}"])))
+        " ".join(
+            list(filter(lambda x: x, [f"{self.roundName}", f"{self.roundNum:,0f}"]))
+        )
 
     @property
     def postponed(self) -> bool:
@@ -509,6 +523,7 @@ class Game:
         if all([not self.not_started, not self.ended]):
             res = f"{res} {self.displayScore}"
         return res
+
 
 class EVENT_ICON(Enum):
     SUBSTITUTION = ":ON!_arrow:"
@@ -628,7 +643,7 @@ class DetailsEvent:
     time: str
     action: str
     order: Optional[int] = 0
-    team: Optional[str] = None 
+    team: Optional[str] = None
     player: Optional[str] = None
     extraPlayers: Optional[str] = None
     position: Optional[Position] = None
@@ -646,7 +661,6 @@ class DetailsEvent:
             return emojize(icon.value)
         except ValueError:
             return ""
-
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -697,11 +711,12 @@ class SubscriptionEvent:
     def __post_init__(self) -> None:
         self.id = md5(f"{self.home_team}/{self.away_team}".lower().encode()).hexdigest()
 
+
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class CancelJobEvent:
     job_id: str
-    action: str = 'Cancel Job'
+    action: str = "Cancel Job"
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -732,19 +747,22 @@ class CompetitionResponse:
     games: list[Game]
     competitors: Optional[list[Competitor]] = None
 
+
 class OddLineType:
     id: int
-    name: str #"Full Time Result"
-    shortName: str #"1X2"
-    title: str #"Full Time Result"
+    name: str  # "Full Time Result"
+    shortName: str  # "1X2"
+    title: str  # "Full Time Result"
+
 
 class OddBoomaker:
-    id: int #14,
-    name: str #Bet365",
-    link: str #https://www.bet365.com/olp/open-account/?affiliate=365_178380",
-    nameForURL: str #bet365",
-    color: str ##007B5B",
-    imageVersion: int #1
+    id: int  # 14,
+    name: str  # Bet365",
+    link: str  # https://www.bet365.com/olp/open-account/?affiliate=365_178380",
+    nameForURL: str  # bet365",
+    color: str  ##007B5B",
+    imageVersion: int  # 1
+
 
 # @dataclass_json(undefined=Undefined.EXCLUDE)
 # @dataclass
