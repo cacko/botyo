@@ -64,6 +64,7 @@ class ZMethod(Method, Enum):
     IMAGE_HOWCUTE = "image:howcute"
     IMAGE_CLASSIFY = "image:classify"
     IMAGE_PIXEL = "image:pixel"
+    IMAGE_POLYGON = "image:polygon"
     EVENT_COUNTDOWN = "event:countdown"
     EVENT_CALENDAR = "event:calendar"
     EVENT_SCHEDULE = "event:schedule"

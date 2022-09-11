@@ -11,7 +11,6 @@ bp = Blueprint("image")
 @bp.command(
     method=ZMethod.IMAGE_ANALYZE,
     desc="Returns Emotion, Race, Gender, Age for image",
-
 )
 def image_analyze(context: Context):
     attachment = context.attachment
@@ -87,11 +86,9 @@ def image_classify(context: Context):
             method=ZMethod.IMAGE_CLASSIFY,
         )
     return RenderResult(
-        message="\n".join([titlecase(x.get("label"))
-                          for x in message.get("response")]),
+        message="\n".join([titlecase(x.get("label")) for x in message.get("response")]),
         method=ZMethod.IMAGE_CLASSIFY,
     )
-
 
 
 @bp.command(
@@ -117,4 +114,30 @@ def image_pixel(context: Context):
         message=message,
         attachment=attachment,
         method=ZMethod.IMAGE_PIXEL,
+    )
+
+
+@bp.command(
+    method=ZMethod.IMAGE_POLYGON,
+    desc="polygon image",
+)
+def image_polygon(context: Context):
+    attachment = context.attachment
+    query = context.query
+    try:
+        query = int(query)
+    except ValueError:
+        query = 8
+    if not attachment:
+        return EmptyResult(method=ZMethod.IMAGE_POLYGON)
+    attachment, message = Image.polygon(attachment, query)
+    if all([attachment is None, message is None]):
+        return RenderResult(
+            message="No shit",
+            method=ZMethod.IMAGE_POLYGON,
+        )
+    return RenderResult(
+        message=message,
+        attachment=attachment,
+        method=ZMethod.IMAGE_POLYGON,
     )

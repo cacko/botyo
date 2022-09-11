@@ -18,7 +18,7 @@ class Action(Enum):
     HOWCUTE = "face/howcute"
     CLASSIFY = "image/classify"
     PIXEL = "image/pixel"
-
+    POLYGON = "image/polygon"
 
 class ImageMeta(type):
 
@@ -39,6 +39,10 @@ class ImageMeta(type):
 
     def pixel(cls, attachment: Attachment, block_size: int = 8) -> tuple[Attachment, dict]:
         return cls(attachment).do_pixel(block_size)
+
+    def polygon(cls, attachment: Attachment, frequency: int = 800) -> tuple[Attachment, dict]:
+        return cls(attachment).do_polygon(frequency)
+
 
 
 class Image(object, metaclass=ImageMeta):
@@ -76,6 +80,9 @@ class Image(object, metaclass=ImageMeta):
 
     def do_pixel(self, block_size):
         return self.getResponse(Action.PIXEL, block_size)
+
+    def do_polygon(self, frequency):
+        return self.getResponse(Action.POLYGON, frequency)
 
     def getResponse(
             self,
