@@ -357,8 +357,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 league_id=self._event.idLeague,
                 job_id=self.id,
                 icon=pix.base64,
-                home_team_icon=TeamLogoPixel(self._event.strHomeTeam),
-                away_team_icon=TeamLogoPixel(self._event.strAwayTeam),
+                home_team_icon=TeamLogoPixel(self._event.strHomeTeam).base64,
+                away_team_icon=TeamLogoPixel(self._event.strAwayTeam).base64,
                 status=self._event.displayStatus
             ))
         if self.inProgress:
