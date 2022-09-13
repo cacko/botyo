@@ -62,11 +62,6 @@ tasks:
     cmds:
       - direnv exec . conda run --live-stream -n {{.PROJECT}} botyo serve
 
-  pip:
-    desc: run pip in the env
-    cmds:
-      - conda run --live-stream -n {{.PROJECT}} pip {{.CMD_ARGS}}
-
   export:
     desc: export env
     cmds:
