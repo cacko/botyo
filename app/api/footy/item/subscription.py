@@ -1,5 +1,6 @@
 
 from app.api.footy.item.lineups import Lineups
+from app.api.logo.team import TeamLogoPixel
 from app.threesixfive.exception import GameNotFound
 from app.threesixfive.item.league import LeagueImage
 from .components import ScoreFormat, ScoreRow
@@ -356,6 +357,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 league_id=self._event.idLeague,
                 job_id=self.id,
                 icon=pix.base64,
+                home_team_icon=TeamLogoPixel(self._event.strHomeTeam),
+                away_team_icon=TeamLogoPixel(self._event.strAwayTeam),
                 status=self._event.displayStatus
             ))
         if self.inProgress:

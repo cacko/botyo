@@ -707,6 +707,8 @@ class SubscriptionEvent:
     icon: str
     status: Optional[str] = ""
     id: Optional[str] = None
+    home_team_icon: Optional[str] = None
+    away_team_icon: Optional[str] = None
 
     def __post_init__(self) -> None:
         self.id = md5(f"{self.home_team}/{self.away_team}".lower().encode()).hexdigest()
