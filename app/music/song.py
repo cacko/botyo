@@ -116,3 +116,7 @@ class Song:
     @property
     def filename(self) -> Path:
         return self.destination
+
+    @property
+    def content_type(self) -> str:
+        return Encoder.content_type
