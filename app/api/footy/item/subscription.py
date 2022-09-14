@@ -279,6 +279,8 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def fulltimeAnnoucement(self) -> str:
+        self.cancel()
+        logging.debug(f"subscription {self.event_name} in done")
         if self._clientId.startswith("http"):
             return  self.fulltimeAnnoucement_
         details =  ParserDetails.get(self._event.details)
@@ -291,6 +293,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 details.score
             ])
         ])
+
         return TextOutput.render()
 
     @property
@@ -550,8 +553,6 @@ class Subscription(metaclass=SubscriptionMeta):
                 except UnknownClientException as e:
                     logging.error(e)
                     pass
-                self.cancel()
-                logging.debug(f"subscription {self.event_name} in done")
         except ValueError:
             pass
         except Exception as e:
