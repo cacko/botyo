@@ -94,7 +94,6 @@ class Track(metaclass=TrackMeta):
 
     @property
     def message(self) -> str:
-        print(f"{self.artist} / {self.title}")
         return f"{self.artist} / {self.title}"
 
     @property

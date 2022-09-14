@@ -280,6 +280,7 @@ class Subscription(metaclass=SubscriptionMeta):
     @property
     def fulltimeAnnoucement(self) -> str:
         self.cancel()
+        logger.info(f"FOOT SUB: Full Time {self.event_name}")
         logging.debug(f"subscription {self.event_name} in done")
         if self._clientId.startswith("http"):
             return  self.fulltimeAnnoucement_
@@ -489,6 +490,7 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def halftimeAnnoucement_(self) -> str:
+        logger.info(f"FOOT SUB: Halt Time {self.event_name}")
         details = ParserDetails.get(self._event.details)
         return [DetailsEventPixel(
             time=details.game_time,
