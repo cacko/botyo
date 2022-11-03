@@ -1,15 +1,15 @@
 
 from cachable.cacheable import Cachable
-from app.threesixfive.item.models import (
-    LeagueItem, Standing, StandingResponse
-)
 from cachable.request import Request
+
+from app.threesixfive.item.models import LeagueItem, Standing, StandingResponse
 from app.threesixfive.url import Url
+
 
 class Standings(Cachable):
 
-    __league: LeagueItem = None
-    _struct: StandingResponse = None
+    __league: LeagueItem
+    _struct: StandingResponse
 
     def __init__(self, league: LeagueItem):
         self.__league = league
