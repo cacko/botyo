@@ -30,7 +30,6 @@ def getResponse(path: str, payload: Payload) -> Response:
         Method.POST,
         json=payload.to_dict()
     )
-    logging.warning(req.body)
     message = ""
     attachment = None
     is_multipart = req.is_multipart

@@ -10,7 +10,7 @@ from itertools import groupby, chain
 
 
 class CompetitionItem(TimeCacheable):
-    __data: CompetitionData = None
+    __data: CompetitionData
 
     def __init__(self, data: CompetitionData):
         self.__data = data
@@ -25,7 +25,7 @@ class CompetitionItem(TimeCacheable):
     ) -> str:
         data =  self.data
         if not data:
-            return None
+            return ""
         games =  data.games
         today = datetime.now(tz=timezone.utc)
         threshold = timedelta(days=1)
@@ -72,7 +72,7 @@ class Competitions:
         comps = sorted(
             comps, key=lambda x: f"{x.country_name} {x.league_name}")
         TextOutput.addRows([
-            f"{c.country_name.upper()} {c.league_name} "
+            f"{c.country_name.upper()} {c.league_name} ({c.league_id})"
             for c in comps
         ])
         return TextOutput.render()

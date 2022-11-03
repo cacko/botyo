@@ -174,26 +174,30 @@ def standings_Command(context: Context):
 
     if not query:
         return EmptyResult(method=ZMethod.FOOTY_STANDINGS)
+    
+    league_id = 0
+    try:
+        league_id = int(query)
+    except ValueError:
+        pass
 
     haystack = Data365.leagues
+    if league_id:
+        league = next(filter(lambda x: x.league_id == league_id, haystack), None)
+    else:
+        haystack = list(filter(lambda x: x.league_id in Config.ontv.leagues, haystack))
+        matcher = LeagueMatch(haystack=haystack)
+        leagues = matcher.fuzzy(LeagueNeedle(league_name=query))
+        if not leagues:
+            return EmptyResult(method=ZMethod.FOOTY_STANDINGS)
+        league = leagues[0]
+    if league:
+        standings = Standings(league)
+        table = standings.render(group)
 
-    haystack = list(filter(lambda x: x.league_id in Config.ontv.leagues, haystack))
-
-    matcher = LeagueMatch(haystack=haystack)
-
-    leagues = matcher.fuzzy(LeagueNeedle(league_name=query))
-
-    if not leagues:
-        return EmptyResult(method=ZMethod.FOOTY_STANDINGS)
-
-    league = leagues[0]
-
-    standings = Standings(league)
-
-    table = standings.render(group)
-
-    res = RenderResult(method=ZMethod.FOOTY_STANDINGS, message=table)
-    return res
+        res = RenderResult(method=ZMethod.FOOTY_STANDINGS, message=table)
+        return res
+    return EmptyResult()
 
 
 @bp.command(method=ZMethod.FOOTY_TEAM, desc="Team info")

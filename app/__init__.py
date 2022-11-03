@@ -24,7 +24,6 @@ formatter = structlog.stdlib.ProcessorFormatter(
         structlog.processors.StackInfoRenderer(),
         structlog.dev.set_exc_info,
         structlog.dev.ConsoleRenderer(),
-
     ],
 )
 
@@ -32,8 +31,7 @@ handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 root_logger = logging.getLogger()
 root_logger.addHandler(handler)
-root_logger.setLevel(
-    getattr(logging, os.environ.get("ZNAYKO_LOG_LEVEL", "INFO")))
+root_logger.setLevel(getattr(logging, os.environ.get("ZNAYKO_LOG_LEVEL", "INFO")))
 
 
 app = Server(Path(__file__).parent.parent)
@@ -41,7 +39,8 @@ app.servers.append(APIServer())
 
 
 Cachable.register(
-    redis_url=os.environ.get("BOTYO_REDIS_URL"), storage_dir=app_config.cachable.path
+    redis_url=os.environ.get("BOTYO_REDIS_URL", ""),
+    storage_dir=app_config.cachable.path,
 )
 Footy.register(app)
 
