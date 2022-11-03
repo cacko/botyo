@@ -1,10 +1,7 @@
-from app.threesixfive.item.models import (
-    LineupMember,
-)
 from botyo_server.output import Align, Column, TextOutput
-from app.threesixfive.item.player import (
-    Player as PlayerData
-)
+
+from app.threesixfive.item.models import LineupMember
+from app.threesixfive.item.player import Player as PlayerData
 
 
 class Player(PlayerData):
