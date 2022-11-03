@@ -9,7 +9,7 @@ tasks:
   default:
     desc: start dev
     cmds:
-      - conda run --live-stream -n {{.PROJECT}} python -m "app"
+      - mamba run --live-stream -n {{.PROJECT}} python -m "app"
 
   logs:
     desc: monitor logs
@@ -60,17 +60,17 @@ tasks:
   systemd-exec:
     desc: systemd exec
     cmds:
-      - direnv exec . conda run --live-stream -n {{.PROJECT}} botyo serve
+      - direnv exec . mamba run --live-stream -n {{.PROJECT}} botyo serve
 
   export:
     desc: export env
     cmds:
-      - conda env export --no-builds --ignore-channels  -n {{.PROJECT}} > environment.yml
+      - mamba env export --no-builds --ignore-channels  -n {{.PROJECT}} > environment.yml
 
   install:
     desc: calls poetry install and npm ci
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/{{.PROJECT}}; conda env update -n {{.PROJECT}} -f environment.yml --prune'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/{{.PROJECT}}; mamba env update -n {{.PROJECT}} -f environment.yml --prune'
 
   deploy:
     desc: shortcut for stop -> push -> pull -> restart
