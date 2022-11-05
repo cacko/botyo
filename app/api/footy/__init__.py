@@ -174,7 +174,7 @@ def standings_Command(context: Context):
 
     if not query:
         return EmptyResult(method=ZMethod.FOOTY_STANDINGS)
-    
+
     league_id = 0
     try:
         league_id = int(query)
