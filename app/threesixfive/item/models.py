@@ -198,9 +198,9 @@ class Competitor:
     sportId: int
     name: str
     nameForURL: str
-    color: str
     mainCompetitionId: int
     type: Optional[int]
+    color: Optional[str]
     popularityRank: Optional[int] = None
     symbolicName: Optional[str] = None
     imageVersion: Optional[int] = None
