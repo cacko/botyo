@@ -94,7 +94,7 @@ class _APIServer(Server):
         data_league = Footy.competition(query)
         res = []
         for game in data_league.games:
-            logo = LeagueImagePixel(data_league.competition.id)
+            logo = LeagueImagePixel(data_league.id)
             n64 = logo.base64
             game.icon = n64
             res.append(game.to_dict())  # type: ignore
