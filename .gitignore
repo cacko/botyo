@@ -20,3 +20,5 @@ t.py
 *.wav
 *.flac
 app/settings.yaml
+*.mp4
+*.jpg
