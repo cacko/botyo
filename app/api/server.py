@@ -86,7 +86,6 @@ class _APIServer(Server):
             abort(404)
 
     def league_logo(self, query):
-        query = request.match_info.get("query")
         logo = LeagueImagePixel(query)
         b64 = logo.base64
         return {"logo": b64}
