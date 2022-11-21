@@ -82,6 +82,17 @@ class FavouritesConfig:
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
+class GoalsConfig:
+    twitter: str
+    api_key: str
+    api_secret: str
+    access_token: str
+    access_secret: str
+    bearer_token: str
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
 class ConfigStruct:
     geo: GeoConfig
     ontv: OntvConfig
@@ -92,6 +103,7 @@ class ConfigStruct:
     beats: BeatsConfig
     favourites: FavouritesConfig
     threesixfive: ThreeSixFiveConfig
+    goals: Optional[GoalsConfig] = None
     chatyo: Optional[ChatyoConfig] = None
     image: Optional[ImageConfig] = None
 
@@ -148,17 +160,19 @@ class ConfigMeta(type):
     def image(cls) -> ImageConfig:
         return cls().struct.image
 
+    @property
+    def goals(cls) -> GoalsConfig:
+        return cls().struct.goals
+
 
 class Config(object, metaclass=ConfigMeta):
 
-    struct: ConfigStruct = None
+    struct: ConfigStruct
 
     def __init__(self):
 
-        settings = Path(environ.get("SETTINGS_PATH", None))
-        if not settings:
-            settings = Path(__file__).parent.parent / "settings.yaml"
+        settings = Path(
+            environ.get("SETTINGS_PATH", Path(__file__).parent.parent / "settings.yaml")
+        )
         data = load(settings.read_text(), Loader=Loader)
-        self.struct = ConfigStruct.from_dict(data)
-
-
+        self.struct = ConfigStruct.from_dict(data)  # type: ignore

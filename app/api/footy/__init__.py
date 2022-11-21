@@ -8,6 +8,7 @@ from dataclasses_json import dataclass_json
 from app.threesixfive.data import Data365
 from app.core.config import Config
 from .footy import Footy
+from .item.competitions import CompetitionItem
 from app.threesixfive.exception import CompetitionNotFound, GameNotFound, TeamNotFound
 from apscheduler.job import Job
 from botyo_server.output import TextOutput
@@ -30,7 +31,7 @@ class LeagueNeedle:
 @bp.command(
     method=ZMethod.FOOTY_SCORES,
     desc="Livescores or live events for game",
-)
+)  # type: ignore
 def scores_command(context: Context):
     message = Footy.livescore().render(context.query, group_by_league=True)
 
@@ -42,7 +43,7 @@ def scores_command(context: Context):
 @bp.command(
     method=ZMethod.FOOTY_LIVE,
     desc="Livescores or live events for game",
-)
+)  # type: ignore
 def live_command(context: Context):
     message = Footy.livescore(live=True).render(context.query, group_by_league=True)
 
@@ -54,7 +55,7 @@ def live_command(context: Context):
 @bp.command(
     method=ZMethod.FOOTY_SUBSCRIBE,
     desc="subscribes the channels for the live updates during the game",
-)
+)  # type: ignore
 def subscribe_command(context: Context):
     if any([not context.client, not context.group, not context.query]):
         return EmptyResult()
@@ -69,7 +70,7 @@ def subscribe_command(context: Context):
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_UNSUBSCRIBE, desc="cancels a subscribtion")
+@bp.command(method=ZMethod.FOOTY_UNSUBSCRIBE, desc="cancels a subscribtion")  # type: ignore
 def unsubscribe_command(context: Context):
     if any([not context.client, not context.group, not context.query]):
         return EmptyResult()
@@ -86,7 +87,7 @@ def unsubscribe_command(context: Context):
 
 @bp.command(
     method=ZMethod.FOOTY_SUBSCRIPTIONS, desc="show all subscriptions in the channel"
-)
+)  # type: ignore
 def subscriptions_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group]):
         return EmptyResult()
@@ -103,7 +104,7 @@ def subscriptions_command(context: Context) -> RenderResult:
     )
 
 
-@bp.command(method=ZMethod.FOOTY_LEAGUES, desc="Enabled leagues")
+@bp.command(method=ZMethod.FOOTY_LEAGUES, desc="Enabled leagues")  # type: ignore
 def competitions_command(context: Context) -> RenderResult:
     competitions = Footy.competitions()
     message = competitions.message(context.query)
@@ -112,19 +113,19 @@ def competitions_command(context: Context) -> RenderResult:
     return RenderResult(message=message, method=ZMethod.FOOTY_LEAGUES)
 
 
-@bp.command(method=ZMethod.FOOTY_LINEUP, desc="Game lineup")
+@bp.command(method=ZMethod.FOOTY_LINEUP, desc="Game lineup")  # type: ignore
 def lineups_command(context: Context) -> RenderResult:
     lineups = Footy.lineups(context.query)
     if lineups:
         message = lineups.message
-        if not message:
-            return EmptyResult()
-        return RenderResult(
-            message=message,
-        )
+        if message:
+            return RenderResult(
+                message=message,
+            )
+    return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_FACTS, desc="Game facts")
+@bp.command(method=ZMethod.FOOTY_FACTS, desc="Game facts")  # type: ignore
 def facts_command(context: Context) -> RenderResult:
     facts = Footy.facts(context.query)
     message = facts.message
@@ -133,7 +134,7 @@ def facts_command(context: Context) -> RenderResult:
     return RenderResult(message=message, method=ZMethod.FOOTY_FACTS)
 
 
-@bp.command(method=ZMethod.FOOTY_STATS, desc="Game stats")
+@bp.command(method=ZMethod.FOOTY_STATS, desc="Game stats")  # type: ignore
 def stats_command(context: Context) -> RenderResult:
     stats = Footy.stats(context.query)
     message = stats.message
@@ -142,7 +143,7 @@ def stats_command(context: Context) -> RenderResult:
     return RenderResult(message=message, method=ZMethod.FOOTY_STATS)
 
 
-@bp.command(method=ZMethod.FOOTY_PLAYER, desc="Player stats")
+@bp.command(method=ZMethod.FOOTY_PLAYER, desc="Player stats")  # type: ignore
 def player_command(context: Context) -> RenderResult:
     try:
         player = Footy.player(context.query)
@@ -164,7 +165,7 @@ def player_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_STANDINGS, desc="standings")
+@bp.command(method=ZMethod.FOOTY_STANDINGS, desc="standings")  # type: ignore
 def standings_Command(context: Context):
     query = context.query
     group = None
@@ -200,7 +201,7 @@ def standings_Command(context: Context):
     return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_TEAM, desc="Team info")
+@bp.command(method=ZMethod.FOOTY_TEAM, desc="Team info")  # type: ignore
 def team_command(context: Context) -> RenderResult:
     try:
         team = Footy.team(context.query)
@@ -212,10 +213,10 @@ def team_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_FIXTURES, desc="League fixtures")
+@bp.command(method=ZMethod.FOOTY_FIXTURES, desc="League fixtures")  # type: ignore
 def fixtures_command(context: Context) -> RenderResult:
     try:
-        competition = Footy.competition(context.query)
+        competition = CompetitionItem(Footy.competition(context.query))
         message = competition.render()
         return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
     except CompetitionNotFound:

@@ -11,6 +11,11 @@ tasks:
     cmds:
       - mamba run --live-stream -n {{.PROJECT}} python -m "app"
 
+  cli:
+    desc: call cli
+    cmds:
+      - mamba run --live-stream -n {{.PROJECT}} python -m "app.cli" {{.CLI_ARGS}}
+
   logs:
     desc: monitor logs
     cmds:

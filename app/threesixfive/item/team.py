@@ -11,6 +11,7 @@ from dataclasses_json import dataclass_json, Undefined
 from hashlib import blake2s
 from app.threesixfive.url import Url
 from datetime import timedelta
+from typing import Optional
 
 
 
@@ -28,7 +29,7 @@ class TeamCache(TimeCache):
 
 
 class TeamSearch(Cachable):
-    __struct: Competitor = None
+    __struct: Optional[Competitor] = None
     __query: str = ""
 
     def __init__(self, query: str):

@@ -144,8 +144,8 @@ class Player(Cachable):
             raise PlayerNotFound
         data = Storage.hget(cls.hash_key, matches[0].name.encode())
         if not data:
-            return PlayerNotFound
-        struct = PlayerStruct.from_dict(pickle.loads(data))
+            raise PlayerNotFound
+        struct = PlayerStruct.from_dict(pickle.loads(data))  # type: ignore
         return cls(
             game=struct.game,
             member=struct.member,

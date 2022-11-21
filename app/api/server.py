@@ -12,10 +12,11 @@ from app.api.logo.team import TeamLogoPixel
 from requests import post
 from botyo_server.core import AppServer
 from butilka.server import Server, request, abort
-import logging 
+from bottle import DictProperty
+import logging
+
 
 class _APIServer(Server):
-
     def __init__(self, *args, **kwargs):
         api_config = Config.api
         super().__init__(host=api_config.host, port=api_config.port, *args, **kwargs)
@@ -35,6 +36,7 @@ class _APIServer(Server):
 
     def subscribe(self):
         data = request.json
+        assert isinstance(data, dict)
         res = Footy.subscribe(
             client=f"{data.get('webhook')}",
             groupID=f"{data.get('group')}",
@@ -44,22 +46,26 @@ class _APIServer(Server):
 
     def subscriptions(self):
         data = request.json
-        res = Subscription.forGroup(client=data.get("webhook"), group=data.get("group"))
+        assert isinstance(data, dict)
+        res = Subscription.forGroup(
+            client=data.get("webhook", ""), group=data.get("group")
+        )
         return [{"id": job.id, "text": job.name} for job in res]
 
     def unsubscribe(self):
         data = request.json
+        assert isinstance(data, dict)
         subs = Subscription.forGroup(
-            client=data.get("webhook"), group=data.get("group")
+            client=data.get("webhook", ""), group=data.get("group")
         )
-        id_parts = data.get("id").split(":")
+        id_parts = data.get("id", "").split(":")
         for sub in subs:
             if sub.id.startswith(id_parts[0]):
                 Scheduler.cancel_jobs(sub.id)
                 post(
-                    data.get("webhook"),
-                    headers=OTP(data.get("group")).headers,
-                    json=CancelJobEvent(job_id=id_parts[0]).to_dict(),
+                    data.get("webhook", ""),
+                    headers=OTP(data.get("group", "")).headers,
+                    json=CancelJobEvent(job_id=id_parts[0]).to_dict(),  # type: ignore
                 )
                 return {"message": f"unsubscribed from {sub.name}"}
         return {"message": "nothing unsubscribed"}
@@ -70,10 +76,11 @@ class _APIServer(Server):
         return {"logo": b64}
 
     def beats(self):
-        path = request.query.path
+        assert isinstance(request.query, DictProperty)
+        path = request.query.path  # type: ignore
         try:
             beats = Beats(path=path)
-            return beats.model.to_dict()
+            return beats.model.to_dict()  # type: ignore
         except FileNotFoundError:
             abort(404)
 
@@ -82,6 +89,16 @@ class _APIServer(Server):
         logo = LeagueImagePixel(query)
         b64 = logo.base64
         return {"logo": b64}
+
+    def league_schedule(self, query):
+        data_league = Footy.competition(query)
+        res = []
+        for game in data_league.games:
+            logo = LeagueImagePixel(data_league.competition.id)
+            n64 = logo.base64
+            game.icon = n64
+            res.append(game.to_dict())  # type: ignore
+        return res
 
     def team_schedule(self, query):
         if not query:
@@ -95,7 +112,7 @@ class _APIServer(Server):
                 logo = LeagueImagePixel(game.competitionId)
                 n64 = logo.base64
                 game.icon = n64
-                res.append(game.to_dict())
+                res.append(game.to_dict())  # type: ignore
             return res
         except ValueError:
             pass
@@ -106,7 +123,7 @@ class _APIServer(Server):
             logo = LeagueImagePixel(game.competitionId)
             n64 = logo.base64
             game.icon = n64
-            res.append(game.to_dict())
+            res.append(game.to_dict())  # type: ignore
         return res
 
     def livescore(self):
@@ -114,25 +131,28 @@ class _APIServer(Server):
         if not obj:
             abort(404)
         events = obj.items
-        return [g.to_dict() for g in events]
+        return [g.to_dict() for g in events]  # type: ignore
 
     def nowplaying(self):
         data = request.json
+        assert isinstance(data, dict)
         _ = Track(**data)
         Track.persist()
         return {}
-    
+
     def stop(self):
         return self.terminate()
 
 
 class APIServer(AppServer):
+    
     def __init__(self) -> None:
         worker = _APIServer()
         super().__init__(worker)
 
     def stop(self):
         try:
+            assert isinstance(self.worker, Server)
             self.worker.terminate()
         except Exception as e:
             logging.exception(e)

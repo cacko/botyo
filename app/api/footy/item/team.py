@@ -6,7 +6,7 @@ from app.threesixfive.item.team import Team as DataTeam, TeamStruct
 
 
 class Team:
-    __competitor: Competitor = None
+    __competitor: Competitor
 
     def __init__(self, competitor: Competitor):
         self.__competitor = competitor
@@ -16,7 +16,7 @@ class Team:
         t = DataTeam(self.__competitor.id)
         res =  t.team
         return res
-
+    
     def render(
             self, tz: ZoneInfo = ZoneInfo("Europe/London")
     ) -> str:

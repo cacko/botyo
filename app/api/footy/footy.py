@@ -5,14 +5,14 @@ from dataclasses import dataclass
 from .item.subscription import Subscription
 from fuzzelinho import Match, MatchMethod
 from app.threesixfive.item.models import Event, LeagueItem
-from app.threesixfive.item.team import TeamSearch
+from app.threesixfive.item.team import TeamSearch, Team as DataTeam
 from app.threesixfive.item.competition import CompetitionData
 from .item.player import Player
 from .item.stats import Stats
 from .item.livescore import Livescore
 from .item.facts import Facts
 from .item.lineups import Lineups
-from .item.competitions import Competitions, CompetitionItem
+from .item.competitions import Competitions
 from .item.team import Team
 from app.threesixfive.exception import GameNotFound, TeamNotFound, CompetitionNotFound
 from app.core.config import Config
@@ -21,7 +21,7 @@ from apscheduler.job import Job
 
 
 class FootyMeta(type):
-    _instance = None
+    _instance: Optional['Footy'] = None
     _app = None
 
     def __call__(cls, *args, **kwds):
@@ -50,14 +50,14 @@ class FootyMeta(type):
     def player(cls, query: str) -> Player:
         return cls().getPlayer(query)
 
-    def precache(cls):
-        return cls().precacheLivegames()
+    # def precache(cls):
+    #     return cls().precacheLivegames()
 
     def competitions(cls) -> Competitions:
         return cls().getCompetitions()
 
-    def competition(cls, query: str) -> CompetitionItem:
-        return  cls().getCompetition(query)
+    def competition(cls, query: str) -> CompetitionData:
+        return cls().getCompetition(query)
 
     def subscribe(cls, client, query: str, groupID) -> str:
         try:
@@ -162,12 +162,9 @@ class Footy(object, metaclass=FootyMeta):
             raise CompetitionNotFound
         return results[0]
 
-    def getCompetition(self, query: str) -> CompetitionItem:
+    def getCompetition(self, query: str) -> CompetitionData:
         item =  self.__queryCompetition(query)
-        if item:
-            data = CompetitionData(item.id)
-            return CompetitionItem(data)
-        return None
+        return CompetitionData(item.id)
 
     def getTeam(self, query: str) -> Team:
         item =  self.__queryTeam(query)
