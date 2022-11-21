@@ -26,6 +26,7 @@ class _APIServer(Server):
         self.app.route("/subscribe", "POST", self.subscribe)
         self.app.route("/nowplaying", "POST", self.nowplaying)
         self.app.route("/team_schedule/<query>", "GET", self.team_schedule)
+        self.app.route("/league_schedule/<query>", "GET", self.league_schedule)
         self.app.route("/team_logo/<query>", "GET", self.team_logo)
         self.app.route("/league_logo/<query>", "GET", self.league_logo)
         self.app.route("/livescore", "GET", self.livescore)
@@ -84,7 +85,7 @@ class _APIServer(Server):
         except FileNotFoundError:
             abort(404)
 
-    def league_logo(self):
+    def league_logo(self, query):
         query = request.match_info.get("query")
         logo = LeagueImagePixel(query)
         b64 = logo.base64
