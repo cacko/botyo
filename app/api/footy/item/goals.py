@@ -1,6 +1,7 @@
 from typing import Optional, Any
 from app.goals import Goals as GoalsGenerator
 from datetime import datetime, timedelta
+import logging
 
 class GoalsMeta(type):
     
@@ -9,14 +10,14 @@ class GoalsMeta(type):
     
     def __call__(cls, *args: Any, **kwds: Any):
         if not cls.__instance:
-            cls.__instance = type.__call__(cls, *args, **kwargs)
+            cls.__instance = type.__call__(cls, *args, **kwds)
         return cls.__instance
 
     def monitor(cls, event_name: str):
         cls().do_monitor(event_name=event_name)
     
     def poll(cls):
-        returbn cls().do_updates()
+        return cls().do_updates()
 
 
 class Goals(object, metaclass=GoalsMeta):
@@ -38,7 +39,4 @@ class Goals(object, metaclass=GoalsMeta):
             for m in vi.matches:
                 self.__query.remove(m)
             logging.info(vi)
-            
-                
-        
                 
