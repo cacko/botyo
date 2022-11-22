@@ -27,7 +27,7 @@ class Goals(object, metaclass=GoalsMeta):
     __query: list[str] = []
     
     def do_monitor(self, event_name: str):
-        self.__query.append(*map(str.lower, event_name.split(" vs ")))
+        self.__query += list(*map(str.lower, event_name.split(" vs ")))
         logging.info(f"GOALS: added {event_name} to query")
         logging.info(f"GOALS: {self.__query}")
         
