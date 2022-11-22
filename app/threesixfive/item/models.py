@@ -711,6 +711,14 @@ class DetailsEventPixel:
     def __post_init__(self) -> None:
         logging.warning(f"{self.event_name}")
         self.id = md5(f"{self.event_name}".lower().encode()).hexdigest()
+        
+    @property
+    def is_goal(self) -> bool:
+        try:
+            assert self.event_name
+            return self.event_name.lower() == "goal"
+        except AssertionError:
+            return False
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

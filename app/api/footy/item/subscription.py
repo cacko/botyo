@@ -507,11 +507,9 @@ class Subscription(metaclass=SubscriptionMeta):
         updated = cache.update
         if update := self.updates_(updated):
             try:
-                assert update
-                assert update.game
-                assert isinstance(update.game.events, list)
+                assert isinstance(update, list)
                 logging.warning(update)
-                has_goal = any([x.is_goal for x in update.game.events])
+                has_goal = any([x.is_goal for x in update])
                 if has_goal:
                     logging.info(f"GOAL event at {self.event_name}")
                     Goals.monitor(self.event_name)
