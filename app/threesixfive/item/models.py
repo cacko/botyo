@@ -715,8 +715,8 @@ class DetailsEventPixel:
     @property
     def is_goal(self) -> bool:
         try:
-            assert self.event_name
-            return self.event_name.lower() == "goal"
+            assert self.action
+            return self.action.lower() == "goal"
         except AssertionError:
             return False
 
