@@ -16,7 +16,7 @@ from app.threesixfive.item.models import (
     GameStatus,
     ResponseGame,
     SubscriptionEvent
-=)
+)
 from app.api import ZMethod
 from .player import Player
 from cachable.request import Request
