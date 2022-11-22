@@ -1,5 +1,4 @@
-import you_get
-from you_get.common import any_download
+from you_get.extractors.twitter import twitter_download
 from app.core.config import Config as app_config
 from typing import Optional, Any
 from .twitter import Twitter
@@ -21,11 +20,11 @@ class GoalsMeta(type):
 class Goals(object, metaclass=GoalsMeta):
     
     def do_search(self, query: list[str], **kwds):
-        res = Twitter.media(query, **kwds)
+        res = Twitter.media(**kwds)
         for t in res:
             try:
-                v = any_download(url=t.url, output_dir="/Volumes/Devo/Code/znayko")
-                logging.info(v)
+                v = twitter_download(url=t.url)
+                logging.warning(type(v))
             except Exception:
                 pass
         return res

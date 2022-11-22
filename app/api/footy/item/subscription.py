@@ -35,6 +35,12 @@ import time
 import logging
 from typing import Optional
 
+def job_id_to_event_id(job_id: str) -> int:
+    try:
+        _, event_id, _ = job_id.split(":")
+        return int(event_id)
+    except:
+        return 0
 
 class Headers(Enum):
     LINEUP_ANNOUNCED = "Lineup Announced"
@@ -118,6 +124,9 @@ class SubscriptionMeta(type):
     def forGroup(cls, client: str, group) -> list[Job]:
         prefix = cls.jobPrefix(client, group)
         return list(filter(lambda g: g.id.startswith(prefix), Scheduler.get_jobs()))
+    
+    def isIn(cls, event: Event) -> bool:
+        return event.id in map(job_id_to_event_id, Scheduler.get_jobs())
 
     def jobPrefix(cls, client: str, group) -> str:
         prefix = ":".join([cls.__module__, client, group])

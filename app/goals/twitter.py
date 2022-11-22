@@ -27,7 +27,7 @@ class TwitterMeta(type):
     def default_username(cls):
         return app_config.goals.twitter
 
-    def media(cls, search: list[str], **kwds) -> list[TwitterItem]:
+    def media(cls, **kwds) -> list[TwitterItem]:
         result = []
         args = {
             "exclude": "retweets,replies",
@@ -36,7 +36,7 @@ class TwitterMeta(type):
             "tweet_fields": "attachments",
         }
 
-        for t in cls().get_user_timeline(search, **{**kwds, **args}):
+        for t in cls().get_user_timeline(**{**kwds, **args}):
             logging.info(t.tweet)
             try:
                 assert t.tweet.attachments
@@ -70,9 +70,7 @@ class Twitter(object, metaclass=TwitterMeta):
             self.__users[username] = res
         return self.__users[username]
 
-    def get_user_timeline(
-        self, query: list[str], **kwds
-    ) -> Generator[TwitterItem, None, None]:
+    def get_user_timeline(self, **kwds) -> Generator[TwitterItem, None, None]:
         user = self.get_user(kwds.get("username", __class__.default_username))
         assert user.id
         assert user.username
@@ -89,12 +87,10 @@ class Twitter(object, metaclass=TwitterMeta):
                 assert isinstance(t.text, str)
                 assert isinstance(t.id, str)
                 ids.append(int(t.id))
-                txt = t.text.lower().strip()
-                if all([p.lower().strip() in txt for p in query]):
-                    yield TwitterItem(
-                        tweet=t,
-                        url=f"https://twitter.com/{user.username}/status/{t.id}",
-                    )
+                yield TwitterItem(
+                    tweet=t,
+                    url=f"https://twitter.com/{user.username}/status/{t.id}",
+                )
             except AssertionError as e:
                 logging.exception(e)
                 pass

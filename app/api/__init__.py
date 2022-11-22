@@ -42,6 +42,7 @@ class ZMethod(Method, Enum):
     FOOTY_UNSUBSCRIBE = "ft:unsubscribe"
     FOOTY_SUBSCRIPTIONS = "ft:listsubscriptions"
     FOOTY_FIXTURES = "ft:fixtures"
+    FOOTY_GOALS = "ft:goals"
     FOOTY_LIVE = "ft:live"
     FOOTY_TEAM = "ft:team"
     CHAT_DIALOG = "chat:dialog"

@@ -19,6 +19,8 @@ from app.core.config import Config
 from emoji import emojize
 from apscheduler.job import Job
 
+class Goal:
+    pass
 
 class FootyMeta(type):
     _instance: Optional['Footy'] = None
@@ -43,6 +45,9 @@ class FootyMeta(type):
 
     def team(cls, query: str) -> Team:
         return  cls().getTeam(query)
+    
+    def goals(cls, query: str) -> list[Goal]:
+        return cls().getGoals(query)
 
     def stats(cls, query: str) -> Stats:
         return  cls().getStats(query)
@@ -105,19 +110,6 @@ class CompetitionMatch(Match):
 
 class Footy(object, metaclass=FootyMeta):
 
-    def getLivescore(self, inprogress=False) -> Livescore:
-        return Livescore(
-            with_details=False,
-            with_progress=False,
-            leagues=Config.ontv.leagues,
-            inprogress=inprogress
-        )
-
-    def getCompetitions(self) -> Competitions:
-        return Competitions(
-            Config.ontv.leagues,
-        )
-
     def __queryGame(self, query) -> Event:
         if not query.strip():
             raise GameNotFound
@@ -161,6 +153,23 @@ class Footy(object, metaclass=FootyMeta):
         if not len(results):
             raise CompetitionNotFound
         return results[0]
+
+    def getLivescore(self, inprogress=False) -> Livescore:
+        return Livescore(
+            with_details=False,
+            with_progress=False,
+            leagues=Config.ontv.leagues,
+            inprogress=inprogress
+        )
+
+    def getCompetitions(self) -> Competitions:
+        return Competitions(
+            Config.ontv.leagues,
+        )
+
+    def getGoals(self, query: str) -> list[Goal]:
+        game = self.__queryGame(query)
+        
 
     def getCompetition(self, query: str) -> CompetitionData:
         item =  self.__queryCompetition(query)

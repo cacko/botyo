@@ -221,3 +221,12 @@ def fixtures_command(context: Context) -> RenderResult:
         return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
     except CompetitionNotFound:
         return EmptyResult()
+
+@bp.command(method=ZMethod.FOOTY_GOALS, desc="Da Goals") # type: ignore
+def goals_command(context: Context) -> RenderResult:
+    try:
+        competition = CompetitionItem(Footy.competition(context.query))
+        message = competition.render()
+        return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
+    except CompetitionNotFound:
+        return EmptyResult() 
