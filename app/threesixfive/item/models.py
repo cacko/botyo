@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, Any
 from datetime import datetime, timezone
 from dataclasses import dataclass, field
 from dataclasses_json import CatchAll, dataclass_json, config, Undefined
@@ -139,13 +139,13 @@ class Event:
 
         delta = (datetime.now(timezone.utc) - self.startTime).total_seconds() / 60
         try:
-            self.displayStatus = GameStatus(self.strStatus)
+            displayStatus = GameStatus(self.strStatus)
             if delta < 0 and self.displayStatus in [GameStatus.NS]:
                 self.displayStatus = self.startTime.astimezone(
                     ZoneInfo("Europe/London")
                 ).strftime("%H:%M")
             else:
-                self.displayStatus = self.displayStatus.value
+                self.displayStatus = displayStatus.value
         except Exception:
             self.displayStatus = self.strStatus
         try:
@@ -157,7 +157,7 @@ class Event:
                     self.strStatus.translate(punctuation).upper()
                 ].value * abs(delta)
         except KeyError as e:
-            self.sort = OrderWeight.JUNK.value * abs(delta)
+            self.sort = int(OrderWeight.JUNK.value * abs(delta))
         if any([self.intAwayScore == -1, self.intHomeScore == -1]):
             self.displayScore = ""
         else:
@@ -167,7 +167,7 @@ class Event:
 
     @property
     def inProgress(self) -> bool:
-        return re.match(r"^\d+$", self.strStatus)
+        return re.match(r"^\d+$", self.strStatus) is not None
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -230,7 +230,11 @@ class StandingRow:
     unknown: Optional[CatchAll] = None
 
     def __post_init__(self):
-        self.forward = self.unknown.get("for")
+        try:
+            assert self.unknown
+            self.forward = self.unknown.get("for")
+        except AssertionError:
+            pass
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -269,18 +273,18 @@ class Competition:
     countryId: int
     sportId: int
     name: str
-    nameForURL: Optional[str] = False
-    popularityRank: Optional[int] = False
-    color: Optional[str] = False
-    totalGames: Optional[int] = 0
-    liveGames: Optional[int] = 0
-    hasActiveGames: Optional[bool] = False
-    hasStandings: Optional[bool] = False
-    hasBrackets: Optional[bool] = False
+    nameForURL: Optional[str] = None
+    popularityRank: Optional[int] = None
+    color: Optional[str] = None
+    totalGames: Optional[int] = None
+    liveGames: Optional[int] = None
+    hasActiveGames: Optional[bool] = None
+    hasStandings: Optional[bool] = None
+    hasBrackets: Optional[bool] = None
 
     @property
     def flag(self) -> str:
-        pass
+        return ""
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -297,7 +301,11 @@ class GameMember:
 
     @property
     def displayName(self) -> str:
-        return self.shortName if self.shortName else self.name
+        try:
+            assert self.shortName
+            return self.shortName
+        except AssertionError:
+            return f"{self.name}"
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -377,16 +385,28 @@ class GameCompetitor:
 
     @property
     def flag(self) -> str:
-        pass
+        return ""
+
+    @property
+    def score_int(self) -> int:
+        try:
+            assert self.score
+            return self.score
+        except AssertionError:
+            return 0
 
     @property
     def shortName(self) -> str:
-        if self.symbolicName:
-            return self.symbolicName
-        parts = self.name.split(" ")
-        if len(parts) == 1:
-            return self.name[:3].upper()
-        return f"{parts[0][:1]}{parts[1][:2]}".upper()
+        try:
+            if self.symbolicName:
+                return self.symbolicName
+            assert self.name
+            parts = self.name.split(" ")
+            if len(parts) == 1:
+                return self.name[:3].upper()
+            return f"{parts[0][:1]}{parts[1][:2]}".upper()
+        except AssertionError:
+            return ""
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -460,7 +480,7 @@ class Game:
     icon: Optional[str] = ""
 
     @property
-    def round(self) -> str:
+    def round(self) -> Optional[str]:
         if self.roundNum is None:
             return ""
         " ".join(
@@ -497,7 +517,7 @@ class Game:
             _status = GameStatus(status)
             if _status in (GameStatus.FT, GameStatus.AET, GameStatus.PPD):
                 return True
-            return _status == GameStatus.HT or re.match(r"^\d+$", status)
+            return _status == GameStatus.HT or re.match(r"^\d+$", status) is not None
         except ValueError:
             return False
 
@@ -515,7 +535,7 @@ class Game:
 
     @property
     def displayScore(self) -> str:
-        return f"{max(self.homeCompetitor.score, 0):.0f}:{max(self.awayCompetitor.score, 0):.0f}"
+        return f"{max(self.homeCompetitor.score_int, 0):.0f}:{max(self.awayCompetitor.score_int, 0):.0f}"
 
     @property
     def displayTitle(self) -> str:
@@ -603,7 +623,7 @@ class ResponseGame:
     game: GameDetails
 
     @property
-    def events(self) -> list[Event]:
+    def events(self) -> list[GameEvent]:
         if not self.game:
             return []
         if not self.game.events:
@@ -611,7 +631,7 @@ class ResponseGame:
         return self.game.events
 
     @property
-    def status(self) -> str:
+    def status(self) -> Optional[str]:
         if not self.game:
             return None
         return self.game.shortStatusText

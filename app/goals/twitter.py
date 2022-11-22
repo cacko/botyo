@@ -1,7 +1,7 @@
 from typing import Any, Optional, Generator
 
 from pytwitter import Api
-from pytwitter.models import User, Tweet, Response, TweetAttachments
+from pytwitter.models import User, Tweet, Response
 
 from app.core.config import Config as app_config
 import logging
@@ -35,11 +35,11 @@ class TwitterMeta(type):
             "expansions": ["attachments.media_keys"],
             "tweet_fields": "attachments",
         }
-        
+
         for t in cls().get_user_timeline(search, **{**kwds, **args}):
             logging.info(t.tweet)
             try:
-                assert(t.tweet.attachments)
+                assert t.tweet.attachments
                 result.append(t)
             except AssertionError:
                 pass
@@ -50,6 +50,7 @@ class Twitter(object, metaclass=TwitterMeta):
 
     __api: Optional[Api] = None
     __users: dict[str, User] = {}
+    __timeline_since_id: dict[str, str] = {}
 
     @property
     def api(self) -> Api:
@@ -74,14 +75,20 @@ class Twitter(object, metaclass=TwitterMeta):
     ) -> Generator[TwitterItem, None, None]:
         user = self.get_user(kwds.get("username", __class__.default_username))
         assert user.id
+        assert user.username
+        if since_id := self.__timeline_since_id.get(user.username, ""):
+            kwds["since_id"] = since_id
         res = self.api.get_timelines(user_id=user.id, **kwds)
         assert isinstance(res, Response)
         tweets = res.data
+        ids = []
         assert isinstance(tweets, list)
         for t in tweets:
             try:
                 assert isinstance(t, Tweet)
                 assert isinstance(t.text, str)
+                assert isinstance(t.id, str)
+                ids.append(int(t.id))
                 txt = t.text.lower().strip()
                 if all([p.lower().strip() in txt for p in query]):
                     yield TwitterItem(
@@ -91,3 +98,4 @@ class Twitter(object, metaclass=TwitterMeta):
             except AssertionError as e:
                 logging.exception(e)
                 pass
+        self.__timeline_since_id[user.username] = max(ids)

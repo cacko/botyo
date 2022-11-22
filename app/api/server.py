@@ -77,12 +77,12 @@ class _APIServer(Server):
         return {"logo": b64}
 
     def beats(self):
-        assert isinstance(request.query, DictProperty)
-        path = request.query.path  # type: ignore
         try:
+            assert isinstance(request.query, DictProperty)
+            path = request.query.path  # type: ignore
             beats = Beats(path=path)
             return beats.model.to_dict()  # type: ignore
-        except FileNotFoundError:
+        except (FileNotFoundError, AssertionError):
             abort(404)
 
     def league_logo(self, query):
