@@ -195,6 +195,18 @@ class Subscription(metaclass=SubscriptionMeta):
         cache = Cache(url=self._event.details, jobId=self.id)
         updated = cache.update
         if update := self.updates(updated):
+            try:
+                assert update
+                assert update.game
+                assert isinstance(update.game.events, list)
+                logging.warning(update)
+                has_goal = any([x.is_goal for x in update.game.events])
+                if has_goal:
+                    logging.info(f"GOAL event at {self.event_name}")
+                    Goals.monitor(self.event_name)
+            except AssertionError:
+                pass
+            Goals.poll()
             TextOutput.addRows(update)
             try:
                 self.sendUpdate(TextOutput.render())
@@ -232,18 +244,6 @@ class Subscription(metaclass=SubscriptionMeta):
             return self.cancel(True)
 
     def updates(self, updated: ResponseGame) -> Optional[list[str]]:
-        try:
-            assert updated
-            assert updated.game
-            assert isinstance(updated.game.events, list)
-            logging.warning(updated)
-            has_goal = any([x.is_goal for x in updated.game.events])
-            if has_goal:
-                logging.info(f"GOAL event at {self.event_name}")
-                Goals.monitor(self.event_name)
-        except AssertionError:
-            pass
-        Goals.poll()
         if self._clientId.startswith("http"):
             return self.updates_(updated)
         if not updated:
@@ -506,6 +506,19 @@ class Subscription(metaclass=SubscriptionMeta):
         cache = Cache(url=str(self._event.details), jobId=self.id)
         updated = cache.update
         if update := self.updates_(updated):
+            try:
+                assert update
+                assert update.game
+                assert isinstance(update.game.events, list)
+                logging.warning(update)
+                has_goal = any([x.is_goal for x in update.game.events])
+                if has_goal:
+                    logging.info(f"GOAL event at {self.event_name}")
+                    Goals.monitor(self.event_name)
+            except AssertionError:
+                pass
+            Goals.poll()
+            
             try:
                 self.sendUpdate_(update)
             except UnknownClientException as e:
