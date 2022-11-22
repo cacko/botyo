@@ -239,6 +239,7 @@ class Subscription(metaclass=SubscriptionMeta):
             assert isinstance(updated.game.events, list)
             has_goal = any([x.is_goal for x in updated.game.events])
             if has_goal:
+                logging.info(f"GOAL event at {self.event_name}")
                 Goals.monitor(self.event_name)
         except AssertionError:
             pass

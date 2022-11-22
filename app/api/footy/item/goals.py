@@ -28,6 +28,8 @@ class Goals(object, metaclass=GoalsMeta):
     
     def do_monitor(self, event_name: str):
         self.__query.append(*map(str.lower, event_name.split(" vs ")))
+        logging.info(f"GOALS: added {event_name} to query")
+        logging.info(f"GOALS: {self.__query}")
         
     def do_updates(self):
         if not len(self.__query):
