@@ -291,7 +291,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 order=0,
                 is_old_event=False,
                 event_name=self.event_name,
-                event_id=int(self._event.id),
+                event_id=self._event.id,
             )
         ]
 
@@ -326,7 +326,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     home_team_id=self._event.idHomeTeam,
                     away_team=self._event.strAwayTeam,
                     away_team_id=self._event.idAwayTeam,
-                    event_id=int(self._event.id),
+                    event_id=self._event.id,
                     event_name=self.event_name,
                     league=self._event.strLeague,
                     league_id=self._event.idLeague,

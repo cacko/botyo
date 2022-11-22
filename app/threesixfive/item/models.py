@@ -721,7 +721,7 @@ class SubscriptionEvent:
     home_team_id: int
     away_team: str
     away_team_id: int
-    event_id: int
+    event_id: int|str
     event_name: str
     job_id: str
     icon: str
