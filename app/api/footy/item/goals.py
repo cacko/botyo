@@ -15,8 +15,8 @@ class GoalsMeta(type):
     def monitor(cls, event_name: str):
         cls().do_monitor(event_name=event_name)
     
-    def updates(cls):
-        pass
+    def poll(cls):
+        returbn cls().do_updates()
 
 
 class Goals(object, metaclass=GoalsMeta):
@@ -29,12 +29,15 @@ class Goals(object, metaclass=GoalsMeta):
         self.__query.append(*map(str.lower, event_name.split(" vs ")))
         
     def do_updates(self):
+        if not len(self.__query):
+            return
         if (datetime.now() - self.__last_update) < self.__interval:
             return []
         self.__last_update = datetime.now()
         for vi in GoalsGenerator.goals(self.__query):
             for m in vi.matches:
                 self.__query.remove(m)
+            logging.info(vi)
             
                 
         

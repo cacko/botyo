@@ -604,6 +604,15 @@ class GameEvent:
     playerId: Optional[int] = 0
     isMajor: Optional[bool] = False
     extraPlayers: Optional[list[int]] = None
+    
+    @property
+    def is_goal(self) -> bool:
+        try:
+            assert self.eventType
+            assert self.eventType.name
+            return self.eventType.name == EVENT_NAME.GOAL.value
+        except AssertionError:
+            return False
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

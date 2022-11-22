@@ -17,7 +17,7 @@ def cli():
 @click.pass_context
 def cli_goals(ctx: click.Context, query: list[str]):
     """Goals for games"""
-    Goals.goals(list(query))
+    click.echo(Goals.goals(list(query)))
 
 if __name__ == "__main__":
     cli()
