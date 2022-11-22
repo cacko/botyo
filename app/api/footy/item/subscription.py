@@ -232,11 +232,11 @@ class Subscription(metaclass=SubscriptionMeta):
             return self.cancel(True)
 
     def updates(self, updated: ResponseGame) -> Optional[list[str]]:
-        
         try:
             assert updated
             assert updated.game
             assert isinstance(updated.game.events, list)
+            logging.warning(updated)
             has_goal = any([x.is_goal for x in updated.game.events])
             if has_goal:
                 logging.info(f"GOAL event at {self.event_name}")
