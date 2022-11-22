@@ -91,8 +91,6 @@ class _APIServer(Server):
         return {"logo": b64}
 
     def league_schedule(self, query):
-        res = map(lambda j: j.name, Scheduler.get_jobs())
-        return list(res)
         data_league = Footy.competition(query)
         res = []
         for game in data_league.games:

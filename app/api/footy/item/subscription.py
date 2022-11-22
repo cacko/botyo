@@ -57,7 +57,7 @@ class Cache(Cachable):
     _struct: Optional[ResponseGame] = None
     __url: str
     __jobId: str
-    __id: str
+    __id: Optional[str] = None
     halftime: bool = False
 
     def __init__(self, url: str, jobId: str = ""):
