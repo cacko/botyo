@@ -12,6 +12,7 @@ from app.threesixfive.item.models import (
     CancelJobEvent,
     DetailsEventPixel,
     Event,
+    GameEvent,
     EventStatus,
     GameStatus,
     ResponseGame,
@@ -33,10 +34,11 @@ import sys
 from pixelme import Pixelate
 import time
 import logging
-from typing import Optional
+from typing import Optional, TypeVar
 from .goals import Goals
 from app.goals import Query as GoalQuery
 
+GE = TypeVar("GE", DetailsEventPixel, GameEvent)
 
 def job_id_to_event_id(job_id: str) -> int:
     try:
@@ -186,6 +188,23 @@ class Subscription(metaclass=SubscriptionMeta):
                 method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self._groupId
             )
         )
+        
+    def processGoals(self, events: list[GE]):
+        try:
+            assert isinstance(events, list)
+            logging.warning(events)
+            for x in events:
+                if x.is_goal:
+                    logging.info(f"GOAL event at {self.event_name}")
+                    Goals.monitor(GoalQuery(
+                        event_name=self.event_name,
+                        event_id=int(self._event.id),
+                        game_event_id=x.order_id
+                    ))
+        except AssertionError:
+            pass
+        Goals.poll()       
+
 
     def trigger(self):
         try:
@@ -204,19 +223,9 @@ class Subscription(metaclass=SubscriptionMeta):
                     assert updated.game
                     assert isinstance(updated.game.events, list)
                     logging.warning(update)
-                    for x in updated.game.events:
-                        if x.is_goal:
-                            logging.info(f"GOAL event at {self.event_name}")
-                            Goals.monitor(
-                                GoalQuery(
-                                    event_name=self.event_name,
-                                    event_id=updated.game.id,
-                                    game_event_id=x.order_id,
-                                )
-                            )
+                    self.processGoals(updated.game.events)
                 except AssertionError:
                     pass
-                Goals.poll()
                 TextOutput.addRows(update)
                 try:
                     self.sendUpdate(TextOutput.render())
@@ -522,20 +531,7 @@ class Subscription(metaclass=SubscriptionMeta):
             updated = cache.update
             assert updated
             if update := self.updates_(updated):
-                try:
-                    assert isinstance(update, list)
-                    logging.warning(update)
-                    for x in update:
-                        if x.is_goal:
-                            logging.info(f"GOAL event at {self.event_name}")
-                            Goals.monitor(GoalQuery(
-                                event_name=self.event_name,
-                                event_id=int(x.event_id),
-                                game_event_id=x.order_id
-                            ))
-                except AssertionError:
-                    pass
-                Goals.poll()
+                self.processGoals(update)
                 try:
                     self.sendUpdate_(update)
                 except UnknownClientException as e:
