@@ -15,7 +15,15 @@ class DownloadItem:
     url: str
     id: str
     path: Path
-    matches: list[str]
+    event_id: int
+    game_event_id: int
+    
+@dataclass
+class Query:
+    needles: list[str]
+    event_id: int
+    game_event_id: int
+    
 
 
 class Goal:
@@ -32,7 +40,7 @@ class GoalsMeta(type):
             cls.__instance = type.__call__(cls, *args, **kwds)
         return cls.__instance
 
-    def goals(cls, query: list[str]) -> list[DownloadItem]:
+    def goals(cls, query: list[Query]) -> list[DownloadItem]:
         return list(cls().do_search(query))
 
     @property
@@ -42,7 +50,7 @@ class GoalsMeta(type):
 
 class Goals(object, metaclass=GoalsMeta):
     def do_search(
-        self, query: list[str], **kwds
+        self, query: list[Query], **kwds
     ) -> Generator[DownloadItem, None, None]:
 
         for t in Twitter.media(**kwds):
@@ -56,20 +64,17 @@ class Goals(object, metaclass=GoalsMeta):
                     if dp.suffix.lower() != ".mp4":
                         dp.unlink(missing_ok=True)
                         continue
-                    matches = reduce(
-                        lambda r, w: [*r, *([w] if w in t_text.lower() else [])],
-                        map(str.lower, query),
-                        [],
-                    )
-                    if len(matches):
-                        yield (
-                            DownloadItem(
-                                text=t_text,
-                                url=t.url,
-                                id=t_id,
-                                path=dp,
-                                matches=matches,
+                    for q in query:
+                        if all([x.lower() in t_text.lower() for x in q.needles]):
+                            yield (
+                                DownloadItem(
+                                    text=t_text,
+                                    url=t.url,
+                                    id=t_id,
+                                    path=dp,
+                                    game_event_id=q.game_event_id,
+                                    event_id=q.event_id
+                                )
                             )
-                        )
             except Exception:
                 pass

@@ -24,7 +24,7 @@ class Goals(object, metaclass=GoalsMeta):
     
     __last_update: datetime = datetime.fromtimestamp(0)
     __interval: timedelta = timedelta(minutes=2)
-    __query: list[str] = []
+    __query: list = []
     
     def do_monitor(self, event_name: str):
         self.__query += [*map(str.lower, event_name.split(" vs "))]
