@@ -138,9 +138,9 @@ class SubscriptionMeta(type):
 
 class Subscription(metaclass=SubscriptionMeta):
 
-    _event: Event = None
+    _event: Event
     _groupId = None
-    _clientId: str = None
+    _clientId: str
     _announceLineups = False
 
     def __init__(self, event: Event, client: str, group) -> None:
@@ -193,8 +193,10 @@ class Subscription(metaclass=SubscriptionMeta):
         if not self.client:
             logging.debug(f">> skip schedule {self._clientId}")
             return
+        assert self._event.details
         cache = Cache(url=self._event.details, jobId=self.id)
         updated = cache.update
+        assert updated
         if update := self.updates(updated):
             try:
                 assert updated
@@ -206,9 +208,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         logging.info(f"GOAL event at {self.event_name}")
                         Goals.monitor(
                             GoalQuery(
-                                needles=[
-                                    *map(str.strip, self.event_name.split(" vs "))
-                                ],
+                                event_name=self.event_name,
                                 event_id=updated.game.id,
                                 game_event_id=x.order if x.order else -1,
                             )
@@ -254,6 +254,7 @@ class Subscription(metaclass=SubscriptionMeta):
 
     def updates(self, updated: ResponseGame) -> Optional[list[str]]:
         if self._clientId.startswith("http"):
+            assert updated
             return self.updates_(updated)
         if not updated:
             return None
@@ -514,14 +515,19 @@ class Subscription(metaclass=SubscriptionMeta):
     def trigger_(self):
         cache = Cache(url=str(self._event.details), jobId=self.id)
         updated = cache.update
+        assert updated
         if update := self.updates_(updated):
             try:
                 assert isinstance(update, list)
                 logging.warning(update)
-                has_goal = any([x.is_goal for x in update])
-                if has_goal:
-                    logging.info(f"GOAL event at {self.event_name}")
-                    Goals.monitor(self.event_name)
+                for x in update:
+                    if x.is_goal:
+                        logging.info(f"GOAL event at {self.event_name}")
+                        Goals.monitor(GoalQuery(
+                            event_name=self.event_name,
+                            event_id=int(x.event_id),
+                            game_event_id=x.order if x.order else 0
+                        ))
             except AssertionError:
                 pass
             Goals.poll()

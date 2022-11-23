@@ -16,21 +16,27 @@ class DownloadItem:
     path: Path
     event_id: int
     game_event_id: int
-    
+
     @property
     def filename(self) -> str:
         return f"video-{self.event_id}-{self.game_event_id}.mp4"
-    
+
     def rename(self, storege_dir: Path):
         dp = storege_dir / self.filename
         self.path = self.path.rename(dp)
-    
+
+
 @dataclass
 class Query:
-    needles: list[str]
+    event_name: str
     event_id: int
     game_event_id: int
-    
+
+    @property
+    def needles(self) -> list[str]:
+        if " vs " in self.event_name:
+            return [*map(str.strip, self.event_name.split(" vs "))]
+        return [*map(str.strip, self.event_name.split("/"))]
 
 
 class Goal:
@@ -74,13 +80,13 @@ class Goals(object, metaclass=GoalsMeta):
                     for q in query:
                         if all([x.lower() in t_text.lower() for x in q.needles]):
                             di = DownloadItem(
-                                    text=t_text,
-                                    url=t.url,
-                                    id=t_id,
-                                    path=dp,
-                                    game_event_id=q.game_event_id,
-                                    event_id=q.event_id
-                                )
+                                text=t_text,
+                                url=t.url,
+                                id=t_id,
+                                path=dp,
+                                game_event_id=q.game_event_id,
+                                event_id=q.event_id,
+                            )
                             di.rename(__class__.output_dir)
                             yield di
             except Exception:
