@@ -606,6 +606,10 @@ class GameEvent:
     extraPlayers: Optional[list[int]] = None
     
     @property
+    def order_id(self) -> int:
+        return self.order if self.order else 0
+
+    @property
     def is_goal(self) -> bool:
         try:
             assert self.eventType
@@ -679,6 +683,10 @@ class DetailsEvent:
     score: Optional[str] = None
 
     @property
+    def id(self) -> int:
+        return self.order if self.order else 0
+
+    @property
     def displayTime(self) -> str:
         return f'{self.time:3.0f}"'
 
@@ -708,10 +716,14 @@ class DetailsEventPixel:
     event_name: Optional[str] = None
     id: Optional[str] = None
 
+    @property
+    def order_id(self) -> int:
+        return self.order if self.order else 0
+
     def __post_init__(self) -> None:
         logging.warning(f"{self.event_name}")
         self.id = md5(f"{self.event_name}".lower().encode()).hexdigest()
-        
+
     @property
     def is_goal(self) -> bool:
         try:
@@ -738,7 +750,7 @@ class SubscriptionEvent:
     home_team_id: int
     away_team: str
     away_team_id: int
-    event_id: int|str
+    event_id: int | str
     event_name: str
     job_id: str
     icon: str

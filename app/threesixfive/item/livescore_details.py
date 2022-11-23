@@ -2,7 +2,13 @@ from datetime import datetime, timedelta
 from hashlib import blake2b
 from .player import Player
 from .models import (
-    DetailsEvent, DetailsEventPixel, ResponseGame, Position, GameMember, GameCompetitor, GameFact
+    DetailsEvent,
+    DetailsEventPixel,
+    ResponseGame,
+    Position,
+    GameMember,
+    GameCompetitor,
+    GameFact,
 )
 from app.threesixfive.exception import GameNotFound
 from cachable.request import Request
@@ -28,21 +34,22 @@ class ParseDetailsCache(TimeCache):
 
 class ParserDetails(TimeCacheable):
 
-    __url: str
-    _struct: ParseDetailsCache = None
-    __id: str = None
+    __url: Optional[str] = None
+    _struct: Optional[ParseDetailsCache|TimeCache] = None
+    __id: Optional[str] = None
     cachetime: timedelta = timedelta(seconds=50)
 
-    def __init__(self, url: str, response: ResponseGame = None):
+    def __init__(
+        self, url: Optional[str] = None, response: Optional[ResponseGame] = None
+    ):
         self.__url = url
         if response is not None:
             self._struct = ParseDetailsCache(
-                timestamp=datetime.now(timezone.utc),
-                struct=response
+                timestamp=datetime.now(timezone.utc), struct=response
             )
 
     @classmethod
-    def get(cls, url: str, response: ResponseGame = None):
+    def get(cls, url: Optional[str] = None, response: Optional[ResponseGame] = None):
         obj = cls(url, response)
         obj.refresh()
         return obj
@@ -53,7 +60,7 @@ class ParserDetails(TimeCacheable):
         try:
             req = Request(self.__url)
             json = req.json
-            res: ResponseGame = ResponseGame.from_dict(json)
+            res: ResponseGame = ResponseGame.from_dict(json)  # type: ignore
             self._struct = self.tocache(res)
             Player.store(res.game)
         except Exception as e:
@@ -64,6 +71,7 @@ class ParserDetails(TimeCacheable):
     @property
     def id(self):
         if not self.__id:
+            assert self.__url
             h = blake2b(digest_size=20)
             h.update(self.__url.encode())
             self.__id = h.hexdigest()
@@ -73,12 +81,14 @@ class ParserDetails(TimeCacheable):
     def events(self) -> list[DetailsEvent]:
         try:
             res = []
+            assert self._struct
+            assert self._struct.struct.game.homeCompetitor
+            assert self._struct.struct.game.awayCompetitor
             competitors = {
-                self._struct.struct.game.homeCompetitor.id:
-                self._struct.struct.game.homeCompetitor,
-                self._struct.struct.game.awayCompetitor.id:
-                self._struct.struct.game.awayCompetitor,
+                self._struct.struct.game.homeCompetitor.id: self._struct.struct.game.homeCompetitor,
+                self._struct.struct.game.awayCompetitor.id: self._struct.struct.game.awayCompetitor,
             }
+            assert self._struct.struct.game.members
             members = {m.id: m for m in self._struct.struct.game.members}
             if not self._struct.struct.game.events:
                 return []
@@ -91,17 +101,25 @@ class ParserDetails(TimeCacheable):
                     position = Position.NONE
                 extraPlayers = ev.extraPlayers
                 if extraPlayers:
-                    extraPlayers = [unidecode(members[pid].displayName)
-                                    for pid in extraPlayers]
-                res.append(DetailsEvent(
-                    time=ev.gameTime,
-                    action=ev.eventType.name,
-                    position=position,
-                    team=competitors[ev.competitorId].name,
-                    player=unidecode(members[ev.playerId].displayName),
-                    extraPlayers=extraPlayers,
-                    order=ev.order))
-            return sorted(res, reverse=True, key=lambda x: x.order)
+                    extraPlayers = [
+                        unidecode(members[pid].displayName) for pid in extraPlayers
+                    ]
+                assert ev.gameTime
+                assert ev.eventType
+                assert ev.eventType.name
+                
+                res.append(
+                    DetailsEvent(
+                        time=str(ev.gameTime),
+                        action=ev.eventType.name,
+                        position=position,
+                        team=competitors[ev.competitorId].name,
+                        player=unidecode(members[ev.playerId].displayName),
+                        extraPlayers=str(extraPlayers),
+                        order=ev.order,
+                    )
+                )
+            return sorted(res, reverse=True, key=lambda x: x.id)
         except Exception:
             return []
 
@@ -110,10 +128,8 @@ class ParserDetails(TimeCacheable):
         try:
             res = []
             competitors = {
-                self._struct.struct.game.homeCompetitor.id:
-                self._struct.struct.game.homeCompetitor,
-                self._struct.struct.game.awayCompetitor.id:
-                self._struct.struct.game.awayCompetitor,
+                self._struct.struct.game.homeCompetitor.id: self._struct.struct.game.homeCompetitor,
+                self._struct.struct.game.awayCompetitor.id: self._struct.struct.game.awayCompetitor,
             }
             members = {m.id: m for m in self._struct.struct.game.members}
             if not self._struct.struct.game.events:
@@ -121,20 +137,24 @@ class ParserDetails(TimeCacheable):
             for ev in self._struct.struct.game.events:
                 extraPlayers = ev.extraPlayers
                 if extraPlayers:
-                    extraPlayers = [unidecode(members[pid].displayName)
-                                    for pid in extraPlayers]
-                res.append(DetailsEventPixel(
-                    event_id=self.event_id,
-                    time=ev.gameTime,
-                    action=ev.eventType.name,
-                    team=competitors[ev.competitorId].name,
-                    team_id=ev.competitorId,
-                    player=unidecode(members[ev.playerId].displayName),
-                    extraPlayers=extraPlayers,
-                    score=self.score,
-                    is_old_event=self.game_time - ev.gameTime > 5,
-                    event_name=f"{self.home.name}/{self.away.name}",
-                    order=ev.order))
+                    extraPlayers = [
+                        unidecode(members[pid].displayName) for pid in extraPlayers
+                    ]
+                res.append(
+                    DetailsEventPixel(
+                        event_id=self.event_id,
+                        time=ev.gameTime,
+                        action=ev.eventType.name,
+                        team=competitors[ev.competitorId].name,
+                        team_id=ev.competitorId,
+                        player=unidecode(members[ev.playerId].displayName),
+                        extraPlayers=extraPlayers,
+                        score=self.score,
+                        is_old_event=self.game_time - ev.gameTime > 5,
+                        event_name=f"{self.home.name}/{self.away.name}",
+                        order=ev.order,
+                    )
+                )
             return sorted(res, reverse=True, key=lambda x: x.order)
         except Exception:
             return []
@@ -177,25 +197,16 @@ class ParserDetails(TimeCacheable):
 
     @property
     def hasLineups(self) -> bool:
-        if any([
-            not self.home,
-            not self.away
-        ]):
+        if any([not self.home, not self.away]):
             return False
-        if any([
-            not self.home.lineups,
-            not self.away.lineups
-        ]):
+        if any([not self.home.lineups, not self.away.lineups]):
             return False
-        return all([
-            self.home.lineups.hasFieldPositions,
-            self.away.lineups.hasFieldPositions
-        ])
+        return all(
+            [self.home.lineups.hasFieldPositions, self.away.lineups.hasFieldPositions]
+        )
 
     @property
     def event_name(self) -> str:
         if self.home and self.away:
-            return unidecode(
-                f"{self.home.name.upper()} vs {self.away.name.upper()}"
-            )
+            return unidecode(f"{self.home.name.upper()} vs {self.away.name.upper()}")
         return "Unknown"

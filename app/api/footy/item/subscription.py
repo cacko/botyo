@@ -188,39 +188,42 @@ class Subscription(metaclass=SubscriptionMeta):
         )
 
     def trigger(self):
-        if self._clientId.startswith("http"):
-            return self.trigger_()
-        if not self.client:
-            logging.debug(f">> skip schedule {self._clientId}")
-            return
-        assert self._event.details
-        cache = Cache(url=self._event.details, jobId=self.id)
-        updated = cache.update
-        assert updated
-        if update := self.updates(updated):
-            try:
-                assert updated
-                assert updated.game
-                assert isinstance(updated.game.events, list)
-                logging.warning(update)
-                for x in updated.game.events:
-                    if x.is_goal:
-                        logging.info(f"GOAL event at {self.event_name}")
-                        Goals.monitor(
-                            GoalQuery(
-                                event_name=self.event_name,
-                                event_id=updated.game.id,
-                                game_event_id=x.order if x.order else -1,
+        try:
+            if self._clientId.startswith("http"):
+                return self.trigger_()
+            if not self.client:
+                logging.debug(f">> skip schedule {self._clientId}")
+                return
+            assert self._event.details
+            cache = Cache(url=self._event.details, jobId=self.id)
+            updated = cache.update
+            assert updated
+            if update := self.updates(updated):
+                try:
+                    assert updated
+                    assert updated.game
+                    assert isinstance(updated.game.events, list)
+                    logging.warning(update)
+                    for x in updated.game.events:
+                        if x.is_goal:
+                            logging.info(f"GOAL event at {self.event_name}")
+                            Goals.monitor(
+                                GoalQuery(
+                                    event_name=self.event_name,
+                                    event_id=updated.game.id,
+                                    game_event_id=x.order_id,
+                                )
                             )
-                        )
-            except AssertionError:
-                pass
-            Goals.poll()
-            TextOutput.addRows(update)
-            try:
-                self.sendUpdate(TextOutput.render())
-            except UnknownClientException:
-                pass
+                except AssertionError:
+                    pass
+                Goals.poll()
+                TextOutput.addRows(update)
+                try:
+                    self.sendUpdate(TextOutput.render())
+                except UnknownClientException:
+                    pass
+        except AssertionError:
+            pass
         try:
             content = cache.content
             if not content:
@@ -458,6 +461,7 @@ class Subscription(metaclass=SubscriptionMeta):
             payload = data.to_dict()
         logging.debug(payload)
         try:
+            assert self._groupId
             resp = post(
                 f"{self._clientId}", headers=OTP(self._groupId).headers, json=payload
             )
@@ -513,11 +517,11 @@ class Subscription(metaclass=SubscriptionMeta):
         ]
 
     def trigger_(self):
-        cache = Cache(url=str(self._event.details), jobId=self.id)
-        updated = cache.update
-        assert updated
-        if update := self.updates_(updated):
-            try:
+        try:
+            cache = Cache(url=str(self._event.details), jobId=self.id)
+            updated = cache.update
+            assert updated
+            if update := self.updates_(updated):
                 assert isinstance(update, list)
                 logging.warning(update)
                 for x in update:
@@ -526,23 +530,19 @@ class Subscription(metaclass=SubscriptionMeta):
                         Goals.monitor(GoalQuery(
                             event_name=self.event_name,
                             event_id=int(x.event_id),
-                            game_event_id=x.order if x.order else 0
+                            game_event_id=x.order_id
                         ))
-            except AssertionError:
-                pass
-            Goals.poll()
+                Goals.poll()
+                try:
+                    self.sendUpdate_(update)
+                except UnknownClientException as e:
+                    print(e)
 
-            try:
-                self.sendUpdate_(update)
-            except UnknownClientException as e:
-                print(e)
-
-        if cache.halftime:
-            cache.halftime = False
-            self.sendUpdate(self.halftimeAnnoucement_)
-        else:
-            self.sendUpdate(self.progressUpdate_)
-        try:
+            if cache.halftime:
+                cache.halftime = False
+                self.sendUpdate(self.halftimeAnnoucement_)
+            else:
+                self.sendUpdate(self.progressUpdate_)
             content = cache.content
             if not content:
                 return self.cancel(True)
@@ -565,7 +565,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 except UnknownClientException as e:
                     logging.error(e)
                     pass
-        except ValueError:
+        except (ValueError, AssertionError):
             pass
         except Exception as e:
             logging.exception(e)
