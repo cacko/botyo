@@ -15,7 +15,7 @@ from app.threesixfive.item.models import (
     EventStatus,
     GameStatus,
     ResponseGame,
-    SubscriptionEvent
+    SubscriptionEvent,
 )
 from app.api import ZMethod
 from .player import Player
@@ -35,6 +35,7 @@ import time
 import logging
 from typing import Optional
 from .goals import Goals
+from app.goals import Query as GoalQuery
 
 
 def job_id_to_event_id(job_id: str) -> int:
@@ -196,14 +197,22 @@ class Subscription(metaclass=SubscriptionMeta):
         updated = cache.update
         if update := self.updates(updated):
             try:
-                assert update
-                assert update.game
-                assert isinstance(update.game.events, list)
+                assert updated
+                assert updated.game
+                assert isinstance(updated.game.events, list)
                 logging.warning(update)
-                has_goal = any([x.is_goal for x in update.game.events])
-                if has_goal:
-                    logging.info(f"GOAL event at {self.event_name}")
-                    Goals.monitor(self.event_name)
+                for x in updated.game.events:
+                    if x.is_goal:
+                        logging.info(f"GOAL event at {self.event_name}")
+                        Goals.monitor(
+                            GoalQuery(
+                                needles=[
+                                    *map(str.strip, self.event_name.split(" vs "))
+                                ],
+                                event_id=updated.game.id,
+                                game_event_id=x.order if x.order else -1,
+                            )
+                        )
             except AssertionError:
                 pass
             Goals.poll()
@@ -516,7 +525,7 @@ class Subscription(metaclass=SubscriptionMeta):
             except AssertionError:
                 pass
             Goals.poll()
-            
+
             try:
                 self.sendUpdate_(update)
             except UnknownClientException as e:
