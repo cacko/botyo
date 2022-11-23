@@ -4,7 +4,6 @@ from typing import Optional, Any, Generator
 from .twitter import Twitter
 from pathlib import Path
 from dataclasses import dataclass
-from functools import reduce
 
 # text=USA 1 - [1] Wales - Gareth Bale penalty 82'
 
@@ -17,6 +16,14 @@ class DownloadItem:
     path: Path
     event_id: int
     game_event_id: int
+    
+    @property
+    def filename(self) -> str:
+        return f"video-{self.event_id}-{self.game_event_id}.mp4"
+    
+    def rename(self, storege_dir: Path):
+        dp = storege_dir / self.filename
+        self.path = self.path.rename(dp)
     
 @dataclass
 class Query:
@@ -66,8 +73,7 @@ class Goals(object, metaclass=GoalsMeta):
                         continue
                     for q in query:
                         if all([x.lower() in t_text.lower() for x in q.needles]):
-                            yield (
-                                DownloadItem(
+                            di = DownloadItem(
                                     text=t_text,
                                     url=t.url,
                                     id=t_id,
@@ -75,6 +81,7 @@ class Goals(object, metaclass=GoalsMeta):
                                     game_event_id=q.game_event_id,
                                     event_id=q.event_id
                                 )
-                            )
+                            di.rename(__class__.output_dir)
+                            yield di
             except Exception:
                 pass
