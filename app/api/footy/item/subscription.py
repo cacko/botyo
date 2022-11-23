@@ -522,16 +522,19 @@ class Subscription(metaclass=SubscriptionMeta):
             updated = cache.update
             assert updated
             if update := self.updates_(updated):
-                assert isinstance(update, list)
-                logging.warning(update)
-                for x in update:
-                    if x.is_goal:
-                        logging.info(f"GOAL event at {self.event_name}")
-                        Goals.monitor(GoalQuery(
-                            event_name=self.event_name,
-                            event_id=int(x.event_id),
-                            game_event_id=x.order_id
-                        ))
+                try:
+                    assert isinstance(update, list)
+                    logging.warning(update)
+                    for x in update:
+                        if x.is_goal:
+                            logging.info(f"GOAL event at {self.event_name}")
+                            Goals.monitor(GoalQuery(
+                                event_name=self.event_name,
+                                event_id=int(x.event_id),
+                                game_event_id=x.order_id
+                            ))
+                except AssertionError:
+                    pass
                 Goals.poll()
                 try:
                     self.sendUpdate_(update)
