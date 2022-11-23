@@ -198,7 +198,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     logging.info(f"GOAL event at {self.event_name}")
                     Goals.monitor(GoalQuery(
                         event_name=self.event_name,
-                        event_id=int(self._event.id),
+                        event_id=int(self._event.idEvent),
                         game_event_id=x.order_id
                     ))
         except AssertionError:
