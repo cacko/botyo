@@ -72,6 +72,7 @@ class Twitter(object, metaclass=TwitterMeta):
 
     def get_user_timeline(self, **kwds) -> Generator[TwitterItem, None, None]:
         user = self.get_user(kwds.get("username", __class__.default_username))
+        del kwds["username"]
         assert user.id
         assert user.username
         if since_id := self.__timeline_since_id.get(user.username, ""):
