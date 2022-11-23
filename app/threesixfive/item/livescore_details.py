@@ -110,7 +110,7 @@ class ParserDetails(TimeCacheable):
                 
                 res.append(
                     DetailsEvent(
-                        time=str(ev.gameTime),
+                        time=f"{ev.gameTime:.0f}",
                         action=ev.eventType.name,
                         position=position,
                         team=competitors[ev.competitorId].name,
