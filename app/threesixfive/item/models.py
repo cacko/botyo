@@ -688,7 +688,7 @@ class DetailsEvent:
 
     @property
     def displayTime(self) -> str:
-        return f'{self.time:3.0f}"'
+        return f'{self.time}"'
 
     @property
     def icon(self) -> str:
