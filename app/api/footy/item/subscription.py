@@ -203,10 +203,10 @@ class Subscription(metaclass=SubscriptionMeta):
                     ))
         except AssertionError:
             pass
-        Goals.poll()       
 
 
     def trigger(self):
+        Goals.poll()
         try:
             if self._clientId.startswith("http"):
                 return self.trigger_()
