@@ -120,7 +120,8 @@ class ParserDetails(TimeCacheable):
                     )
                 )
             return sorted(res, reverse=True, key=lambda x: x.id)
-        except Exception:
+        except Exception as e:
+            logging.exception(e)
             return []
 
     @property
@@ -156,7 +157,8 @@ class ParserDetails(TimeCacheable):
                     )
                 )
             return sorted(res, reverse=True, key=lambda x: x.order)
-        except Exception:
+        except Exception as e:
+            logging.exception(e)
             return []
 
     @property

@@ -224,15 +224,15 @@ class Subscription(metaclass=SubscriptionMeta):
                     assert isinstance(updated.game.events, list)
                     logging.warning(update)
                     self.processGoals(updated.game.events)
-                except AssertionError:
-                    pass
+                except AssertionError as e:
+                    logging.exception(e)
                 TextOutput.addRows(update)
                 try:
                     self.sendUpdate(TextOutput.render())
                 except UnknownClientException:
                     pass
-        except AssertionError:
-            pass
+        except AssertionError as e:
+            logging.exception(e)
         try:
             content = cache.content
             if not content:
@@ -564,8 +564,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 except UnknownClientException as e:
                     logging.error(e)
                     pass
-        except (ValueError, AssertionError):
-            pass
+        except (ValueError, AssertionError) as e:
+            logging.exception(e)
         except Exception as e:
             logging.exception(e)
             return self.cancel(True)
