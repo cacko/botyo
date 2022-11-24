@@ -221,9 +221,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 try:
                     assert updated
                     assert updated.game
-                    assert isinstance(updated.game.events, list)
-                    logging.warning(update)
-                    self.processGoals(updated.game.events)
+                    if updated.game.events:
+                        self.processGoals(updated.game.events)
                 except AssertionError as e:
                     logging.exception(e)
                 TextOutput.addRows(update)
