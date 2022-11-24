@@ -8,7 +8,7 @@ from botyo_server.output import TextOutput
 from botyo_server.scheduler import Scheduler
 from apscheduler.schedulers.base import JobLookupError
 from botyo_server.socket.connection import Connection, UnknownClientException
-from botyo_server.models import RenderResult
+from botyo_server.models import RenderResult, Attachment
 from app.threesixfive.item.models import (
     CancelJobEvent,
     DetailsEventPixel,
@@ -38,6 +38,7 @@ import logging
 from typing import Optional, TypeVar
 from .goals import Goals
 from app.goals import Query as GoalQuery
+from pathlib import Path
 
 GE = TypeVar("GE", DetailsEventPixel, GameEvent)
 
@@ -145,6 +146,7 @@ class Subscription(metaclass=SubscriptionMeta):
     _groupId = None
     _clientId: str
     _announceLineups = False
+    _goal_queue: list[GoalQuery] = []
 
     def __init__(self, event: Event, client: str, group) -> None:
         self._clientId = client
@@ -193,6 +195,21 @@ class Subscription(metaclass=SubscriptionMeta):
             )
         )
         
+    def sendGoal(self, message: str, attachment: Path):
+        if not self.client:
+            return
+        connection = self.client
+        if not self.client:
+            raise UnknownClientException
+        connection.respond(
+            RenderResult(
+                method=ZMethod.FOOTY_SUBSCRIBE, 
+                message=message, 
+                attachment=Attachment(filename=attachment.as_posix()),
+                group=self._groupId
+            )
+        )
+          
     def processGoals(self, events: list[GE]):
         try:
             assert isinstance(events, list)
@@ -200,18 +217,29 @@ class Subscription(metaclass=SubscriptionMeta):
             for x in events:
                 if x.is_goal:
                     logging.info(f"GOAL event at {self.event_name}")
-                    Goals.monitor(GoalQuery(
+                    goal_query = GoalQuery(
                         event_name=self.event_name,
                         event_id=int(self._event.idEvent),
                         game_event_id=x.order_id
-                    ))
+                    )
+                    Goals.monitor(goal_query)
+                    self._goal_queue.append(goal_query)
         except AssertionError:
             pass
 
+    def checkGoals(self):
+        if not len(self._goal_queue):
+            return
+        Goals.poll()
+        for gq in self._goal_queue:
+            goal_video = Goals.video(gq)
+            if goal_video:
+                self.sendGoal("Goal", goal_video)
+                self._goal_queue.remove(gq)
 
     def trigger(self):
         try:
-            Goals.poll()
+            self.checkGoals()
             if self._clientId.startswith("http"):
                 return self.trigger_()
             if not self.client:

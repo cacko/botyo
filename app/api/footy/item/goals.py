@@ -2,6 +2,7 @@ from typing import Optional, Any
 from app.goals import Goals as GoalsGenerator, Query as GoalQuery
 from datetime import datetime, timedelta
 import logging
+from pathlib import Path
 
 class GoalsMeta(type):
     
@@ -18,6 +19,9 @@ class GoalsMeta(type):
     
     def poll(cls):
         return cls().do_updates()
+    
+    def video(cls, query: GoalQuery) -> Optional[Path]:
+        return GoalsGenerator.goal_video(query);
 
 
 class Goals(object, metaclass=GoalsMeta):

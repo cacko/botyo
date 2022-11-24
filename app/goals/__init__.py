@@ -22,11 +22,15 @@ class DownloadItem:
 
     @property
     def filename(self) -> str:
-        return f"video-{self.event_id}-{self.game_event_id}.mp4"
+        return self.__class__.get_filename(self.event_id, self.game_event_id)
 
     def rename(self, storege_dir: Path):
         dp = storege_dir / self.filename
         self.path = self.path.rename(dp)
+        
+    @classmethod
+    def get_filename(cls, event_id:int, game_event_id: int) -> str:
+        return f"video-{event_id}-{game_event_id}.mp4"
 
 
 @dataclass
@@ -66,6 +70,12 @@ class GoalsMeta(type):
     @property
     def output_dir(cls) -> Path:
         return Path(app_config.cachable.path)
+    
+    def goal_video(cls, q: Query) -> Optional[Path]:
+        fp = cls.output_dir / DownloadItem.get_filename(q.event_id, q.game_event_id)
+        if fp.exists():
+            return fp
+        return None
 
 
 class Goals(object, metaclass=GoalsMeta):
