@@ -216,7 +216,6 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            assert updated
             if update := self.updates(updated):
                 try:
                     assert updated
@@ -263,9 +262,8 @@ class Subscription(metaclass=SubscriptionMeta):
             logging.exception(e)
             return self.cancel(True)
 
-    def updates(self, updated: ResponseGame) -> Optional[list[str]]:
+    def updates(self, updated: Optional[ResponseGame] = None) -> Optional[list[str]]:
         if self._clientId.startswith("http"):
-            assert updated
             return self.updates_(updated)
         if not updated:
             return None
