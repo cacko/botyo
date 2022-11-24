@@ -37,6 +37,10 @@ class Query:
         if " vs " in self.event_name:
             return [*map(str.strip, self.event_name.split(" vs "))]
         return [*map(str.strip, self.event_name.split("/"))]
+    
+    @property
+    def id(self) -> str:
+        return f"{self.event_id}-{self.game_event_id}"
 
 
 class Goal:

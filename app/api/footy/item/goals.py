@@ -24,10 +24,10 @@ class Goals(object, metaclass=GoalsMeta):
     
     __last_update: datetime = datetime.fromtimestamp(0)
     __interval: timedelta = timedelta(minutes=2)
-    __query: dict[int, GoalQuery] = {}
+    __query: dict[str, GoalQuery] = {}
     
     def do_monitor(self, query: GoalQuery):
-        self.__query[query.game_event_id] = query
+        self.__query[query.id] = query
         logging.info(f"GOALS: added {'/'.join(query.needles)} to query")
         logging.info(f"GOALS: {self.__query}")
         
@@ -38,6 +38,9 @@ class Goals(object, metaclass=GoalsMeta):
             return []
         self.__last_update = datetime.now()
         for vi in GoalsGenerator.goals(list(self.__query.values())):
-            del self.__query[vi.game_event_id]
+            try:
+                del self.__query[vi.id]
+            except KeyError:
+                pass
             logging.info(vi)
                 
