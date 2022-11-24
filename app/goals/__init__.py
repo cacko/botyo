@@ -4,11 +4,22 @@ from typing import Optional, Any, Generator
 from .twitter import Twitter
 from pathlib import Path
 from dataclasses import dataclass
+from fuzzelinho import MatchMethod, Match
 import logging
 import re
 
 GOAL_MATCH = re.compile(r"([\w ]+)\s\d+\s-\s\d+\s([\w ]+)", re.MULTILINE)
 
+
+class TeamsMatch(Match):
+    minRatio = 80
+    method = MatchMethod.WRATIO
+
+
+@dataclass
+class TeamsNeedle:
+    home: str
+    away: str
 
 
 @dataclass
@@ -27,9 +38,9 @@ class DownloadItem:
     def rename(self, storege_dir: Path):
         dp = storege_dir / self.filename
         self.path = self.path.rename(dp)
-        
+
     @classmethod
-    def get_filename(cls, event_id:int, game_event_id: int) -> str:
+    def get_filename(cls, event_id: int, game_event_id: int) -> str:
         return f"video-{event_id}-{game_event_id}.mp4"
 
 
@@ -45,7 +56,7 @@ class Query:
         if " vs " in self.event_name:
             return [*map(str.strip, self.event_name.split(" vs "))]
         return [*map(str.strip, self.event_name.split("/"))]
-    
+
     @property
     def id(self) -> str:
         return f"{self.event_id}-{self.game_event_id}"
@@ -71,7 +82,7 @@ class GoalsMeta(type):
     @property
     def output_dir(cls) -> Path:
         return Path(app_config.cachable.path)
-    
+
     def goal_video(cls, q: Query) -> Optional[Path]:
         fp = cls.output_dir / DownloadItem.get_filename(q.event_id, q.game_event_id)
         if fp.exists():
@@ -96,10 +107,15 @@ class Goals(object, metaclass=GoalsMeta):
                         dp.unlink(missing_ok=True)
                         continue
                     for q in query:
-                        if m := GOAL_MATCH.search(t_text.replace("[", "").replace("]", "")):
+                        if m := GOAL_MATCH.search(
+                            t_text.replace("[", "").replace("]", "")
+                        ):
                             teams = [*map(lambda x: x.strip().lower(), m.groups())]
+                            m = TeamsMatch([TeamsNeedle(home=teams[0], away=teams[1])])
                             logging.debug(f"GOALS: matched teams {teams}")
-                            if any([qi.lower() in teams for qi in q.needles]):
+                            if m.fuzzy(
+                                TeamsNeedle(home=q.needles[0], away=q.needles[1])
+                            ):
                                 di = DownloadItem(
                                     text=t_text,
                                     url=t.url,
