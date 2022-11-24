@@ -26,5 +26,5 @@ class Standings(Cachable):
     def __fetch(self):
         req = Request(Url.standings(self.__league.league_id))
         json = req.json
-        self._struct = StandingResponse.from_dict(json)
+        self._struct = StandingResponse.from_dict(json)  # type: ignore
         return self.tocache(self._struct)

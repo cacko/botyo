@@ -20,6 +20,7 @@ from datetime import timezone
 from cachable.cacheable import TimeCacheable
 from cachable.models import TimeCache
 import logging
+from typing import Optional
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -128,10 +129,14 @@ class ParserDetails(TimeCacheable):
     def events_pixel(self) -> list[DetailsEventPixel]:
         try:
             res = []
+            assert self._struct
+            assert self._struct.struct.game.homeCompetitor
+            assert self._struct.struct.game.awayCompetitor
             competitors = {
                 self._struct.struct.game.homeCompetitor.id: self._struct.struct.game.homeCompetitor,
                 self._struct.struct.game.awayCompetitor.id: self._struct.struct.game.awayCompetitor,
             }
+            assert self._struct.struct.game.members
             members = {m.id: m for m in self._struct.struct.game.members}
             if not self._struct.struct.game.events:
                 return []
@@ -141,6 +146,13 @@ class ParserDetails(TimeCacheable):
                     extraPlayers = [
                         unidecode(members[pid].displayName) for pid in extraPlayers
                     ]
+                assert self.event_id
+                assert ev.gameTime
+                assert ev.eventType
+                assert ev.eventType.name
+                assert self.game_time
+                assert self.home
+                assert self.away
                 res.append(
                     DetailsEventPixel(
                         event_id=self.event_id,
@@ -149,66 +161,81 @@ class ParserDetails(TimeCacheable):
                         team=competitors[ev.competitorId].name,
                         team_id=ev.competitorId,
                         player=unidecode(members[ev.playerId].displayName),
-                        extraPlayers=extraPlayers,
+                        extraPlayers=str(extraPlayers),
                         score=self.score,
                         is_old_event=self.game_time - ev.gameTime > 5,
                         event_name=f"{self.home.name}/{self.away.name}",
                         order=ev.order,
                     )
                 )
-            return sorted(res, reverse=True, key=lambda x: x.order)
+            return sorted(res, reverse=True, key=lambda x: x.order_id)
         except Exception as e:
             logging.exception(e)
             return []
 
     @property
     def event_id(self):
-        return self._struct.struct.game.id
+        if self._struct:
+            return self._struct.struct.game.id
 
     @property
     def score(self) -> str:
-        return f"{self.home.score:.0f}:{self.away.score:.0f}"
+        try:
+            assert self.home
+            assert self.away
+            return f"{self.home.score:.0f}:{self.away.score:.0f}"
+        except AssertionError:
+            return ""
 
     @property
-    def members(self) -> list[GameMember]:
-        return self._struct.struct.game.members
+    def members(self) -> Optional[list[GameMember]]:
+        if self._struct:
+            return self._struct.struct.game.members
 
     @property
-    def home(self) -> GameCompetitor:
-        if not self._struct.struct.game:
+    def home(self) -> Optional[GameCompetitor]:
+        if not self._struct or not self._struct.struct.game:
             return None
         return self._struct.struct.game.homeCompetitor
 
     @property
-    def game_time(self) -> int:
-        if not self._struct.struct.game:
+    def game_time(self) -> Optional[int]:
+        if not self._struct or not self._struct.struct.game:
             return None
         return self._struct.struct.game.gameTime
 
     @property
-    def facts(self) -> list[GameFact]:
-        if not self._struct.struct.game:
+    def facts(self) -> Optional[list[GameFact]]:
+        if not self._struct or not self._struct.struct.game:
             return None
         return self._struct.struct.game.matchFacts
 
     @property
-    def away(self) -> GameCompetitor:
-        if not self._struct.struct.game:
+    def away(self) -> Optional[GameCompetitor]:
+        if not self._struct or not self._struct.struct.game:
             return None
         return self._struct.struct.game.awayCompetitor
 
     @property
     def hasLineups(self) -> bool:
-        if any([not self.home, not self.away]):
+        try:
+            assert self.home
+            assert self.home.lineups
+            assert self.away
+            assert self.away.lineups
+            return all(
+                [self.home.lineups.hasFieldPositions, self.away.lineups.hasFieldPositions]
+            )
+        except AssertionError:
             return False
-        if any([not self.home.lineups, not self.away.lineups]):
-            return False
-        return all(
-            [self.home.lineups.hasFieldPositions, self.away.lineups.hasFieldPositions]
-        )
 
     @property
     def event_name(self) -> str:
-        if self.home and self.away:
+        try:
+            assert self.home
+            assert self.away
+            assert self.home.name
+            assert self.away.name
             return unidecode(f"{self.home.name.upper()} vs {self.away.name.upper()}")
-        return "Unknown"
+        except AssertionError:
+            return "Unknown"
