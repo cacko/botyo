@@ -4,7 +4,7 @@ from typing import Optional, Any, Generator
 from .twitter import Twitter
 from pathlib import Path
 from dataclasses import dataclass
-
+import logging
 import re
 
 GOAL_MATCH = re.compile(r"([\w ]+)\s\d+\s-\s\d+\s([\w ]+)", re.MULTILINE)
@@ -97,8 +97,9 @@ class Goals(object, metaclass=GoalsMeta):
                         continue
                     for q in query:
                         if m := GOAL_MATCH.search(t_text.replace("[", "").replace("]", "")):
-                            teams = m.groups()
-                            if any([qi in teams for qi in query]):
+                            teams = [*map(str.lower, m.groups())]
+                            logging.debug(teams)
+                            if any([qi.lower() in teams for qi in q.needles]):
                                 di = DownloadItem(
                                     text=t_text,
                                     url=t.url,
