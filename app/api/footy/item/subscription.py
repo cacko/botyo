@@ -6,6 +6,7 @@ from .components import ScoreFormat, ScoreRow
 from .livescore_details import ParserDetails
 from botyo_server.output import TextOutput
 from botyo_server.scheduler import Scheduler
+from apscheduler.schedulers.base import JobLookupError
 from botyo_server.socket.connection import Connection, UnknownClientException
 from botyo_server.models import RenderResult
 from app.threesixfive.item.models import (
@@ -175,7 +176,7 @@ class Subscription(metaclass=SubscriptionMeta):
             Scheduler.cancel_jobs(self.id)
             if notify and self._clientId.startswith("http"):
                 self.sendUpdate_(CancelJobEvent(job_id=self.id))
-        except Exception:
+        except JobLookupError:
             pass
 
     def sendUpdate(self, message):
@@ -209,8 +210,8 @@ class Subscription(metaclass=SubscriptionMeta):
 
 
     def trigger(self):
-        Goals.poll()
         try:
+            Goals.poll()
             if self._clientId.startswith("http"):
                 return self.trigger_()
             if not self.client:
@@ -232,9 +233,6 @@ class Subscription(metaclass=SubscriptionMeta):
                     self.sendUpdate(TextOutput.render())
                 except UnknownClientException:
                     pass
-        except AssertionError as e:
-            logging.exception(e)
-        try:
             content = cache.content
             if not content:
                 return self.cancel(True)
@@ -295,7 +293,6 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def fulltimeAnnoucement(self):
-        self.cancel()
         logging.info(f"FOOT SUB: Full Time {self.event_name}")
         logging.debug(f"subscription {self.event_name} in done")
         if self._clientId.startswith("http"):
@@ -305,7 +302,6 @@ class Subscription(metaclass=SubscriptionMeta):
         TextOutput.addRows(
             [" ".join([icon, "FULLTIME: ", self.event_name, details.score])]
         )
-
         return TextOutput.render()
 
     @property
@@ -559,7 +555,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 ]
             ):
                 try:
-                    self.sendUpdate(self.fulltimeAnnoucement)
+                    self.sendUpdate(self.fulltimeAnnoucement_)
                 except UnknownClientException as e:
                     logging.error(e)
                     pass
