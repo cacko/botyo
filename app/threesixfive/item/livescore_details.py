@@ -100,15 +100,15 @@ class ParserDetails(TimeCacheable):
                     position = Position.AWAY
                 else:
                     position = Position.NONE
-                extraPlayers = ev.extraPlayers
-                if extraPlayers:
+                players = ev.extraPlayers
+                extraPlayers = []
+                if players:
                     extraPlayers = [
-                        unidecode(members[pid].displayName) for pid in extraPlayers
+                        unidecode(members[pid].displayName) for pid in players
                     ]
                 assert ev.gameTime
                 assert ev.eventType
                 assert ev.eventType.name
-                
                 res.append(
                     DetailsEvent(
                         time=f"{ev.gameTime:.0f}",
