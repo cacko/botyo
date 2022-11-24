@@ -5,7 +5,10 @@ from .twitter import Twitter
 from pathlib import Path
 from dataclasses import dataclass
 
-# text=USA 1 - [1] Wales - Gareth Bale penalty 82'
+import re
+
+GOAL_MATCH = re.compile(r"([\w ]+)\s\d+\s-\s\d+\s([\w ]+)", re.MULTILINE)
+
 
 
 @dataclass
@@ -82,16 +85,18 @@ class Goals(object, metaclass=GoalsMeta):
                         dp.unlink(missing_ok=True)
                         continue
                     for q in query:
-                        if all([x.lower() in t_text.lower() for x in q.needles]):
-                            di = DownloadItem(
-                                text=t_text,
-                                url=t.url,
-                                id=t_id,
-                                path=dp,
-                                game_event_id=q.game_event_id,
-                                event_id=q.event_id,
-                            )
-                            di.rename(__class__.output_dir)
-                            yield di
+                        if m := GOAL_MATCH.search(t_text.replace("[", "").replace("]", "")):
+                            teams = m.groups()
+                            if any([qi in teams for qi in query]):
+                                di = DownloadItem(
+                                    text=t_text,
+                                    url=t.url,
+                                    id=t_id,
+                                    path=dp,
+                                    game_event_id=q.game_event_id,
+                                    event_id=q.event_id,
+                                )
+                                di.rename(__class__.output_dir)
+                                yield di
             except Exception:
                 pass
