@@ -455,7 +455,7 @@ class Subscription(metaclass=SubscriptionMeta):
         except ValueError:
             return False
 
-    def updates_(self, updated: ResponseGame):
+    def updates_(self, updated: Optional[ResponseGame]):
         if not updated:
             return None
         details = ParserDetails(None, response=updated)
@@ -529,7 +529,6 @@ class Subscription(metaclass=SubscriptionMeta):
         try:
             cache = Cache(url=str(self._event.details), jobId=self.id)
             updated = cache.update
-            assert updated
             if update := self.updates_(updated):
                 self.processGoals(update)
                 try:
