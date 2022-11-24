@@ -116,7 +116,7 @@ class ParserDetails(TimeCacheable):
                         position=position,
                         team=competitors[ev.competitorId].name,
                         player=unidecode(members[ev.playerId].displayName),
-                        extraPlayers=str(extraPlayers),
+                        extraPlayers=extraPlayers,
                         order=ev.order,
                     )
                 )

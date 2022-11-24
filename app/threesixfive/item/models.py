@@ -678,7 +678,7 @@ class DetailsEvent:
     order: Optional[int] = 0
     team: Optional[str] = None
     player: Optional[str] = None
-    extraPlayers: Optional[str] = None
+    extraPlayers: Optional[str|list[str]] = None
     position: Optional[Position] = None
     score: Optional[str] = None
 
