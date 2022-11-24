@@ -206,7 +206,10 @@ class Subscription(metaclass=SubscriptionMeta):
             RenderResult(
                 method=ZMethod.FOOTY_SUBSCRIBE,
                 message=message,
-                attachment=Attachment(filename=attachment.as_posix()),
+                attachment=Attachment(
+                    path=attachment.as_posix(),
+                    contentType="video/mp4",
+                ),
                 group=self._groupId,
             )
         )
