@@ -49,6 +49,7 @@ class GameStatus(Enum):
     CNL = "Canc."
     HT = "Half Time"
     _2ND = "2nd"
+    _1ST = "1st"
 
 
 class OrderWeight(Enum):
