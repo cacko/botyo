@@ -171,9 +171,12 @@ class Subscription(metaclass=SubscriptionMeta):
         )
 
     def cancel(self, notify=False):
-        Scheduler.cancel_jobs(self.id)
-        if notify and self._clientId.startswith("http"):
-            self.sendUpdate_(CancelJobEvent(job_id=self.id))
+        try:
+            Scheduler.cancel_jobs(self.id)
+            if notify and self._clientId.startswith("http"):
+                self.sendUpdate_(CancelJobEvent(job_id=self.id))
+        except Exception:
+            pass
 
     def sendUpdate(self, message):
         if self._clientId.startswith("http"):
