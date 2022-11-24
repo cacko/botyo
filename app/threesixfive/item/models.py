@@ -710,7 +710,7 @@ class DetailsEventPixel:
     order: Optional[int] = 0
     team: Optional[str] = None
     player: Optional[str] = None
-    extraPlayers: Optional[str] = None
+    extraPlayers: Optional[list[str]] = None
     score: Optional[str] = None
     team_id: Optional[int] = None
     event_name: Optional[str] = None

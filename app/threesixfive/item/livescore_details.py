@@ -141,10 +141,11 @@ class ParserDetails(TimeCacheable):
             if not self._struct.struct.game.events:
                 return []
             for ev in self._struct.struct.game.events:
-                extraPlayers = ev.extraPlayers
-                if extraPlayers:
+                players = ev.extraPlayers
+                extraPlayers = []
+                if players:
                     extraPlayers = [
-                        unidecode(members[pid].displayName) for pid in extraPlayers
+                        unidecode(members[pid].displayName) for pid in players
                     ]
                 assert self.event_id
                 assert ev.gameTime
@@ -161,7 +162,7 @@ class ParserDetails(TimeCacheable):
                         team=competitors[ev.competitorId].name,
                         team_id=ev.competitorId,
                         player=unidecode(members[ev.playerId].displayName),
-                        extraPlayers=str(extraPlayers),
+                        extraPlayers=extraPlayers,
                         score=self.score,
                         is_old_event=self.game_time - ev.gameTime > 5,
                         event_name=f"{self.home.name}/{self.away.name}",
