@@ -94,4 +94,4 @@ class Twitter(object, metaclass=TwitterMeta):
             except AssertionError as e:
                 logging.exception(e)
                 pass
-        self.__timeline_since_id[user.username] = max(ids)
+        self.__timeline_since_id[user.username] = str(max(ids))

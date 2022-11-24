@@ -97,8 +97,8 @@ class Goals(object, metaclass=GoalsMeta):
                         continue
                     for q in query:
                         if m := GOAL_MATCH.search(t_text.replace("[", "").replace("]", "")):
-                            teams = [*map(str.lower, m.groups())]
-                            logging.debug(teams)
+                            teams = [*map(lambda x: x.strip().lower(), m.groups())]
+                            logging.debug(f"GOALS: matched teams {teams}")
                             if any([qi.lower() in teams for qi in q.needles]):
                                 di = DownloadItem(
                                     text=t_text,
