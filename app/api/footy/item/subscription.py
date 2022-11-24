@@ -560,7 +560,9 @@ class Subscription(metaclass=SubscriptionMeta):
                 except UnknownClientException as e:
                     logging.error(e)
                     pass
-        except (ValueError, AssertionError) as e:
+        except ValueError:
+            pass
+        except AssertionError as e:
             logging.exception(e)
         except Exception as e:
             logging.exception(e)
