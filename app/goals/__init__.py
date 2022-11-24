@@ -38,6 +38,7 @@ class Query:
     event_name: str
     event_id: int
     game_event_id: int
+    title: str
 
     @property
     def needles(self) -> list[str]:

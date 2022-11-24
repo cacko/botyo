@@ -619,7 +619,6 @@ class GameEvent:
         except AssertionError:
             return False
 
-
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class GameDetails(Game):

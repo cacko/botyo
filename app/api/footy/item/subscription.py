@@ -42,6 +42,7 @@ from pathlib import Path
 
 GE = TypeVar("GE", DetailsEventPixel, GameEvent)
 
+
 def job_id_to_event_id(job_id: str) -> int:
     try:
         _, event_id, _ = job_id.split(":")
@@ -194,7 +195,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self._groupId
             )
         )
-        
+
     def sendGoal(self, message: str, attachment: Path):
         if not self.client:
             return
@@ -203,13 +204,13 @@ class Subscription(metaclass=SubscriptionMeta):
             raise UnknownClientException
         connection.respond(
             RenderResult(
-                method=ZMethod.FOOTY_SUBSCRIBE, 
-                message=message, 
+                method=ZMethod.FOOTY_SUBSCRIBE,
+                message=message,
                 attachment=Attachment(filename=attachment.as_posix()),
-                group=self._groupId
+                group=self._groupId,
             )
         )
-          
+
     def processGoals(self, events: list[GE]):
         try:
             assert isinstance(events, list)
@@ -220,7 +221,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     goal_query = GoalQuery(
                         event_name=self.event_name,
                         event_id=int(self._event.idEvent),
-                        game_event_id=x.order_id
+                        game_event_id=x.order_id,
+                        title=f"{self._event.strHomeTeam} - {self._event.strAwayTeam} {self._event.displayScore}",
                     )
                     Goals.monitor(goal_query)
                     self._goal_queue.append(goal_query)
@@ -234,7 +236,7 @@ class Subscription(metaclass=SubscriptionMeta):
         for gq in self._goal_queue:
             goal_video = Goals.video(gq)
             if goal_video:
-                self.sendGoal("Goal", goal_video)
+                self.sendGoal(gq.title, goal_video)
                 self._goal_queue.remove(gq)
 
     def trigger(self):
