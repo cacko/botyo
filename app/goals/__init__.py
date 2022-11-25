@@ -4,6 +4,7 @@ from typing import Optional, Any, Generator
 from .twitter import Twitter
 from pathlib import Path
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from fuzzelinho import MatchMethod, Match
 import logging
 import re
@@ -16,6 +17,7 @@ class TeamsMatch(Match):
     method = MatchMethod.WRATIO
 
 
+@dataclass_json
 @dataclass
 class TeamsNeedle:
     home: str
