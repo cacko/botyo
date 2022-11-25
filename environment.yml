@@ -262,6 +262,5 @@ dependencies:
     - you-get==0.4.1620
     - zope-interface==5.4.0
 variables:
-  PIP_EXTRA_INDEX_URL: https://pypi.cacko.net/simple/
   allow_conda_downgrades: 'true'
 prefix: /Users/jago/miniforge3/envs/global/envs/znayko
