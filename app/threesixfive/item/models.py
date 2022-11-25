@@ -140,13 +140,13 @@ class Event:
 
         delta = (datetime.now(timezone.utc) - self.startTime).total_seconds() / 60
         try:
-            displayStatus = GameStatus(self.strStatus)
-            if delta < 0 and self.displayStatus in [GameStatus.NS]:
+            self.displayStatus = GameStatus(self.strStatus).value
+            if delta < 0 and self.displayStatus in [GameStatus.NS.value]:
                 self.displayStatus = self.startTime.astimezone(
                     ZoneInfo("Europe/London")
                 ).strftime("%H:%M")
             else:
-                self.displayStatus = displayStatus.value
+                self.displayStatus = self.displayStatus.value
         except Exception:
             self.displayStatus = self.strStatus
         try:
