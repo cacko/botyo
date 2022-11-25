@@ -21,6 +21,7 @@ class Standings(StandingsData):
         )
 
     def render(self, group_query=None) -> str:
+        TextOutput.utf8mono = True
         data: Standing = self.standing(True)
         if data.groups and data.rows:
             data.rows = list(filter(lambda x: x.groupNum is not None, data.rows))

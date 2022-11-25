@@ -1,11 +1,13 @@
 from botyo_server.output import Align, Column, TextOutput
 from app.threesixfive.item.lineups import Lineups as LineupsData
 import logging
+from typing import Optional
 
 class Lineups(LineupsData):
 
     @property
-    def message(self) -> str:
+    def message(self) -> Optional[str]:
+        TextOutput.utf8mono = True
         lineups = self.lineups
         if not lineups:
             return None
@@ -29,8 +31,8 @@ class Lineups(LineupsData):
                 for h, a in zip(home.lineup, away.lineup)
             ]
             TextOutput.addColumns(
-                (Column(size=21, align=Align.LEFT),
-                 Column(size=21, align=Align.RIGHT)),
+                [Column(size=21, align=Align.LEFT),
+                 Column(size=21, align=Align.RIGHT)],
                 [(home.team.name.upper(), away.team.name.upper())],
             )
             TextOutput.addColumns(cols, rows)

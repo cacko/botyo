@@ -54,6 +54,7 @@ class ScoreRow:
                              home=home, away=away, win=win)
 
     def __str__(self) -> str:
+        TextOutput.utf8mono = True
         if self.format == ScoreFormat.STANDALONE:
             cols = (
                 Column(size=16, align=Align.LEFT),

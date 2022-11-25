@@ -6,6 +6,7 @@ class Stats(StatsData):
 
     @property
     def message(self) -> str:
+        TextOutput.utf8mono = True
         stats =  self.stats
         if not stats:
             return None

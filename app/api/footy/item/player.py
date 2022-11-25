@@ -8,6 +8,7 @@ class Player(PlayerData):
 
     @property
     def message(self) -> str:
+        TextOutput.utf8mono = True
         TextOutput.addRows([f"{self._struct.member.name.upper()[:40]:<40}"])
         lineupMember: LineupMember = self._struct.lineupMember
         if lineupMember.stats:

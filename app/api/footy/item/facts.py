@@ -9,5 +9,6 @@ class Facts(FactsData):
         facts = self.facts
         if not facts:
             return None
+        TextOutput.utf8mono = True
         TextOutput.addRows([f"* {x.text}\n" for x in facts])
         return TextOutput.render()

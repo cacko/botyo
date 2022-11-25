@@ -63,7 +63,7 @@ class Livescore(LivescoreData):
 
     def render(self, filt: str = "", group_by_league=True):
         items =  self.items
-
+        TextOutput.utf8mono = True
         if self.inprogress:
             items = list(filter(lambda x: x.inProgress, items))
         items.reverse()
