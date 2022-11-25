@@ -68,7 +68,6 @@ class Competitions:
         return list(filter(lambda x: x.id in self.leagues, all))
 
     def message(self, query: str = "") -> str:
-        TextOutput.utf8mono = True
         comps =  self.current
         comps = sorted(
             comps, key=lambda x: f"{x.country_name} {x.league_name}")

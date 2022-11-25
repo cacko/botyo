@@ -7,7 +7,6 @@ class Lineups(LineupsData):
 
     @property
     def message(self) -> Optional[str]:
-        TextOutput.utf8mono = True
         lineups = self.lineups
         if not lineups:
             return None

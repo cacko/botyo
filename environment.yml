@@ -104,7 +104,7 @@ dependencies:
     - black==22.8.0
     - blis==0.7.8
     - bottle==0.12.23
-    - botyo-server==0.7.96
+    - botyo-server==0.7.101
     - brotli==1.0.9
     - butilka==0.1.18
     - cachable==0.3.12
@@ -208,7 +208,7 @@ dependencies:
     - requests-file==1.5.1
     - requests-oauthlib==1.3.1
     - requests-toolbelt==0.9.1
-    - rich==12.5.1
+    - rich==12.6.0
     - rsa==4.9
     - scikit-learn==1.1.3
     - scipy==1.9.0
@@ -219,7 +219,7 @@ dependencies:
     - smart-open==5.2.1
     - snowballstemmer==2.2.0
     - soupsieve==2.3.2.post1
-    - spacy==3.4.1
+    - spacy==3.4.3
     - spacy-legacy==3.0.10
     - spacy-loggers==1.0.3
     - sphinx==5.1.1
@@ -244,7 +244,7 @@ dependencies:
     - toolz==0.12.0
     - tqdm==4.64.0
     - twisted==22.4.0
-    - typer==0.4.2
+    - typer==0.7.0
     - typing-inspect==0.8.0
     - tzdata==2022.2
     - tzlocal==4.2
@@ -262,5 +262,6 @@ dependencies:
     - you-get==0.4.1620
     - zope-interface==5.4.0
 variables:
+  PIP_EXTRA_INDEX_URL: https://pypi.cacko.net/simple/
   allow_conda_downgrades: 'true'
 prefix: /Users/jago/miniforge3/envs/global/envs/znayko

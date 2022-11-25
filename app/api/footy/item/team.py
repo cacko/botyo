@@ -23,7 +23,6 @@ class Team:
         team =  self.data
         if not team:
             return ""
-        TextOutput.utf8mono = True
         TextOutput.clean()
         columns = [
             Column(size=25, align=Align.RIGHT, title="vs"),
