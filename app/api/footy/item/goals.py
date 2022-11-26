@@ -5,7 +5,10 @@ import logging
 from pathlib import Path
 from cachable.storage import Storage
 import pickle
+from app.threesixfive.item.models import (
 
+    GoalEvent
+)
 
 class GoalsQueueMeta(type):
 
@@ -65,6 +68,9 @@ class GoalsMeta(type):
     
     def video(cls, query: GoalQuery) -> Optional[Path]:
         return GoalsGenerator.goal_video(query);
+    
+    def save_metadata(cls, data: GoalEvent) -> bool:
+        return GoalsGenerator.save_data(data)
 
 
 class Goals(object, metaclass=GoalsMeta):

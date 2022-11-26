@@ -18,6 +18,7 @@ from app.threesixfive.item.models import (
     GameStatus,
     ResponseGame,
     SubscriptionEvent,
+    GoalEvent
 )
 from app.api import ZMethod
 from .player import Player
@@ -230,6 +231,15 @@ class Subscription(metaclass=SubscriptionMeta):
                         game_event_id=x.order_id,
                         title=f"{self._event.strHomeTeam} - {self._event.strAwayTeam} {self._event.displayScore}",
                     )
+                    goal_event = GoalEvent(
+                        event_id=int(self._event.idEvent),
+                        event_name=self.event_name,
+                        order=x.order_id,
+                        player=x.playerName,
+                        score=self._event.displayScore if self._event.displayScore else "",
+                        time=x.displayTime
+                    )
+                    Goals.save_metadata(goal_event)
                     Goals.monitor(goal_query)
                     self.goals_queue[goal_query.id] = goal_query
         except AssertionError:

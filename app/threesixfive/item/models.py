@@ -605,7 +605,7 @@ class GameEvent:
     playerId: Optional[int] = 0
     isMajor: Optional[bool] = False
     extraPlayers: Optional[list[int]] = None
-    
+
     @property
     def order_id(self) -> int:
         return self.order if self.order else 0
@@ -618,6 +618,17 @@ class GameEvent:
             return self.eventType.name == EVENT_NAME.GOAL.value
         except AssertionError:
             return False
+
+    @property
+    def displayTime(self) -> str:
+        if not self.gameTimeDisplay:
+            return ""
+        return self.gameTimeDisplay
+        
+    @property
+    def playerName(self) -> str:
+        return ""
+
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
@@ -700,6 +711,18 @@ class DetailsEvent:
             return ""
 
 
+@dataclass_json
+@dataclass
+class GoalEvent:
+    event_id: int
+    game_event_id: int
+    time: str
+    order: int
+    player: str
+    event_name: str
+    score: str
+
+
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class DetailsEventPixel:
@@ -731,6 +754,16 @@ class DetailsEventPixel:
             return self.action.lower() == "goal"
         except AssertionError:
             return False
+        
+    @property
+    def playerName(self) -> str:
+        return self.player if self.player else ""
+
+    @property
+    def displayTime(self) -> str:
+        if not self.time:
+            return ""
+        return f"{self.time:.0f}'"
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

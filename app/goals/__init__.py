@@ -8,9 +8,13 @@ from dataclasses_json import dataclass_json
 from fuzzelinho import MatchMethod, Match
 import logging
 import re
+from app.threesixfive.item.models import (
+    GoalEvent
+)
+import json
 
 GOAL_MATCH = re.compile(r"([\w ]+)\s\d+\s-\s\d+\s([\w ]+)", re.MULTILINE)
-
+VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 
 class TeamsMatch(Match):
     minRatio = 80
@@ -56,6 +60,18 @@ class DownloadItem:
     @classmethod
     def get_filename(cls, event_id: int, game_event_id: int) -> str:
         return f"video-{event_id}-{game_event_id}.mp4"
+    
+    @classmethod
+    def get_metafile(cls, event_id: int, game_event_id: int) -> str:
+        return f"video-{event_id}-{game_event_id}.json"
+ 
+    
+    @classmethod
+    def from_path(cls, video_path: Path) -> Optional['DownloadItem']:
+        match = VIDEO_MATCH.match(video_path.name)
+        if not match:
+            return None
+        event_id, game_event_id = map(int, match.groups())
 
 
 @dataclass_json
@@ -105,6 +121,9 @@ class GoalsMeta(type):
 
     def goals(cls, query: list[Query]) -> list[DownloadItem]:
         return list(cls().do_search(query))
+    
+    def videos(cls) -> list[DownloadItem]:
+        return cls().get_downloads()
 
     @property
     def output_dir(cls) -> Path:
@@ -120,7 +139,14 @@ class GoalsMeta(type):
             return fp
         logging.error(f"GOAL NOT found at {fp}")
         return None
-
+    
+    def save_data(cls, data: GoalEvent) -> bool:
+        fp = cls.output_dir / DownloadItem.get_metafile(data.event_id, data.game_event_id)
+        if fp.exists():
+            return True
+        with fp.open("wb") as jp:
+            json.dump(data.to_dict(), jp)  # type: ignore
+        return True
 
 class Goals(object, metaclass=GoalsMeta):
     def __needles(self, **kwds) -> Generator[TwitterNeedle, None, None]:
@@ -167,3 +193,7 @@ class Goals(object, metaclass=GoalsMeta):
                     
                     di.rename(__class__.output_dir)
                     yield di
+                    
+    def get_downloads(self) -> list[DownloadItem]:
+        for dp in __class__.output_dir.glob(f"*.mp4"):
+            pass
