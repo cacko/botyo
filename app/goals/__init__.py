@@ -10,6 +10,7 @@ import logging
 import re
 from app.threesixfive.item.models import GoalEvent
 import json
+from requests.exceptions import HTTPError
 
 GOAL_MATCH = re.compile(r"([\w ]+)\s\d+\s-\s\d+\s([\w ]+)", re.MULTILINE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
@@ -170,7 +171,12 @@ class Goals(object, metaclass=GoalsMeta):
         self, query: list[Query], **kwds
     ) -> Generator[DownloadItem, None, None]:
         for needle in self.__needles(**kwds):
-            twitter_download(url=needle.url, output_dir=__class__.output_dir.as_posix())
+            try:
+                twitter_download(url=needle.url, output_dir=__class__.output_dir.as_posix())
+            except HTTPError as e:
+                logging.error(e)
+            except Exception as e:
+                logging.exception(e)
             for dp in __class__.output_dir.glob(f"*{needle.id}*"):
                 if dp.suffix.lower() != ".mp4":
                     dp.unlink(missing_ok=True)
