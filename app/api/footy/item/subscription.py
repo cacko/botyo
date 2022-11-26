@@ -237,8 +237,8 @@ class Subscription(metaclass=SubscriptionMeta):
             return
         Goals.poll()
         for gq in self._goal_queue:
-            goal_video = Goals.video(gq)
-            if goal_video:
+            logging.debug(f"CHECK GOALS: {gq}")
+            if goal_video := Goals.video(gq):
                 self.sendGoal(gq.title, goal_video)
                 self._goal_queue.remove(gq)
 
@@ -270,7 +270,6 @@ class Subscription(metaclass=SubscriptionMeta):
             if not content:
                 return self.cancel(True)
             Player.store(content.game)
-            logging.debug(content.game.shortStatusText)
             if any(
                 [
                     GameStatus(content.game.shortStatusText)

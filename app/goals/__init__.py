@@ -108,6 +108,7 @@ class GoalsMeta(type):
 
     def goal_video(cls, q: Query) -> Optional[Path]:
         fp = cls.output_dir / DownloadItem.get_filename(q.event_id, q.game_event_id)
+        logging.info(f"GOAL found at {fp}")
         if fp.exists():
             return fp
         return None
