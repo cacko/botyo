@@ -142,7 +142,7 @@ class Goals(object, metaclass=GoalsMeta):
                     dp.unlink(missing_ok=True)
                     continue
                 matcher = TeamsMatch(query)
-                matched = matcher.fuzzy(needle)
+                matched = matcher.fuzzy(needle.needle)
                 if not len(matched):
                     dp.unlink(missing_ok=True)
                     continue
