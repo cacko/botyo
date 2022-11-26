@@ -168,7 +168,6 @@ class ParserDetails(TimeCacheable):
                         event_name=f"{self.home.name}/{self.away.name}",
                         order=ev.order,
                         status=self.game_status,
-                        shortStatus=self.game_short_status
                     )
                 )
             return sorted(res, reverse=True, key=lambda x: x.order_id)
@@ -184,15 +183,9 @@ class ParserDetails(TimeCacheable):
     @property
     def game_status(self) -> str:
         if self._struct:
-            return self._struct.struct.game.statusText
-        return ""
-    
-    @property
-    def game_short_status(self) -> str:
-        if self._struct:
             return self._struct.struct.game.shortStatusText
         return ""
-
+    
     @property
     def score(self) -> str:
         try:

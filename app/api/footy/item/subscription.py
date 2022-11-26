@@ -544,7 +544,6 @@ class Subscription(metaclass=SubscriptionMeta):
                     event_id=details.event_id,
                     order=sys.maxsize,
                     status=details.game_status,
-                    shortStatus=details.game_short_status,
                 )
             ]
         except AssertionError as e:
@@ -569,7 +568,6 @@ class Subscription(metaclass=SubscriptionMeta):
                     event_id=details.event_id,
                     order=sys.maxsize,
                     status=details.game_status,
-                    shortStatus=details.game_short_status,
                 )
             ]
         except AssertionError as e:
@@ -593,7 +591,6 @@ class Subscription(metaclass=SubscriptionMeta):
                     event_id=details.event_id,
                     order=sys.maxsize,
                     status=details.game_status,
-                    shortStatus=details.game_short_status,
                 )
             ]
         except AssertionError as e:

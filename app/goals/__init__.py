@@ -144,9 +144,7 @@ class GoalsMeta(type):
         )
         if fp.exists():
             return True
-        with fp.open("wb") as jp:
-            json.dump(data.to_dict(), jp)  # type: ignore
-        return True
+        return fp.write_text(GoalEvent.to_json()) > 0  # type: ignore
 
 
 class Goals(object, metaclass=GoalsMeta):
