@@ -173,10 +173,8 @@ class Goals(object, metaclass=GoalsMeta):
         for needle in self.__needles(**kwds):
             try:
                 twitter_download(url=needle.url, output_dir=__class__.output_dir.as_posix())
-            except HTTPError as e:
-                logging.error(e)
             except Exception as e:
-                logging.exception(e)
+                logging.error(f"TWITTER DOWNLOAD: {e}")
             for dp in __class__.output_dir.glob(f"*{needle.id}*"):
                 if dp.suffix.lower() != ".mp4":
                     dp.unlink(missing_ok=True)
