@@ -48,7 +48,10 @@ class DownloadItem:
 
     def rename(self, storege_dir: Path):
         dp = storege_dir / self.filename
-        self.path = self.path.rename(dp)
+        if not dp.exists():
+            self.path = self.path.rename(dp)
+        else:
+            self.path = dp
 
     @classmethod
     def get_filename(cls, event_id: int, game_event_id: int) -> str:
@@ -80,6 +83,10 @@ class Query:
     @property
     def away(self) -> str:
         return self.needles[1]
+
+    @property
+    def goal_video(self) -> str:
+        return DownloadItem.get_filename(self.event_id, self.game_event_id)
 
 
 class Goal:
@@ -155,7 +162,8 @@ class Goals(object, metaclass=GoalsMeta):
                         id=needle.id,
                         path=dp,
                         game_event_id=q.game_event_id,
-                        event_id=q.event_id
+                        event_id=q.event_id,
                     )
+                    
                     di.rename(__class__.output_dir)
                     yield di

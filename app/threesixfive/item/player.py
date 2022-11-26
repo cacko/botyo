@@ -42,16 +42,18 @@ class PlayerNeedle:
 class PlayerImage(CachableFile):
     SIZE = (300, 300)
 
-    member: GameMember = None
-    team: str = None
-    URL_TEMPLATE = "https://imagecache.365scores.com/image/upload/" \
-        "f_png,w_200," \
-        "h_200,c_limit,q_auto:eco,dpr_2,d_Athletes:{member.athleteId}.png," \
-        "r_max,c_thumb,g_face,z_0.65/v{member.imageVersion}/Athletes" \
+    member: GameMember
+    team: Optional[str] = None
+    URL_TEMPLATE = (
+        "https://imagecache.365scores.com/image/upload/"
+        "f_png,w_200,"
+        "h_200,c_limit,q_auto:eco,dpr_2,d_Athletes:{member.athleteId}.png,"
+        "r_max,c_thumb,g_face,z_0.65/v{member.imageVersion}/Athletes"
         "/{team}/{member.athleteId}"
-    __id: str = None
+    )
+    __id: Optional[str] = None
 
-    def __init__(self, member, team: str = None):
+    def __init__(self, member, team: Optional[str] = None):
         self.member = member
         self.team = team
 
@@ -104,29 +106,35 @@ class PlayerStruct:
 
 class Player(Cachable):
 
-    _struct: PlayerStruct = None
+    _struct: Optional[PlayerStruct] = None
 
     def __init__(
         self, game: PlayerGame, member: GameMember, lineupMember: LineupMember
     ):
-        self._struct = PlayerStruct(
-            game=game, member=member, lineupMember=lineupMember)
+        self._struct = PlayerStruct(game=game, member=member, lineupMember=lineupMember)
 
     @classmethod
-    def store(cls, game: GameDetails):
+    def store(cls, game_details: GameDetails):
         try:
-            members = game.members
+            members = game_details.members
+            assert members
+            assert game_details.homeCompetitor
+            assert game_details.awayCompetitor
             competitors = {
-                game.homeCompetitor.id: game.homeCompetitor,
-                game.awayCompetitor.id: game.awayCompetitor,
+                game_details.homeCompetitor.id: game_details.homeCompetitor,
+                game_details.awayCompetitor.id: game_details.awayCompetitor,
             }
+            assert game_details.homeCompetitor.lineups
+            assert game_details.homeCompetitor.lineups.members
+            assert game_details.awayCompetitor.lineups
+            assert game_details.awayCompetitor.lineups.members
             for lineupMember in [
-                *game.homeCompetitor.lineups.members,
-                *game.awayCompetitor.lineups.members,
+                *game_details.homeCompetitor.lineups.members,
+                *game_details.awayCompetitor.lineups.members,
             ]:
-                member: GameMember = next(
-                    filter(lambda x: x.id == lineupMember.id, members), None)
-                game: PlayerGame = PlayerGame.from_dict(game.to_dict())
+                member = next(filter(lambda x: x.id == lineupMember.id, members), None)
+                assert member
+                game: PlayerGame = PlayerGame.from_dict(game_details.to_dict())  # type: ignore
                 team: GameCompetitor = competitors[member.competitorId]
                 game.teamId = team.id
                 game.teamName = team.name
@@ -137,10 +145,8 @@ class Player(Cachable):
 
     @classmethod
     def find(cls, query):
-        haystack = [PlayerNeedle(name=k.decode())
-                    for k in Storage.hkeys(cls.hash_key)]
-        matches = PlayerMatch(haystack=haystack).fuzzy(
-            PlayerNeedle(name=query))
+        haystack = [PlayerNeedle(name=k.decode()) for k in Storage.hkeys(cls.hash_key)]
+        matches = PlayerMatch(haystack=haystack).fuzzy(PlayerNeedle(name=query))
         if not matches:
             raise PlayerNotFound
         data = Storage.hget(cls.hash_key, matches[0].name.encode())
@@ -148,14 +154,12 @@ class Player(Cachable):
             raise PlayerNotFound
         struct = PlayerStruct.from_dict(pickle.loads(data))  # type: ignore
         return cls(
-            game=struct.game,
-            member=struct.member,
-            lineupMember=struct.lineupMember
+            game=struct.game, member=struct.member, lineupMember=struct.lineupMember
         )
 
     def fromcache(self):
         if data := Storage.hget(__class__.hash_key, self.id):
-            return PlayerStruct.from_dict(pickle.loads(data))
+            return PlayerStruct.from_dict(pickle.loads(data))  # type: ignore
         return None
 
     def tocache(self, res):
@@ -178,20 +182,24 @@ class Player(Cachable):
 
     @property
     def id(self):
+        assert self._struct
+        assert self._struct.member
+        assert self._struct.member.name
         return unidecode(self._struct.member.name)
 
     @property
     def image(self) -> PlayerImage:
+        assert self._struct
         isNational = self.isNationalTeam
         team = "NationalTeam" if isNational else None
         return PlayerImage(self._struct.member, team=team)
 
     @property
     def isNationalTeam(self) -> bool:
+        assert self._struct
         game: PlayerGame = self._struct.game
         leagues = Data365.leagues
-        competition = next(
-            filter(lambda x: x.id == game.competitionId, leagues), None)
+        competition = next(filter(lambda x: x.id == game.competitionId, leagues), None)
         country_name = competition.country_name if competition else ""
         logging.debug(f">> Country {country_name}")
         if not country_name:
@@ -206,8 +214,10 @@ class Player(Cachable):
 
     @property
     def member(self) -> GameMember:
+        assert self._struct
         return self._struct.member
 
     @property
     def lineupMember(self) -> LineupMember:
+        assert self._struct
         return self._struct.lineupMember
