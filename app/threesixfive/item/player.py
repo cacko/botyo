@@ -40,6 +40,7 @@ class PlayerNeedle:
 
 
 class PlayerImage(CachableFile):
+    SIZE = (300, 300)
 
     member: GameMember = None
     team: str = None
