@@ -729,6 +729,8 @@ class DetailsEventPixel:
     time: int
     action: str
     is_old_event: bool
+    status: Optional[str] = None
+    shortStatus: Optional[str] = None
     order: Optional[int] = 0
     team: Optional[str] = None
     player: Optional[str] = None

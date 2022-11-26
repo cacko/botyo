@@ -18,7 +18,7 @@ from app.threesixfive.item.models import (
     GameStatus,
     ResponseGame,
     SubscriptionEvent,
-    GoalEvent
+    GoalEvent,
 )
 from app.api import ZMethod
 from .player import Player
@@ -236,8 +236,10 @@ class Subscription(metaclass=SubscriptionMeta):
                         event_name=self.event_name,
                         game_event_id=x.order_id,
                         player=x.playerName,
-                        score=self._event.displayScore if self._event.displayScore else "",
-                        time=x.displayTime
+                        score=self._event.displayScore
+                        if self._event.displayScore
+                        else "",
+                        time=x.displayTime,
                     )
                     Goals.save_metadata(goal_event)
                     Goals.monitor(goal_query)
@@ -541,6 +543,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     event_name=f"{details.home.name}/{details.away.name}",
                     event_id=details.event_id,
                     order=sys.maxsize,
+                    status=details.game_status,
+                    shortStatus=details.game_short_status,
                 )
             ]
         except AssertionError as e:
@@ -564,6 +568,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     event_name=f"{details.home.name}/{details.away.name}",
                     event_id=details.event_id,
                     order=sys.maxsize,
+                    status=details.game_status,
+                    shortStatus=details.game_short_status,
                 )
             ]
         except AssertionError as e:
@@ -586,6 +592,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     event_name=f"{details.home.name}/{details.away.name}",
                     event_id=details.event_id,
                     order=sys.maxsize,
+                    status=details.game_status,
+                    shortStatus=details.game_short_status,
                 )
             ]
         except AssertionError as e:

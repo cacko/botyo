@@ -38,7 +38,7 @@ class TeamSearch(Cachable):
     def __fetch(self):
         req = Request(Url.search(self.__query))
         json = req.json
-        results: list[Competitor] = SearchResponse.from_dict(json).results
+        results: list[Competitor] = SearchResponse.from_dict(json).results  # type: ignore
         self.__struct = results[0] if len(results) else None
         return self.tocache(self.__struct)
 
@@ -57,14 +57,14 @@ class TeamSearch(Cachable):
         return h.hexdigest()
 
     @property
-    def competitor(self) -> Competitor:
+    def competitor(self) -> Optional[Competitor]:
         if not self.load():
             self.__fetch()
         return self.__struct
 
 
 class Team(TimeCacheable):
-    _struct: TeamCache = None
+    _struct: Optional[TeamCache] = None
     __competitor_id: int = 0
     cachetime: timedelta = timedelta(seconds=20)
 
@@ -85,7 +85,7 @@ class Team(TimeCacheable):
     def __fetch(self):
         req = Request(Url.team_games(self.__competitor_id))
         json = req.json
-        team: TeamStruct = TeamStruct.from_dict(json)
+        team: TeamStruct = TeamStruct.from_dict(json)  # type: ignore
         return self.tocache(team)
 
     @property
