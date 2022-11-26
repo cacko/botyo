@@ -172,7 +172,7 @@ class Subscription(metaclass=SubscriptionMeta):
         return " vs ".join(
             [self._event.strHomeTeam.upper(), self._event.strAwayTeam.upper()]
         )
-    
+
     @property
     def goals_queue(self) -> GoalsQueue:
         return GoalsQueue(f"subscription.{self.id}.goals.queue")
@@ -239,7 +239,8 @@ class Subscription(metaclass=SubscriptionMeta):
         if not len(self.goals_queue):
             return
         Goals.poll()
-        for qid, gq in self.goals_queue.items():
+        for qid in list(self.goals_queue.keys()):
+            gq = self.goals_queue[qid]
             logging.debug(f"CHECK GOALS: {gq}")
             if goal_video := Goals.video(gq):
                 self.sendGoal(gq.title, goal_video)
