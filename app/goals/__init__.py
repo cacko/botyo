@@ -108,9 +108,10 @@ class GoalsMeta(type):
 
     def goal_video(cls, q: Query) -> Optional[Path]:
         fp = cls.output_dir / DownloadItem.get_filename(q.event_id, q.game_event_id)
-        logging.info(f"GOAL found at {fp}")
         if fp.exists():
+            logging.info(f"GOAL found at {fp}")
             return fp
+        logging.error(f"GOAL NOT found at {fp}")
         return None
 
 
@@ -154,8 +155,7 @@ class Goals(object, metaclass=GoalsMeta):
                         id=needle.id,
                         path=dp,
                         game_event_id=q.game_event_id,
-                        event_id=q.event_id,
-                        subscription_id=q.subscription_id,
+                        event_id=q.event_id
                     )
                     di.rename(__class__.output_dir)
                     yield di
