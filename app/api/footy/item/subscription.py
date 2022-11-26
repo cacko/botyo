@@ -36,7 +36,7 @@ from pixelme import Pixelate
 import time
 import logging
 from typing import Optional, TypeVar
-from .goals import Goals
+from .goals import Goals, GoalsQueue
 from app.goals import Query as GoalQuery
 from pathlib import Path
 
@@ -147,7 +147,6 @@ class Subscription(metaclass=SubscriptionMeta):
     _groupId = None
     _clientId: str
     _announceLineups = False
-    _goal_queue: list[GoalQuery] = []
 
     def __init__(self, event: Event, client: str, group) -> None:
         self._clientId = client
@@ -173,6 +172,10 @@ class Subscription(metaclass=SubscriptionMeta):
         return " vs ".join(
             [self._event.strHomeTeam.upper(), self._event.strAwayTeam.upper()]
         )
+    
+    @property
+    def goals_queue(self) -> GoalsQueue:
+        return GoalsQueue(f"subscription.{self.id}.goals.queue")
 
     def cancel(self, notify=False):
         try:
@@ -228,19 +231,19 @@ class Subscription(metaclass=SubscriptionMeta):
                         title=f"{self._event.strHomeTeam} - {self._event.strAwayTeam} {self._event.displayScore}",
                     )
                     Goals.monitor(goal_query)
-                    self._goal_queue.append(goal_query)
+                    self.goals_queue[goal_query.id] = goal_query
         except AssertionError:
             pass
 
     def checkGoals(self):
-        if not len(self._goal_queue):
+        if not len(self.goals_queue):
             return
         Goals.poll()
-        for gq in self._goal_queue:
+        for qid, gq in self.goals_queue.items():
             logging.debug(f"CHECK GOALS: {gq}")
             if goal_video := Goals.video(gq):
                 self.sendGoal(gq.title, goal_video)
-                self._goal_queue.remove(gq)
+                del self.goals_queue[qid]
 
     def trigger(self):
         try:

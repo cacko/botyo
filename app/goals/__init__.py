@@ -143,7 +143,7 @@ class Goals(object, metaclass=GoalsMeta):
                     dp.unlink(missing_ok=True)
                     continue
                 matcher = TeamsMatch(query)
-                matched = matcher.fuzzy(needle.needle)
+                matched: list[Query] = matcher.fuzzy(needle.needle)
                 if not len(matched):
                     dp.unlink(missing_ok=True)
                     continue
@@ -155,6 +155,7 @@ class Goals(object, metaclass=GoalsMeta):
                         path=dp,
                         game_event_id=q.game_event_id,
                         event_id=q.event_id,
+                        subscription_id=q.subscription_id,
                     )
                     di.rename(__class__.output_dir)
                     yield di
