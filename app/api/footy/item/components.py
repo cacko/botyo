@@ -32,7 +32,7 @@ class LeagueRow:
 
 class ScoreRow:
 
-    row: ScoreData = None
+    row: ScoreData
     format: ScoreFormat = ScoreFormat.LIST
     league: str = ""
 
@@ -82,7 +82,7 @@ class ScoreRow:
             )
         else:
             raise NotImplementedError
-        TextOutput.addColumns(cols, [row])
+        TextOutput.addColumns(list(cols), [list(row)])
         if self.row.win:
             TextOutput.addColumns(
                 [Column(size=sum([x.size for x in cols]),

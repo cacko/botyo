@@ -21,20 +21,22 @@ class Lineups(LineupsData):
                 Column(size=2, align=Align.LEFT),
             )
             rows = [
-                (
+                [
                     members[h.id].jerseyNumber,
                     members[h.id].name,
                     members[a.id].name,
                     members[a.id].jerseyNumber,
-                )
+                ]
                 for h, a in zip(home.lineup, away.lineup)
             ]
+            assert home.team.name
+            assert away.team.name
             TextOutput.addColumns(
                 [Column(size=21, align=Align.LEFT),
                  Column(size=21, align=Align.RIGHT)],
-                [(home.team.name.upper(), away.team.name.upper())],
+                [[home.team.name.upper(), away.team.name.upper()]],
             )
-            TextOutput.addColumns(cols, rows)
+            TextOutput.addColumns(list(cols), rows)
             return TextOutput.render()
         except Exception as e:
             logging.exception(e, exc_info=True)

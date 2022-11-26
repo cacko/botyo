@@ -717,7 +717,6 @@ class GoalEvent:
     event_id: int
     game_event_id: int
     time: str
-    order: int
     player: str
     event_name: str
     score: str

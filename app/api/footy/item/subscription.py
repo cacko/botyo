@@ -234,7 +234,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     goal_event = GoalEvent(
                         event_id=int(self._event.idEvent),
                         event_name=self.event_name,
-                        order=x.order_id,
+                        game_event_id=x.order_id,
                         player=x.playerName,
                         score=self._event.displayScore if self._event.displayScore else "",
                         time=x.displayTime
@@ -310,28 +310,31 @@ class Subscription(metaclass=SubscriptionMeta):
             return self.cancel(True)
 
     def updates(self, updated: Optional[ResponseGame] = None) -> Optional[list[str]]:
-        if self._clientId.startswith("http"):
-            return self.updates_(updated)
-        if not updated:
+        try:
+            if self._clientId.startswith("http"):
+                return self.updates_(updated)  # type: ignore
+            if not updated:
+                return None
+            details = ParserDetails(None, response=updated)
+            rows = details.rendered
+            if not rows:
+                return None
+            assert details.home
+            assert details.away
+            res = ScoreRow(
+                status=f"{details.game_time:.0f}",
+                home=details.home.name,
+                away=details.away.name,
+                score=details.score,
+                format=ScoreFormat.STANDALONE,
+                league=self._event.strLeague,
+            )
+            return [*rows, str(res)]
+        except AssertionError:
             return None
-
-        details = ParserDetails(None, response=updated)
-
-        rows = details.rendered
-        if not rows:
-            return None
-        res = ScoreRow(
-            status=f"{details.game_time:.0f}",
-            home=details.home.name,
-            away=details.away.name,
-            score=details.score,
-            format=ScoreFormat.STANDALONE,
-            league=self._event.strLeague,
-        )
-        return [*rows, res]
 
     @property
-    def client(self) -> Connection:
+    def client(self) -> Optional[Connection]:
         try:
             return Connection.client(self._clientId)
         except UnknownClientException:
@@ -368,7 +371,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 order=0,
                 is_old_event=False,
                 event_name=self.event_name,
-                event_id=self._event.id,
+                event_id=self._event.idEvent,
             )
         ]
 
@@ -493,7 +496,7 @@ class Subscription(metaclass=SubscriptionMeta):
             _status = EventStatus(status)
             if _status in (EventStatus.FT, EventStatus.AET, EventStatus.PPD):
                 return True
-            return _status == EventStatus.HT or re.match(r"^\d+", status)
+            return _status == EventStatus.HT or re.match(r"^\d+", status) is not None
         except ValueError:
             return False
 
@@ -523,49 +526,70 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def fulltimeAnnoucement_(self):
-        details = ParserDetails.get(str(self._event.details))
-        return [
-            DetailsEventPixel(
-                time=details.game_time,
-                action="Full Time",
-                is_old_event=False,
-                score=details.score,
-                event_name=f"{details.home.name}/{details.away.name}",
-                event_id=details.event_id,
-                order=sys.maxsize,
-            )
-        ]
+        try:
+            details = ParserDetails.get(str(self._event.details))
+            assert details.game_time
+            assert details.home
+            assert details.away
+            assert details.event_id
+            return [
+                DetailsEventPixel(
+                    time=details.game_time,
+                    action="Full Time",
+                    is_old_event=False,
+                    score=details.score,
+                    event_name=f"{details.home.name}/{details.away.name}",
+                    event_id=details.event_id,
+                    order=sys.maxsize,
+                )
+            ]
+        except AssertionError as e:
+            logging.exception(e)
 
     @property
     def halftimeAnnoucement_(self):
-        logging.info(f"FOOT SUB: Halt Time {self.event_name}")
-        details = ParserDetails.get(str(self._event.details))
-        return [
-            DetailsEventPixel(
-                time=details.game_time,
-                action="Half Time",
-                is_old_event=False,
-                score=details.score,
-                event_name=f"{details.home.name}/{details.away.name}",
-                event_id=details.event_id,
-                order=sys.maxsize,
-            )
-        ]
+        try:
+            logging.info(f"FOOT SUB: Halt Time {self.event_name}")
+            details = ParserDetails.get(str(self._event.details))
+            assert details.game_time
+            assert details.home
+            assert details.away
+            assert details.event_id
+            return [
+                DetailsEventPixel(
+                    time=details.game_time,
+                    action="Half Time",
+                    is_old_event=False,
+                    score=details.score,
+                    event_name=f"{details.home.name}/{details.away.name}",
+                    event_id=details.event_id,
+                    order=sys.maxsize,
+                )
+            ]
+        except AssertionError as e:
+            logging.exception(e)
 
     @property
     def progressUpdate_(self):
-        details = ParserDetails.get(str(self._event.details))
-        return [
-            DetailsEventPixel(
-                time=details.game_time,
-                action="Progress",
-                is_old_event=False,
-                score=details.score,
-                event_name=f"{details.home.name}/{details.away.name}",
-                event_id=details.event_id,
-                order=sys.maxsize,
-            )
-        ]
+        try:
+            details = ParserDetails.get(str(self._event.details))
+            assert details.game_time
+            assert details.home
+            assert details.away
+            assert details.event_id
+            return [
+                DetailsEventPixel(
+                    time=details.game_time,
+                    action="Progress",
+                    is_old_event=False,
+                    score=details.score,
+                    event_name=f"{details.home.name}/{details.away.name}",
+                    event_id=details.event_id,
+                    order=sys.maxsize,
+                )
+            ]
+        except AssertionError as e:
+            logging.exception(e)
 
     def trigger_(self):
         try:

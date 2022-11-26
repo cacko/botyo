@@ -116,7 +116,10 @@ class Footy(object, metaclass=FootyMeta):
         items =  self.getLivescore().items
         try:
             idEvent = int(query)
-            return next(filter(lambda x: x.idEvent == idEvent, items), None)
+            res = next(filter(lambda x: x.idEvent == idEvent, items), None)
+            if not res:
+                raise GameNotFound
+            return res
         except ValueError:
             pass
         matcher = GameMatch(haystack=items)
@@ -143,7 +146,10 @@ class Footy(object, metaclass=FootyMeta):
         items =  self.getCompetitions().current
         try:
             idCompetition = int(query)
-            return next(filter(lambda x: x.id == idCompetition, items), None)
+            res = next(filter(lambda x: x.id == idCompetition, items), None)
+            if not res:
+                raise CompetitionNotFound
+            return res
         except ValueError:
             pass
         matcher = CompetitionMatch(haystack=items)
@@ -169,7 +175,7 @@ class Footy(object, metaclass=FootyMeta):
 
     def getGoals(self, query: str) -> list[Goal]:
         game = self.__queryGame(query)
-        
+        return []
 
     def getCompetition(self, query: str) -> CompetitionData:
         item =  self.__queryCompetition(query)

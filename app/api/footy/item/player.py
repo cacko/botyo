@@ -8,15 +8,20 @@ class Player(PlayerData):
 
     @property
     def message(self) -> str:
-        TextOutput.addRows([f"{self._struct.member.name.upper()[:40]:<40}"])
-        lineupMember: LineupMember = self._struct.lineupMember
-        if lineupMember.stats:
-            columns = [
-                Column(size=20, align=Align.LEFT),
-                Column(size=10, align=Align.RIGHT),
-            ]
-            stats = ((s.name, s.value) for s in lineupMember.stats)
-            TextOutput.addColumns(cols=columns, content=stats)
-        else:
-            TextOutput.addRows(["No stats yet"])
-        return TextOutput.render()
+        try:
+            assert self._struct
+            assert self._struct.member.name
+            TextOutput.addRows([f"{self._struct.member.name.upper()[:40]:<40}"])
+            lineupMember: LineupMember = self._struct.lineupMember
+            if lineupMember.stats:
+                columns = [
+                    Column(size=20, align=Align.LEFT),
+                    Column(size=10, align=Align.RIGHT),
+                ]
+                stats = [[s.name, s.value] for s in lineupMember.stats]
+                TextOutput.addColumns(cols=columns, content=stats)
+            else:
+                TextOutput.addRows(["No stats yet"])
+            return TextOutput.render()
+        except AssertionError:
+            return ""

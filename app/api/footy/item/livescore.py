@@ -53,13 +53,18 @@ class Livescore(LivescoreData):
             self.items
         )
         for ev in items:
-            cache = Cache(ev.details)
-            content =  cache.content
-            if not content:
-                continue
-            game = content.game
-            if game is not None:
-                Player.store(game)
+            try:
+                assert ev
+                assert ev.details
+                cache = Cache(ev.details)
+                content =  cache.content
+                if not content:
+                    continue
+                game = content.game
+                if game is not None:
+                    Player.store(game)
+            except AssertionError:
+                pass
 
     def render(self, filt: str = "", group_by_league=True):
         items =  self.items
@@ -80,7 +85,7 @@ class Livescore(LivescoreData):
                 home=x.strHomeTeam,
                 score=x.displayScore,
                 away=x.strAwayTeam,
-                win=x.strWinDescription if x.displayStatus == "AET" else "",
+                win=str(x.strWinDescription) if x.displayStatus == "AET" else "",
                 league=x.strLeague
             )
             for x in sorted(items, key=lambda itm: itm.sort)
@@ -103,6 +108,7 @@ class Livescore(LivescoreData):
                 None,
             )
             try:
+                assert itm
                 details =  ParserDetails.get(itm.details)
                 if details:
                     TextOutput.addRows([
@@ -110,7 +116,7 @@ class Livescore(LivescoreData):
                         *map(str, details.rendered)
                     ])
                     return TextOutput.render()
-            except GameNotFound:
+            except (GameNotFound, AssertionError):
                 return None
         if group_by_league:
             filtered = list(chain.from_iterable([

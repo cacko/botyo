@@ -33,8 +33,8 @@ class CompetitionItem(TimeCacheable):
         for d, gms in groupby(games, lambda x: x.startTime.date()):
 
             rows = [
-                (g.displayStatus,
-                 g.displayTitle)
+                [g.displayStatus,
+                 g.displayTitle]
                 for g in gms
             ]
             rows.append(["", '-' * 36])
