@@ -3,53 +3,8 @@ from app.goals import Goals as GoalsGenerator, Query as GoalQuery
 from datetime import datetime, timedelta
 import logging
 from pathlib import Path
-from cachable.storage import Storage
-import pickle
-from app.threesixfive.item.models import (
-
-    GoalEvent
-)
-
-class GoalsQueueMeta(type):
-
-    __instances = {}
-
-    def __call__(cls, storage_key, *args, **kwds):
-        if storage_key not in cls.__instances:
-            cls.__instances[storage_key] = type.__call__(
-                cls, storage_key, *args, **kwds
-            )
-        return cls.__instances[storage_key]
-
-    def _load(cls, storage_key) -> dict[str, GoalQuery]:
-        data = Storage.hgetall(storage_key)
-        if not data:
-            logging.debug("no data")
-            return {}
-        items = {k.decode(): pickle.loads(v) for k, v in data.items()}
-        return items
-
-
-class GoalsQueue(dict, metaclass=GoalsQueueMeta):
-
-    __storage_key: str
-
-    def __init__(self, storage_key, *args, **kwds):
-        self.__storage_key = storage_key
-        items = __class__._load(storage_key)
-        super().__init__(items, *args, **kwds)
-
-    def __setitem__(self, __k, __v) -> None:
-        Storage.pipeline().hset(self.__storage_key, __k, pickle.dumps(__v)).persist(
-            self.__storage_key
-        ).execute()
-        return super().__setitem__(__k, __v)
-
-    def __delitem__(self, __v) -> None:
-        Storage.pipeline().hdel(self.__storage_key, __v).persist(
-            self.__storage_key
-        ).execute()
-        return super().__delitem__(__v)
+from app.threesixfive.item.models import GoalEvent
+from app.core.store import Queue
 
 class GoalsMeta(type):
     
@@ -79,8 +34,8 @@ class Goals(object, metaclass=GoalsMeta):
     __interval: timedelta = timedelta(minutes=2)
     
     @property
-    def queue(self) -> GoalsQueue:
-        return GoalsQueue("goals.queue")
+    def queue(self) -> Queue:
+        return Queue("goals.queue")
     
     def do_monitor(self, query: GoalQuery):
         self.queue[query.id] = query

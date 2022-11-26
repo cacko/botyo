@@ -1,5 +1,5 @@
 from app.api.footy.footy import Footy
-from app.api.footy.item.subscription import Subscription
+from app.api.footy.item.subscription import Subscription, SubscritionClient
 from app.core.config import Config
 from app.core.otp import OTP
 from botyo_server.scheduler import Scheduler
@@ -48,27 +48,29 @@ class _APIServer(Server):
     def subscriptions(self):
         data = request.json
         assert isinstance(data, dict)
-        res = Subscription.forGroup(
-            client=data.get("webhook", ""), group=data.get("group")
+        sc = SubscritionClient(
+            client_id=data.get("webhook", ""), group_id=data.get("group")
         )
-        return [{"id": job.id, "text": job.name} for job in res]
+        subs = Subscription.forGroup(sc)
+        return [{"id": sub.id, "text": sub.event_name} for sub in subs]
 
     def unsubscribe(self):
         data = request.json
         assert isinstance(data, dict)
-        subs = Subscription.forGroup(
-            client=data.get("webhook", ""), group=data.get("group")
+        sc = SubscritionClient(
+            client_id=data.get("webhook", ""), group_id=data.get("group")
         )
+        subs = Subscription.forGroup(sc)
         id_parts = data.get("id", "").split(":")
         for sub in subs:
             if sub.id.startswith(id_parts[0]):
-                Scheduler.cancel_jobs(sub.id)
+                sub.cancel(sc)
                 post(
                     data.get("webhook", ""),
                     headers=OTP(data.get("group", "")).headers,
                     json=CancelJobEvent(job_id=id_parts[0]).to_dict(),  # type: ignore
                 )
-                return {"message": f"unsubscribed from {sub.name}"}
+                return {"message": f"unsubscribed from {sub.event_name}"}
         return {"message": "nothing unsubscribed"}
 
     def team_logo(self, query):
@@ -145,7 +147,6 @@ class _APIServer(Server):
 
 
 class APIServer(AppServer):
-    
     def __init__(self) -> None:
         worker = _APIServer()
         super().__init__(worker)

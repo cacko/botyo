@@ -91,11 +91,11 @@ def unsubscribe_command(context: Context):
 def subscriptions_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group]):
         return EmptyResult()
-    jobs: list[Job] = Footy.listjobs(client=context.client, group=context.group)
-    if not len(jobs):
+    subs = Footy.listjobs(client=context.client, group=context.group)
+    if not len(subs):
         rows = ["Nothing is scheduled"]
     else:
-        rows = [j.name for j in jobs]
+        rows = [s.event_name for s in subs]
     TextOutput.addRows(rows)
     return RenderResult(
         method=ZMethod.FOOTY_SUBSCRIPTIONS,
@@ -222,11 +222,12 @@ def fixtures_command(context: Context) -> RenderResult:
     except CompetitionNotFound:
         return EmptyResult()
 
-@bp.command(method=ZMethod.FOOTY_GOALS, desc="Da Goals") # type: ignore
+
+@bp.command(method=ZMethod.FOOTY_GOALS, desc="Da Goals")  # type: ignore
 def goals_command(context: Context) -> RenderResult:
     try:
         competition = CompetitionItem(Footy.competition(context.query))
         message = competition.render()
         return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
     except CompetitionNotFound:
-        return EmptyResult() 
+        return EmptyResult()

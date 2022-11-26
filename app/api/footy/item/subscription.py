@@ -37,9 +37,12 @@ from pixelme import Pixelate
 import time
 import logging
 from typing import Optional, TypeVar
-from .goals import Goals, GoalsQueue
+from .goals import Goals
 from app.goals import Query as GoalQuery
 from pathlib import Path
+from app.core.store import Queue
+from dataclasses import dataclass
+from functools import reduce
 
 GE = TypeVar("GE", DetailsEventPixel, GameEvent)
 
@@ -127,46 +130,79 @@ class Cache(Cachable):
             return None
 
 
+@dataclass
+class SubscritionClient:
+    client_id: str
+    group_id: Optional[str] = None
+
+    @property
+    def id(self) -> str:
+        return __class__.get_id(self.client_id, self.group_id)
+
+    @property
+    def is_rest(self) -> bool:
+        return self.client_id.startswith("http")
+
+    @classmethod
+    def get_id(cls, client: str, group) -> str:
+        return f"{client}-{group}"
+
+
 class SubscriptionMeta(type):
-    def __call__(cls, event: Event, client: str, group, *args, **kwds):
-        return type.__call__(cls, event, client, group, *args, **kwds)
 
-    def forGroup(cls, client: str, group) -> list[Job]:
-        prefix = cls.jobPrefix(client, group)
-        return list(filter(lambda g: g.id.startswith(prefix), Scheduler.get_jobs()))
+    __subs: dict[str, "Subscription"] = {}
 
-    def jobPrefix(cls, client: str, group) -> str:
-        prefix = ":".join([cls.__module__, client, group])
-        h = blake2b(digest_size=20)
-        h.update(prefix.encode())
-        return h.hexdigest()
+    def __call__(cls, event: Event):
+        k = event.id
+        if k not in cls.__subs:
+            cls.__subs[k] = type.__call__(cls, event)
+            cls.clients[k] = []
+
+        return cls.__subs[k]
+
+    def get(cls, event: Event, sc: SubscritionClient) -> "Subscription":
+        obj = cls(event)
+        k = event.id
+        if SubscritionClient.id not in [x.id for x in cls.clients[k]]:
+            cls.clients[k].append(sc)
+        return obj
+
+    def forGroup(cls, sc: SubscritionClient) -> list['Subscription']:
+        subs = list(filter(lambda k: sc.id in cls.clients[k], cls.clients.keys()))
+        if not subs:
+            return []
+        return subs
+        # return list(
+        #     filter(
+        #         lambda g: any([g.id.startswith(s.id) for s in subs]),
+        #         Scheduler.get_jobs(),
+        #     )
+        # )
+
+    @property
+    def clients(cls) -> Queue:
+        return Queue(f"subscription.clients")
 
 
 class Subscription(metaclass=SubscriptionMeta):
 
     _event: Event
-    _groupId = None
-    _clientId: str
     _announceLineups = False
 
-    def __init__(self, event: Event, client: str, group) -> None:
-        self._clientId = client
+    def __init__(self, event: Event) -> None:
         self._event = event
-        self._groupId = group
 
     @property
     def id(self):
         prefix = JobPrefix.INPROGRESS
         if not self.inProgress:
             prefix = JobPrefix.SCHEDULED
-        jobPrefix = __class__.jobPrefix(self._clientId, self._groupId)
-        return ":".join([jobPrefix, self._event.id, prefix.value])
+        return ":".join([self._event.id, prefix.value])
 
     @property
     def beforeGameId(self):
         prefix = JobPrefix.BEFOREGAME
-        jobPrefix = __class__.jobPrefix(self._clientId, self._groupId)
-        return ":".join([jobPrefix, self._event.id, prefix.value])
+        return ":".join([self._event.id, prefix.value])
 
     @property
     def event_name(self):
@@ -175,48 +211,59 @@ class Subscription(metaclass=SubscriptionMeta):
         )
 
     @property
-    def goals_queue(self) -> GoalsQueue:
-        return GoalsQueue(f"subscription.{self.id}.goals.queue")
+    def goals_queue(self) -> Queue:
+        return Queue(f"subscription.{self.id}.goals.queue")
 
-    def cancel(self, notify=False):
+    @property
+    def subscriptions(self) -> list[SubscritionClient]:
+        return __class__.clients[self.id]
+
+    def cancel(self, sc: SubscritionClient):
         try:
-            Scheduler.cancel_jobs(self.id)
-            if notify and self._clientId.startswith("http"):
-                self.sendUpdate_(CancelJobEvent(job_id=self.id))
+            if sc.is_rest:
+                self.sendUpdate_(CancelJobEvent(job_id=self.id), sc)
+                self.subscriptions.remove(sc)
+            if not len(self.subscriptions):
+                Scheduler.cancel_jobs(self.id)
         except JobLookupError:
             pass
 
-    def sendUpdate(self, message):
-        if self._clientId.startswith("http"):
-            return self.sendUpdate_(message)
+    def cancel_all(self):
+        for sc in self.subscriptions:
+            self.cancel(sc)
+
+    def sendUpdate(self, message, sc: SubscritionClient):
+        if sc.is_rest:
+            return self.sendUpdate_(message, sc)
         if not self.client:
             return
-        connection = self.client
-        if not self.client:
+        connection = self.client(sc.client_id)
+        if not connection:
             raise UnknownClientException
         connection.respond(
             RenderResult(
-                method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self._groupId
+                method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=sc.group_id
             )
         )
 
     def sendGoal(self, message: str, attachment: Path):
-        if not self.client:
-            return
-        connection = self.client
-        if not self.client:
-            raise UnknownClientException
-        connection.respond(
-            RenderResult(
-                method=ZMethod.FOOTY_SUBSCRIBE,
-                message=message,
-                attachment=Attachment(
-                    path=attachment.as_posix(),
-                    contentType="video/mp4",
-                ),
-                group=self._groupId,
+        for sc in self.subscriptions:
+            if sc.is_rest:
+                continue
+            connection = self.client(sc.client_id)
+            if not connection:
+                raise UnknownClientException
+            connection.respond(
+                RenderResult(
+                    method=ZMethod.FOOTY_SUBSCRIBE,
+                    message=message,
+                    attachment=Attachment(
+                        path=attachment.as_posix(),
+                        contentType="video/mp4",
+                    ),
+                    group=sc.group_id,
+                )
             )
-        )
 
     def processGoals(self, events: list[GE]):
         try:
@@ -261,11 +308,6 @@ class Subscription(metaclass=SubscriptionMeta):
     def trigger(self):
         try:
             self.checkGoals()
-            if self._clientId.startswith("http"):
-                return self.trigger_()
-            if not self.client:
-                logging.debug(f">> skip schedule {self._clientId}")
-                return
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
@@ -277,14 +319,25 @@ class Subscription(metaclass=SubscriptionMeta):
                         self.processGoals(updated.game.events)
                 except AssertionError as e:
                     logging.exception(e)
-                TextOutput.addRows(update)
-                try:
-                    self.sendUpdate(TextOutput.render())
-                except UnknownClientException:
-                    pass
+                for sc in self.subscriptions:
+                    if sc.is_rest:
+                        details = ParserDetails(None, response=updated)
+                        events = details.events_pixel
+                        self.sendUpdate_(events, sc)
+                        if cache.halftime:
+                            cache.halftime = False
+                            self.sendUpdate_(self.halftimeAnnoucement_, sc)
+                        else:
+                            self.sendUpdate_(self.progressUpdate_, sc)
+                    else:
+                        TextOutput.addRows(update)
+                        try:
+                            self.sendUpdate(TextOutput.render(), sc)
+                        except UnknownClientException:
+                            pass
             content = cache.content
             if not content:
-                return self.cancel(True)
+                return self.cancel_all()
             Player.store(content.game)
             if any(
                 [
@@ -299,22 +352,24 @@ class Subscription(metaclass=SubscriptionMeta):
                     ],
                 ]
             ):
-                try:
-                    self.sendUpdate(self.fulltimeAnnoucement)
-                except UnknownClientException:
-                    pass
-                self.cancel()
+                for sc in self.subscriptions:
+                    try:
+                        if sc.is_rest:
+                            self.sendUpdate_(self.fulltimeAnnoucement_, sc)
+                        else:
+                            self.sendUpdate(self.fulltimeAnnoucement, sc)
+                    except UnknownClientException:
+                        pass
+                    self.cancel(sc)
                 logging.debug(f"subscription {self.event_name} in done")
         except ValueError:
             pass
         except Exception as e:
             logging.exception(e)
-            return self.cancel(True)
+            return self.cancel_all()
 
     def updates(self, updated: Optional[ResponseGame] = None) -> Optional[list[str]]:
         try:
-            if self._clientId.startswith("http"):
-                return self.updates_(updated)  # type: ignore
             if not updated:
                 return None
             details = ParserDetails(None, response=updated)
@@ -335,10 +390,9 @@ class Subscription(metaclass=SubscriptionMeta):
         except AssertionError:
             return None
 
-    @property
-    def client(self) -> Optional[Connection]:
+    def client(self, client_id: str) -> Optional[Connection]:
         try:
-            return Connection.client(self._clientId)
+            return Connection.client(client_id)
         except UnknownClientException:
             return None
 
@@ -346,8 +400,6 @@ class Subscription(metaclass=SubscriptionMeta):
     def fulltimeAnnoucement(self):
         logging.info(f"FOOT SUB: Full Time {self.event_name}")
         logging.debug(f"subscription {self.event_name} in done")
-        if self._clientId.startswith("http"):
-            return self.fulltimeAnnoucement_
         details = ParserDetails.get(str(self._event.details))
         icon = emojize(":chequered_flag:")
         TextOutput.addRows(
@@ -357,8 +409,6 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def startAnnouncement(self) -> str | list[DetailsEventPixel]:
-        if self._clientId.startswith("http"):
-            return self.startAnnouncement_
         TextOutput.addRows(
             [" ".join([emojize(":goal_net:"), f"GAME STARTING: {self.event_name}"])]
         )
@@ -389,13 +439,17 @@ class Subscription(metaclass=SubscriptionMeta):
             misfire_grace_time=60,
         )
         if announceStart:
-            try:
-                self.sendUpdate(self.startAnnouncement)
-            except UnknownClientException:
-                pass
+            for sc in self.subscriptions:
+                try:
+                    if sc.is_rest:
+                        self.sendUpdate_(self.startAnnouncement_, sc)
+                    else:
+                        self.sendUpdate(self.startAnnouncement, sc)
+                except UnknownClientException:
+                    pass
 
-    def schedule(self):
-        if self._clientId.startswith("http"):
+    def schedule(self, sc: SubscritionClient):
+        if sc.is_rest:
             logo = LeagueImage(self._event.idLeague)
             logo_path = logo.path
             pix = Pixelate(input=logo_path, padding=200, grid_lines=True, block_size=25)
@@ -416,8 +470,9 @@ class Subscription(metaclass=SubscriptionMeta):
                     icon=pix.base64,
                     home_team_icon=TeamLogoPixel(self._event.strHomeTeam).base64,
                     away_team_icon=TeamLogoPixel(self._event.strAwayTeam).base64,
-                    status=self._event.displayStatus,
-                )
+                    status=self._event.strStatus,
+                ),
+                sc,
             )
         if self.inProgress:
             return self.start()
@@ -432,32 +487,32 @@ class Subscription(metaclass=SubscriptionMeta):
             misfire_grace_time=180,
         )
 
-    def beforeGameTrigger(self):
-        if not self.client:
-            logging.debug(f">> skip schedule {self._clientId}")
-            return
-        try:
-            logging.debug(f"{self.event_name} check for lineups")
-            lineups = Lineups(self._event)
-            message = lineups.message
-            if not message:
-                logging.debug(f"{self.event_name} not lineups yet")
-                return
-            logging.debug(f"{self.event_name} lineups available")
-            TextOutput.addRows(
-                [f"{Headers.LINEUP_ANNOUNCED.value: ^ 42}\n".upper(), message]
-            )
-            text = TextOutput.render()
-            try:
-                self.sendUpdate(text)
-            except UnknownClientException:
-                pass
-            Scheduler.cancel_jobs(self.beforeGameId)
-            logging.debug(f"subscription before game {self.event_name} in done")
-        except ValueError:
-            pass
-        except Exception as e:
-            logging.exception(e)
+    # def beforeGameTrigger(self):
+    #     if not self.client:
+    #         logging.debug(f">> skip schedule {self._clientId}")
+    #         return
+    #     try:
+    #         logging.debug(f"{self.event_name} check for lineups")
+    #         lineups = Lineups(self._event)
+    #         message = lineups.message
+    #         if not message:
+    #             logging.debug(f"{self.event_name} not lineups yet")
+    #             return
+    #         logging.debug(f"{self.event_name} lineups available")
+    #         TextOutput.addRows(
+    #             [f"{Headers.LINEUP_ANNOUNCED.value: ^ 42}\n".upper(), message]
+    #         )
+    #         text = TextOutput.render()
+    #         try:
+    #             self.sendUpdate(text)
+    #         except UnknownClientException:
+    #             pass
+    #         Scheduler.cancel_jobs(self.beforeGameId)
+    #         logging.debug(f"subscription before game {self.event_name} in done")
+    #     except ValueError:
+    #         pass
+    #     except Exception as e:
+    #         logging.exception(e)
 
     @property
     def isValid(self) -> bool:
@@ -509,7 +564,7 @@ class Subscription(metaclass=SubscriptionMeta):
         events = details.events_pixel
         return events
 
-    def sendUpdate_(self, data):
+    def sendUpdate_(self, data, sc: SubscritionClient):
         payload = []
         if isinstance(data, list):
             payload = [d.to_dict() for d in data]
@@ -517,13 +572,13 @@ class Subscription(metaclass=SubscriptionMeta):
             payload = data.to_dict()
         logging.debug(payload)
         try:
-            assert self._groupId
+            assert sc.group_id
             resp = post(
-                f"{self._clientId}", headers=OTP(self._groupId).headers, json=payload
+                f"{sc.client_id}", headers=OTP(sc.group_id).headers, json=payload
             )
             return resp.status_code
         except ConnectionError:
-            logging.error(f"Cannot send update to f{self._clientId}")
+            logging.error(f"Cannot send update to f{sc.client_id}")
             pass
 
     @property
@@ -595,49 +650,3 @@ class Subscription(metaclass=SubscriptionMeta):
             ]
         except AssertionError as e:
             logging.exception(e)
-
-    def trigger_(self):
-        try:
-            cache = Cache(url=str(self._event.details), jobId=self.id)
-            updated = cache.update
-            if update := self.updates_(updated):
-                self.processGoals(update)
-                try:
-                    self.sendUpdate_(update)
-                except UnknownClientException as e:
-                    print(e)
-
-            if cache.halftime:
-                cache.halftime = False
-                self.sendUpdate(self.halftimeAnnoucement_)
-            else:
-                self.sendUpdate(self.progressUpdate_)
-            content = cache.content
-            if not content:
-                return self.cancel(True)
-            Player.store(content.game)
-            if any(
-                [
-                    GameStatus(content.game.shortStatusText)
-                    in [
-                        GameStatus.FT,
-                        GameStatus.JE,
-                        GameStatus.SUS,
-                        GameStatus.ABD,
-                        GameStatus.AET,
-                        GameStatus.FN,
-                    ],
-                ]
-            ):
-                try:
-                    self.sendUpdate(self.fulltimeAnnoucement_)
-                except UnknownClientException as e:
-                    logging.error(e)
-                    pass
-        except ValueError:
-            pass
-        except AssertionError as e:
-            logging.exception(e)
-        except Exception as e:
-            logging.exception(e)
-            return self.cancel(True)
