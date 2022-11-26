@@ -9,6 +9,7 @@ import logging
 import signal
 import sys
 
+
 app = Server(Path(__file__).parent.parent)
 app.servers.append(APIServer())
 
