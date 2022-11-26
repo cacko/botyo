@@ -24,6 +24,15 @@ class TeamsNeedle:
     away: str
 
 
+@dataclass_json
+@dataclass
+class TwitterNeedle:
+    needle: TeamsNeedle
+    id: str
+    text: str
+    url: str
+
+
 @dataclass
 class DownloadItem:
     text: str
@@ -46,6 +55,7 @@ class DownloadItem:
         return f"video-{event_id}-{game_event_id}.mp4"
 
 
+@dataclass_json
 @dataclass
 class Query:
     event_name: str
@@ -62,6 +72,14 @@ class Query:
     @property
     def id(self) -> str:
         return f"{self.event_id}-{self.game_event_id}"
+
+    @property
+    def home(self) -> str:
+        return self.needles[0]
+
+    @property
+    def away(self) -> str:
+        return self.needles[1]
 
 
 class Goal:
@@ -83,7 +101,10 @@ class GoalsMeta(type):
 
     @property
     def output_dir(cls) -> Path:
-        return Path(app_config.cachable.path)
+        root = Path(app_config.cachable.path) / "goals"
+        if not root.exists():
+            root.mkdir(parents=True)
+        return root
 
     def goal_video(cls, q: Query) -> Optional[Path]:
         fp = cls.output_dir / DownloadItem.get_filename(q.event_id, q.game_event_id)
@@ -93,40 +114,46 @@ class GoalsMeta(type):
 
 
 class Goals(object, metaclass=GoalsMeta):
+    def __needles(self, **kwds) -> Generator[TwitterNeedle, None, None]:
+        for t in Twitter.media(**kwds):
+            t_id, t_text = (
+                t.tweet.id if t.tweet.id else "",
+                t.tweet.text if t.tweet.text else "",
+            )
+            matched_teams = GOAL_MATCH.search(t_text.replace("[", "").replace("]", ""))
+            if not matched_teams:
+                continue
+            teams = [*map(lambda x: x.strip().lower(), matched_teams.groups())]
+            logging.debug(f"GOALS: matched teams {teams}")
+            yield TwitterNeedle(
+                needle=TeamsNeedle(home=teams[0], away=teams[1]),
+                id=t_id,
+                text=t_text,
+                url=t.url,
+            )
+
     def do_search(
         self, query: list[Query], **kwds
     ) -> Generator[DownloadItem, None, None]:
-
-        for t in Twitter.media(**kwds):
-            try:
-                twitter_download(url=t.url, output_dir=__class__.output_dir.as_posix())
-                t_id, t_text = (
-                    t.tweet.id if t.tweet.id else "",
-                    t.tweet.text if t.tweet.text else "",
-                )
-                for dp in __class__.output_dir.glob(f"*{t_id}*"):
-                    if dp.suffix.lower() != ".mp4":
-                        dp.unlink(missing_ok=True)
-                        continue
-                    for q in query:
-                        if m := GOAL_MATCH.search(
-                            t_text.replace("[", "").replace("]", "")
-                        ):
-                            teams = [*map(lambda x: x.strip().lower(), m.groups())]
-                            m = TeamsMatch([TeamsNeedle(home=teams[0], away=teams[1])])
-                            logging.debug(f"GOALS: matched teams {teams}")
-                            if m.fuzzy(
-                                TeamsNeedle(home=q.needles[0], away=q.needles[1])
-                            ):
-                                di = DownloadItem(
-                                    text=t_text,
-                                    url=t.url,
-                                    id=t_id,
-                                    path=dp,
-                                    game_event_id=q.game_event_id,
-                                    event_id=q.event_id,
-                                )
-                                di.rename(__class__.output_dir)
-                                yield di
-            except Exception:
-                pass
+        for needle in self.__needles(**kwds):
+            twitter_download(url=needle.url, output_dir=__class__.output_dir.as_posix())
+            for dp in __class__.output_dir.glob(f"*{needle.id}*"):
+                if dp.suffix.lower() != ".mp4":
+                    dp.unlink(missing_ok=True)
+                    continue
+                matcher = TeamsMatch(query)
+                matched = matcher.fuzzy(needle)
+                if not len(matched):
+                    dp.unlink(missing_ok=True)
+                    continue
+                for q in matched:
+                    di = DownloadItem(
+                        text=needle.text,
+                        url=needle.url,
+                        id=needle.id,
+                        path=dp,
+                        game_event_id=q.game_event_id,
+                        event_id=q.event_id,
+                    )
+                    di.rename(__class__.output_dir)
+                    yield di
