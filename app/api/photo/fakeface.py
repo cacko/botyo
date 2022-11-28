@@ -6,7 +6,7 @@ import logging
 from cachable.request import Request
 from dataclasses_json import dataclass_json
 from cachable.models import BinaryStruct
-from cachable.cacheable import CachableFile
+from cachable.storage.file import CachableFileImage
 from app.demographics import Gender
 from app.chatyo import getResponse, Payload
 
@@ -25,12 +25,12 @@ class Query:
         self.t = uuid1().hex
 
 
-class FakeFace(CachableFile):
+class FakeFace(CachableFileImage):
 
-    _struct: BinaryStruct = None
-    __name = None
-    __id = None
-    __gender: Gender = None
+    _struct: Optional[BinaryStruct] = None
+    __name: str
+    __id: Optional[str] = None
+    __gender: Optional[Gender] = None
     SIZE = (200, 200)
 
     def __init__(self, name: str):
@@ -46,7 +46,7 @@ class FakeFace(CachableFile):
             params = Query()
             if gender in [Gender.M, Gender.F]:
                 params.gender = gender.value
-            res = Request(BASE_URL, params=params.to_dict())
+            res = Request(BASE_URL, params=params.to_dict())  # type: ignore
             json = res.json
             photo_url = json.get("image_url")
             res = Request(photo_url)
@@ -71,8 +71,10 @@ class FakeFace(CachableFile):
     def gender(self) -> Gender:
         if not self.__gender:
             resp = getResponse(
-                "name/gender", Payload(
+                "name/gender",
+                Payload(
                     message=self.__name,
-                ))
+                ),
+            )
             self.__gender = Gender(resp.response)
         return self.__gender

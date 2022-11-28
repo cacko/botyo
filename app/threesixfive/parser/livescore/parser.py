@@ -1,7 +1,7 @@
 from typing import Generator, Optional
 from cachable.request import Request
 from datetime import datetime, timezone
-from cachable.cacheable import CachableFile
+from cachable.storage.file import CachableFileImage
 from app.threesixfive.item.models import Country, ResponseScores, Sport
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from botyo_server.scheduler import Scheduler
@@ -33,7 +33,7 @@ class ParserResponse:
     id: Optional[int] =  None
 
 
-class Badge(CachableFile):
+class Badge(CachableFileImage):
 
     _name: str
     _url: str
@@ -50,7 +50,7 @@ class Badge(CachableFile):
         return f"{store_key(AssetKey.TEAM_BADGE, self._name)}.png"
 
 
-def badges(badge: Badge):
+def badges(badge):
     with Scheduler.app_context:
         return badge.process()
 

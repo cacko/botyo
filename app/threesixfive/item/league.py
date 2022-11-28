@@ -2,16 +2,17 @@
 
 from hashlib import blake2b
 
-from cachable.cacheable import Cachable, CachableFile, TimeCacheable
+from cachable.cacheable import Cachable, TimeCacheable
+from cachable.storage.file import CachableFileImage
 
 from app.core.image import pixelme_b64
 from app.threesixfive.url import Url
 
 
-class LeagueImage(CachableFile):
+class LeagueImage(CachableFileImage):
 
-    __id: str = None
-    _league_id = None
+    __id = None
+    _league_id: int
 
     def __init__(self, league_id: int):
         self._league_id = league_id
@@ -44,7 +45,7 @@ class LeagueImagePixel(Cachable):
     @property
     def base64(self) -> str:
         if not self.load():
-            team = LeagueImage(self.__league_id)
+            team = LeagueImage(int(self.__league_id))
             path = team.path
             self._struct = pixelme_b64(path, resize=(8, 8))
             self.tocache(self._struct)
