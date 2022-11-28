@@ -307,9 +307,12 @@ class Subscription(metaclass=SubscriptionMeta):
                 pass
             for sc in self.subscriptions:
                 if sc.is_rest:
-                    details = ParserDetails(None, response=updated)
-                    events = details.events_pixel
-                    self.sendUpdate_(events, sc)
+                    try:
+                        details = ParserDetails(None, response=updated)
+                        events = details.events_pixel
+                        self.sendUpdate_(events, sc)
+                    except Exception as e:
+                        logging.exception(e)
                     if cache.halftime:
                         cache.halftime = False
                         self.sendUpdate_(self.halftimeAnnoucement_, sc)
@@ -348,8 +351,8 @@ class Subscription(metaclass=SubscriptionMeta):
                         pass
                     self.cancel(sc)
                 logging.debug(f"subscription {self.event_name} in done")
-        except ValueError:
-            pass
+        except ValueError as e:
+            logging.exception(e)
         except Exception as e:
             logging.exception(e)
             return self.cancel_all()
