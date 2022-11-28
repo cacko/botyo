@@ -6,7 +6,7 @@ import logging
 from cachable.request import Request
 from dataclasses_json import dataclass_json
 from cachable.models import BinaryStruct
-from cachable.storage.file import CachableFileImage
+from cachable.storage.file import CachableFileImage, FileStorage
 from app.demographics import Gender
 from app.chatyo import getResponse, Payload
 
@@ -37,6 +37,10 @@ class FakeFace(CachableFileImage):
         if not name:
             raise ValueError
         self.__name = name
+
+    @property
+    def storage(self):
+        return FileStorage()
 
     def _init(self):
         if self.isCached:

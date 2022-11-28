@@ -3,7 +3,7 @@
 from hashlib import blake2b
 
 from cachable.cacheable import Cachable, TimeCacheable
-from cachable.storage.file import CachableFileImage
+from cachable.storage.file import CachableFileImage, FileStorage
 
 from app.core.image import pixelme_b64
 from app.threesixfive.url import Url
@@ -16,6 +16,10 @@ class LeagueImage(CachableFileImage):
 
     def __init__(self, league_id: int):
         self._league_id = league_id
+        
+    @property
+    def storage(self):
+        return FileStorage()
 
     @property
     def url(self):

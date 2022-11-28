@@ -7,7 +7,7 @@ from .models import (
     GameDetails,
     LineupMember,
 )
-from cachable.storage.file import CachableFileImage
+from cachable.storage.file import CachableFileImage, FileStorage
 from cachable.storage.redis import RedisStorage
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json, Undefined, config
@@ -57,6 +57,10 @@ class PlayerImage(CachableFileImage):
     def __init__(self, member, team: Optional[str] = None):
         self.member = member
         self.team = team
+
+    @property
+    def storage(self):
+        return FileStorage()
 
     @property
     def url(self):

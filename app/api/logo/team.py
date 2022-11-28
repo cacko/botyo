@@ -1,6 +1,6 @@
 from cachable.request import Request
 from hashlib import blake2b
-from cachable.storage.file import CachableFileImage
+from cachable.storage.file import CachableFileImage, FileStorage
 from cachable import Cachable
 from cachable.models import BinaryStruct
 from urllib.parse import quote
@@ -15,6 +15,10 @@ class Team(CachableFileImage):
     __id = None
     SIZE = (200, 200)
     __apiUrl: str
+    
+    @property
+    def storage(self):
+        return FileStorage()
 
     def __init__(self, name: str):
         if not name:
@@ -53,6 +57,10 @@ class TeamLogoPixel(Cachable):
 
     def __init__(self, name) -> None:
         self.__name = name
+        
+    @property
+    def storage(self):
+        return FileStorage()
 
     @property
     def base64(self) -> str:
