@@ -145,7 +145,10 @@ class SubscritionClient:
 
     @classmethod
     def get_id(cls, client: str, group) -> str:
-        return f"{client}-{group}"
+        prefix = ":".join([cls.__module__, client, group])
+        h = blake2b(digest_size=20)
+        h.update(prefix.encode())
+        return h.hexdigest()
 
 
 class SubscriptionMeta(type):
@@ -167,17 +170,11 @@ class SubscriptionMeta(type):
             cls.clients[k].append(sc)
         return obj
 
-    def forGroup(cls, sc: SubscritionClient) -> list['Subscription']:
+    def forGroup(cls, sc: SubscritionClient) -> list["Subscription"]:
         subs = list(filter(lambda k: sc.id in cls.clients[k], cls.clients.keys()))
         if not subs:
             return []
         return subs
-        # return list(
-        #     filter(
-        #         lambda g: any([g.id.startswith(s.id) for s in subs]),
-        #         Scheduler.get_jobs(),
-        #     )
-        # )
 
     @property
     def clients(cls) -> Queue:
