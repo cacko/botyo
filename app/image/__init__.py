@@ -1,8 +1,7 @@
 from pathlib import Path
 from botyo_server.models import Attachment
-from cachable import Cachable
 from cachable.request import Request, Method
-
+from cachable.storage.file import FileStorage
 from app.core.config import Config
 from uuid import uuid4
 import filetype
@@ -47,7 +46,7 @@ class ImageMeta(type):
 
 class Image(object, metaclass=ImageMeta):
 
-	__attachment: Attachment = None
+	__attachment: Attachment
 
 	def __init__(self, attachment: Attachment) -> None:
 		self.__attachment = attachment
@@ -55,7 +54,7 @@ class Image(object, metaclass=ImageMeta):
 	def do_analyze(self):
 		attachment, message = self.getResponse(Action.ANALYZE)
 		if message:
-			analyses: AnalyzeReponse = AnalyzeReponse.from_json(message)
+			analyses: AnalyzeReponse = AnalyzeReponse.from_json(message)  # type: ignore
 			rows = [
 				["Age: ", analyses.age],
 				["Emotion: ", analyses.dominant_emotion,
@@ -93,10 +92,12 @@ class Image(object, metaclass=ImageMeta):
 		if action_param:
 			path = f"{path}/{action_param}"
 		attachment = self.__attachment
-		p = Path(attachment.get("path"))
+		assert isinstance(attachment, dict)
+		p = Path(attachment.get("path", ""))
 		kind = filetype.guess(p.as_posix())
 		mime = attachment.get("contentType")
 		with p.open("rb") as fp:
+			assert kind
 			req = Request(
 				f"{Config.image.base_url}/{path}",
 				method=Method.POST,
@@ -109,16 +110,18 @@ class Image(object, metaclass=ImageMeta):
 			is_multipart = req.is_multipart
 			if is_multipart:
 				multipart = req.multipart
-				cp = Cachable.storage
+				cp = FileStorage.storage_path
 				for part in multipart.parts:
 					content_type = part.headers.get(
-						b"content-type", b"").decode()
+						b"content-type", b"").decode()  # type: ignore
 					if "image/png" in content_type:
+						assert kind
 						fp = cp / f"{uuid4().hex}.{kind.extension}.png"
 						fp.write_bytes(part.content)
 						attachment = Attachment(path=fp.absolute().as_posix(),
 												contentType="image/png", )
 					elif "image/jpeg" in content_type:
+						assert kind
 						fp = cp / f"{uuid4().hex}.{kind.extension}.jpg"
 						fp.write_bytes(part.content)
 						attachment = Attachment(path=fp.absolute().as_posix(),

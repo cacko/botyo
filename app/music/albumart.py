@@ -4,13 +4,13 @@ from PIL import Image
 from stringcase import alphanumcase
 from subprocess import PIPE, Popen, STDOUT
 from corestring import split_with_quotes
-from cachable import Cachable
-
+from cachable.storage.file import FileStorage
+from typing import Optional
 
 class AlbumArt:
 
-    __query: str = None
-    __found: Path = None
+    __query: str
+    __found: Optional[Path] = None
 
     def __init__(self, query: str):
         self.__query = query
@@ -22,7 +22,7 @@ class AlbumArt:
         if not self.__convert():
             raise FileNotFoundError
 
-    def __search(self) -> Path:
+    def __search(self) -> Optional[Path]:
         if not self.__found:
             query = self.__query.strip()
             filt = split_with_quotes(query)
@@ -32,17 +32,19 @@ class AlbumArt:
                 stderr=STDOUT,
                 env=self.environment,
             ) as p:
+                assert p.stdout
                 for line in iter(p.stdout.readline, b""):
                     self.__found = Path(f"{line.decode().strip()}")
                     return self.__found
                 if p.returncode:
-                    return False
-            return False
+                    return None
+            return None
         return self.__found
 
     def __convert(self) -> bool:
         dst = self.destination
         if not dst.exists():
+            assert self.__found
             p = self.__found / "cover.jpg"
             if not p.exists():
                 return False
@@ -66,4 +68,4 @@ class AlbumArt:
     @property
     def destination(self) -> Path:
         filename = f"albumart-{alphanumcase(self.__query)}.png"
-        return Cachable.storage / filename
+        return FileStorage.storage_path / filename

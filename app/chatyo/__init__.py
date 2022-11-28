@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import logging
 from uuid import uuid4
-from cachable import Cachable
+from cachable.storage.file import FileStorage
 from cachable.request import Request, Method
 from dataclasses_json import dataclass_json
 from app.core.config import Config
@@ -28,16 +28,16 @@ def getResponse(path: str, payload: Payload) -> Response:
     req = Request(
         url,
         Method.POST,
-        json=payload.to_dict()
+        json=payload.to_dict()  # type: ignore
     )
     message = ""
     attachment = None
     is_multipart = req.is_multipart
     if is_multipart:
-        cp = Cachable.storage
+        cp = FileStorage.storage_path
         multipart_data = req.multipart
         for part in multipart_data.parts:
-            content_type = part.headers.get(b"content-type", b"").decode()
+            content_type = part.headers.get(b"content-type", b"").decode()  # type: ignore
             logging.debug(f"Multipart part content-type: {content_type}")
             if "image/png" in content_type:
                 fp = cp / f"{uuid4().hex}.png"
@@ -52,9 +52,10 @@ def getResponse(path: str, payload: Payload) -> Response:
             else:
                 message = part.text
     else:
-        message = req.json
+        msg = req.json
+        message = ""
         if message:
-            message = message.get("response")
+            message = msg.get("response", "")
     return Response(
         response=message,
         attachment=attachment

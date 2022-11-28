@@ -6,7 +6,7 @@ from typing import Optional
 from coretime import isodate_decoder, isodate_encoder
 from app.core.store import Storage
 import pickle
-from cachable import Cachable
+from cachable.storage.file import FileStorage
 from pathlib import Path
 from stringcase import alphanumcase
 from base64 import b64decode
@@ -18,7 +18,7 @@ from app.music.encoder import Encoder
 class TrackMeta(type):
 
     __TRACK_STORAGE_KEY = "now_playing_track"
-    __instance: "Track" = None
+    __instance: "Track"
 
     def __call__(cls, *args, **kwds):
         cls.__instance = type.__call__(cls, *args, **kwds)
@@ -29,7 +29,7 @@ class TrackMeta(type):
             return
         dc = cls.__instance
         st_key = cls.storage_key
-        Storage.pipeline().set(st_key, pickle.dumps(dc.to_dict())).persist(
+        Storage.pipeline().set(st_key, pickle.dumps(dc.to_dict())).persist(  # type: ignore
             st_key
         ).execute()
 
@@ -42,7 +42,7 @@ class TrackMeta(type):
         return None
 
     @property
-    def trackdata(cls) -> "Track":
+    def trackdata(cls) -> Optional["Track"]:
         if cls.__instance:
             return cls.__instance
         return cls.load()
@@ -85,9 +85,10 @@ class Track(metaclass=TrackMeta):
 
     @property
     def audio_destination(self) -> Path:
+        assert self.path
         song_path = Path(self.path)
         name = "/".join([song_path.parent.name, song_path.stem])
-        res = Cachable.storage / f"{alphanumcase(name)}.{Encoder.extension}"
+        res = FileStorage.storage_path / f"{alphanumcase(name)}.{Encoder.extension}"
         if not res.exists():
             Encoder.encode(song_path, res)
         return res
@@ -99,8 +100,9 @@ class Track(metaclass=TrackMeta):
     @property
     def album_art(self) -> Path:
         name = "/".join([self.artist, self.album])
-        res = Cachable.storage / f"albumart-{alphanumcase(name)}.png"
+        res = FileStorage.storage_path / f"albumart-{alphanumcase(name)}.png"
         if not res.exists():
+            assert self.coverArt
             data = b64decode(self.coverArt)
             res.write_bytes(data)
         return res

@@ -2,15 +2,15 @@ from pathlib import Path
 import os
 from subprocess import PIPE, Popen, STDOUT
 from corestring import split_with_quotes, string_hash
-from cachable import Cachable
+from cachable.storage.file import FileStorage
 from app.music.encoder import Encoder
-
+from typing import Optional
 
 class Song:
 
-    __query: str = None
-    __found: Path = None
-    __message: Path = None
+    __query: Optional[str] = None
+    __found: Optional[Path] = None
+    __message: Optional[str] = None
 
     def __init__(self, query: str):
         self.__query = query
@@ -24,8 +24,9 @@ class Song:
         if not self.__encode():
             raise FileNotFoundError
 
-    def __search(self) -> Path:
+    def __search(self) -> Optional[Path]:
         if not self.__found:
+            assert self.__query
             query = self.__query.strip()
             filt = split_with_quotes(query)
             if ":" not in query and len(filt) == 1:
@@ -46,18 +47,20 @@ class Song:
                 stderr=STDOUT,
                 env=self.environment,
             ) as p:
+                assert p.stdout
                 for line in iter(p.stdout.readline, b""):
                     print(line)
                     self.__found = Path(f"{line.decode().strip()}")
                     return self.__found
                 if p.returncode:
                     print(p.returncode)
-                    return False
-            return False
+                    return
+            return
         return self.__found
 
     def __identify(self):
         if not self.__message:
+            assert self.__found
             cmd = (
                 "ffprobe",
                 "-loglevel",
@@ -75,6 +78,7 @@ class Song:
                 stderr=STDOUT,
                 env=self.environment,
             ) as p:
+                assert p.stdout
                 for line in iter(p.stdout.readline, b""):
                     self.__message = line.decode().strip()
                     return self.__message
@@ -85,6 +89,7 @@ class Song:
 
     def __encode(self):
         if not self.destination.exists():
+            assert self.__found
             Encoder.encode(self.__found, self.destination)
         return self.destination
 
@@ -107,11 +112,11 @@ class Song:
     @property
     def destination(self) -> Path:
         hash = string_hash(self.__query)
-        return Cachable.storage / f"{hash}.{Encoder.extension}"
+        return FileStorage.storage_path / f"{hash}.{Encoder.extension}"
 
     @property
     def message(self) -> str:
-        return self.__message
+        return self.__message if self.__message else ""
 
     @property
     def filename(self) -> Path:

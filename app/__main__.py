@@ -1,4 +1,5 @@
-from cachable import Cachable
+from cachable.storage.redis import RedisStorage
+from cachable.storage.file import FileStorage
 from app.core.config import Config as app_config
 from app.api.footy import Footy
 from botyo_server.server import Server
@@ -13,11 +14,9 @@ import sys
 app = Server(Path(__file__).parent.parent)
 app.servers.append(APIServer())
 
+RedisStorage.register(os.environ.get("BOTYO_REDIS_URL", ""))
+FileStorage.register(Path(app_config.cachable.path))
 
-Cachable.register(
-    redis_url=os.environ.get("BOTYO_REDIS_URL", ""),
-    storage_dir=app_config.cachable.path,
-)
 Footy.register(app)
 
 

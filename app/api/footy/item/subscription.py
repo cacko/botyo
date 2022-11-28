@@ -35,11 +35,11 @@ import sys
 from pixelme import Pixelate
 import time
 import logging
-from typing import Optional
+from typing import Optional, Any
 from .goals import Goals
 from app.goals import Query as GoalQuery
 from pathlib import Path
-from app.core.store import Queue
+from app.core.store import QueueDict, QueueList
 from dataclasses import dataclass
 
 
@@ -139,6 +139,11 @@ class SubscritionClient:
         return h.hexdigest()
 
 
+class SubscriptionClients(QueueDict):
+    
+    def __getitem__(self, __key: Any) -> QueueList:
+        return QueueList(super().__getitem__(__key))
+
 class SubscriptionMeta(type):
 
     __subs: dict[str, "Subscription"] = {}
@@ -147,9 +152,9 @@ class SubscriptionMeta(type):
         k = event.job_id
         if k not in cls.__subs:
             cls.__subs[k] = type.__call__(cls, event)
-            cls.clients[k] = []
-
+            cls.clients[k] = f"subscription.{k}.clients"
         return cls.__subs[k]
+    
 
     def get(cls, event: Event, sc: SubscritionClient) -> "Subscription":
         obj = cls(event)
@@ -165,8 +170,8 @@ class SubscriptionMeta(type):
         return subs
 
     @property
-    def clients(cls) -> Queue:
-        return Queue(f"subscription.clients")
+    def clients(cls) -> SubscriptionClients:
+        return SubscriptionClients(f"subscription.clients")
 
 
 class Subscription(metaclass=SubscriptionMeta):
@@ -196,8 +201,8 @@ class Subscription(metaclass=SubscriptionMeta):
         )
 
     @property
-    def goals_queue(self) -> Queue:
-        return Queue(f"subscription.{self._event.job_id}.goals.queue")
+    def goals_queue(self) -> QueueDict:
+        return QueueDict(f"subscription.{self._event.job_id}.goals.queue")
 
     @property
     def subscriptions(self) -> list[SubscritionClient]:
@@ -253,10 +258,9 @@ class Subscription(metaclass=SubscriptionMeta):
     def processGoals(self, events: list[GameEvent]):
         try:
             assert isinstance(events, list)
-            logging.warning(events)
             for x in events:
                 if x.is_goal:
-                    logging.info(f"GOAL event at {self.event_name}")
+                    logging.debug(f"GOAL event at {self.event_name}")
                     goal_query = GoalQuery(
                         event_name=self.event_name,
                         event_id=int(self._event.idEvent),
@@ -316,7 +320,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         logging.exception(e)
                     if cache.halftime:
                         cache.halftime = False
-                        self.sendUpdate_(self.halftimeAnnoucement_, sc)
+                        self.sendUpdate_(self.halftimeAnnoucementPixel, sc)
                     else:
                         self.sendUpdate_(self.progressUpdate_, sc)
                 elif chatUpdate:
@@ -407,7 +411,7 @@ class Subscription(metaclass=SubscriptionMeta):
             logging.exception(e)
 
     @property
-    def halftimeAnnoucement_(self):
+    def halftimeAnnoucementPixel(self):
         try:
             details = ParserDetails.get(str(self._event.details))
             return DetailsEventPixel.halfTimeEvent(details)

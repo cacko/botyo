@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import logging
 from pathlib import Path
 from app.threesixfive.item.models import GoalEvent
-from app.core.store import Queue
+from app.core.store import QueueDict
 
 class GoalsMeta(type):
     
@@ -34,8 +34,8 @@ class Goals(object, metaclass=GoalsMeta):
     __interval: timedelta = timedelta(minutes=2)
     
     @property
-    def queue(self) -> Queue:
-        return Queue("goals.queue")
+    def queue(self) -> QueueDict:
+        return QueueDict("goals.queue")
     
     def do_monitor(self, query: GoalQuery):
         self.queue[query.id] = query

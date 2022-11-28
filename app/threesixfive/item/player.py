@@ -7,7 +7,8 @@ from .models import (
     GameDetails,
     LineupMember,
 )
-from cachable.cacheable import CachableFile, Cachable
+from cachable.storage.file import CachableFileImage
+from cachable.storage.redis import RedisStorage
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json, Undefined, config
 from fuzzelinho import Match, MatchMethod
@@ -19,7 +20,7 @@ from marshmallow import fields
 from hashlib import blake2b
 import logging
 
-from cachable.storage import Storage
+from cachable import Cachable
 
 
 class InternationalCompetitions(Enum):
@@ -39,7 +40,7 @@ class PlayerNeedle:
     name: str
 
 
-class PlayerImage(CachableFile):
+class PlayerImage(CachableFileImage):
     SIZE = (300, 300)
 
     member: GameMember
@@ -145,11 +146,13 @@ class Player(Cachable):
 
     @classmethod
     def find(cls, query):
-        haystack = [PlayerNeedle(name=k.decode()) for k in Storage.hkeys(cls.hash_key)]
+        haystack = [
+            PlayerNeedle(name=k.decode()) for k in RedisStorage.hkeys(cls.hash_key)
+        ]
         matches = PlayerMatch(haystack=haystack).fuzzy(PlayerNeedle(name=query))
         if not matches:
             raise PlayerNotFound
-        data = Storage.hget(cls.hash_key, matches[0].name.encode())
+        data = RedisStorage.hget(cls.hash_key, matches[0].name.encode())
         if not data:
             raise PlayerNotFound
         struct = PlayerStruct.from_dict(pickle.loads(data))  # type: ignore
@@ -158,12 +161,12 @@ class Player(Cachable):
         )
 
     def fromcache(self):
-        if data := Storage.hget(__class__.hash_key, self.id):
+        if data := RedisStorage.hget(__class__.hash_key, self.id):
             return PlayerStruct.from_dict(pickle.loads(data))  # type: ignore
         return None
 
     def tocache(self, res):
-        Storage.pipeline().hset(
+        RedisStorage.pipeline().hset(
             __class__.hash_key, self.id, pickle.dumps(res.to_dict())
         ).persist(__class__.hash_key).execute()
         return res
@@ -178,7 +181,7 @@ class Player(Cachable):
 
     @property
     def isCached(self) -> bool:
-        return Storage.hexists(self.store_key, self.id) == 1
+        return RedisStorage.hexists(self.store_key, self.id) == 1
 
     @property
     def id(self):
