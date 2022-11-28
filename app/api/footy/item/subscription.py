@@ -188,6 +188,7 @@ class Subscription(metaclass=SubscriptionMeta):
 
     def __init__(self, event: Event) -> None:
         self._event = event
+        self.cancel_all()
 
     @property
     def id(self):
