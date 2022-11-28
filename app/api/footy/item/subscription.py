@@ -296,7 +296,6 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            update = self.updates(updated)
             try:
                 assert updated
                 assert updated.game
@@ -305,6 +304,8 @@ class Subscription(metaclass=SubscriptionMeta):
             except AssertionError as e:
                 logging.debug(e)
                 pass
+            chatUpdate = self.updates(updated)
+            logging.debug(self.subscriptions)
             for sc in self.subscriptions:
                 if sc.is_rest:
                     try:
@@ -318,8 +319,9 @@ class Subscription(metaclass=SubscriptionMeta):
                         self.sendUpdate_(self.halftimeAnnoucement_, sc)
                     else:
                         self.sendUpdate_(self.progressUpdate_, sc)
-                if update:
-                    TextOutput.addRows(update)
+                elif chatUpdate:
+                    TextOutput.clean()
+                    TextOutput.addRows(chatUpdate)
                     try:
                         self.sendUpdate(TextOutput.render(), sc)
                     except UnknownClientException:
