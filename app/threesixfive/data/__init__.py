@@ -1,9 +1,7 @@
 import json
 from pathlib import Path
-from cachable.request import Request
 from app.core.config import Config
 from app.threesixfive.item.models import CountryItem, LeagueItem
-from app.threesixfive.url import Url
 
 
 class Data365Meta(type):
@@ -32,18 +30,13 @@ class Data365Meta(type):
 class Data365(object, metaclass=Data365Meta):
 
     def getCompetitionsPath(self) -> Path:
-        p = Path(__file__).parent / Config.threesixfive.competitions_json
-        if not p.exists():
-            req = Request()
-            json = req.json
-            p.write_text(json.dumps(json))
-        return p
+        return Path(__file__).parent / Config.threesixfive.competitions_json
 
     def getLeaguesPath(self) -> Path:
         p = Path(__file__).parent / Config.threesixfive.leagues_json
         if not p.exists():
             competitions_path = self.getCompetitionsPath()
-            competitions = json.load(competitions_path.read_text())
+            competitions = json.loads(competitions_path.read_text())
             countries = {c.get("id"): c for c in competitions.get("countries")}
             sports = {s.get("id"): s for s in competitions.get("sports")}
             p.write_text(json.dumps([{
@@ -60,10 +53,10 @@ class Data365(object, metaclass=Data365Meta):
 
     def getCountries(self) -> list[CountryItem]:
         competitions_path = self.getCompetitionsPath()
-        competitions = json.load(competitions_path.read_text())
+        competitions = json.loads(competitions_path.read_text())
         countries_json = json.dumps(competitions.get("countries"))
-        return CountryItem.schema().loads(countries_json, many=True)
+        return CountryItem.schema().loads(countries_json, many=True)  # type: ignore
 
     def getLeagues(self) -> list[LeagueItem]:
         leagues_path = self.getLeaguesPath()
-        return LeagueItem.schema().loads(leagues_path.read_text(), many=True)
+        return LeagueItem.schema().loads(leagues_path.read_text(), many=True)  # type: ignore

@@ -8,8 +8,7 @@ from app.core.config import Config
 from validators import ip_address, domain
 import socket
 from botyo_server.output import TextOutput, Column
-from pycountry import countries
-import flag
+from app.core.country import Country
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -45,16 +44,12 @@ class GeoLookup:
 
     @property
     def country_with_flag(self):
-        if not self.country:
-            return None
-        matches = countries.search_fuzzy(self.country)
-        if not len(matches):
-            return self.country
-        return flag.flagize(f"{self.country} :{matches.pop(0).alpha_2}:")
+        if self.country:
+            return Country(name=self.country).country_with_flag
 
 
 class GeoMeta(type):
-    _instances: dict[str, 'Geo'] = {}
+    _instances: dict[str, "Geo"] = {}
     _app = None
     _api = None
 
@@ -73,10 +68,10 @@ class GeoMeta(type):
 
 class Geo(object, metaclass=GeoMeta):
 
-    __ip: str = None
-    __lookup_result: GeoLookup = None
+    __ip: str
+    __lookup_result: Optional[GeoLookup] = None
 
-    def __init__(self, query: str) -> None:
+    def __init__(self, query) -> None:
         if ip_address.ipv4(query):
             self.__ip = query
         elif domain(query):
@@ -87,33 +82,34 @@ class Geo(object, metaclass=GeoMeta):
     @property
     def lookup_result(self):
         if not self.__lookup_result:
-            req = Request(
-                f"{__class__.api_url}/geo",
-                params={"ip": self.__ip}
-            )
+            req = Request(f"{__class__.api_url}/geo", params={"ip": self.__ip})
             json = req.json
-            self.__lookup_result = GeoLookup.from_dict(json)
+            self.__lookup_result = GeoLookup.from_dict(json)  # type: ignore
 
         return self.__lookup_result
 
     def lookup(self) -> str:
-        result =  self.lookup_result
+        result = self.lookup_result
         if not result:
-            return None
-        data = filter(lambda x: x[0], [
-            (result.country_with_flag, "Country"),
-            (result.city, "City"),
-            (result.subdivisions, "Area"),
-            (result.timezone, "Timezone"),
-            (result.gps, "Location"),
-            (result.isp, "ISP")
-        ])
-        cols, row = reduce(lambda r, cr: (
-            [*r[0], Column(title=cr[1], fullsize=True, size=40)
-             ], [*r[1], cr[0]]
-        ),
+            return ""
+        data = filter(
+            lambda x: x[0],
+            [
+                (result.country_with_flag, "Country"),
+                (result.city, "City"),
+                (result.subdivisions, "Area"),
+                (result.timezone, "Timezone"),
+                (result.gps, "Location"),
+                (result.isp, "ISP"),
+            ],
+        )
+        cols, row = reduce(
+            lambda r, cr: (
+                [*r[0], Column(title=cr[1], fullsize=True, size=40)],
+                [*r[1], cr[0]],
+            ),
             data,
-            ([], [])
+            ([], []),
         )
         TextOutput.addRobustTable(cols, [row])
         return TextOutput.render()

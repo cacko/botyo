@@ -296,30 +296,30 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            if update := self.updates(updated):
-                try:
-                    assert updated
-                    assert updated.game
-                    if updated.game.events:
-                        self.processGoals(updated.game.events)
-                except AssertionError as e:
-                    logging.exception(e)
-                for sc in self.subscriptions:
-                    if sc.is_rest:
-                        details = ParserDetails(None, response=updated)
-                        events = details.events_pixel
-                        self.sendUpdate_(events, sc)
-                        if cache.halftime:
-                            cache.halftime = False
-                            self.sendUpdate_(self.halftimeAnnoucement_, sc)
-                        else:
-                            self.sendUpdate_(self.progressUpdate_, sc)
+            update = self.updates(updated)
+            try:
+                assert updated
+                assert updated.game
+                if updated.game.events:
+                    self.processGoals(updated.game.events)
+            except AssertionError as e:
+                logging.exception(e)
+            for sc in self.subscriptions:
+                if sc.is_rest:
+                    details = ParserDetails(None, response=updated)
+                    events = details.events_pixel
+                    self.sendUpdate_(events, sc)
+                    if cache.halftime:
+                        cache.halftime = False
+                        self.sendUpdate_(self.halftimeAnnoucement_, sc)
                     else:
-                        TextOutput.addRows(update)
-                        try:
-                            self.sendUpdate(TextOutput.render(), sc)
-                        except UnknownClientException:
-                            pass
+                        self.sendUpdate_(self.progressUpdate_, sc)
+                if update:
+                    TextOutput.addRows(update)
+                    try:
+                        self.sendUpdate(TextOutput.render(), sc)
+                    except UnknownClientException:
+                        pass
             content = cache.content
             if not content:
                 return self.cancel_all()
