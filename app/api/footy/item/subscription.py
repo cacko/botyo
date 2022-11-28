@@ -26,7 +26,6 @@ from cachable.request import Request
 from cachable.cacheable import Cachable
 from enum import Enum
 from hashlib import blake2b
-from apscheduler.job import Job
 from emoji import emojize
 from datetime import datetime, timezone
 import re
@@ -36,23 +35,12 @@ import sys
 from pixelme import Pixelate
 import time
 import logging
-from typing import Optional, TypeVar
+from typing import Optional
 from .goals import Goals
 from app.goals import Query as GoalQuery
 from pathlib import Path
 from app.core.store import Queue
 from dataclasses import dataclass
-from functools import reduce
-
-GE = TypeVar("GE", DetailsEventPixel, GameEvent)
-
-
-def job_id_to_event_id(job_id: str) -> int:
-    try:
-        _, event_id, _ = job_id.split(":")
-        return int(event_id)
-    except:
-        return 0
 
 
 class Headers(Enum):
@@ -156,7 +144,7 @@ class SubscriptionMeta(type):
     __subs: dict[str, "Subscription"] = {}
 
     def __call__(cls, event: Event):
-        k = event.id
+        k = event.job_id
         if k not in cls.__subs:
             cls.__subs[k] = type.__call__(cls, event)
             cls.clients[k] = []
@@ -165,7 +153,7 @@ class SubscriptionMeta(type):
 
     def get(cls, event: Event, sc: SubscritionClient) -> "Subscription":
         obj = cls(event)
-        k = event.id
+        k = event.job_id
         if SubscritionClient.id not in [x.id for x in cls.clients[k]]:
             cls.clients[k].append(sc)
         return obj
@@ -194,12 +182,12 @@ class Subscription(metaclass=SubscriptionMeta):
         prefix = JobPrefix.INPROGRESS
         if not self.inProgress:
             prefix = JobPrefix.SCHEDULED
-        return ":".join([self._event.id, prefix.value])
+        return ":".join([self._event.job_id, prefix.value])
 
     @property
     def beforeGameId(self):
         prefix = JobPrefix.BEFOREGAME
-        return ":".join([self._event.id, prefix.value])
+        return ":".join([self._event.job_id, prefix.value])
 
     @property
     def event_name(self):
@@ -209,11 +197,11 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def goals_queue(self) -> Queue:
-        return Queue(f"subscription.{self.id}.goals.queue")
+        return Queue(f"subscription.{self._event.job_id}.goals.queue")
 
     @property
     def subscriptions(self) -> list[SubscritionClient]:
-        return __class__.clients[self.id]
+        return __class__.clients[self._event.job_id]
 
     def cancel(self, sc: SubscritionClient):
         try:
@@ -262,7 +250,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 )
             )
 
-    def processGoals(self, events: list[GE]):
+    def processGoals(self, events: list[GameEvent]):
         try:
             assert isinstance(events, list)
             logging.warning(events)
@@ -352,7 +340,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 for sc in self.subscriptions:
                     try:
                         if sc.is_rest:
-                            self.sendUpdate_(self.fulltimeAnnoucement_, sc)
+                            self.sendUpdate_(self.fulltimeAnnoucementPixel, sc)
                         else:
                             self.sendUpdate(self.fulltimeAnnoucement, sc)
                     except UnknownClientException:
@@ -405,24 +393,31 @@ class Subscription(metaclass=SubscriptionMeta):
         return TextOutput.render()
 
     @property
-    def startAnnouncement(self) -> str | list[DetailsEventPixel]:
+    def fulltimeAnnoucementPixel(self):
+        try:
+            details = ParserDetails.get(str(self._event.details))
+            return DetailsEventPixel.fullTimeEvent(details=details)
+        except AssertionError as e:
+            logging.exception(e)
+
+    @property
+    def halftimeAnnoucement_(self):
+        try:
+            details = ParserDetails.get(str(self._event.details))
+            return DetailsEventPixel.halfTimeEvent(details)
+        except AssertionError as e:
+            logging.exception(e)
+
+    @property
+    def startAnnouncement(self) -> str | list[str]:
         TextOutput.addRows(
             [" ".join([emojize(":goal_net:"), f"GAME STARTING: {self.event_name}"])]
         )
         return TextOutput.render()
 
     @property
-    def startAnnouncement_(self) -> list[DetailsEventPixel]:
-        return [
-            DetailsEventPixel(
-                time=0,
-                action="Game Start",
-                order=0,
-                is_old_event=False,
-                event_name=self.event_name,
-                event_id=self._event.idEvent,
-            )
-        ]
+    def startAnnouncementPixel(self) -> list[DetailsEventPixel]:
+        return [DetailsEventPixel.startTimeEvent(self.event_name, self._event.idEvent)]
 
     def start(self, announceStart=False):
         logging.debug(f"subscriion in live mode {self.event_name}")
@@ -439,7 +434,7 @@ class Subscription(metaclass=SubscriptionMeta):
             for sc in self.subscriptions:
                 try:
                     if sc.is_rest:
-                        self.sendUpdate_(self.startAnnouncement_, sc)
+                        self.sendUpdate_(self.startAnnouncementPixel, sc)
                     else:
                         self.sendUpdate(self.startAnnouncement, sc)
                 except UnknownClientException:
@@ -484,32 +479,30 @@ class Subscription(metaclass=SubscriptionMeta):
             misfire_grace_time=180,
         )
 
-    # def beforeGameTrigger(self):
-    #     if not self.client:
-    #         logging.debug(f">> skip schedule {self._clientId}")
-    #         return
-    #     try:
-    #         logging.debug(f"{self.event_name} check for lineups")
-    #         lineups = Lineups(self._event)
-    #         message = lineups.message
-    #         if not message:
-    #             logging.debug(f"{self.event_name} not lineups yet")
-    #             return
-    #         logging.debug(f"{self.event_name} lineups available")
-    #         TextOutput.addRows(
-    #             [f"{Headers.LINEUP_ANNOUNCED.value: ^ 42}\n".upper(), message]
-    #         )
-    #         text = TextOutput.render()
-    #         try:
-    #             self.sendUpdate(text)
-    #         except UnknownClientException:
-    #             pass
-    #         Scheduler.cancel_jobs(self.beforeGameId)
-    #         logging.debug(f"subscription before game {self.event_name} in done")
-    #     except ValueError:
-    #         pass
-    #     except Exception as e:
-    #         logging.exception(e)
+    def beforeGameTrigger(self):
+        try:
+            logging.debug(f"{self.event_name} check for lineups")
+            lineups = Lineups(self._event)
+            message = lineups.message
+            if not message:
+                logging.debug(f"{self.event_name} not lineups yet")
+                return
+            logging.debug(f"{self.event_name} lineups available")
+            TextOutput.addRows(
+                [f"{Headers.LINEUP_ANNOUNCED.value: ^ 42}\n".upper(), message]
+            )
+            text = TextOutput.render()
+            for sc in filter(lambda s: not s.is_rest, self.subscriptions):
+                try:
+                    self.sendUpdate(text, sc)
+                except UnknownClientException:
+                    pass
+                self.cancel(sc)
+            logging.debug(f"subscription before game {self.event_name} in done")
+        except ValueError:
+            pass
+        except Exception as e:
+            logging.error(e)
 
     @property
     def isValid(self) -> bool:
@@ -577,53 +570,6 @@ class Subscription(metaclass=SubscriptionMeta):
         except ConnectionError:
             logging.error(f"Cannot send update to f{sc.client_id}")
             pass
-
-    @property
-    def fulltimeAnnoucement_(self):
-        try:
-            details = ParserDetails.get(str(self._event.details))
-            assert details.game_time
-            assert details.home
-            assert details.away
-            assert details.event_id
-            return [
-                DetailsEventPixel(
-                    time=details.game_time,
-                    action="Full Time",
-                    is_old_event=False,
-                    score=details.score,
-                    event_name=f"{details.home.name}/{details.away.name}",
-                    event_id=details.event_id,
-                    order=sys.maxsize,
-                    status=details.game_status,
-                )
-            ]
-        except AssertionError as e:
-            logging.exception(e)
-
-    @property
-    def halftimeAnnoucement_(self):
-        try:
-            logging.info(f"FOOT SUB: Halt Time {self.event_name}")
-            details = ParserDetails.get(str(self._event.details))
-            assert details.game_time
-            assert details.home
-            assert details.away
-            assert details.event_id
-            return [
-                DetailsEventPixel(
-                    time=details.game_time,
-                    action="Half Time",
-                    is_old_event=False,
-                    score=details.score,
-                    event_name=f"{details.home.name}/{details.away.name}",
-                    event_id=details.event_id,
-                    order=sys.maxsize,
-                    status=details.game_status,
-                )
-            ]
-        except AssertionError as e:
-            logging.exception(e)
 
     @property
     def progressUpdate_(self):

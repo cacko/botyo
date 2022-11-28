@@ -13,7 +13,9 @@ from stringcase import constcase
 from hashlib import md5
 from app.core.config import Config as app_config
 from emoji import emojize
-
+import sys
+from app.threesixfive.item.livescore_details import ParserDetails
+from hashlib import md5
 
 class EventStatus(Enum):
     HT = "HT"
@@ -165,6 +167,15 @@ class Event:
             self.displayScore = ":".join(
                 [f"{self.intHomeScore:.0f}", f"{self.intAwayScore:.0f}"]
             )
+            
+    @property
+    def job_id(self) -> str:
+        return md5(f"{self.event_name}".lower().encode()).hexdigest()
+
+    
+    @property
+    def event_name(self) -> str:
+        return "/".join([s if s else "" for s in [self.strHomeTeam, self.strAwayTeam]])
 
     @property
     def inProgress(self) -> bool:
@@ -624,7 +635,7 @@ class GameEvent:
         if not self.gameTimeDisplay:
             return ""
         return self.gameTimeDisplay
-        
+
     @property
     def playerName(self) -> str:
         return ""
@@ -754,7 +765,7 @@ class DetailsEventPixel:
             return self.action.lower() == "goal"
         except AssertionError:
             return False
-        
+
     @property
     def playerName(self) -> str:
         return self.player if self.player else ""
@@ -764,6 +775,51 @@ class DetailsEventPixel:
         if not self.time:
             return ""
         return f"{self.time:.0f}'"
+
+    @classmethod
+    def fullTimeEvent(cls, details: ParserDetails):
+        assert details.game_time
+        assert details.home
+        assert details.away
+        assert details.event_id
+        return cls(
+            time=details.game_time,
+            action="Full Time",
+            is_old_event=False,
+            score=details.score,
+            event_name=f"{details.home.name}/{details.away.name}",
+            event_id=details.event_id,
+            order=sys.maxsize,
+            status=details.game_status,
+        )
+
+    @classmethod
+    def halfTimeEvent(cls, details: ParserDetails):
+        assert details.game_time
+        assert details.home
+        assert details.away
+        assert details.event_id
+        return cls(
+            time=details.game_time,
+            action="Half Time",
+            is_old_event=False,
+            score=details.score,
+            event_name=f"{details.home.name}/{details.away.name}",
+            event_id=details.event_id,
+            order=sys.maxsize,
+            status=details.game_status,
+        )
+
+    @classmethod
+    def startTimeEvent(cls, event_name: str, event_id: int):
+        return cls(
+            time=0,
+            action="Game Start",
+            order=0,
+            is_old_event=False,
+            event_name=event_name,
+            event_id=event_id,
+        )
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -793,7 +849,7 @@ class SubscriptionEvent:
     away_team_icon: Optional[str] = None
 
     def __post_init__(self) -> None:
-        self.id = md5(f"{self.home_team}/{self.away_team}".lower().encode()).hexdigest()
+        self.id = md5(f"{self.event_name}".lower().encode()).hexdigest()
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
