@@ -303,7 +303,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 if updated.game.events:
                     self.processGoals(updated.game.events)
             except AssertionError as e:
-                logging.exception(e)
+                logging.debug(e)
+                pass
             for sc in self.subscriptions:
                 if sc.is_rest:
                     details = ParserDetails(None, response=updated)
