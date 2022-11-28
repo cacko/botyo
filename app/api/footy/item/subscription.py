@@ -133,7 +133,7 @@ class SubscritionClient:
 
     @classmethod
     def get_id(cls, client: str, group) -> str:
-        prefix = ":".join([cls.__module__, client, group])
+        prefix = ":".join([client, group])
         h = blake2b(digest_size=20)
         h.update(prefix.encode())
         return h.hexdigest()
@@ -143,13 +143,16 @@ class SubscriptionClients(QueueDict):
     
     def __getitem__(self, __key: Any) -> QueueList:
         return QueueList(super().__getitem__(__key))
+    
+    def ids(self, __key: Any) -> list[str]:
+        return [i.id for i in self.__getitem__(__key)]
 
 class SubscriptionMeta(type):
 
     __subs: dict[str, "Subscription"] = {}
 
     def __call__(cls, event: Event):
-        k = event.job_id
+        k = event.event_hash
         if k not in cls.__subs:
             cls.__subs[k] = type.__call__(cls, event)
             cls.clients[k] = f"subscription.{k}.clients"
@@ -158,13 +161,13 @@ class SubscriptionMeta(type):
 
     def get(cls, event: Event, sc: SubscritionClient) -> "Subscription":
         obj = cls(event)
-        k = event.job_id
+        k = event.event_hash
         if SubscritionClient.id not in [x.id for x in cls.clients[k]]:
             cls.clients[k].append(sc)
         return obj
 
     def forGroup(cls, sc: SubscritionClient) -> list["Subscription"]:
-        subs = list(filter(lambda k: sc.id in cls.clients[k], cls.clients.keys()))
+        subs = list(filter(lambda k: sc.id in cls.clients.ids(k), cls.clients.keys()))
         if not subs:
             return []
         return subs
@@ -187,12 +190,12 @@ class Subscription(metaclass=SubscriptionMeta):
         prefix = JobPrefix.INPROGRESS
         if not self.inProgress:
             prefix = JobPrefix.SCHEDULED
-        return ":".join([self._event.job_id, prefix.value])
+        return ":".join([str(self._event.idEvent), prefix.value])
 
     @property
     def beforeGameId(self):
         prefix = JobPrefix.BEFOREGAME
-        return ":".join([self._event.job_id, prefix.value])
+        return ":".join([str(self._event.idEvent), prefix.value])
 
     @property
     def event_name(self):
@@ -202,11 +205,11 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def goals_queue(self) -> QueueDict:
-        return QueueDict(f"subscription.{self._event.job_id}.goals.queue")
+        return QueueDict(f"subscription.{self._event.event_hash}.goals.queue")
 
     @property
     def subscriptions(self) -> list[SubscritionClient]:
-        return __class__.clients[self._event.job_id]
+        return __class__.clients[self._event.event_hash]
 
     def cancel(self, sc: SubscritionClient):
         try:
@@ -296,6 +299,7 @@ class Subscription(metaclass=SubscriptionMeta):
 
     def trigger(self):
         try:
+            logging.debug(self.subscriptions)
             self.checkGoals()
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
@@ -309,7 +313,6 @@ class Subscription(metaclass=SubscriptionMeta):
                 logging.debug(e)
                 pass
             chatUpdate = self.updates(updated)
-            logging.debug(self.subscriptions)
             for sc in self.subscriptions:
                 if sc.is_rest:
                     try:

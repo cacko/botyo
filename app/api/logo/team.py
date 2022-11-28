@@ -1,19 +1,20 @@
 from cachable.request import Request
 from hashlib import blake2b
-from cachable.cacheable import CachableFile, Cachable
+from cachable.storage.file import CachableFileImage
+from cachable import Cachable
 from cachable.models import BinaryStruct
 from urllib.parse import quote
 from app.core.config import Config
 from app.core.image import pixelme_b64
+from typing import Optional
 
+class Team(CachableFileImage):
 
-class Team(CachableFile):
-
-    _struct: BinaryStruct = None
-    __name = None
+    _struct: Optional[BinaryStruct] = None
+    __name: str
     __id = None
     SIZE = (200, 200)
-    __apiUrl: str = None
+    __apiUrl: str
 
     def __init__(self, name: str):
         if not name:

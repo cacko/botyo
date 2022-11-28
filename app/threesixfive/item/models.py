@@ -168,7 +168,7 @@ class Event:
             )
             
     @property
-    def job_id(self) -> str:
+    def event_hash(self) -> str:
         return md5(f"{self.event_name}".lower().encode()).hexdigest()
 
     
