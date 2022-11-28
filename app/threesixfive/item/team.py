@@ -79,7 +79,7 @@ class Team(TimeCacheable):
             return True
         if not self.isCached:
             return False
-        self._struct = self.fromcache()
+        self._struct = self.fromcache()  # type: ignore
         return True if self._struct else False
 
     def __fetch(self):
@@ -95,5 +95,5 @@ class Team(TimeCacheable):
     @property
     def team(self) -> TeamStruct:
         if not self.load():
-            self._struct = self.__fetch()
-        return self._struct.struct if self._struct else None
+            self._struct = self.__fetch()  # type: ignore
+        return self._struct.struct if self._struct else None  # type: ignore
