@@ -14,7 +14,6 @@ from hashlib import md5
 from app.core.config import Config as app_config
 from emoji import emojize
 import sys
-from app.threesixfive.item.livescore_details import ParserDetails
 from hashlib import md5
 
 class EventStatus(Enum):
@@ -777,7 +776,7 @@ class DetailsEventPixel:
         return f"{self.time:.0f}'"
 
     @classmethod
-    def fullTimeEvent(cls, details: ParserDetails):
+    def fullTimeEvent(cls, details):
         assert details.game_time
         assert details.home
         assert details.away
@@ -794,7 +793,7 @@ class DetailsEventPixel:
         )
 
     @classmethod
-    def halfTimeEvent(cls, details: ParserDetails):
+    def halfTimeEvent(cls, details):
         assert details.game_time
         assert details.home
         assert details.away
