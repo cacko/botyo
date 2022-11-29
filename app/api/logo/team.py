@@ -7,6 +7,7 @@ from app.core.image import pixelme_b64
 from typing import Optional
 from app.core.store import ImageCachable
 
+
 class Team(ImageCachable):
 
     _struct: Optional[BinaryStruct] = None
@@ -14,7 +15,7 @@ class Team(ImageCachable):
     __id = None
     SIZE = (200, 200)
     __apiUrl: str
-    
+
     def __init__(self, name: str):
         if not name:
             raise ValueError
@@ -25,9 +26,7 @@ class Team(ImageCachable):
         if self.isCached:
             return
         try:
-            req = Request(
-                f"{self.__apiUrl}/assets/team/badge/{quote(self.__name)}.png"
-            )
+            req = Request(f"{self.__apiUrl}/assets/team/badge/{quote(self.__name)}.png")
             return self.tocache(req.binary)
         except Exception:
             pass
@@ -45,17 +44,13 @@ class Team(ImageCachable):
         return f"{self.id}.png"
 
 
-class TeamLogoPixel(Cachable):
+class TeamLogoPixel(ImageCachable):
 
     __name: str
     __id = None
 
     def __init__(self, name) -> None:
         self.__name = name
-        
-    @property
-    def storage(self):
-        return FileStorage()
 
     @property
     def base64(self) -> str:
