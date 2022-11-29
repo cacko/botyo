@@ -72,7 +72,7 @@ class QueueListMeta(type):
         return cls.__instances[storage_key]
 
 
-class QueueList(list, metaclass=QueueDictMeta):
+class QueueList(list, metaclass=QueueListMeta):
 
     __storage_key: str
 
@@ -81,17 +81,17 @@ class QueueList(list, metaclass=QueueDictMeta):
         items = self.load()
         super().__init__(items, *args, **kwds)
 
-    def __setitem__(self, __k, __v) -> None:
-        RedisStorage.pipeline().sadd(self.__storage_key, self.dumps(__v)).persist(
+    def append(self, __object: Any) -> None:
+        RedisStorage.pipeline().sadd(self.__storage_key, self.dumps(__object)).persist(
             self.__storage_key
         ).execute()
-        return super().__setitem__(__k, __v)
+        return super().append(__object)
 
-    def __delitem__(self, __v) -> None:
-        RedisStorage.pipeline().srem(self.__storage_key, self.dumps(__v)).persist(
+    def remove(self, __value: Any) -> None:
+        RedisStorage.pipeline().srem(self.__storage_key, self.dumps(__value)).persist(
             self.__storage_key
         ).execute()
-        return super().__delitem__(__v)
+        return super().remove(__value)
 
     def dumps(self, v):
         return pickle.dumps(v)
