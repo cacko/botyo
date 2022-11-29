@@ -594,6 +594,7 @@ class Subscription(metaclass=SubscriptionMeta):
             assert details.event_id
             return [
                 DetailsEventPixel(
+                    id=self._event.id,
                     time=details.game_time,
                     action="Progress",
                     is_old_event=False,

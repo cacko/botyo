@@ -735,7 +735,7 @@ class GoalEvent:
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class DetailsEventPixel:
-    event_id: Union[int, str]
+    event_id: int
     time: int
     action: str
     is_old_event: bool
@@ -848,7 +848,8 @@ class SubscriptionEvent:
     away_team_icon: Optional[str] = None
 
     def __post_init__(self) -> None:
-        self.id = md5(f"{self.event_name}".lower().encode()).hexdigest()
+        event_name = f"{self.home_team}/{self.away_team}"
+        self.id = md5(f"{event_name}".lower().encode()).hexdigest()
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
