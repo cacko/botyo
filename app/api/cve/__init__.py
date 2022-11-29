@@ -10,40 +10,27 @@ from app.api import ZMethod
 bp = Blueprint("cve")
 
 
-@bp.command(
-    method=ZMethod.CVE_CVE,
-    desc="Latest Common Vulnerabilities and Exposures."
-)
+@bp.command(method=ZMethod.CVE_CVE, desc="Latest Common Vulnerabilities and Exposures.")  # type: ignore
 def cve_command(context: Context) -> RenderResult:
     cve = CVE(context.query)
     message = cve.message
     if not message:
         return EmptyResult()
-    return RenderResult(
-        message=message,
-        method=ZMethod.CVE_CVE
-    )
+    return RenderResult(message=message, method=ZMethod.CVE_CVE)
 
 
-@bp.command(
-    method=ZMethod.CVE_ALERT,
-    desc="subscribe for CVE updates"
-)
+@bp.command(method=ZMethod.CVE_ALERT, desc="subscribe for CVE updates")  # type: ignore
 def cvesubscribe_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group, not context.query]):
         return EmptyResult()
     sub = Subscription(context.client, context.group, context.query)
     sub.schedule()
     return RenderResult(
-        method=ZMethod.CVE_ALERT,
-        message=f"Subscribed for {sub.subscription_name}"
+        method=ZMethod.CVE_ALERT, message=f"Subscribed for {sub.subscription_name}"
     )
 
 
-@bp.command(
-    method=ZMethod.CVE_UNALERT,
-    desc="unsubscribe for CVE updates"
-)
+@bp.command(method=ZMethod.CVE_UNALERT, desc="unsubscribe for CVE updates")  # type: ignore
 def cveunsubscribe_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group, not context.query]):
         return EmptyResult()
@@ -52,7 +39,7 @@ def cveunsubscribe_command(context: Context) -> RenderResult:
         sub.cancel()
         return RenderResult(
             method=ZMethod.CVE_UNALERT,
-            message=f"Unsubscribed for {sub.subscription_name}"
+            message=f"Unsubscribed for {sub.subscription_name}",
         )
 
     except Exception:
@@ -60,24 +47,14 @@ def cveunsubscribe_command(context: Context) -> RenderResult:
 
 
 @bp.command(
-    method=ZMethod.CVE_LISTALERTS,
-    desc="list current subscrionts for CVE updates"
-)
+    method=ZMethod.CVE_LISTALERTS, desc="list current subscrionts for CVE updates"
+)  # type: ignore
 def cvelistsubscriptions_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group]):
         return EmptyResult()
     jobs = Subscription.forGroup(context.client, context.group)
     if not jobs:
-        return RenderResult(
-            method=ZMethod.CVE_LISTALERTS,
-            message="No subscriptions"
-        )
+        return RenderResult(method=ZMethod.CVE_LISTALERTS, message="No subscriptions")
 
-    TextOutput.addRows(map(
-        lambda x: x.name,
-        jobs
-    ))
-    return RenderResult(
-        method=ZMethod.CVE_LISTALERTS,
-        message=TextOutput.render()
-    )
+    TextOutput.addRows(map(lambda x: x.name, jobs))
+    return RenderResult(method=ZMethod.CVE_LISTALERTS, message=TextOutput.render())

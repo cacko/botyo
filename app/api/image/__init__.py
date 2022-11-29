@@ -11,7 +11,7 @@ bp = Blueprint("image")
 @bp.command(
     method=ZMethod.IMAGE_ANALYZE,
     desc="Returns Emotion, Race, Gender, Age for image",
-)
+)  # type: ignore
 def image_analyze(context: Context):
     attachment = context.attachment
     if not attachment:
@@ -32,7 +32,7 @@ def image_analyze(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TAG,
     desc="tag faces in image",
-)
+)  # type: ignore
 def image_Tag(context: Context):
     attachment = context.attachment
     if not attachment:
@@ -53,7 +53,7 @@ def image_Tag(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_HOWCUTE,
     desc="howcute faces in image",
-)
+)  # type: ignore
 def image_howcute(context: Context):
     attachment = context.attachment
     if not attachment:
@@ -74,7 +74,7 @@ def image_howcute(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_CLASSIFY,
     desc="Classify objects in images",
-)
+)  # type: ignore
 def image_classify(context: Context):
     attachment = context.attachment
     if not attachment:
@@ -94,7 +94,7 @@ def image_classify(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_PIXEL,
     desc="pixel image",
-)
+)  # type: ignore
 def image_pixel(context: Context):
     attachment = context.attachment
     query = context.query
@@ -120,7 +120,7 @@ def image_pixel(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_POLYGON,
     desc="polygon image",
-)
+)  # type: ignore
 def image_polygon(context: Context):
     attachment = context.attachment
     query = context.query

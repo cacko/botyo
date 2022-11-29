@@ -1,5 +1,5 @@
 from app.chatyo import Payload, Response, getResponse
-
+from typing import Optional
 
 class ChatMeta(type):
 
@@ -10,13 +10,13 @@ class ChatMeta(type):
             cls._instance = type.__call__(cls, *args, **kwds)
         return cls._instance
 
-    def dialog(cls, source, text, lang: str = None) -> Response:
+    def dialog(cls, source, text, lang: Optional[str] = None) -> Response:
         return cls().getResponse("chat/dialog", text, source, lang)
 
-    def phrase(cls, text, source=None, lang: str = None) -> Response:
+    def phrase(cls, text, source=None, lang: Optional[str] = None) -> Response:
         return cls().getResponse("chat/phrase", text, source, lang)
 
-    def reply(cls, text, source=None, lang: str = None) -> Response:
+    def reply(cls, text, source=None, lang: Optional[str] = None) -> Response:
         return cls().getResponse("chat/sarcastic", text, source, lang)
 
 class Chat(object, metaclass=ChatMeta):
@@ -25,8 +25,8 @@ class Chat(object, metaclass=ChatMeta):
             self,
             path,
             text,
-            source: str = None,
-            lang: str = None) -> Response:
+            source: Optional[str] = None,
+            lang: Optional[str] = None) -> Response:
         return getResponse(
             path,
             Payload(

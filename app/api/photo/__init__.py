@@ -7,10 +7,7 @@ from botyo_server.socket.connection import Context
 bp = Blueprint("photo")
 
 
-@bp.command(
-    method=ZMethod.PHOTO_FAKE,
-    desc="fake photo"
-)
+@bp.command(method=ZMethod.PHOTO_FAKE, desc="fake photo")  # type: ignore
 def photo_command(context: Context):
     fakeface = FakeFace(context.query)
     path = fakeface.path
@@ -19,11 +16,8 @@ def photo_command(context: Context):
         return EmptyResult()
 
     res = RenderResult(
-        attachment=Attachment(
-            path=path.as_posix(),
-            contentType=fakeface.contentType
-        ),
-        method=ZMethod.PHOTO_FAKE
+        attachment=Attachment(path=path.as_posix(), contentType=fakeface.contentType),
+        method=ZMethod.PHOTO_FAKE,
     )
 
     return res

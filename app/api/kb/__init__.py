@@ -13,7 +13,7 @@ bp = Blueprint("kb")
 
 
 class ICONS(Enum):
-    GLASSES = emojize(':glasses:')
+    GLASSES = emojize(":glasses:")
     LIGHTBULD = emojize(":light_bulb:")
     OPENBOOK = emojize(":open_book:")
     QUESTION = emojize(":information:")
@@ -22,7 +22,7 @@ class ICONS(Enum):
 @bp.command(
     method=ZMethod.KNOWLEDGE_ARTICLE,
     desc="search and displayed the first match for a term from wikipedia",
-)
+)  # type: ignore
 def article_command(context: Context):
     try:
         wiki = KnowledgeBase(context.query)
@@ -30,19 +30,16 @@ def article_command(context: Context):
         article = f"{ICONS.OPENBOOK.value} {article}"
         TextOutput.addRows(article.split("\n"))
         return RenderResult(
-            message=TextOutput.render(),
-            method=ZMethod.KNOWLEDGE_ARTICLE
+            message=TextOutput.render(), method=ZMethod.KNOWLEDGE_ARTICLE
         )
     except FileNotFoundError:
-        return EmptyResult(
-            method=ZMethod.KNOWLEDGE_ARTICLE
-        )
+        return EmptyResult(method=ZMethod.KNOWLEDGE_ARTICLE)
 
 
 @bp.command(
     method=ZMethod.KNOWLEDGE_ASK,
     desc="ask to learn",
-)
+)  # type: ignore
 def ask_command(context: Context):
     try:
         msg = context.query
@@ -51,15 +48,14 @@ def ask_command(context: Context):
         answer = KnowledgeBase.answer(msg)
         res = RenderResult(
             message=f"{ICONS.LIGHTBULD.value} {answer.response}"
-            if answer.response else None,
+            if answer.response
+            else None,
             attachment=answer.attachment,
             method=ZMethod.KNOWLEDGE_ASK,
         )
         return res
     except FileNotFoundError:
-        return EmptyResult(
-            method=ZMethod.KNOWLEDGE_ASK
-        )
+        return EmptyResult(method=ZMethod.KNOWLEDGE_ASK)
     except Exception as e:
         logging.error(e)
 
@@ -67,7 +63,7 @@ def ask_command(context: Context):
 @bp.command(
     method=ZMethod.KNOWLEDGE_TELL,
     desc="ask to be told",
-)
+)  # type: ignore
 def tell_command(context: Context):
     try:
         title = context.query
@@ -79,9 +75,7 @@ def tell_command(context: Context):
             method=ZMethod.KNOWLEDGE_TELL,
         )
     except FileNotFoundError:
-        return EmptyResult(
-            method=ZMethod.KNOWLEDGE_TELL
-        )
+        return EmptyResult(method=ZMethod.KNOWLEDGE_TELL)
     except Exception as e:
         logging.error(e)
 
@@ -89,7 +83,7 @@ def tell_command(context: Context):
 @bp.command(
     method=ZMethod.KNOWLEDGE_WTF,
     desc="wtf is that",
-)
+)  # type: ignore
 def wtf_command(context: Context):
     try:
         title = context.query
@@ -98,11 +92,10 @@ def wtf_command(context: Context):
         answer = KnowledgeBase.wolfram(title)
         return RenderResult(
             message=f"{ICONS.QUESTION.value} {answer.response}"
-            if answer.response else None,
+            if answer.response
+            else None,
             attachment=answer.attachment,
             method=ZMethod.KNOWLEDGE_WTF,
         )
     except FileNotFoundError:
-        return EmptyResult(
-            method=ZMethod.KNOWLEDGE_WTF
-        )
+        return EmptyResult(method=ZMethod.KNOWLEDGE_WTF)

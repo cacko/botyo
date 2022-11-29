@@ -13,19 +13,14 @@ bp = Blueprint("ontv")
 @bp.command(
     method=ZMethod.ONTV_TV,
     desc="TV Schedule",
-)
+)  # type: ignore
 def tv_command(context: Context) -> RenderResult:
     tv = TV(
         Request(f"{Config.ontv.api_url}/data/schedule.json"),
         Config.ontv.leagues,
     )
-    message = tv.render(
-        filt=context.query,
-        tz=ZoneInfo(context.timezone)
-    )
+    assert context.timezone
+    message = tv.render(filt=context.query, tz=ZoneInfo(context.timezone))
     if not message:
         return EmptyResult()
-    return RenderResult(
-        message=message,
-        method=ZMethod.ONTV_TV
-    )
+    return RenderResult(message=message, method=ZMethod.ONTV_TV)

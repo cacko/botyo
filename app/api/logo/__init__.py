@@ -8,7 +8,7 @@ from app.api import ZMethod
 bp = Blueprint("logo")
 
 
-@bp.command(method=ZMethod.LOGO_TEAM, desc="logo for the requested football team")
+@bp.command(method=ZMethod.LOGO_TEAM, desc="logo for the requested football team")  # type: ignore
 def logo_command(context: Context):
     logo = Team(context.query)
     path = logo.path

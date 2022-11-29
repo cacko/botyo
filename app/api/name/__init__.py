@@ -35,10 +35,7 @@ class RaceIcon(Enum):
     FAGGOT = ":middle_finger:"
 
 
-@bp.command(
-    method=ZMethod.NAME_GENDER,
-    desc="genderiya"
-)
+@bp.command(method=ZMethod.NAME_GENDER, desc="genderiya")  # type: ignore
 def gender_command(context: Context):
     name = context.query
 
@@ -55,19 +52,12 @@ def gender_command(context: Context):
         return EmptyResult(method=ZMethod.NAME_GENDER)
 
     icon = getattr(GenderIcon, gender.name)
-    TextOutput.addRows(
-        [f"{name.upper()} {icon.value} {titlecase(gender.value)}"])
-    res = RenderResult(
-        method=ZMethod.NAME_GENDER,
-        message=TextOutput.render()
-    )
+    TextOutput.addRows([f"{name.upper()} {icon.value} {titlecase(gender.value)}"])
+    res = RenderResult(method=ZMethod.NAME_GENDER, message=TextOutput.render())
     return res
 
 
-@bp.command(
-    method=ZMethod.NAME_RACE,
-    desc="Batko's Life Matters"
-)
+@bp.command(method=ZMethod.NAME_RACE, desc="Batko's Life Matters")  # type: ignore
 def race_command(context: Context):
     name = context.query
 
@@ -84,10 +74,6 @@ def race_command(context: Context):
         return EmptyResult(method=ZMethod.NAME_RACE)
 
     icon = getattr(RaceIcon, race.name)
-    TextOutput.addRows(
-        [f"{name.upper()} {icon.value} {titlecase(race.value)}"])
-    res = RenderResult(
-        method=ZMethod.NAME_RACE,
-        message=TextOutput.render()
-    )
+    TextOutput.addRows([f"{name.upper()} {icon.value} {titlecase(race.value)}"])
+    res = RenderResult(method=ZMethod.NAME_RACE, message=TextOutput.render())
     return res
