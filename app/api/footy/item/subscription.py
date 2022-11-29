@@ -401,7 +401,9 @@ class Subscription(metaclass=SubscriptionMeta):
     def fulltimeAnnoucementPixel(self):
         try:
             details = ParserDetails.get(str(self._event.details))
-            return DetailsEventPixel.fullTimeEvent(details=details, self._event.idLeague)
+            return DetailsEventPixel.fullTimeEvent(
+                details=details, league_id=self._event.idLeague
+            )
         except AssertionError as e:
             logging.exception(e)
 
