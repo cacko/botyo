@@ -5,7 +5,7 @@ from urllib.parse import quote
 from app.core.config import Config
 from app.core.image import pixelme_b64
 from typing import Optional
-from app.core.store import ImageCachable
+from app.core.store import ImageCachable, RedisCachable
 
 
 class Team(ImageCachable):
@@ -44,7 +44,7 @@ class Team(ImageCachable):
         return f"{self.id}.png"
 
 
-class TeamLogoPixel(ImageCachable):
+class TeamLogoPixel(RedisCachable):
 
     __name: str
     __id = None
