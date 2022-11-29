@@ -2,7 +2,7 @@ from typing import Optional
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
 
-from .item.subscription import Subscription, SubscritionClient
+from .item.subscription import Subscription, SubscriptionClient
 from fuzzelinho import Match, MatchMethod
 from app.threesixfive.item.models import Event, LeagueItem
 from app.threesixfive.item.team import TeamSearch, Team as DataTeam
@@ -76,7 +76,7 @@ class FootyMeta(type):
         return cls().removeSubscription(query=query, client=client, group=group)
 
     def listjobs(cls, client, group) -> list[Subscription]:
-        return Subscription.forGroup(SubscritionClient(client_id=client, group_id=group))
+        return Subscription.forGroup(SubscriptionClient(client_id=client, group_id=group))
 
 
 class GameMatch(Match):
@@ -195,7 +195,7 @@ class Footy(object, metaclass=FootyMeta):
 
     def removeSubscription(self, client: str, query: str, group) -> str:
         item = self.__queryGame(query)
-        sc = SubscritionClient(client_id=client, group_id=group)
+        sc = SubscriptionClient(client_id=client, group_id=group)
         sub = Subscription.get(event=item, sc=sc)
         sub.cancel(sc)
         icon = emojize(":dango:")
@@ -204,7 +204,7 @@ class Footy(object, metaclass=FootyMeta):
     def getSubscription(self, client: str, query: str, group) -> str:
         try:
             item = self.__queryGame(query)
-            sc = SubscritionClient(client_id=client, group_id=group)
+            sc = SubscriptionClient(client_id=client, group_id=group)
             sub = Subscription.get(event=item, sc=sc)
             if not sub.isValid:
                 return "Event has ended".upper()

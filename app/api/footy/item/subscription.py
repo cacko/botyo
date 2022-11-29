@@ -6,7 +6,7 @@ from .components import ScoreFormat, ScoreRow
 from .livescore_details import ParserDetails
 from botyo_server.output import TextOutput
 from botyo_server.scheduler import Scheduler
-from apscheduler.schedulers.base import JobLookupError
+from apscheduler.schedulers.base import JobLookupError, Job
 from botyo_server.socket.connection import Connection, UnknownClientException
 from botyo_server.models import RenderResult, Attachment
 from app.threesixfive.item.models import (
@@ -119,7 +119,7 @@ class Cache(RedisCachable):
 
 
 @dataclass
-class SubscritionClient:
+class SubscriptionClient:
     client_id: str
     group_id: Optional[str] = None
 
@@ -138,20 +138,6 @@ class SubscritionClient:
         h.update(prefix.encode())
         return h.hexdigest()
 
-
-class SubscriptionClients(QueueDict):
-    def __getitem__(self, __key: Any) -> QueueList:
-        return QueueList(super().__getitem__(__key))
-
-    def ids(self, __key: Any) -> list[str]:
-        return [i.id for i in self.__getitem__(__key)]
-
-    def loads(self, v):
-        return v
-    
-    def dumps(self, v):
-        return v
-
 class SubscriptionMeta(type):
 
     __subs: dict[str, "Subscription"] = {}
@@ -160,29 +146,27 @@ class SubscriptionMeta(type):
         k = event.event_hash
         if k not in cls.__subs:
             cls.__subs[k] = type.__call__(cls, event)
-            cls.clients[k] = f"subscription.{k}.clients"
         return cls.__subs[k]
 
-    def get(cls, event: Event, sc: SubscritionClient) -> "Subscription":
+    def get(cls, event: Event, sc: SubscriptionClient) -> "Subscription":
         obj = cls(event)
         k = event.event_hash
-        logging.debug(f">>>>> GET SUB FOR {event} {sc}")
-        logging.debug(cls.clients[k])
-        logging.debug(cls.clients.ids(k))
-        logging.debug(sc)
-        if sc.id not in [x.id for x in cls.clients[k]]:
-            cls.clients[k].append(sc)
+        subs = obj.subscriptions
+        if sc.id not in [x.id for x in subs]:
+            subs.append(sc)
         return obj
 
-    def forGroup(cls, sc: SubscritionClient) -> list["Subscription"]:
-        subs = list(filter(lambda k: sc.id in cls.clients.ids(k), cls.clients.keys()))
-        if not subs:
-            return []
-        return subs
-
-    @property
-    def clients(cls) -> SubscriptionClients:
-        return SubscriptionClients(f"subscription.clients")
+    def forGroup(cls, sc: SubscriptionClient) -> list[Job]:
+        res = []
+        for job in Scheduler.get_jobs():
+            event_id = job.id.split(":")[0]
+            clients = cls.clients(event_id)
+            if sc.id in [x.id for x in clients]:
+                res.append(job)
+        return res
+    
+    def clients(cls, event_id: str) -> QueueList:
+        return QueueList(f"subscription.{event_id}.clients")
 
 
 class Subscription(metaclass=SubscriptionMeta):
@@ -198,12 +182,12 @@ class Subscription(metaclass=SubscriptionMeta):
         prefix = JobPrefix.INPROGRESS
         if not self.inProgress:
             prefix = JobPrefix.SCHEDULED
-        return ":".join([str(self._event.idEvent), prefix.value])
+        return ":".join([self._event.id, prefix.value])
 
     @property
     def beforeGameId(self):
         prefix = JobPrefix.BEFOREGAME
-        return ":".join([str(self._event.idEvent), prefix.value])
+        return ":".join([self._event.id, prefix.value])
 
     @property
     def event_name(self):
@@ -213,13 +197,13 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def goals_queue(self) -> QueueDict:
-        return QueueDict(f"subscription.{self._event.event_hash}.goals.queue")
+        return QueueDict(f"subscription.{self._event.id}.goals.queue")
 
     @property
-    def subscriptions(self) -> list[SubscritionClient]:
-        return __class__.clients[self._event.event_hash]
+    def subscriptions(self) -> list[SubscriptionClient]:
+        return __class__.clients(self._event.id)
 
-    def cancel(self, sc: SubscritionClient):
+    def cancel(self, sc: SubscriptionClient):
         try:
             if sc.is_rest:
                 self.sendUpdate_(CancelJobEvent(job_id=self.id), sc)
@@ -233,7 +217,7 @@ class Subscription(metaclass=SubscriptionMeta):
         for sc in self.subscriptions:
             self.cancel(sc)
 
-    def sendUpdate(self, message, sc: SubscritionClient):
+    def sendUpdate(self, message, sc: SubscriptionClient):
         if sc.is_rest:
             return self.sendUpdate_(message, sc)
         if not self.client:
@@ -461,7 +445,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 except UnknownClientException:
                     pass
 
-    def schedule(self, sc: SubscritionClient):
+    def schedule(self, sc: SubscriptionClient):
         if sc.is_rest:
             logo = LeagueImage(self._event.idLeague)
             logo_path = logo.path
@@ -575,7 +559,7 @@ class Subscription(metaclass=SubscriptionMeta):
         events = details.events_pixel
         return events
 
-    def sendUpdate_(self, data, sc: SubscritionClient):
+    def sendUpdate_(self, data, sc: SubscriptionClient):
         logging.debug(f"send update REST {sc}")
         payload = []
         if isinstance(data, list):
