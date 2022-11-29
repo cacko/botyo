@@ -146,6 +146,11 @@ class SubscriptionClients(QueueDict):
     def ids(self, __key: Any) -> list[str]:
         return [i.id for i in self.__getitem__(__key)]
 
+    def loads(self, v):
+        return v
+    
+    def dumps(self, v):
+        return v
 
 class SubscriptionMeta(type):
 
