@@ -48,7 +48,7 @@ class GameStatus(Enum):
     FN = "Final"
     PPD = "Post."
     CNL = "Canc."
-    HT = "Half Time"
+    HT = "Halftime"
     SECOND_HALF = "2nd Half"
     FIRST_HALF = "1st Half"
     
