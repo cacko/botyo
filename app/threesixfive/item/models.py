@@ -49,8 +49,8 @@ class GameStatus(Enum):
     PPD = "Post."
     CNL = "Canc."
     HT = "Half Time"
-    _2ND = "2nd"
-    _1ST = "1st"
+    SECOND_HALF = "2nd Half"
+    FIRST_HALF = "1st Half"
     
 class ShortGameStatus(Enum):
     FIRST_HALF = "1st"
