@@ -23,7 +23,6 @@ from app.threesixfive.item.models import (
 from app.api import ZMethod
 from .player import Player
 from cachable.request import Request
-from cachable.cacheable import Cachable
 from enum import Enum
 from hashlib import blake2b
 from emoji import emojize
@@ -41,6 +40,7 @@ from app.goals import Query as GoalQuery
 from pathlib import Path
 from app.core.store import QueueDict, QueueList
 from dataclasses import dataclass
+from app.core.store import RedisCachable
 
 
 class Headers(Enum):
@@ -53,7 +53,7 @@ class JobPrefix(Enum):
     BEFOREGAME = "BFG"
 
 
-class Cache(Cachable):
+class Cache(RedisCachable):
 
     _struct: Optional[ResponseGame] = None
     __url: str

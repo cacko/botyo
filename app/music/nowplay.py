@@ -4,7 +4,7 @@ from marshmallow import fields
 from dataclasses_json import dataclass_json, Undefined, config
 from typing import Optional
 from coretime import isodate_decoder, isodate_encoder
-from app.core.store import Storage
+from app.core.store import RedisStorage
 import pickle
 from cachable.storage.file import FileStorage
 from pathlib import Path
@@ -29,13 +29,13 @@ class TrackMeta(type):
             return
         dc = cls.__instance
         st_key = cls.storage_key
-        Storage.pipeline().set(st_key, pickle.dumps(dc.to_dict())).persist(  # type: ignore
+        RedisStorage.pipeline().set(st_key, pickle.dumps(dc.to_dict())).persist(  # type: ignore
             st_key
         ).execute()
 
     def load(cls):
         st_key = cls.storage_key
-        data = Storage.get(st_key)
+        data = RedisStorage.get(st_key)
         if data:
             dc = pickle.loads(data)
             return cls(**dc)

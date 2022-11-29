@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from app.threesixfive.item.models import GameCompetitor
-from cachable.cacheable import Cachable
 from .livescore_details import ParserDetails
 from .models import Event, GameMember, LineupMember, LineupMemberStatus
-
+from app.core.store import RedisCachable
 
 @dataclass_json
 @dataclass
@@ -21,9 +20,9 @@ class LineupCache:
     members: list[GameMember]
 
 
-class Lineups(Cachable):
+class Lineups(RedisCachable):
 
-    __item: Event = None
+    __item: Event
     _struct: LineupCache = None
 
     def __init__(self, item: Event):

@@ -1,10 +1,10 @@
 from datetime import timezone, datetime, timedelta
 from .models import Event
-from cachable.cacheable import TimeCacheable
 from app.threesixfive.parser.livescore import Livescores as Fetcher
+from app.core.store import TimeCachable
 
 
-class Livescore(TimeCacheable):
+class Livescore(TimeCachable):
 
     with_progress = False
     with_details = False
@@ -17,8 +17,7 @@ class Livescore(TimeCacheable):
         with_progress=False,
         leagues: list[int] = [],
         with_details=False,
-        inprogress=False
-
+        inprogress=False,
     ):
         self.with_progress = with_progress
         self.leagues = leagues
@@ -35,9 +34,13 @@ class Livescore(TimeCacheable):
             fetcher = Fetcher(
                 with_details=self.with_details,
                 with_progress=self.with_progress,
-                leagues=self.leagues
+                leagues=self.leagues,
             )
             results = fetcher.fetch()
             self._struct = self.tocache(results)
-        events: list[Event] = self._struct.struct
-        return events
+        try:
+            assert self._struct
+            events: list[Event] = self._struct.struct
+            return events
+        except AssertionError:
+            return []

@@ -1,5 +1,4 @@
 from app.api.cve.components import CVEHeader
-from cachable.cacheable import Cachable
 from hashlib import blake2b
 from botyo_server.scheduler import Scheduler
 from apscheduler.job import Job
@@ -9,9 +8,10 @@ from botyo_server.models import RenderResult
 from .models import CVEResponse, CVEListItem
 from .cve import CVE
 from stringcase import alphanumcase
+from app.core.store import RedisCachable
 
 
-class Cache(Cachable):
+class Cache(RedisCachable):
 
     _struct: CVEResponse = None
     __id = None

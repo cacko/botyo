@@ -6,9 +6,9 @@ import logging
 from cachable.request import Request
 from dataclasses_json import dataclass_json
 from cachable.models import BinaryStruct
-from cachable.storage.file import CachableFileImage, FileStorage
 from app.demographics import Gender
 from app.chatyo import getResponse, Payload
+from app.core.store import ImageCachable
 
 BASE_URL = "https://fakeface.rest/face/json"
 
@@ -25,7 +25,7 @@ class Query:
         self.t = uuid1().hex
 
 
-class FakeFace(CachableFileImage):
+class FakeFace(ImageCachable):
 
     _struct: Optional[BinaryStruct] = None
     __name: str
@@ -37,10 +37,6 @@ class FakeFace(CachableFileImage):
         if not name:
             raise ValueError
         self.__name = name
-
-    @property
-    def storage(self):
-        return FileStorage()
 
     def _init(self):
         if self.isCached:

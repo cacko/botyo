@@ -1,25 +1,16 @@
-
-
 from hashlib import blake2b
-
-from cachable.cacheable import Cachable, TimeCacheable
-from cachable.storage.file import CachableFileImage, FileStorage
-
+from app.core.store import ImageCachable, RedisCachable
 from app.core.image import pixelme_b64
 from app.threesixfive.url import Url
 
 
-class LeagueImage(CachableFileImage):
+class LeagueImage(ImageCachable):
 
     __id = None
     _league_id: int
 
     def __init__(self, league_id: int):
         self._league_id = league_id
-        
-    @property
-    def storage(self):
-        return FileStorage()
 
     @property
     def url(self):
@@ -38,7 +29,7 @@ class LeagueImage(CachableFileImage):
         return f"{self.id}.png"
 
 
-class LeagueImagePixel(Cachable):
+class LeagueImagePixel(RedisCachable):
 
     __league_id: str
     __id = None
@@ -62,6 +53,7 @@ class LeagueImagePixel(Cachable):
             h.update(f"{self.__league_id}".encode())
             self.__id = h.hexdigest()
         return self.__id
+
 
 # class LeagueSchedule(TimeCacheable):
 #     _struct: TeamCache = None

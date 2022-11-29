@@ -3,7 +3,7 @@ from pathlib import Path
 from cachable.models import BinaryStruct
 from cairosvg import svg2png
 from multiavatar.multiavatar import multiavatar
-from cachable.storage.file import CachableFileImage, FileStorage
+from app.core.store import ImageCachable
 from PIL import Image
 from py_avataaars import (
     PyAvataaar,
@@ -20,7 +20,7 @@ from typing import Optional
 from app.demographics import Demographics, Gender
 
 
-class MultiAvatar(CachableFileImage):
+class MultiAvatar(ImageCachable):
 
     _struct: Optional[BinaryStruct] = None
     _name: str
@@ -31,10 +31,7 @@ class MultiAvatar(CachableFileImage):
         if not name:
             raise ValueError
         self._name = name
-        
-    @property
-    def storage(self):
-        return FileStorage()
+
 
     def _init(self):
         if self.isCached:

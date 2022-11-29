@@ -17,8 +17,8 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json, Undefined
 from unidecode import unidecode
 from datetime import timezone
-from cachable.cacheable import TimeCacheable
 from cachable.models import TimeCache
+from app.core.store import TimeCachable
 import logging
 from typing import Optional
 
@@ -33,7 +33,7 @@ class ParseDetailsCache(TimeCache):
     struct: ResponseGame
 
 
-class ParserDetails(TimeCacheable):
+class ParserDetails(TimeCachable):
 
     __url: Optional[str] = None
     _struct: Optional[ParseDetailsCache|TimeCache] = None

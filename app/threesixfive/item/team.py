@@ -4,7 +4,6 @@ from .models import (
     SearchResponse,
 )
 from cachable.request import Request
-from cachable.cacheable import TimeCacheable, Cachable
 from cachable.models import TimeCache
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json, Undefined
@@ -12,7 +11,7 @@ from hashlib import blake2s
 from app.threesixfive.url import Url
 from datetime import timedelta
 from typing import Optional
-
+from app.core.store import RedisCachable, TimeCachable
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -28,7 +27,7 @@ class TeamCache(TimeCache):
     struct: TeamStruct
 
 
-class TeamSearch(Cachable):
+class TeamSearch(RedisCachable):
     __struct: Optional[Competitor] = None
     __query: str = ""
 
@@ -63,7 +62,7 @@ class TeamSearch(Cachable):
         return self.__struct
 
 
-class Team(TimeCacheable):
+class Team(TimeCachable):
     _struct: Optional[TeamCache] = None
     __competitor_id: int = 0
     cachetime: timedelta = timedelta(seconds=20)

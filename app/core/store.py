@@ -1,10 +1,13 @@
-from cachable.storage.redis import RedisStorage
+from cachable.storage.redis import RedisStorage as MainRedisStorage
+from cachable.storage.file import FileStorage, CachableFileImage
+from cachable import TimeCacheable as MainTimeCachable, Cachable
 import pickle
 import logging
 from typing import Any
 
 
-class Storage(RedisStorage):
+
+class RedisStorage(MainRedisStorage):
     @classmethod
     def hmset(cls, name: str, mapping: dict):
         return cls._redis.hmset(name, mapping)
@@ -22,7 +25,7 @@ class QueueDictMeta(type):
         return cls.__instances[storage_key]
 
     def _load(cls, storage_key) -> dict[str, Any]:
-        data = Storage.hgetall(storage_key)
+        data = RedisStorage.hgetall(storage_key)
         if not data:
             logging.debug("no data")
             return {}
@@ -40,13 +43,13 @@ class QueueDict(dict, metaclass=QueueDictMeta):
         super().__init__(items, *args, **kwds)
 
     def __setitem__(self, __k, __v) -> None:
-        Storage.pipeline().hset(self.__storage_key, __k, pickle.dumps(__v)).persist(
+        RedisStorage.pipeline().hset(self.__storage_key, __k, pickle.dumps(__v)).persist(
             self.__storage_key
         ).execute()
         return super().__setitem__(__k, __v)
 
     def __delitem__(self, __v) -> None:
-        Storage.pipeline().hdel(self.__storage_key, __v).persist(
+        RedisStorage.pipeline().hdel(self.__storage_key, __v).persist(
             self.__storage_key
         ).execute()
         return super().__delitem__(__v)
@@ -65,7 +68,7 @@ class QueueListMeta(type):
         return cls.__instances[storage_key]
 
     def _load(cls, storage_key) -> list[Any]:
-        data = Storage.smembers(storage_key)
+        data = RedisStorage.smembers(storage_key)
         if not data:
             logging.debug("no data")
             return []
@@ -83,13 +86,38 @@ class QueueList(list, metaclass=QueueDictMeta):
         super().__init__(items, *args, **kwds)
 
     def __setitem__(self, __k, __v) -> None:
-        Storage.pipeline().sadd(self.__storage_key, pickle.dumps(__v)).persist(
+        RedisStorage.pipeline().sadd(self.__storage_key, pickle.dumps(__v)).persist(
             self.__storage_key
         ).execute()
         return super().__setitem__(__k, __v)
 
     def __delitem__(self, __v) -> None:
-        Storage.pipeline().srem(self.__storage_key, pickle.dumps(__v)).persist(
+        RedisStorage.pipeline().srem(self.__storage_key, pickle.dumps(__v)).persist(
             self.__storage_key
         ).execute()
         return super().__delitem__(__v)
+    
+class RedisCachable(Cachable):
+    
+    @property
+    def storage(self):
+        return RedisStorage()
+    
+class TimeCachable(MainTimeCachable):
+    
+    @property
+    def storage(self):
+        return RedisStorage()
+    
+class ImageCachable(CachableFileImage):
+    
+    @property
+    def storage(self):
+        return FileStorage()
+    
+class FileCachable(Cachable):
+
+    @property
+    def storage(self):
+        return FileStorage() 
+    

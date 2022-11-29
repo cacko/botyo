@@ -1,4 +1,3 @@
-from cachable.cacheable import Cachable
 from hashlib import blake2b
 from dataclasses_json import dataclass_json, Undefined
 from dataclasses import dataclass
@@ -8,7 +7,7 @@ import logging
 from typing import Optional
 from cachable.request import Request
 from app.chatyo import Response, getResponse, Payload
-
+from app.core.store import RedisCachable
 
 @dataclass_json
 @dataclass
@@ -54,7 +53,7 @@ class WikiApi:
     BASE = "https://en.wikipedia.org/w/api.php"
 
 
-class KnowledgeBase(Cachable):
+class KnowledgeBase(RedisCachable):
 
     __query = None
     __id = None

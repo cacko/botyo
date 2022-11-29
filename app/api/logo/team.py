@@ -1,14 +1,13 @@
 from cachable.request import Request
 from hashlib import blake2b
-from cachable.storage.file import CachableFileImage, FileStorage
-from cachable import Cachable
 from cachable.models import BinaryStruct
 from urllib.parse import quote
 from app.core.config import Config
 from app.core.image import pixelme_b64
 from typing import Optional
+from app.core.store import ImageCachable
 
-class Team(CachableFileImage):
+class Team(ImageCachable):
 
     _struct: Optional[BinaryStruct] = None
     __name: str
@@ -16,10 +15,6 @@ class Team(CachableFileImage):
     SIZE = (200, 200)
     __apiUrl: str
     
-    @property
-    def storage(self):
-        return FileStorage()
-
     def __init__(self, name: str):
         if not name:
             raise ValueError

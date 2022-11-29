@@ -5,13 +5,12 @@ from .models import (
     Game,
 )
 from cachable.request import Request
-from cachable.cacheable import TimeCacheable
 from cachable.models import TimeCache
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json, Undefined
-from hashlib import blake2s
 from app.threesixfive.url import Url
 from datetime import timedelta
+from app.core.store import TimeCachable
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -20,7 +19,7 @@ class CompetitionCache(TimeCache):
     struct: CompetitionResponse
 
 
-class CompetitionData(TimeCacheable):
+class CompetitionData(TimeCachable):
     _struct: CompetitionCache = None
     __competition_id: int = 0
     cachetime: timedelta = timedelta(minutes=5)

@@ -1,9 +1,8 @@
 from .livescore_details import ParserDetails
 from .models import GameFact, Event
-from cachable.cacheable import Cachable
+from app.core.store import RedisCachable
 
-
-class Facts(Cachable):
+class Facts(RedisCachable):
 
     __item: Event = None
     _struct: list[GameFact] = None
