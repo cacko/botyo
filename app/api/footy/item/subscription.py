@@ -208,7 +208,7 @@ class Subscription(metaclass=SubscriptionMeta):
         try:
             if sc.is_rest:
                 self.sendUpdate_(CancelJobEvent(job_id=self.id), sc)
-                self.subscriptions.remove(sc)
+            self.subscriptions.remove(sc)
             if not len(self.subscriptions):
                 Scheduler.cancel_jobs(self.id)
         except JobLookupError:
