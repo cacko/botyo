@@ -91,11 +91,11 @@ def unsubscribe_command(context: Context):
 def subscriptions_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group]):
         return EmptyResult()
-    subs = Footy.listjobs(client=context.client, group=context.group)
+    jobs = Footy.listjobs(client=context.client, group=context.group)
     if not len(subs):
         rows = ["Nothing is scheduled"]
     else:
-        rows = [s.event_name for s in subs]
+        rows = [j.name for j in jobs]
     TextOutput.addRows(rows)
     return RenderResult(
         method=ZMethod.FOOTY_SUBSCRIPTIONS,

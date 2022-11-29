@@ -75,7 +75,7 @@ class FootyMeta(type):
     def unsubscribe(cls, client, query: str, group) -> str:
         return cls().removeSubscription(query=query, client=client, group=group)
 
-    def listjobs(cls, client, group) -> list[Subscription]:
+    def listjobs(cls, client, group) -> list[Job]:
         return Subscription.forGroup(SubscriptionClient(client_id=client, group_id=group))
 
 
