@@ -13,7 +13,6 @@ from app.threesixfive.item.models import (
     CancelJobEvent,
     DetailsEventPixel,
     Event,
-    GameEvent,
     GameDetails,
     EventStatus,
     GameStatus,
@@ -35,7 +34,7 @@ import sys
 from pixelme import Pixelate
 import time
 import logging
-from typing import Optional, Any
+from typing import Optional
 from .goals import Goals
 from app.goals import Query as GoalQuery
 from pathlib import Path
@@ -139,6 +138,39 @@ class SubscriptionClient:
         h.update(prefix.encode())
         return h.hexdigest()
 
+    @property
+    def connection(self) -> Connection:
+        return Connection.client(self.client_id)
+
+    def sendUpdate(self, data):
+        if self.is_rest:
+            return self.updateREST(data)
+        return self.updateBotyo(data)
+
+    def updateBotyo(self, message):
+        self.connection.respond(
+            RenderResult(
+                method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self.group_id
+            )
+        )
+
+    def updateREST(self, data):
+        payload = []
+        if isinstance(data, list):
+            payload = [d.to_dict() for d in data]
+        elif hasattr(data, "to_dict"):
+            payload = data.to_dict()
+        logging.debug(payload)
+        try:
+            assert self.group_id
+            resp = post(
+                f"{self.client_id}", headers=OTP(self.group_id).headers, json=payload
+            )
+            return resp.status_code
+        except ConnectionError:
+            logging.error(f"Cannot send update to f{self.client_id}")
+            pass
+
 
 class SubscriptionMeta(type):
 
@@ -207,7 +239,7 @@ class Subscription(metaclass=SubscriptionMeta):
     def cancel(self, sc: SubscriptionClient):
         try:
             if sc.is_rest:
-                self.sendUpdate_(CancelJobEvent(job_id=self.id), sc)
+                sc.sendUpdate(CancelJobEvent(job_id=self.id))
             self.subscriptions.remove(sc)
             if not len(self.subscriptions):
                 Scheduler.cancel_jobs(self.id)
@@ -218,28 +250,11 @@ class Subscription(metaclass=SubscriptionMeta):
         for sc in self.subscriptions:
             self.cancel(sc)
 
-    def sendUpdate(self, message, sc: SubscriptionClient):
-        if sc.is_rest:
-            return self.sendUpdate_(message, sc)
-        if not self.client:
-            return
-        connection = self.client(sc.client_id)
-        if not connection:
-            raise UnknownClientException
-        connection.respond(
-            RenderResult(
-                method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=sc.group_id
-            )
-        )
-
     def sendGoal(self, message: str, attachment: Path):
         for sc in self.subscriptions:
             if sc.is_rest:
                 continue
-            connection = self.client(sc.client_id)
-            if not connection:
-                raise UnknownClientException
-            connection.respond(
+            sc.connection.respond(
                 RenderResult(
                     method=ZMethod.FOOTY_SUBSCRIBE,
                     message=message,
@@ -278,7 +293,15 @@ class Subscription(metaclass=SubscriptionMeta):
         except AssertionError:
             pass
 
-    def checkGoals(self):
+    def checkGoals(self, updated: Optional[ResponseGame] = None):
+        try:
+            assert updated
+            assert updated.game
+            if updated.game.events:
+                self.processGoals(updated.game)
+        except AssertionError as e:
+            logging.debug(e)
+            pass
         if not len(self.goals_queue):
             return
         Goals.poll()
@@ -291,40 +314,31 @@ class Subscription(metaclass=SubscriptionMeta):
 
     def trigger(self):
         try:
-            logging.debug(self.subscriptions)
-            self.checkGoals()
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            try:
-                assert updated
-                assert updated.game
-                if updated.game.events:
-                    self.processGoals(updated.game)
-            except AssertionError as e:
-                logging.debug(e)
-                pass
             chatUpdate = self.updates(updated)
             for sc in self.subscriptions:
                 if sc.is_rest:
                     try:
                         details = ParserDetails(None, response=updated)
                         events = details.events_pixel
-                        self.sendUpdate_(events, sc)
+                        sc.sendUpdate(events)
                     except Exception as e:
                         pass
                     if cache.halftime:
                         cache.halftime = False
-                        self.sendUpdate_(self.halftimeAnnoucementPixel, sc)
+                        sc.sendUpdate(self.halftimeAnnoucementPixel)
                     else:
-                        self.sendUpdate_(self.progressUpdate_, sc)
+                        sc.sendUpdate(self.progressUpdatePixel)
                 elif chatUpdate:
                     TextOutput.clean()
                     TextOutput.addRows(chatUpdate)
                     try:
-                        self.sendUpdate(TextOutput.render(), sc)
+                        sc.sendUpdate(TextOutput.render())
                     except UnknownClientException:
                         pass
+            self.checkGoals(updated)
             content = cache.content
             if not content:
                 return self.cancel_all()
@@ -345,9 +359,9 @@ class Subscription(metaclass=SubscriptionMeta):
                 for sc in self.subscriptions:
                     try:
                         if sc.is_rest:
-                            self.sendUpdate_(self.fulltimeAnnoucementPixel, sc)
+                            sc.sendUpdate(self.fulltimeAnnoucementPixel)
                         else:
-                            self.sendUpdate(self.fulltimeAnnoucement, sc)
+                            sc.sendUpdate(self.fulltimeAnnoucement)
                     except UnknownClientException:
                         pass
                     self.cancel(sc)
@@ -445,9 +459,9 @@ class Subscription(metaclass=SubscriptionMeta):
             for sc in self.subscriptions:
                 try:
                     if sc.is_rest:
-                        self.sendUpdate_(self.startAnnouncementPixel, sc)
+                        sc.sendUpdate(self.startAnnouncementPixel)
                     else:
-                        self.sendUpdate(self.startAnnouncement, sc)
+                        sc.sendUpdate(self.startAnnouncement)
                 except UnknownClientException:
                     pass
 
@@ -457,7 +471,7 @@ class Subscription(metaclass=SubscriptionMeta):
             logo_path = logo.path
             pix = Pixelate(input=logo_path, padding=200, grid_lines=True, block_size=25)
             pix.resize((8, 8))
-            self.sendUpdate_(
+            sc.sendUpdate(
                 SubscriptionEvent(
                     start_time=self._event.startTime,
                     action="Subscribed",
@@ -475,7 +489,6 @@ class Subscription(metaclass=SubscriptionMeta):
                     away_team_icon=TeamLogoPixel(self._event.strAwayTeam).base64,
                     status=self._event.strStatus,
                 ),
-                sc,
             )
         if self.inProgress:
             return self.start()
@@ -505,7 +518,7 @@ class Subscription(metaclass=SubscriptionMeta):
             text = TextOutput.render()
             for sc in filter(lambda s: not s.is_rest, self.subscriptions):
                 try:
-                    self.sendUpdate(text, sc)
+                    sc.sendUpdate(text)
                 except UnknownClientException:
                     pass
                 self.cancel(sc)
@@ -565,26 +578,8 @@ class Subscription(metaclass=SubscriptionMeta):
         events = details.events_pixel
         return events
 
-    def sendUpdate_(self, data, sc: SubscriptionClient):
-        logging.debug(f"send update REST {sc}")
-        payload = []
-        if isinstance(data, list):
-            payload = [d.to_dict() for d in data]
-        elif hasattr(data, "to_dict"):
-            payload = data.to_dict()
-        logging.debug(payload)
-        try:
-            assert sc.group_id
-            resp = post(
-                f"{sc.client_id}", headers=OTP(sc.group_id).headers, json=payload
-            )
-            return resp.status_code
-        except ConnectionError:
-            logging.error(f"Cannot send update to f{sc.client_id}")
-            pass
-
     @property
-    def progressUpdate_(self):
+    def progressUpdatePixel(self):
         try:
             details = ParserDetails.get(str(self._event.details))
             assert details.game_time
