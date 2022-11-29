@@ -401,7 +401,7 @@ class Subscription(metaclass=SubscriptionMeta):
     def fulltimeAnnoucementPixel(self):
         try:
             details = ParserDetails.get(str(self._event.details))
-            return DetailsEventPixel.fullTimeEvent(details=details)
+            return DetailsEventPixel.fullTimeEvent(details=details, self._event.idLeague)
         except AssertionError as e:
             logging.exception(e)
 
@@ -409,7 +409,7 @@ class Subscription(metaclass=SubscriptionMeta):
     def halftimeAnnoucementPixel(self):
         try:
             details = ParserDetails.get(str(self._event.details))
-            return DetailsEventPixel.halfTimeEvent(details)
+            return DetailsEventPixel.halfTimeEvent(details, self._event.idLeague)
         except AssertionError as e:
             logging.exception(e)
 
@@ -422,7 +422,11 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def startAnnouncementPixel(self) -> list[DetailsEventPixel]:
-        return [DetailsEventPixel.startTimeEvent(self.event_name, self._event.idEvent)]
+        return [
+            DetailsEventPixel.startTimeEvent(
+                self.event_name, self._event.idEvent, self._event.idLeague
+            )
+        ]
 
     def start(self, announceStart=False):
         logging.debug(f"subscriion in live mode {self.event_name}")
@@ -596,6 +600,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     event_id=self._event.idEvent,
                     order=sys.maxsize,
                     status=details.game_status,
+                    league_id=self._event.idLeague,
                 )
             ]
         except AssertionError as e:

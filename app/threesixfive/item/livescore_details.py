@@ -243,3 +243,4 @@ class ParserDetails(TimeCachable):
             return unidecode(f"{self.home.name.upper()} vs {self.away.name.upper()}")
         except AssertionError:
             return "Unknown"
+        

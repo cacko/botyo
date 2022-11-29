@@ -762,6 +762,7 @@ class DetailsEventPixel:
     team_id: Optional[int] = None
     event_name: Optional[str] = None
     id: Optional[str] = None
+    league_id: Optional[int] = None
 
     @property
     def order_id(self) -> int:
@@ -790,7 +791,7 @@ class DetailsEventPixel:
         return f"{self.time:.0f}'"
 
     @classmethod
-    def fullTimeEvent(cls, details):
+    def fullTimeEvent(cls, details, league_id):
         assert details.game_time
         assert details.home
         assert details.away
@@ -804,10 +805,11 @@ class DetailsEventPixel:
             event_id=details.event_id,
             order=sys.maxsize,
             status=details.game_status,
+            league_id=league_id
         )
 
     @classmethod
-    def halfTimeEvent(cls, details):
+    def halfTimeEvent(cls, details, league_id):
         assert details.game_time
         assert details.home
         assert details.away
@@ -821,10 +823,11 @@ class DetailsEventPixel:
             event_id=details.event_id,
             order=sys.maxsize,
             status=details.game_status,
+            league_id=league_id
         )
 
     @classmethod
-    def startTimeEvent(cls, event_name: str, event_id: int):
+    def startTimeEvent(cls, event_name: str, event_id: int, league_id):
         return cls(
             time=0,
             action="Game Start",
@@ -832,6 +835,7 @@ class DetailsEventPixel:
             is_old_event=False,
             event_name=event_name,
             event_id=event_id,
+            league_id=league_id
         )
 
 
