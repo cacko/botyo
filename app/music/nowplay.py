@@ -18,7 +18,7 @@ from app.music.encoder import Encoder
 class TrackMeta(type):
 
     __TRACK_STORAGE_KEY = "now_playing_track"
-    __instance: "Track"
+    __instance: Optional["Track"] = None
 
     def __call__(cls, *args, **kwds):
         cls.__instance = type.__call__(cls, *args, **kwds)
