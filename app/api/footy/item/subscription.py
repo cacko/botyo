@@ -600,7 +600,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     is_old_event=False,
                     score=details.score,
                     event_name=f"{details.home.name}/{details.away.name}",
-                    event_id=details.id,
+                    event_id=self._event.id,
                     order=sys.maxsize,
                     status=details.game_status,
                 )
