@@ -4,7 +4,7 @@ import os
 from typing import Generator
 import shlex
 import logging
-
+from typing import Optional
 class ShellMeta(type):
     def __call__(cls, *args, **kwargs):
         return type.__call__(cls, *args, **kwargs)
@@ -15,9 +15,9 @@ class ShellMeta(type):
 
 class Shell(object, metaclass=ShellMeta):
 
-    args: list[str] = None
+    args: list[str]
 
-    executable: str = None
+    executable: Optional[str] = None
     executable_arguments: list[str] = []
 
     OUTPUT_IGNORED = []

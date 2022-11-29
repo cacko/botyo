@@ -127,53 +127,49 @@ class ParserDetails(TimeCachable):
 
     @property
     def events_pixel(self) -> list[DetailsEventPixel]:
-        try:
-            res = []
-            assert self._struct
-            assert self._struct.struct.game.homeCompetitor
-            assert self._struct.struct.game.awayCompetitor
-            competitors = {
-                self._struct.struct.game.homeCompetitor.id: self._struct.struct.game.homeCompetitor,
-                self._struct.struct.game.awayCompetitor.id: self._struct.struct.game.awayCompetitor,
-            }
-            assert self._struct.struct.game.members
-            members = {m.id: m for m in self._struct.struct.game.members}
-            if not self._struct.struct.game.events:
-                return []
-            for ev in self._struct.struct.game.events:
-                players = ev.extraPlayers
-                extraPlayers = []
-                if players:
-                    extraPlayers = [
-                        unidecode(members[pid].displayName) for pid in players
-                    ]
-                assert self.event_id
-                assert ev.gameTime
-                assert ev.eventType
-                assert ev.eventType.name
-                assert self.game_time
-                assert self.home
-                assert self.away
-                res.append(
-                    DetailsEventPixel(
-                        event_id=self.event_id,
-                        time=ev.gameTime,
-                        action=ev.eventType.name,
-                        team=competitors[ev.competitorId].name,
-                        team_id=ev.competitorId,
-                        player=unidecode(members[ev.playerId].displayName),
-                        extraPlayers=extraPlayers,
-                        score=self.score,
-                        is_old_event=self.game_time - ev.gameTime > 5,
-                        event_name=f"{self.home.name}/{self.away.name}",
-                        order=ev.order,
-                        status=self.game_status,
-                    )
-                )
-            return sorted(res, reverse=True, key=lambda x: x.order_id)
-        except Exception as e:
-            logging.exception(e)
+        res = []
+        assert self._struct
+        assert self._struct.struct.game.homeCompetitor
+        assert self._struct.struct.game.awayCompetitor
+        competitors = {
+            self._struct.struct.game.homeCompetitor.id: self._struct.struct.game.homeCompetitor,
+            self._struct.struct.game.awayCompetitor.id: self._struct.struct.game.awayCompetitor,
+        }
+        assert self._struct.struct.game.members
+        members = {m.id: m for m in self._struct.struct.game.members}
+        if not self._struct.struct.game.events:
             return []
+        for ev in self._struct.struct.game.events:
+            players = ev.extraPlayers
+            extraPlayers = []
+            if players:
+                extraPlayers = [
+                    unidecode(members[pid].displayName) for pid in players
+                ]
+            assert self.event_id
+            assert ev.gameTime
+            assert ev.eventType
+            assert ev.eventType.name
+            assert self.game_time
+            assert self.home
+            assert self.away
+            res.append(
+                DetailsEventPixel(
+                    event_id=self.event_id,
+                    time=ev.gameTime,
+                    action=ev.eventType.name,
+                    team=competitors[ev.competitorId].name,
+                    team_id=ev.competitorId,
+                    player=unidecode(members[ev.playerId].displayName),
+                    extraPlayers=extraPlayers,
+                    score=self.score,
+                    is_old_event=self.game_time - ev.gameTime > 5,
+                    event_name=f"{self.home.name}/{self.away.name}",
+                    order=ev.order,
+                    status=self.game_status,
+                )
+            )
+        return sorted(res, reverse=True, key=lambda x: x.order_id)
 
     @property
     def event_id(self):

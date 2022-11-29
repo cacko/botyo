@@ -1,6 +1,6 @@
 
 from .shell import Shell
-
+from typing import Optional
 
 class LyricsShell(Shell):
     OUTPUT_IGNORED = ["Tekst piosenki:", "Dodaj", "Historia"]
@@ -17,8 +17,8 @@ class LyricsShell(Shell):
 
 class Lyrics:
 
-    __query: str = None
-    __message: str = None
+    __query: str
+    __message: Optional[str] = None
 
     def __init__(self, query: str):
         self.__query = query
