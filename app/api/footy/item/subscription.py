@@ -140,12 +140,12 @@ class SubscritionClient:
 
 
 class SubscriptionClients(QueueDict):
-    
     def __getitem__(self, __key: Any) -> QueueList:
         return QueueList(super().__getitem__(__key))
-    
+
     def ids(self, __key: Any) -> list[str]:
         return [i.id for i in self.__getitem__(__key)]
+
 
 class SubscriptionMeta(type):
 
@@ -157,7 +157,6 @@ class SubscriptionMeta(type):
             cls.__subs[k] = type.__call__(cls, event)
             cls.clients[k] = f"subscription.{k}.clients"
         return cls.__subs[k]
-    
 
     def get(cls, event: Event, sc: SubscritionClient) -> "Subscription":
         obj = cls(event)
@@ -320,7 +319,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         events = details.events_pixel
                         self.sendUpdate_(events, sc)
                     except Exception as e:
-                        logging.exception(e)
+                        pass
                     if cache.halftime:
                         cache.halftime = False
                         self.sendUpdate_(self.halftimeAnnoucementPixel, sc)
@@ -600,7 +599,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     is_old_event=False,
                     score=details.score,
                     event_name=f"{details.home.name}/{details.away.name}",
-                    event_id=self._event.id,
+                    event_id=self._event.idEvent,
                     order=sys.maxsize,
                     status=details.game_status,
                 )
