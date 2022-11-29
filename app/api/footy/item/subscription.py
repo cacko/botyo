@@ -14,6 +14,7 @@ from app.threesixfive.item.models import (
     DetailsEventPixel,
     Event,
     GameEvent,
+    GameDetails,
     EventStatus,
     GameStatus,
     ResponseGame,
@@ -138,6 +139,7 @@ class SubscriptionClient:
         h.update(prefix.encode())
         return h.hexdigest()
 
+
 class SubscriptionMeta(type):
 
     __subs: dict[str, "Subscription"] = {}
@@ -163,7 +165,7 @@ class SubscriptionMeta(type):
             if sc.id in [x.id for x in clients]:
                 res.append(job)
         return res
-    
+
     def clients(cls, event_id: str) -> QueueList:
         return QueueList(f"subscription.{event_id}.clients")
 
@@ -249,8 +251,9 @@ class Subscription(metaclass=SubscriptionMeta):
                 )
             )
 
-    def processGoals(self, events: list[GameEvent]):
+    def processGoals(self, game: GameDetails):
         try:
+            events = game.events
             assert isinstance(events, list)
             for x in events:
                 if x.is_goal:
@@ -259,16 +262,14 @@ class Subscription(metaclass=SubscriptionMeta):
                         event_name=self.event_name,
                         event_id=int(self._event.idEvent),
                         game_event_id=x.order_id,
-                        title=f"{self._event.strHomeTeam} - {self._event.strAwayTeam} {self._event.displayScore}",
+                        title=f"{self._event.strHomeTeam} - {self._event.strAwayTeam} {game.score}",
                     )
                     goal_event = GoalEvent(
                         event_id=int(self._event.idEvent),
                         event_name=self.event_name,
                         game_event_id=x.order_id,
                         player=x.playerName,
-                        score=self._event.displayScore
-                        if self._event.displayScore
-                        else "",
+                        score=game.score,
                         time=x.displayTime,
                     )
                     Goals.save_metadata(goal_event)
@@ -299,7 +300,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 assert updated
                 assert updated.game
                 if updated.game.events:
-                    self.processGoals(updated.game.events)
+                    self.processGoals(updated.game)
             except AssertionError as e:
                 logging.debug(e)
                 pass

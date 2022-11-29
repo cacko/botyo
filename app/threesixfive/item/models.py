@@ -654,6 +654,14 @@ class GameDetails(Game):
     homeCompetitor: Optional[GameCompetitor] = None
     awayCompetitor: Optional[GameCompetitor] = None
 
+    @property
+    def score(self) -> str:
+        try:
+            assert self.homeCompetitor
+            assert self.awayCompetitor
+            return f"{self.homeCompetitor.score:.0f}:{self.awayCompetitor.score:.0f}"
+        except AssertionError:
+            return ""
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
