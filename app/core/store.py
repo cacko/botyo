@@ -104,7 +104,7 @@ class QueueList(list, metaclass=QueueListMeta):
         if not data:
             logging.debug("no data")
             return []
-        items = [self.loads(v) for k, v in data]
+        items = [self.loads(v) for v in data]
         return list(items)
 
 
