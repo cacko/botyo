@@ -166,7 +166,7 @@ class SubscriptionMeta(type):
     def get(cls, event: Event, sc: SubscritionClient) -> "Subscription":
         obj = cls(event)
         k = event.event_hash
-        if SubscritionClient.id not in [x.id for x in cls.clients[k]]:
+        if sc.id not in [x.id for x in cls.clients[k]]:
             cls.clients[k].append(sc)
         return obj
 
