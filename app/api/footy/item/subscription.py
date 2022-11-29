@@ -338,7 +338,7 @@ class Subscription(metaclass=SubscriptionMeta):
             Player.store(content.game)
             if any(
                 [
-                    GameStatus(content.game.shortStatusText)
+                    GameStatus(content.game.statusText)
                     in [
                         GameStatus.FT,
                         GameStatus.JE,
