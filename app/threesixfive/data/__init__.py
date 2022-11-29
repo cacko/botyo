@@ -28,9 +28,11 @@ class Data365Meta(type):
 
 
 class Data365(object, metaclass=Data365Meta):
-
     def getCompetitionsPath(self) -> Path:
         return Path(__file__).parent / Config.threesixfive.competitions_json
+
+    def getCountriesPath(self) -> Path:
+        return Path(__file__).parent / Config.threesixfive.countries_json
 
     def getLeaguesPath(self) -> Path:
         p = Path(__file__).parent / Config.threesixfive.leagues_json
@@ -39,22 +41,30 @@ class Data365(object, metaclass=Data365Meta):
             competitions = json.loads(competitions_path.read_text())
             countries = {c.get("id"): c for c in competitions.get("countries")}
             sports = {s.get("id"): s for s in competitions.get("sports")}
-            p.write_text(json.dumps([{
-                "id": comp.get("id"),
-                "league_id": comp.get("id"),
-                "league_name": comp.get("name"),
-                "country_id": comp.get("countryId"),
-                "country_name": countries[comp.get("countryId")].get("name"),
-                "sport_id": comp.get("sportId"),
-                "sport_name": sports[comp.get("sportId")].get("name"),
-            } for comp in competitions.get("competitions")]
-            ))
+            p.write_text(
+                json.dumps(
+                    [
+                        {
+                            "id": comp.get("id"),
+                            "league_id": comp.get("id"),
+                            "league_name": comp.get("name"),
+                            "country_id": comp.get("countryId"),
+                            "country_name": countries[comp.get("countryId")].get(
+                                "name"
+                            ),
+                            "sport_id": comp.get("sportId"),
+                            "sport_name": sports[comp.get("sportId")].get("name"),
+                        }
+                        for comp in competitions.get("competitions")
+                    ]
+                )
+            )
         return p
 
     def getCountries(self) -> list[CountryItem]:
-        competitions_path = self.getCompetitionsPath()
-        competitions = json.loads(competitions_path.read_text())
-        countries_json = json.dumps(competitions.get("countries"))
+        countries_path = self.getCountriesPath()
+        data = json.loads(countries_path.read_text())
+        countries_json = json.dumps(data.get("countries"))
         return CountryItem.schema().loads(countries_json, many=True)  # type: ignore
 
     def getLeagues(self) -> list[LeagueItem]:

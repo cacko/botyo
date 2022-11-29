@@ -18,6 +18,7 @@ class OntvConfig:
 class ThreeSixFiveConfig:
     competitions_json: str
     leagues_json: str
+    countries_json: str
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

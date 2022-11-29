@@ -13,7 +13,6 @@ scan.json
 app/settings.toml
 cache/
 tea/
-data/
 t.py
 .venv
 .cache/
