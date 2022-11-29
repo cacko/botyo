@@ -92,7 +92,7 @@ def subscriptions_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group]):
         return EmptyResult()
     jobs = Footy.listjobs(client=context.client, group=context.group)
-    if not len(subs):
+    if not len(jobs):
         rows = ["Nothing is scheduled"]
     else:
         rows = [j.name for j in jobs]
