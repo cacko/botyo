@@ -12,7 +12,7 @@ from app.threesixfive.item.models import GoalEvent
 import json
 from requests.exceptions import HTTPError
 
-GOAL_MATCH = re.compile(r"([\w ]+)\s\d+\s-\s\d+\s([\w ]+)", re.MULTILINE)
+GOAL_MATCH = re.compile(r"(\w+)\s\(d+)\s-\s\(d+)\s(\w+)", re.MULTILINE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 
 
@@ -26,12 +26,19 @@ class TeamsMatch(Match):
 class TeamsNeedle:
     home: str
     away: str
+    
+@dataclass_json
+@dataclass
+class GoalNeedle:
+    home: int
+    away: int
 
 
 @dataclass_json
 @dataclass
 class TwitterNeedle:
     needle: TeamsNeedle
+    goals: GoalNeedle
     id: str
     text: str
     url: str
@@ -86,6 +93,13 @@ class Query:
         if " vs " in self.event_name:
             return [*map(str.strip, self.event_name.split(" vs "))]
         return [*map(str.strip, self.event_name.split("/"))]
+    
+    @property
+    def goals(self) -> list[int]:
+        match = re.search(r"(\d:\d)", self.title)
+        if match:
+            return [int(x) for x in match.group(1).split(":")]
+        return [0,0]
 
     @property
     def id(self) -> str:
@@ -158,10 +172,11 @@ class Goals(object, metaclass=GoalsMeta):
             matched_teams = GOAL_MATCH.search(t_text.replace("[", "").replace("]", ""))
             if not matched_teams:
                 continue
-            teams = [*map(lambda x: x.strip().lower(), matched_teams.groups())]
-            logging.debug(f"GOALS: matched teams {teams}")
+            team1, score1, score2, team2 = matched_teams.groups()
+            logging.debug(f"GOALS: matched teams {team1} {team2}")
             yield TwitterNeedle(
-                needle=TeamsNeedle(home=teams[0], away=teams[1]),
+                needle=TeamsNeedle(home=team1, away=team2),
+                goals=GoalNeedle(home=int(score1), away=int(score2)),
                 id=t_id,
                 text=t_text,
                 url=t.url,
@@ -185,17 +200,17 @@ class Goals(object, metaclass=GoalsMeta):
                     dp.unlink(missing_ok=True)
                     continue
                 for q in matched:
-                    di = DownloadItem(
-                        text=needle.text,
-                        url=needle.url,
-                        id=needle.id,
-                        path=dp,
-                        game_event_id=q.game_event_id,
-                        event_id=q.event_id,
-                    )
-
-                    di.rename(__class__.output_dir)
-                    yield di
+                    if q.goals[0] == needle.goals.home and q.goals[1] == needle.goals.away:
+                        di = DownloadItem(
+                            text=needle.text,
+                            url=needle.url,
+                            id=needle.id,
+                            path=dp,
+                            game_event_id=q.game_event_id,
+                            event_id=q.event_id,
+                        )
+                        di.rename(__class__.output_dir)
+                        yield di
 
     def get_downloads(self) -> list[DownloadItem]:
         return []
