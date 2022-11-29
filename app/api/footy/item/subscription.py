@@ -568,6 +568,7 @@ class Subscription(metaclass=SubscriptionMeta):
         return events
 
     def sendUpdate_(self, data, sc: SubscritionClient):
+        logging.debug(f"send update REST {sc}")
         payload = []
         if isinstance(data, list):
             payload = [d.to_dict() for d in data]
