@@ -166,6 +166,10 @@ class SubscriptionMeta(type):
     def get(cls, event: Event, sc: SubscritionClient) -> "Subscription":
         obj = cls(event)
         k = event.event_hash
+        logging.debug(f">>>>> GET SUB FOR {event} {sc}")
+        logging.debug(cls.clients[k])
+        logging.debug(cls.clients.ids(k))
+        logging.debug(sc)
         if sc.id not in [x.id for x in cls.clients[k]]:
             cls.clients[k].append(sc)
         return obj
