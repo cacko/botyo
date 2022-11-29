@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Any
+from typing import Optional, Union
 from datetime import datetime, timezone
 from dataclasses import dataclass, field
 from dataclasses_json import CatchAll, dataclass_json, config, Undefined
@@ -735,7 +735,7 @@ class GoalEvent:
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class DetailsEventPixel:
-    event_id: int
+    event_id: Union[int, str]
     time: int
     action: str
     is_old_event: bool

@@ -600,10 +600,10 @@ class Subscription(metaclass=SubscriptionMeta):
                     is_old_event=False,
                     score=details.score,
                     event_name=f"{details.home.name}/{details.away.name}",
-                    event_id=details.event_id,
+                    event_id=details.id,
                     order=sys.maxsize,
                     status=details.game_status,
                 )
             ]
         except AssertionError as e:
-            logging.exception(e)
+            pass
