@@ -249,6 +249,10 @@ class Subscription(metaclass=SubscriptionMeta):
     def cancel_all(self):
         for sc in self.subscriptions:
             self.cancel(sc)
+        for gid in list(self.goals_queue.keys()):
+            gq = self.goals_queue[gid]
+            if gq.event_id == self._event.idEvent:
+                del self.goals_queue[gid]
 
     def sendGoal(self, message: str, attachment: Path):
         for sc in self.subscriptions:
