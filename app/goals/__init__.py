@@ -200,8 +200,6 @@ class Goals(object, metaclass=GoalsMeta):
                     dp.unlink(missing_ok=True)
                     continue
                 for q in matched:
-                    logging.debug(q)
-                    logging.debug(needle)
                     if q.goals[0] == needle.goals.home and q.goals[1] == needle.goals.away:
                         di = DownloadItem(
                             text=needle.text,

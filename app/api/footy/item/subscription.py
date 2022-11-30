@@ -308,6 +308,7 @@ class Subscription(metaclass=SubscriptionMeta):
             gq = self.goals_queue[qid]
             logging.debug(f"CHECK GOALS: {gq}")
             if goal_video := Goals.video(gq):
+                logging.warning(gq)
                 self.sendGoal(gq.title, goal_video)
                 del self.goals_queue[qid]
 
