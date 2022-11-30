@@ -52,9 +52,11 @@ def getResponse(path: str, payload: Payload) -> Response:
                 case _:
                     message = part.text
     else:
-        msg = json.loads(req.body)
-        if msg:
-            message = msg.get("response", "")
+        logging.warning(req.body)
+        logging.warning(req.json)
+        # msg = json.loads(req.body)
+        # if msg:
+        #     message = msg.get("response", "")
     return Response(
         response=message,
         attachment=attachment
