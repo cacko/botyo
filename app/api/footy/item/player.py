@@ -11,12 +11,12 @@ class Player(PlayerData):
         try:
             assert self._struct
             assert self._struct.member.name
-            TextOutput.addRows([f"{self._struct.member.name.upper()[:40]:<40}"])
+            TextOutput.addRows([f"{self._struct.member.name.upper()[:45]:<45}"])
             lineupMember: LineupMember = self._struct.lineupMember
             if lineupMember.stats:
                 columns = [
                     Column(size=20, align=Align.LEFT),
-                    Column(size=10, align=Align.RIGHT),
+                    Column(size=15, align=Align.RIGHT),
                 ]
                 stats = [[s.name, s.value] for s in lineupMember.stats]
                 TextOutput.addColumns(cols=columns, content=stats)
