@@ -33,6 +33,7 @@ def getResponse(path: str, payload: Payload) -> Response:
     message = ""
     attachment = None
     is_multipart = req.is_multipart
+    logging.warning(req.body)
     if is_multipart:
         cp = FileStorage.storage_path
         multipart_data = req.multipart
