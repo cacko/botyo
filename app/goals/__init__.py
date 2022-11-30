@@ -173,7 +173,7 @@ class Goals(object, metaclass=GoalsMeta):
             if not matched_teams:
                 continue
             team1, score1, score2, team2 = matched_teams.groups()
-            logging.debug(f"GOALS: matched teams {team1} {team2}")
+            logging.debug(f"GOALS: matched teams {team1} {team2} {score1} {score2}")
             yield TwitterNeedle(
                 needle=TeamsNeedle(home=team1, away=team2),
                 goals=GoalNeedle(home=int(score1), away=int(score2)),
@@ -200,6 +200,8 @@ class Goals(object, metaclass=GoalsMeta):
                     dp.unlink(missing_ok=True)
                     continue
                 for q in matched:
+                    logging.debug(q)
+                    logging.debug(needle)
                     if q.goals[0] == needle.goals.home and q.goals[1] == needle.goals.away:
                         di = DownloadItem(
                             text=needle.text,

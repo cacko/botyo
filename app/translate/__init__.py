@@ -1,4 +1,4 @@
-from app.chatyo import Payload, getResponse
+from app.chatyo import Payload, getResponse, Response
 
 
 class TranslateMeta(type):
@@ -15,11 +15,10 @@ class TranslateMeta(type):
 
 
 class Translate(object, metaclass=TranslateMeta):
-
-    def getResponse(self, path, text) -> str:
+    def getResponse(self, path, text) -> Response:
         return getResponse(
             path,
             Payload(
                 message=text,
-            )
+            ),
         )

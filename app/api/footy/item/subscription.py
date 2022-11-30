@@ -301,7 +301,6 @@ class Subscription(metaclass=SubscriptionMeta):
                 self.processGoals(updated.game)
         except AssertionError as e:
             logging.debug(e)
-            pass
         if not len(self.goals_queue):
             return
         Goals.poll()
