@@ -7,7 +7,7 @@ from dataclasses_json import dataclass_json
 from app.core.config import Config
 from typing import Optional
 from botyo_server.models import Attachment
-
+import json
 @dataclass_json()
 @dataclass()
 class Payload:
@@ -52,7 +52,7 @@ def getResponse(path: str, payload: Payload) -> Response:
                 case _:
                     message = part.text
     else:
-        msg = req.json
+        msg = json.loads(req.body)
         if msg:
             message = msg.get("response", "")
     return Response(
