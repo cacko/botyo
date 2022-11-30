@@ -77,6 +77,17 @@ tasks:
     cmds:
       - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/{{.PROJECT}}; mamba env update -n {{.PROJECT}} -f environment.yml --prune'
 
+  update:
+    desc: update package
+    cmds:
+      - mamba run --live-stream -n {{.PROJECT}} pip install {{.CLI_ARGS}} -U
+      - task: export
+      - sed -in '/libcxx/d' environment.yml
+      - task: pp
+      - task: install
+      - task: deploy
+
+
   deploy:
     desc: shortcut for stop -> push -> pull -> restart
     cmds:
