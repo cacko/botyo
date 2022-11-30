@@ -82,7 +82,7 @@ tasks:
     cmds:
       - mamba run --live-stream -n {{.PROJECT}} pip install {{.CLI_ARGS}} -U
       - task: export
-      - sed -in '/libcxx/d' environment.yml
+      - sed -i '' -e '/libcxx/d' environment.yml
       - task: pp
       - task: install
       - task: deploy
