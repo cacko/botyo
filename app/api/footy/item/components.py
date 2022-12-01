@@ -56,10 +56,10 @@ class ScoreRow:
                 Column(size=16, align=Align.RIGHT),
             )
             row = (
-                self.row.home.upper(),
+                self.home.upper(),
                 self.row.status,
                 self.row.score,
-                self.row.away.upper(),
+                self.away.upper(),
             )
         elif self.format == ScoreFormat.LIST:
             cols = (
@@ -70,9 +70,9 @@ class ScoreRow:
             )
             row = (
                 self.row.status,
-                self.row.home,
+                self.home,
                 self.row.score,
-                self.row.away,
+                self.away,
             )
         else:
             raise NotImplementedError
@@ -85,12 +85,12 @@ class ScoreRow:
         return TextOutput.render()
 
     @property
-    def home(self):
-        return (f"{Country(name=self.row.home).flag}{self.row.home}",)
+    def home(self) -> str:
+        return f"{Country(name=self.row.home).flag}{self.row.home}"
 
     @property
-    def away(self):
-        return (f"{Country(name=self.row.away).flag}{self.row.away}",)
+    def away(self) -> str:
+        return f"{Country(name=self.row.away).flag}{self.row.away}"
 
     @property
     def status(self):
