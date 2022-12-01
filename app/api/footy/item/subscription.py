@@ -151,16 +151,19 @@ class SubscriptionClient:
         result = RenderResult(
             method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self.group_id
         )
-        self.connection.send(
-            ZSONResponse(
-                message=result.message,
-                attachment=result.attachment,
-                client=self.client_id,
-                group=result.group,
-                method=result.method,
-                plain=result.plain,
+        try:
+            self.connection.send(
+                ZSONResponse(
+                    message=result.message,
+                    attachment=result.attachment,
+                    client=self.client_id,
+                    group=result.group,
+                    method=result.method,
+                    plain=result.plain,
+                )
             )
-        )
+        except UnknownClientException:
+            pass
 
     def updateREST(self, data):
         payload = []
@@ -275,16 +278,19 @@ class Subscription(metaclass=SubscriptionMeta):
                 ),
                 group=sc.group_id,
             )
-            sc.connection.send(
-                ZSONResponse(
-                    message=result.message,
-                    attachment=result.attachment,
-                    client=sc.client_id,
-                    group=result.group,
-                    method=result.method,
-                    plain=result.plain,
+            try:
+                sc.connection.send(
+                    ZSONResponse(
+                        message=result.message,
+                        attachment=result.attachment,
+                        client=sc.client_id,
+                        group=result.group,
+                        method=result.method,
+                        plain=result.plain,
+                    )
                 )
-            )
+            except UnknownClientException:
+                pass
 
     def processGoals(self, game: GameDetails):
         try:
