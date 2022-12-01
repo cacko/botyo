@@ -9,10 +9,8 @@ from fuzzelinho import MatchMethod, Match
 import logging
 import re
 from app.threesixfive.item.models import GoalEvent
-import json
-from requests.exceptions import HTTPError
 
-GOAL_MATCH = re.compile(r"([\w ]+)\s+(\d+)\s+-\s+(\d+)\s([\w ]+)", re.MULTILINE)
+GOAL_MATCH = re.compile(r"([\w ]+)\s?(\d+)\s+-\s+(\d+)\s([\w ]+)", re.MULTILINE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 
 
@@ -26,7 +24,8 @@ class TeamsMatch(Match):
 class TeamsNeedle:
     home: str
     away: str
-    
+
+
 @dataclass_json
 @dataclass
 class GoalNeedle:
@@ -55,14 +54,20 @@ class DownloadItem:
 
     @property
     def filename(self) -> str:
-        return self.__class__.get_filename(self.event_id, self.game_event_id)
+        return __class__.get_filename(self.event_id, self.game_event_id)
 
-    def rename(self, storege_dir: Path):
+    def rename(self, storege_dir: Path) -> "DownloadItem":
         dp = storege_dir / self.filename
         if not dp.exists():
-            self.path = self.path.rename(dp)
-        else:
-            self.path = dp
+            dp = self.path.rename(dp)
+        return __class__(
+            text=self.text,
+            url=self.url,
+            id=self.id,
+            path=dp,
+            event_id=self.event_id,
+            game_event_id=self.game_event_id,
+        )
 
     @classmethod
     def get_filename(cls, event_id: int, game_event_id: int) -> str:
@@ -86,32 +91,21 @@ class Query:
     event_name: str
     event_id: int
     game_event_id: int
-    title: str
+    home: str
+    away: str
+    score: str
 
     @property
-    def needles(self) -> list[str]:
-        if " vs " in self.event_name:
-            return [*map(str.strip, self.event_name.split(" vs "))]
-        return [*map(str.strip, self.event_name.split("/"))]
-    
+    def title(self) -> str:
+        return f"{self.home} - {self.away} {self.score}"
+
     @property
     def goals(self) -> list[int]:
-        match = re.search(r"(\d:\d)", self.title)
-        if match:
-            return [int(x) for x in match.group(1).split(":")]
-        return [0,0]
+        return [int(x) for x in self.score.split(":")]
 
     @property
     def id(self) -> str:
         return f"{self.event_id}-{self.game_event_id}"
-
-    @property
-    def home(self) -> str:
-        return self.needles[0]
-
-    @property
-    def away(self) -> str:
-        return self.needles[1]
 
     @property
     def goal_video(self) -> str:
@@ -175,7 +169,7 @@ class Goals(object, metaclass=GoalsMeta):
             team1, score1, score2, team2 = matched_teams.groups()
             logging.debug(f"GOALS: matched teams {team1} {team2} {score1} {score2}")
             yield TwitterNeedle(
-                needle=TeamsNeedle(home=team1, away=team2),
+                needle=TeamsNeedle(home=team1.strip(), away=team2.strip()),
                 goals=GoalNeedle(home=int(score1), away=int(score2)),
                 id=t_id,
                 text=t_text,
@@ -187,20 +181,26 @@ class Goals(object, metaclass=GoalsMeta):
     ) -> Generator[DownloadItem, None, None]:
         for needle in self.__needles(**kwds):
             try:
-                twitter_download(url=needle.url, output_dir=__class__.output_dir.as_posix())
+                twitter_download(
+                    url=needle.url, output_dir=__class__.output_dir.as_posix()
+                )
             except Exception as e:
                 logging.error(f"TWITTER DOWNLOAD: {e}")
             for dp in __class__.output_dir.glob(f"*{needle.id}*"):
+                logging.warning(f"dp {dp} {dp.suffix}")
                 if dp.suffix.lower() != ".mp4":
                     dp.unlink(missing_ok=True)
                     continue
                 matcher = TeamsMatch(query)
+                logging.warning(matcher)
                 matched: list[Query] = matcher.fuzzy(needle.needle)
+                logging.info(matched)
                 if not len(matched):
                     dp.unlink(missing_ok=True)
                     continue
                 for q in matched:
-                    if q.goals[0] == needle.goals.home and q.goals[1] == needle.goals.away:
+                    logging.info([q, matched])
+                    if sum(q.goals) == needle.goals.home + needle.goals.away:
                         di = DownloadItem(
                             text=needle.text,
                             url=needle.url,
@@ -209,8 +209,7 @@ class Goals(object, metaclass=GoalsMeta):
                             game_event_id=q.game_event_id,
                             event_id=q.event_id,
                         )
-                        di.rename(__class__.output_dir)
-                        yield di
+                        yield di.rename(__class__.output_dir)
 
     def get_downloads(self) -> list[DownloadItem]:
         return []

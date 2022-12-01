@@ -303,7 +303,9 @@ class Subscription(metaclass=SubscriptionMeta):
                         event_name=self.event_name,
                         event_id=int(self._event.idEvent),
                         game_event_id=x.order_id,
-                        title=f"{self._event.strHomeTeam} - {self._event.strAwayTeam} {game.score}",
+                        score=game.score,
+                        home=self._event.strHomeTeam,
+                        away=self._event.strAwayTeam
                     )
                     goal_event = GoalEvent(
                         event_id=int(self._event.idEvent),
@@ -326,7 +328,7 @@ class Subscription(metaclass=SubscriptionMeta):
             if updated.game.events:
                 self.processGoals(updated.game)
         except AssertionError as e:
-            logging.debug(e)
+            pass
         if not len(self.goals_queue):
             return
         Goals.poll()
@@ -334,7 +336,6 @@ class Subscription(metaclass=SubscriptionMeta):
             gq = self.goals_queue[qid]
             logging.debug(f"CHECK GOALS: {gq}")
             if goal_video := Goals.video(gq):
-                logging.warning(gq)
                 self.sendGoal(gq.title, goal_video)
                 del self.goals_queue[qid]
 

@@ -39,7 +39,7 @@ class Goals(object, metaclass=GoalsMeta):
     
     def do_monitor(self, query: GoalQuery):
         self.queue[query.id] = query
-        logging.info(f"GOALS: added {'/'.join(query.needles)} to query")
+        logging.info(f"GOALS: added {query} to query")
         logging.info(f"GOALS: {self.queue}")
         
     def do_updates(self):
@@ -51,7 +51,8 @@ class Goals(object, metaclass=GoalsMeta):
         for vi in GoalsGenerator.goals(list(self.queue.values())):
             try:
                 del self.queue[vi.id]
+                logging.info(vi)
             except KeyError:
                 pass
-            logging.info(vi)
+
                 
