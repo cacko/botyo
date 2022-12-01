@@ -1,10 +1,9 @@
 from botyo_server.output import Align, Column, TextOutput
 from collections import namedtuple
 from enum import Enum
+from app.core.country import Country
 
-ScoreData = namedtuple(
-    "ScoreData", "status,home,away,score,win",
-    defaults=["vs", ""])
+ScoreData = namedtuple("ScoreData", "status,home,away,score,win", defaults=["vs", ""])
 
 
 class ScoreFormat(Enum):
@@ -16,17 +15,13 @@ class LeagueRow:
 
     __title = ""
 
-    def __init__(
-        self,
-        league: str
-    ) -> None:
+    def __init__(self, league: str) -> None:
         self.__title = league
 
     def __str__(self) -> str:
-        sz = 16+5+5+16
-        cols = (Column(size=sz, align=Align.LEFT))
-        TextOutput.addColumns(
-            [cols], [['-' * sz], [self.__title.upper()]])
+        sz = 16 + 5 + 5 + 16
+        cols = Column(size=sz, align=Align.LEFT)
+        TextOutput.addColumns([cols], [["-" * sz], [self.__title.upper()]])
         return TextOutput.render()
 
 
@@ -44,14 +39,13 @@ class ScoreRow:
         away,
         win: str = "",
         format: ScoreFormat = ScoreFormat.LIST,
-        league: str = ""
+        league: str = "",
     ):
         self.format = format
         if not score:
             score = "vs"
         self.league = league
-        self.row = ScoreData(status=status, score=score,
-                             home=home, away=away, win=win)
+        self.row = ScoreData(status=status, score=score, home=home, away=away, win=win)
 
     def __str__(self) -> str:
         if self.format == ScoreFormat.STANDALONE:
@@ -85,19 +79,18 @@ class ScoreRow:
         TextOutput.addColumns(list(cols), [list(row)])
         if self.row.win:
             TextOutput.addColumns(
-                [Column(size=sum([x.size for x in cols]),
-                        align=Align.CENTER)],
+                [Column(size=sum([x.size for x in cols]), align=Align.CENTER)],
                 [[self.row.win]],
             )
         return TextOutput.render()
 
     @property
     def home(self):
-        return self.row.home
+        return (f"{Country(name=self.row.home).flag}{self.row.home}",)
 
     @property
     def away(self):
-        return self.row.away
+        return (f"{Country(name=self.row.away).flag}{self.row.away}",)
 
     @property
     def status(self):

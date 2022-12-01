@@ -16,6 +16,8 @@ from emoji import emojize
 import sys
 from hashlib import md5
 
+WORLD_CUP_ID = 5930
+
 class EventStatus(Enum):
     HT = "HT"
     FT = "FT"
