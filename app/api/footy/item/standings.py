@@ -1,5 +1,5 @@
 from itertools import groupby
-
+from app.core.country import Country
 from botyo_server.output import Align, Column, TextOutput
 
 from app.threesixfive.item.models import Standing
@@ -46,7 +46,7 @@ class Standings(StandingsData):
             rows.append(
                 [
                     f"{row.position:.0f}",
-                    row.competitor.name,
+                    Country(name=row.competitor.name).country_with_flag,
                     f"{row.points:.0f}",
                     f"{row.gamePlayed:.0f}",
                     f"{gd:+d}",
