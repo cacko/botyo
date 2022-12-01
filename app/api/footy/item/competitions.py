@@ -2,12 +2,12 @@ from datetime import datetime, timezone, timedelta
 
 from botyo_server.output import TextOutput, Column, Align
 from app.threesixfive.data import Data365
-from app.threesixfive.item.models import Game, LeagueItem, Competition
+from app.threesixfive.item.models import LeagueItem
 from app.threesixfive.item.competition import CompetitionData
 from cachable import TimeCacheable
 from zoneinfo import ZoneInfo
-from itertools import groupby, chain
-
+from itertools import groupby
+from app.core.country import Country
 
 class CompetitionItem(TimeCacheable):
     __data: CompetitionData

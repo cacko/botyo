@@ -15,8 +15,10 @@ from app.core.config import Config as app_config
 from emoji import emojize
 import sys
 from hashlib import md5
+from app.core.country import Country as Flag
 
 WORLD_CUP_ID = 5930
+
 
 class EventStatus(Enum):
     HT = "HT"
@@ -53,7 +55,8 @@ class GameStatus(Enum):
     HT = "Halftime"
     SECOND_HALF = "2nd Half"
     FIRST_HALF = "1st Half"
-    
+
+
 class ShortGameStatus(Enum):
     FIRST_HALF = "1st"
     SECOND_HALF = "2nd"
@@ -174,12 +177,11 @@ class Event:
             self.displayScore = ":".join(
                 [f"{self.intHomeScore:.0f}", f"{self.intAwayScore:.0f}"]
             )
-            
+
     @property
     def event_hash(self) -> str:
         return md5(f"{self.event_name}".lower().encode()).hexdigest()
 
-    
     @property
     def event_name(self) -> str:
         return "/".join([s if s else "" for s in [self.strHomeTeam, self.strAwayTeam]])
@@ -558,7 +560,9 @@ class Game:
 
     @property
     def displayTitle(self) -> str:
-        res = f"{self.homeCompetitor.name} - {self.awayCompetitor.name}"
+        assert self.homeCompetitor.name
+        assert self.awayCompetitor.name
+        res = f"{Flag(name=self.homeCompetitor.name).country_with_flag} - {Flag(name=self.awayCompetitor.name).country_with_flag}"
         if all([not self.not_started, not self.ended]):
             res = f"{res} {self.displayScore}"
         return res
@@ -664,6 +668,7 @@ class GameDetails(Game):
             return f"{self.homeCompetitor.score:.0f}:{self.awayCompetitor.score:.0f}"
         except AssertionError:
             return ""
+
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
@@ -807,7 +812,7 @@ class DetailsEventPixel:
             event_id=details.event_id,
             order=sys.maxsize,
             status=details.game_status,
-            league_id=league_id
+            league_id=league_id,
         )
 
     @classmethod
@@ -825,7 +830,7 @@ class DetailsEventPixel:
             event_id=details.event_id,
             order=sys.maxsize,
             status=details.game_status,
-            league_id=league_id
+            league_id=league_id,
         )
 
     @classmethod
@@ -837,7 +842,7 @@ class DetailsEventPixel:
             is_old_event=False,
             event_name=event_name,
             event_id=event_id,
-            league_id=league_id
+            league_id=league_id,
         )
 
 
