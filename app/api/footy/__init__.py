@@ -33,11 +33,13 @@ class LeagueNeedle:
     desc="Livescores or live events for game",
 )  # type: ignore
 def scores_command(context: Context):
-    message = Footy.livescore().render(context.query, group_by_league=True)
-
-    if not message:
+    try:
+        assert context.query
+        message = Footy.livescore().render(context.query, group_by_league=True)
+        assert message
+        return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
+    except AssertionError:
         return EmptyResult()
-    return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
 
 
 @bp.command(
@@ -45,11 +47,13 @@ def scores_command(context: Context):
     desc="Livescores or live events for game",
 )  # type: ignore
 def live_command(context: Context):
-    message = Footy.livescore(live=True).render(context.query, group_by_league=True)
-
-    if not message:
+    try:
+        assert context.query
+        message = Footy.livescore(live=True).render(context.query, group_by_league=True)
+        assert message
+        return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
+    except GameNotFound:
         return EmptyResult()
-    return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
 
 
 @bp.command(
@@ -60,13 +64,14 @@ def subscribe_command(context: Context):
     if any([not context.client, not context.group, not context.query]):
         return EmptyResult()
     try:
+        assert context.query
         response = Footy.subscribe(
             client=context.client, groupID=context.group, query=context.query
         )
         return RenderResult(
             method=ZMethod.FOOTY_SUBSCRIBE, message=response, group=context.group
         )
-    except GameNotFound:
+    except (GameNotFound, AssertionError):
         return EmptyResult()
 
 
@@ -75,13 +80,14 @@ def unsubscribe_command(context: Context):
     if any([not context.client, not context.group, not context.query]):
         return EmptyResult()
     try:
+        assert context.query
         response = Footy.unsubscribe(
             client=context.client, group=context.group, query=context.query
         )
         return RenderResult(
             method=ZMethod.FOOTY_UNSUBSCRIBE, message=response, group=context.group
         )
-    except GameNotFound:
+    except (GameNotFound, AssertionError):
         return EmptyResult()
 
 
@@ -106,52 +112,64 @@ def subscriptions_command(context: Context) -> RenderResult:
 
 @bp.command(method=ZMethod.FOOTY_LEAGUES, desc="Enabled leagues")  # type: ignore
 def competitions_command(context: Context) -> RenderResult:
-    competitions = Footy.competitions()
-    message = competitions.message(context.query)
-    if not message:
+    try:
+        assert context.query
+        competitions = Footy.competitions()
+        message = competitions.message(context.query)
+        assert message
+        return RenderResult(message=message, method=ZMethod.FOOTY_LEAGUES)
+    except AssertionError:
         return EmptyResult()
-    return RenderResult(message=message, method=ZMethod.FOOTY_LEAGUES)
 
 
 @bp.command(method=ZMethod.FOOTY_LINEUP, desc="Game lineup")  # type: ignore
 def lineups_command(context: Context) -> RenderResult:
-    lineups = Footy.lineups(context.query)
-    if lineups:
+    try:
+        assert context.query
+        lineups = Footy.lineups(context.query)
+        assert lineups
         message = lineups.message
-        if message:
-            return RenderResult(
-                message=message,
-            )
-    return EmptyResult()
+        assert message
+        return RenderResult(
+            message=message,
+        )
+    except AssertionError:
+        return EmptyResult()
 
 
 @bp.command(method=ZMethod.FOOTY_FACTS, desc="Game facts")  # type: ignore
 def facts_command(context: Context) -> RenderResult:
-    facts = Footy.facts(context.query)
-    message = facts.message
-    if not message:
+    try:
+        assert context.query
+        facts = Footy.facts(context.query)
+        message = facts.message
+        assert message
+        return RenderResult(message=message, method=ZMethod.FOOTY_FACTS)
+    except AssertionError:
         return EmptyResult()
-    return RenderResult(message=message, method=ZMethod.FOOTY_FACTS)
 
 
 @bp.command(method=ZMethod.FOOTY_STATS, desc="Game stats")  # type: ignore
 def stats_command(context: Context) -> RenderResult:
-    stats = Footy.stats(context.query)
-    message = stats.message
-    if not message:
+    try:
+        assert context.query
+        stats = Footy.stats(context.query)
+        message = stats.message
+        assert message
+        return RenderResult(message=message, method=ZMethod.FOOTY_STATS)
+    except AssertionError:
         return EmptyResult()
-    return RenderResult(message=message, method=ZMethod.FOOTY_STATS)
 
 
 @bp.command(method=ZMethod.FOOTY_PLAYER, desc="Player stats")  # type: ignore
 def player_command(context: Context) -> RenderResult:
     try:
+        assert context.query
         player = Footy.player(context.query)
         image = player.image
         image_path = image.path
         message = player.message
-        if not image_path:
-            return EmptyResult()
+        assert image_path
         if not image_path.exists():
             return RenderResult(method=ZMethod.FOOTY_PLAYER, message=message)
         return RenderResult(
@@ -161,73 +179,74 @@ def player_command(context: Context) -> RenderResult:
                 path=image_path.as_posix(), contentType=image.contentType
             ),
         )
-    except Exception:
+    except (Exception, AssertionError):
         return EmptyResult()
 
 
 @bp.command(method=ZMethod.FOOTY_STANDINGS, desc="standings")  # type: ignore
 def standings_Command(context: Context):
-    query = context.query
-    group = None
-
-    if ":" in query:
-        query, group = query.split(":", 1)
-
-    if not query:
-        return EmptyResult(method=ZMethod.FOOTY_STANDINGS)
-
-    league_id = 0
     try:
-        league_id = int(query)
-    except ValueError:
-        pass
-
-    haystack = Data365.leagues
-    if league_id:
-        league = next(filter(lambda x: x.league_id == league_id, haystack), None)
-    else:
-        haystack = list(filter(lambda x: x.league_id in Config.ontv.leagues, haystack))
-        matcher = LeagueMatch(haystack=haystack)
-        leagues = matcher.fuzzy(LeagueNeedle(league_name=query))
-        if not leagues:
-            return EmptyResult(method=ZMethod.FOOTY_STANDINGS)
-        league = leagues[0]
-    if league:
+        query = context.query
+        group = None
+        assert query
+        if ":" in query:
+            query, group = query.split(":", 1)
+        league_id = 0
+        try:
+            league_id = int(query)
+        except ValueError:
+            pass
+        haystack = Data365.leagues
+        if league_id:
+            league = next(filter(lambda x: x.league_id == league_id, haystack), None)
+        else:
+            haystack = list(
+                filter(lambda x: x.league_id in Config.ontv.leagues, haystack)
+            )
+            matcher = LeagueMatch(haystack=haystack)
+            leagues = matcher.fuzzy(LeagueNeedle(league_name=query))
+            assert leagues
+            league = leagues[0]
+        assert league
         standings = Standings(league)
         table = standings.render(group)
-
         res = RenderResult(method=ZMethod.FOOTY_STANDINGS, message=table)
         return res
+    except AssertionError:
+        pass
     return EmptyResult()
 
 
 @bp.command(method=ZMethod.FOOTY_TEAM, desc="Team info")  # type: ignore
 def team_command(context: Context) -> RenderResult:
     try:
+        assert context.query
         team = Footy.team(context.query)
         message = team.render()
         if not message:
             return EmptyResult()
         return RenderResult(message=message, method=ZMethod.FOOTY_TEAM)
-    except TeamNotFound:
+    except (CompetitionNotFound, AssertionError):
         return EmptyResult()
 
 
 @bp.command(method=ZMethod.FOOTY_FIXTURES, desc="League fixtures")  # type: ignore
 def fixtures_command(context: Context) -> RenderResult:
     try:
+        assert context.query
         competition = CompetitionItem(Footy.competition(context.query))
         message = competition.render()
         return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
-    except CompetitionNotFound:
+    except (CompetitionNotFound, AssertionError):
         return EmptyResult()
 
 
 @bp.command(method=ZMethod.FOOTY_GOALS, desc="Da Goals")  # type: ignore
 def goals_command(context: Context) -> RenderResult:
     try:
+        assert context.query
         competition = CompetitionItem(Footy.competition(context.query))
         message = competition.render()
         return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
-    except CompetitionNotFound:
+    except (CompetitionNotFound, AssertionError):
         return EmptyResult()
