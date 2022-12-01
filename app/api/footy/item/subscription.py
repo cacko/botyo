@@ -8,7 +8,7 @@ from botyo_server.output import TextOutput
 from botyo_server.scheduler import Scheduler
 from apscheduler.schedulers.base import JobLookupError, Job
 from botyo_server.socket.connection import Connection, UnknownClientException
-from botyo_server.models import RenderResult, Attachment
+from botyo_server.models import RenderResult, Attachment, ZSONResponse
 from app.threesixfive.item.models import (
     CancelJobEvent,
     DetailsEventPixel,
@@ -148,9 +148,17 @@ class SubscriptionClient:
         return self.updateBotyo(data)
 
     def updateBotyo(self, message):
-        self.connection.respond(
-            RenderResult(
-                method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self.group_id
+        result = RenderResult(
+            method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self.group_id
+        )
+        self.connection.send(
+            ZSONResponse(
+                message=result.message,
+                attachment=result.attachment,
+                client=self.client_id,
+                group=result.group,
+                method=result.method,
+                plain=result.plain,
             )
         )
 
@@ -258,15 +266,23 @@ class Subscription(metaclass=SubscriptionMeta):
         for sc in self.subscriptions:
             if sc.is_rest:
                 continue
-            sc.connection.respond(
-                RenderResult(
-                    method=ZMethod.FOOTY_SUBSCRIBE,
-                    message=message,
-                    attachment=Attachment(
-                        path=attachment.as_posix(),
-                        contentType="video/mp4",
-                    ),
-                    group=sc.group_id,
+            result = RenderResult(
+                method=ZMethod.FOOTY_SUBSCRIBE,
+                message=message,
+                attachment=Attachment(
+                    path=attachment.as_posix(),
+                    contentType="video/mp4",
+                ),
+                group=sc.group_id,
+            )
+            sc.connection.send(
+                ZSONResponse(
+                    message=result.message,
+                    attachment=result.attachment,
+                    client=sc.client_id,
+                    group=result.group,
+                    method=result.method,
+                    plain=result.plain,
                 )
             )
 
