@@ -12,7 +12,7 @@ from app.threesixfive.item.models import GoalEvent
 import json
 from requests.exceptions import HTTPError
 
-GOAL_MATCH = re.compile(r"(\w+)\s+(\d+)\s+-\s+(\d+)\s(\w+)", re.MULTILINE)
+GOAL_MATCH = re.compile(r"([\w ]+)\s+(\d+)\s+-\s+(\d+)\s([\w ]+)", re.MULTILINE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 
 
