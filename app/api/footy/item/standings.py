@@ -52,4 +52,4 @@ class Standings(StandingsData):
                     f"{gd:+d}",
                 ]
             )
-        TextOutput.addPrestoTable(self.columns(name), rows)
+        TextOutput.addTable(self.columns(name), rows)
