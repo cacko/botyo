@@ -9,6 +9,7 @@ from fuzzelinho import MatchMethod, Match
 import logging
 import re
 from app.threesixfive.item.models import GoalEvent
+from datetime import datetime, timedelta
 
 GOAL_MATCH = re.compile(r"([\w ]+)\s?(\d+)\s+-\s+(\d+)\s([\w ]+)", re.MULTILINE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
@@ -94,6 +95,7 @@ class Query:
     home: str
     away: str
     score: str
+    timestamp: int
 
     @property
     def title(self) -> str:
@@ -111,6 +113,12 @@ class Query:
     def goal_video(self) -> str:
         return DownloadItem.get_filename(self.event_id, self.game_event_id)
 
+    @property
+    def is_expired(self) -> bool:
+        return datetime.now() - datetime.fromtimestamp(self.timestamp) > timedelta(
+            hours=2
+        )
+
 
 class Goal:
     def __init__(self) -> None:
@@ -126,8 +134,8 @@ class GoalsMeta(type):
             cls.__instance = type.__call__(cls, *args, **kwds)
         return cls.__instance
 
-    def goals(cls, query: list[Query]) -> list[DownloadItem]:
-        return list(cls().do_search(query))
+    def goals(cls, query: list[Query]) -> Generator[DownloadItem, None, None]:
+        yield from cls().do_search(query)
 
     def videos(cls) -> list[DownloadItem]:
         return cls().get_downloads()
@@ -194,8 +202,9 @@ class Goals(object, metaclass=GoalsMeta):
                 matcher = TeamsMatch(query)
                 logging.warning(matcher)
                 matched: list[Query] = matcher.fuzzy(needle.needle)
+                logging.debug(matched)
+                logging.debug(needle)
                 for q in matched:
-                    logging.info([q, matched])
                     if sum(q.goals) == needle.goals.home + needle.goals.away:
                         di = DownloadItem(
                             text=needle.text,

@@ -305,7 +305,8 @@ class Subscription(metaclass=SubscriptionMeta):
                         game_event_id=x.order_id,
                         score=game.score,
                         home=self._event.strHomeTeam,
-                        away=self._event.strAwayTeam
+                        away=self._event.strAwayTeam,
+                        timestamp=int(time.time())
                     )
                     goal_event = GoalEvent(
                         event_id=int(self._event.idEvent),
@@ -327,10 +328,8 @@ class Subscription(metaclass=SubscriptionMeta):
             assert updated.game
             if updated.game.events:
                 self.processGoals(updated.game)
-        except AssertionError as e:
+        except AssertionError:
             pass
-        if not len(self.goals_queue):
-            return
         Goals.poll()
         for qid in list(self.goals_queue.keys()):
             gq = self.goals_queue[qid]

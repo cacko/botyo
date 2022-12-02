@@ -31,7 +31,7 @@ class GoalsMeta(type):
 class Goals(object, metaclass=GoalsMeta):
     
     __last_update: datetime = datetime.fromtimestamp(0)
-    __interval: timedelta = timedelta(minutes=2)
+    __interval: timedelta = timedelta(minutes=1)
     
     @property
     def queue(self) -> QueueDict:
@@ -42,12 +42,20 @@ class Goals(object, metaclass=GoalsMeta):
         logging.info(f"GOALS: added {query} to query")
         logging.info(f"GOALS: {self.queue}")
         
+    def clean(self):
+        try:
+            for id in  [x.id for x in self.queue if x.is_expired]:
+                del self.queue[id]
+        except AssertionError:
+            return
+        
     def do_updates(self):
         if not len(self.queue):
             return
-        if (datetime.now() - self.__last_update) < self.__interval:
-            return []
-        self.__last_update = datetime.now()
+        # if (datetime.now() - self.__last_update) < self.__interval:
+        #     return []
+        # self.__last_update = datetime.now()
+        self.clean()
         for vi in GoalsGenerator.goals(list(self.queue.values())):
             try:
                 del self.queue[vi.id]
