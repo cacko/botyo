@@ -194,10 +194,6 @@ class Goals(object, metaclass=GoalsMeta):
                 matcher = TeamsMatch(query)
                 logging.warning(matcher)
                 matched: list[Query] = matcher.fuzzy(needle.needle)
-                logging.info(matched)
-                if not len(matched):
-                    dp.unlink(missing_ok=True)
-                    continue
                 for q in matched:
                     logging.info([q, matched])
                     if sum(q.goals) == needle.goals.home + needle.goals.away:
