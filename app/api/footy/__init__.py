@@ -38,7 +38,7 @@ def scores_command(context: Context):
         message = Footy.livescore().render(context.query, group_by_league=True)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
-    except AssertionError:
+    except Exception:
         return EmptyResult()
 
 
@@ -52,7 +52,7 @@ def live_command(context: Context):
         message = Footy.livescore(live=True).render(context.query, group_by_league=True)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
-    except GameNotFound:
+    except Exception:
         return EmptyResult()
 
 
@@ -71,7 +71,7 @@ def subscribe_command(context: Context):
         return RenderResult(
             method=ZMethod.FOOTY_SUBSCRIBE, message=response, group=context.group
         )
-    except (GameNotFound, AssertionError):
+    except Exception:
         return EmptyResult()
 
 
@@ -87,7 +87,7 @@ def unsubscribe_command(context: Context):
         return RenderResult(
             method=ZMethod.FOOTY_UNSUBSCRIBE, message=response, group=context.group
         )
-    except (GameNotFound, AssertionError):
+    except Exception:
         return EmptyResult()
 
 
@@ -118,7 +118,7 @@ def competitions_command(context: Context) -> RenderResult:
         message = competitions.message(context.query)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_LEAGUES)
-    except AssertionError:
+    except Exception:
         return EmptyResult()
 
 
@@ -133,7 +133,7 @@ def lineups_command(context: Context) -> RenderResult:
         return RenderResult(
             message=message,
         )
-    except AssertionError:
+    except Exception:
         return EmptyResult()
 
 
@@ -145,7 +145,7 @@ def facts_command(context: Context) -> RenderResult:
         message = facts.message
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_FACTS)
-    except AssertionError:
+    except Exception:
         return EmptyResult()
 
 
@@ -157,7 +157,7 @@ def stats_command(context: Context) -> RenderResult:
         message = stats.message
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_STATS)
-    except AssertionError:
+    except Exception:
         return EmptyResult()
 
 
@@ -179,7 +179,7 @@ def player_command(context: Context) -> RenderResult:
                 path=image_path.as_posix(), contentType=image.contentType
             ),
         )
-    except (Exception, AssertionError):
+    except Exception:
         return EmptyResult()
 
 
@@ -212,9 +212,8 @@ def standings_Command(context: Context):
         table = standings.render(group)
         res = RenderResult(method=ZMethod.FOOTY_STANDINGS, message=table)
         return res
-    except AssertionError:
-        pass
-    return EmptyResult()
+    except Exception:
+        return EmptyResult()
 
 
 @bp.command(method=ZMethod.FOOTY_TEAM, desc="Team info")  # type: ignore
@@ -226,7 +225,7 @@ def team_command(context: Context) -> RenderResult:
         if not message:
             return EmptyResult()
         return RenderResult(message=message, method=ZMethod.FOOTY_TEAM)
-    except (CompetitionNotFound, AssertionError):
+    except Exception:
         return EmptyResult()
 
 
@@ -237,7 +236,7 @@ def fixtures_command(context: Context) -> RenderResult:
         competition = CompetitionItem(Footy.competition(context.query))
         message = competition.render()
         return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
-    except (CompetitionNotFound, AssertionError):
+    except Exception:
         return EmptyResult()
 
 
@@ -248,5 +247,5 @@ def goals_command(context: Context) -> RenderResult:
         competition = CompetitionItem(Footy.competition(context.query))
         message = competition.render()
         return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
-    except (CompetitionNotFound, AssertionError):
+    except Exception:
         return EmptyResult()
