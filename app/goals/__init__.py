@@ -98,10 +98,14 @@ class Query:
     away: str
     score: str
     timestamp: int
+    player: Optional[str] = None
 
     @property
     def title(self) -> str:
-        return f"{self.home} - {self.away} {self.score}"
+        res = f"{self.home} - {self.away} {self.score}"
+        if self.player:
+            res += f" [{self.player}]"
+        return res
 
     @property
     def goals(self) -> list[int]:
