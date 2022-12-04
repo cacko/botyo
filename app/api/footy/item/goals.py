@@ -44,7 +44,7 @@ class Goals(object, metaclass=GoalsMeta):
         
     def clean(self):
         try:
-            for id in  [x.id for x in self.queue if x.is_expired]:
+            for id in  [x.id for x in self.queue.values() if x.is_expired]:
                 del self.queue[id]
         except AssertionError:
             return
