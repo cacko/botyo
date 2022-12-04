@@ -35,8 +35,7 @@ class LeagueNeedle:
 )  # type: ignore
 def scores_command(context: Context):
     try:
-        assert context.query
-        message = Footy.livescore().render(context.query, group_by_league=True)
+        message = Footy.livescore().render(context.query if context.query else "", group_by_league=True)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
     except Exception:
