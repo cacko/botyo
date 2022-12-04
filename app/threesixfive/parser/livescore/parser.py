@@ -157,5 +157,5 @@ class Parser:
                         game.awayCompetitor.name,
                         Url.badge(game.awayCompetitor.id),
                     )
-            except AssertionError:
-                pass
+            except AssertionError as e:
+                logging.exception(e)
