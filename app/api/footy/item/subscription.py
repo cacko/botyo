@@ -366,8 +366,10 @@ class Subscription(metaclass=SubscriptionMeta):
                         pass
             self.checkGoals(updated)
             content = cache.content
-            if not content:
-                return self.cancel_all()
+            assert content
+            # if not content:
+            #     raise ValueError
+            #     # return self.cancel_all()
             Player.store(content.game)
             if any(
                 [
@@ -392,11 +394,13 @@ class Subscription(metaclass=SubscriptionMeta):
                         pass
                     self.cancel(sc)
                 logging.debug(f"subscription {self.event_name} in done")
+        except AssertionError:
+            pass
         except ValueError as e:
             logging.exception(e)
         except Exception as e:
             logging.exception(e)
-            return self.cancel_all()
+            # return self.cancel_all()
 
     def updates(self, updated: Optional[ResponseGame] = None) -> Optional[list[str]]:
         try:
