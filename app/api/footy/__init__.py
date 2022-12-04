@@ -48,7 +48,6 @@ def scores_command(context: Context):
 )  # type: ignore
 def live_command(context: Context):
     try:
-        assert context.query
         message = Footy.livescore(live=True).render(context.query if context.query else "", group_by_league=True)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
