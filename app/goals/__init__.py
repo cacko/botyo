@@ -14,7 +14,9 @@ from datetime import datetime, timedelta
 GOAL_MATCH = re.compile(r"([\w ]+)\s?(\d+)\s+-\s+(\d+)\s([\w ]+)", re.MULTILINE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 
-
+# (base) muzak at /store/cache/znayko/goals ❯ ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4 
+# width=1280
+# height=720
 class TeamsMatch(Match):
     minRatio = 80
     method = MatchMethod.WRATIO

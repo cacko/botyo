@@ -289,6 +289,28 @@ class StandingResponse:
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
+class Bracket:
+    lastUpdateId: int
+    requestedUpdateId: int
+    ttl: int
+    stages: list[Standing]
+
+
+
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
+class BracketsResponse:
+    lastUpdateId: int
+    requestedUpdateId: int
+    ttl: int
+    brackets: Bracket
+
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
 class Competition:
     id: int
     countryId: int

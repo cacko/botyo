@@ -275,6 +275,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 attachment=Attachment(
                     path=attachment.as_posix(),
                     contentType="video/mp4",
+                    width=1280,
+                    height=720
                 ),
                 group=sc.group_id,
             )

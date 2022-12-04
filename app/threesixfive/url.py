@@ -16,6 +16,7 @@ class BASEURL(Enum):
                  "f_png,w_200,h_200,c_limit,q_auto:eco,dpr_3," \
                  "d_Competitors:default1.png/v3/Competitors"
     STANDINGS = "https://webws.365scores.com/web/standings"
+    BRACKETS = "https://webws.365scores.com/web/brackets"
     SEARCH = "https://webws.365scores.com/web/search/"
     TEAM_STATS = "https://webws.365scores.com/web/stats/"
     COMPETITION_SCHEDULE = "https://webws.365scores.com/web/games/current"
@@ -35,6 +36,17 @@ class CompetitionScheduleArguments:
 @dataclass_json
 @dataclass
 class StandingsArguments:
+    competitions: int
+    appTypeId: int = 5
+    langId: int = 1
+    timezoneName: str = "UTC"
+    userCountryId: int = 1
+    showOdds: bool = True
+    live: bool = True
+
+@dataclass_json
+@dataclass
+class BracketsArguments:
     competitions: int
     appTypeId: int = 5
     langId: int = 1
@@ -141,43 +153,46 @@ class UrlMeta(type):
 
     def search(clsc, filter: str):
         query = SearchArguments(query=filter)
-        return f"{BASEURL.SEARCH.value}/?{urlencode(query.to_dict())}"
+        return f"{BASEURL.SEARCH.value}/?{urlencode(query.to_dict())}" # type: ignore
 
     def livescores(cls, leagues):
         if not leagues:
             query = AllScoresArguments()
-            return f"{BASEURL.ALLSCORES.value}/?{urlencode(query.to_dict())}"
+            return f"{BASEURL.ALLSCORES.value}/?{urlencode(query.to_dict())}" # type: ignore
         query = LiveScoresArguments(
             competitions=",".join(map(str, leagues))
         )
-        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.to_dict())}"
+        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.to_dict())}" # type: ignore
 
     def badge(cls, team_id):
         return f"{BASEURL.TEAM_IMAGE.value}/{team_id}"
 
     def game(cls, game_id):
         query = GameArguments(gameId=game_id)
-        return f"{BASEURL.GAME.value}/?{urlencode(query.to_dict())}"
+        return f"{BASEURL.GAME.value}/?{urlencode(query.to_dict())}" # type: ignore
 
     def competitions(cls):
         query = CompetitionsArguments()
-        return f"{BASEURL.COMPETITIONS.value}/?{urlencode(query.to_dict())}"
+        return f"{BASEURL.COMPETITIONS.value}/?{urlencode(query.to_dict())}" # type: ignore
 
     def competition_logo(cls, competition_id):
         return f"{BASEURL.COMPETITION_IMAGE.value}/{competition_id}"
 
     def competition_schedule(cls, competition_id):
         query = CompetitionScheduleArguments(competitions=competition_id)
-        return f"{BASEURL.COMPETITION_SCHEDULE.value}/?{urlencode(query.to_dict())}"
+        return f"{BASEURL.COMPETITION_SCHEDULE.value}/?{urlencode(query.to_dict())}" # type: ignore
 
     def standings(cls, competition_id):
         query = StandingsArguments(competitions=competition_id)
-        return f"{BASEURL.STANDINGS.value}/?{urlencode(query.to_dict())}"
+        return f"{BASEURL.STANDINGS.value}/?{urlencode(query.to_dict())}" # type: ignore
+
+    def brackets(cls, competition_id):
+        query = BracketsArguments(competitions=competition_id)
+        return f"{BASEURL.BRACKETS.value}/?{urlencode(query.to_dict())}" # type: ignore
 
     def team_games(cls, competitor_id):
         query = CompetitorScoresArguments(competitors=competitor_id)
-        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.to_dict())}"
-
+        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.to_dict())}" # type: ignore
 
 class Url(metaclass=UrlMeta):
     pass
