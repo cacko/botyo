@@ -8,9 +8,7 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from app.core.store import ImageCachable
 from app.threesixfive.url import Url
-from app.threesixfive.team import (
-    normalize_team, DEFAULT_BADGE, store_key, AssetKey
-)
+from app.threesixfive.team import normalize_team, DEFAULT_BADGE, store_key, AssetKey
 import logging
 
 
@@ -29,7 +27,7 @@ class ParserResponse:
     team2Id: int
     sportId: int
     winDescription: str = ""
-    id: Optional[int] =  None
+    id: Optional[int] = None
 
 
 class Badge(ImageCachable):
@@ -43,7 +41,6 @@ class Badge(ImageCachable):
         self._name = normalize_team(name)
         self._url = url
         super().__init__()
-    
 
     @property
     def filename(self) -> str:
@@ -51,7 +48,7 @@ class Badge(ImageCachable):
 
 
 def badges(badge):
-    with Scheduler.app_context:
+    with Scheduler.app_context:  # type: ignore
         return badge.process()
 
 
@@ -64,9 +61,8 @@ class BadgeQueueItem:
 
 class BadgeFetcher:
 
-    queue: list[BadgeQueueItem] = None
+    queue: list[BadgeQueueItem]
     isRunning = False
-    executor: ThreadPoolExecutor = None
     POOL_SIZE = 10
 
     def __init__(self):
@@ -78,7 +74,7 @@ class BadgeFetcher:
 
     def _job(self, executor):
         for item in self.queue:
-            badge = Badge(**item.to_dict())
+            badge = Badge(**item.to_dict())  # type: ignore
             if not badge.isCached:
                 yield executor.submit(badges, badge)
 
@@ -96,12 +92,6 @@ class BadgeFetcher:
 
 
 class Parser:
-
-    __endpoint: str
-    __struct: ResponseScores = None
-    with_details = False
-    leagues: list[int] = None
-
     def __init__(self, with_details=False, leagues: list[int] = []):
         self.__endpoint = Url.livescores(leagues=leagues)
         self.with_details = with_details
@@ -111,11 +101,10 @@ class Parser:
         req = Request(self.__endpoint)
         json = req.json
         today = datetime.now(tz=timezone.utc).date()
-        self.__struct: ResponseScores = ResponseScores.from_dict(json)
-        self.__struct.games = [*filter(
-            lambda g: g.startTime.date() == today,
-            self.__struct.games
-        )]
+        self.__struct: ResponseScores = ResponseScores.from_dict(json)  # type: ignore
+        self.__struct.games = [
+            *filter(lambda g: g.startTime.date() == today, self.__struct.games)
+        ]
 
     @property
     def events_total(self) -> int:
@@ -133,30 +122,40 @@ class Parser:
     def events(self) -> Generator[ParserResponse, None, None]:
         badgeFetcher = BadgeFetcher()
         for game in self.__struct.games:
-            yield ParserResponse(
-                team1=game.homeCompetitor.name,
-                team2=game.awayCompetitor.name,
-                team1Score=game.homeCompetitor.score,
-                team2Score=game.awayCompetitor.score,
-                startTime=game.startTime,
-                status=game.shortStatusText
-                if game.gameTime < 0 or game.gameTimeDisplay == ""
-                else f"{game.gameTime:.0f}",
-                league_id=game.competitionId,
-                league=game.competitionDisplayName,
-                details=Url.game(game.id),
-                team1Id=game.homeCompetitor.id,
-                team2Id=game.awayCompetitor.id,
-                sportId=game.sportId,
-                winDescription=game.winDescription,
-                id=game.id
-            )
-            if self.with_details:
-                badgeFetcher.add(
-                    game.homeCompetitor.name,
-                    Url.badge(game.homeCompetitor.id),
+            try:
+                assert game.homeCompetitor.name
+                assert game.awayCompetitor.name
+                assert game.homeCompetitor.score
+                assert game.awayCompetitor.score
+                assert game.homeCompetitor.id
+                assert game.awayCompetitor.id
+                assert game.winDescription
+                yield ParserResponse(
+                    team1=game.homeCompetitor.name,
+                    team2=game.awayCompetitor.name,
+                    team1Score=game.homeCompetitor.score,
+                    team2Score=game.awayCompetitor.score,
+                    startTime=game.startTime,
+                    status=game.shortStatusText
+                    if game.gameTime < 0 or game.gameTimeDisplay == ""
+                    else f"{game.gameTime:.0f}",
+                    league_id=game.competitionId,
+                    league=game.competitionDisplayName,
+                    details=Url.game(game.id),
+                    team1Id=game.homeCompetitor.id,
+                    team2Id=game.awayCompetitor.id,
+                    sportId=game.sportId,
+                    winDescription=game.winDescription,
+                    id=game.id,
                 )
-                badgeFetcher.add(
-                    game.awayCompetitor.name,
-                    Url.badge(game.awayCompetitor.id),
-                )
+                if self.with_details:
+                    badgeFetcher.add(
+                        game.homeCompetitor.name,
+                        Url.badge(game.homeCompetitor.id),
+                    )
+                    badgeFetcher.add(
+                        game.awayCompetitor.name,
+                        Url.badge(game.awayCompetitor.id),
+                    )
+            except AssertionError:
+                pass

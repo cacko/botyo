@@ -4,6 +4,7 @@ from app.threesixfive.parser.livescore.parser import Parser, ParserResponse
 from hashlib import md5
 from typing import Any
 
+
 class Livescores:
 
     with_progress = False
@@ -11,10 +12,7 @@ class Livescores:
     leagues = []
 
     def __init__(
-        self,
-        with_progress=False,
-        leagues: list[int] = [],
-        with_details=False
+        self, with_progress=False, leagues: list[int] = [], with_details=False
     ):
         self.with_progress = with_progress
         self.leagues = leagues
@@ -29,7 +27,7 @@ class Livescores:
             for ev in progress.track(parser.events):
                 result.append(
                     Event(
-                        strSport=sports.get(ev.sportId).name,
+                        strSport=sports[ev.sportId].name,  # type: ignore
                         idLeague=ev.league_id,
                         strLeague=ev.league,
                         idHomeTeam=ev.team1Id,
@@ -48,7 +46,7 @@ class Livescores:
                 )
         return result
 
-    def __getIds(self, ev: ParserResponse) -> dict[str,Any]:
+    def __getIds(self, ev: ParserResponse) -> dict[str, Any]:
         keys = ("id", "idEvent")
         values = (md5(f"{ev.team1}/{ev.team2}".lower().encode()).hexdigest(), ev.id)
         return dict(zip(keys, values))

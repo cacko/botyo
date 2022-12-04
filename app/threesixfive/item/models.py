@@ -195,8 +195,8 @@ class Event:
 @dataclass
 class Sport:
     id: int
-    name: str
-    nameForURL: str
+    name: Optional[str] = None
+    nameForURL: Optional[str] = None
     totalGames: Optional[int] = 0
     liveGames: Optional[int] = 0
 
