@@ -13,6 +13,7 @@ from app.threesixfive.exception import CompetitionNotFound, GameNotFound, TeamNo
 from apscheduler.job import Job
 from botyo_server.output import TextOutput
 from app.api import ZMethod
+import logging
 
 bp = Blueprint("footy")
 
@@ -52,7 +53,8 @@ def live_command(context: Context):
         message = Footy.livescore(live=True).render(context.query, group_by_league=True)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
-    except Exception:
+    except Exception as e:
+        logging.exception(e)
         return EmptyResult()
 
 
