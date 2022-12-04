@@ -197,7 +197,6 @@ class Goals(object, metaclass=GoalsMeta):
             except Exception as e:
                 logging.error(f"TWITTER DOWNLOAD: {e}")
             for dp in __class__.output_dir.glob(f"*{needle.id}*"):
-                logging.warning(f"dp {dp} {dp.suffix}")
                 if dp.suffix.lower() != ".mp4":
                     dp.unlink(missing_ok=True)
                     continue
