@@ -591,7 +591,7 @@ class Game:
 
 
 class EVENT_ICON(Enum):
-    SUBSTITUTION = ":ON!_arrow:"
+    SUBSTITUTION = ":left_arrow""
     GOAL = ":soccer_ball:"
     YELLOW__CARD = ":yellow_square:"
     RED__CARD = ":red_square:"
