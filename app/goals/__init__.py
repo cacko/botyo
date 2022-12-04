@@ -122,7 +122,7 @@ class Query:
     @property
     def is_expired(self) -> bool:
         return datetime.now() - datetime.fromtimestamp(self.timestamp) > timedelta(
-            hours=2
+            hours=4
         )
 
 
