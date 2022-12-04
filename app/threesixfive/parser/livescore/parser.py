@@ -125,8 +125,8 @@ class Parser:
             try:
                 assert game.homeCompetitor.name
                 assert game.awayCompetitor.name
-                assert game.homeCompetitor.score
-                assert game.awayCompetitor.score
+                assert game.homeCompetitor.score is not None
+                assert game.awayCompetitor.score is not None
                 assert game.homeCompetitor.id
                 assert game.awayCompetitor.id
                 yield ParserResponse(
