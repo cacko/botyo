@@ -129,7 +129,6 @@ class Parser:
                 assert game.awayCompetitor.score
                 assert game.homeCompetitor.id
                 assert game.awayCompetitor.id
-                assert game.winDescription
                 yield ParserResponse(
                     team1=game.homeCompetitor.name,
                     team2=game.awayCompetitor.name,
@@ -145,7 +144,7 @@ class Parser:
                     team1Id=game.homeCompetitor.id,
                     team2Id=game.awayCompetitor.id,
                     sportId=game.sportId,
-                    winDescription=game.winDescription,
+                    winDescription=game.winDescription if game.winDescription else "",
                     id=game.id,
                 )
                 if self.with_details:
