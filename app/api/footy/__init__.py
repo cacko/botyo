@@ -49,7 +49,7 @@ def scores_command(context: Context):
 def live_command(context: Context):
     try:
         assert context.query
-        message = Footy.livescore(live=True).render(context.query, group_by_league=True)
+        message = Footy.livescore(live=True).render(context.query if context.query else "", group_by_league=True)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
     except Exception as e:
@@ -114,9 +114,8 @@ def subscriptions_command(context: Context) -> RenderResult:
 @bp.command(method=ZMethod.FOOTY_LEAGUES, desc="Enabled leagues")  # type: ignore
 def competitions_command(context: Context) -> RenderResult:
     try:
-        assert context.query
         competitions = Footy.competitions()
-        message = competitions.message(context.query)
+        message = competitions.message(context.query if context.query else "")
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_LEAGUES)
     except Exception:
