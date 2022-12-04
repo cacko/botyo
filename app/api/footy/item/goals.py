@@ -58,6 +58,7 @@ class Goals(object, metaclass=GoalsMeta):
         self.clean()
         for vi in GoalsGenerator.goals(list(self.queue.values())):
             try:
+                vi.rename(GoalsGenerator.output_dir)
                 del self.queue[vi.id]
                 logging.info(vi)
             except KeyError:

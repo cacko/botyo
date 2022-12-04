@@ -194,6 +194,7 @@ class Goals(object, metaclass=GoalsMeta):
     def do_search(
         self, query: list[Query], **kwds
     ) -> Generator[DownloadItem, None, None]:
+        logging.debug(f"DO SEARCH: {query}")
         for needle in self.__needles(**kwds):
             try:
                 twitter_download(
@@ -201,14 +202,13 @@ class Goals(object, metaclass=GoalsMeta):
                 )
             except Exception as e:
                 logging.error(f"TWITTER DOWNLOAD: {e}")
-                continue
             for dp in __class__.output_dir.glob(f"*{needle.id}*mp4"):
                 matcher = TeamsMatch(query)
                 matched: list[Query] = matcher.fuzzy(needle.needle)
                 logging.debug(f"GOALS SEARCH MATCHED: {matched} from {needle}")
                 for q in matched:
                     if sum(q.goals) == needle.goals.home + needle.goals.away:
-                        di = DownloadItem(
+                        yield DownloadItem(
                             text=needle.text,
                             url=needle.url,
                             id=q.id,
@@ -216,7 +216,6 @@ class Goals(object, metaclass=GoalsMeta):
                             game_event_id=q.game_event_id,
                             event_id=q.event_id,
                         )
-                        yield di.rename(__class__.output_dir)
 
     def get_downloads(self) -> list[DownloadItem]:
         return []
