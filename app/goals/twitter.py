@@ -1,5 +1,5 @@
 from typing import Any, Optional, Generator
-
+from app.core.store import QueueDict
 from pytwitter import Api
 from pytwitter.models import User, Tweet, Response
 
@@ -50,7 +50,6 @@ class Twitter(object, metaclass=TwitterMeta):
 
     __api: Optional[Api] = None
     __users: dict[str, User] = {}
-    __timeline_since_id: dict[str, str] = {}
 
     @property
     def api(self) -> Api:
@@ -63,6 +62,10 @@ class Twitter(object, metaclass=TwitterMeta):
             )
         return self.__api
 
+    @property
+    def timeline_since_id(self) -> QueueDict:
+        return QueueDict("timeline_since_id")
+
     def get_user(self, username: str) -> User:
         if username not in self.__users:
             res = self.api.get_user(username=username).data  # type: ignore
@@ -74,8 +77,11 @@ class Twitter(object, metaclass=TwitterMeta):
         user = self.get_user(kwds.get("username", __class__.default_username))
         assert user.id
         assert user.username
-        if since_id := self.__timeline_since_id.get(user.username, ""):
-            kwds["since_id"] = since_id
+        try:
+            if since_id := self.timeline_since_id[user.username]:
+                kwds["since_id"] = since_id
+        except:
+            pass
         res = self.api.get_timelines(user_id=user.id, **kwds)
         assert isinstance(res, Response)
         tweets = res.data
@@ -92,6 +98,6 @@ class Twitter(object, metaclass=TwitterMeta):
                     url=f"https://twitter.com/{user.username}/status/{t.id}",
                 )
             except AssertionError as e:
-                logging.exception(e)
+                pass
         if len(ids):
-            self.__timeline_since_id[user.username] = str(max(ids))
+            self.timeline_since_id[user.username] = str(max(ids))

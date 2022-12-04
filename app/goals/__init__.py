@@ -11,10 +11,12 @@ import re
 from app.threesixfive.item.models import GoalEvent
 from datetime import datetime, timedelta
 
-GOAL_MATCH = re.compile(r"([\w ]+)\s?(\d+)\s+-\s+(\d+)\s([\w ]+)", re.MULTILINE)
+GOAL_MATCH = re.compile(
+    r"^([\w ]+) *\[?(\d+)\]? *-  *\[?(\d+)\]? *([\w ]+)", re.IGNORECASE
+)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 
-# (base) muzak at /store/cache/znayko/goals ❯ ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4 
+# (base) muzak at /store/cache/znayko/goals ❯ ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4
 # width=1280
 # height=720
 class TeamsMatch(Match):
@@ -59,10 +61,11 @@ class DownloadItem:
     def filename(self) -> str:
         return __class__.get_filename(self.event_id, self.game_event_id)
 
-    def rename(self, storege_dir: Path) -> "DownloadItem":
-        dp = storege_dir / self.filename
+    def rename(self, storage_dir: Path) -> "DownloadItem":
+        dp = storage_dir / self.filename
         if not dp.exists():
             dp = self.path.rename(dp)
+            logging.debug(f"GOALS rename {self.path} to {dp}")
         return __class__(
             text=self.text,
             url=self.url,
@@ -177,18 +180,16 @@ class Goals(object, metaclass=GoalsMeta):
                 t.tweet.id if t.tweet.id else "",
                 t.tweet.text if t.tweet.text else "",
             )
-            matched_teams = GOAL_MATCH.search(t_text.replace("[", "").replace("]", ""))
-            if not matched_teams:
-                continue
-            team1, score1, score2, team2 = matched_teams.groups()
-            logging.debug(f"GOALS: matched teams {team1} {team2} {score1} {score2}")
-            yield TwitterNeedle(
-                needle=TeamsNeedle(home=team1.strip(), away=team2.strip()),
-                goals=GoalNeedle(home=int(score1), away=int(score2)),
-                id=t_id,
-                text=t_text,
-                url=t.url,
-            )
+            if matched_teams := GOAL_MATCH.search(t_text):
+                team1, score1, score2, team2 = map(str.strip, matched_teams.groups())
+                logging.debug(f"GOALS: matched teams {team1} {team2} {score1} {score2}")
+                yield TwitterNeedle(
+                    needle=TeamsNeedle(home=team1, away=team2),
+                    goals=GoalNeedle(home=int(score1), away=int(score2)),
+                    id=t_id,
+                    text=t_text,
+                    url=t.url,
+                )
 
     def do_search(
         self, query: list[Query], **kwds
@@ -200,22 +201,18 @@ class Goals(object, metaclass=GoalsMeta):
                 )
             except Exception as e:
                 logging.error(f"TWITTER DOWNLOAD: {e}")
-            for dp in __class__.output_dir.glob(f"*{needle.id}*"):
-                if dp.suffix.lower() != ".mp4":
-                    dp.unlink(missing_ok=True)
-                    continue
+                continue
+            for dp in __class__.output_dir.glob(f"*{needle.id}*mp4"):
                 matcher = TeamsMatch(query)
-                logging.warning(matcher)
                 matched: list[Query] = matcher.fuzzy(needle.needle)
-                logging.debug(matched)
-                logging.debug(needle)
+                logging.debug(f"GOALS SEARCH MATCHED: {matched} from {needle}")
                 for q in matched:
                     if sum(q.goals) == needle.goals.home + needle.goals.away:
                         di = DownloadItem(
                             text=needle.text,
                             url=needle.url,
-                            id=needle.id,
-                            path=dp,
+                            id=q.id,
+                            path=dp.absolute(),
                             game_event_id=q.game_event_id,
                             event_id=q.event_id,
                         )
