@@ -1,8 +1,8 @@
 from app.threesixfive.item.models import Event
 from prokopiy import Progress
-from .parser import Parser, ParserResponse
+from app.threesixfive.parser.livescore.parser import Parser, ParserResponse
 from hashlib import md5
-
+from typing import Any
 
 class Livescores:
 
@@ -48,7 +48,7 @@ class Livescores:
                 )
         return result
 
-    def __getIds(self, ev: ParserResponse) -> dict[str:any]:
+    def __getIds(self, ev: ParserResponse) -> dict[str,Any]:
         keys = ("id", "idEvent")
         values = (md5(f"{ev.team1}/{ev.team2}".lower().encode()).hexdigest(), ev.id)
         return dict(zip(keys, values))
