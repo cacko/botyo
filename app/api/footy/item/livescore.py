@@ -52,7 +52,6 @@ class Livescore(LivescoreData):
             lambda ev: (ev.startTime - now) < timeframe,
             self.items
         )
-        logging.debug(items)
         for ev in items:
             try:
                 assert ev
@@ -71,6 +70,7 @@ class Livescore(LivescoreData):
         items =  self.items
         if self.inprogress:
             items = list(filter(lambda x: x.inProgress, items))
+        logging.debug(items)
         items.reverse()
         filteredIds = [
             x.id for x in
