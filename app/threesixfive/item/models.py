@@ -57,6 +57,7 @@ class GameStatus(Enum):
     FIRST_HALF = "1st Half"
     ET = "Extra Time"
     BPEN = "Before Penalties"
+    PEN = "Penalties"
 
 
 class ShortGameStatus(Enum):
@@ -66,6 +67,7 @@ class ShortGameStatus(Enum):
     HALF_TIME = "HT"
     EXTRA_TIME = "Extra Time"
     BEFORE_PENALTIES = "Before Penalties"
+    PENALTIES = "Penalties"
 
 
 class OrderWeight(Enum):
