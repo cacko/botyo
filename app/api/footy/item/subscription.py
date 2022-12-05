@@ -412,7 +412,7 @@ class Subscription(metaclass=SubscriptionMeta):
             assert details.home
             assert details.away
             res = ScoreRow(
-                status=f"{details.game_time:.0f}",
+                status=f"{details.game_time:.0f}\"",
                 home=details.home.name,
                 away=details.away.name,
                 score=details.score,
