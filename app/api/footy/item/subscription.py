@@ -16,6 +16,7 @@ from app.threesixfive.item.models import (
     GameDetails,
     EventStatus,
     GameStatus,
+    ShortGameStatus,
     ResponseGame,
     SubscriptionEvent,
     GoalEvent,
@@ -374,14 +375,10 @@ class Subscription(metaclass=SubscriptionMeta):
             Player.store(content.game)
             if any(
                 [
-                    GameStatus(content.game.statusText)
+                    ShortGameStatus(content.game.shortStatusText)
                     in [
-                        GameStatus.FT,
-                        GameStatus.JE,
-                        GameStatus.SUS,
-                        GameStatus.ABD,
-                        GameStatus.AET,
-                        GameStatus.FN,
+                        ShortGameStatus.FINAL,
+                        ShortGameStatus.AFTER_PENALTIES
                     ],
                 ]
             ):
@@ -394,7 +391,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     except UnknownClientException:
                         pass
                     self.cancel(sc)
-                logging.debug(f"subscription {self.event_name} in done")
+                    logging.debug(f"subscription {self.event_name} in done")
         except AssertionError:
             pass
         except ValueError as e:

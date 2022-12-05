@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Optional
 from itertools import chain
 from functools import reduce
-
+import logging
 
 class GameMatch(Match):
     minRatio = 80
@@ -52,6 +52,7 @@ class Livescore(LivescoreData):
             lambda ev: (ev.startTime - now) < timeframe,
             self.items
         )
+        logging.debug(items)
         for ev in items:
             try:
                 assert ev
