@@ -390,8 +390,9 @@ class Subscription(metaclass=SubscriptionMeta):
                             sc.sendUpdate(self.fulltimeAnnoucement)
                     except UnknownClientException:
                         pass
-                    self.cancel(sc)
-                    logging.debug(f"subscription {self.event_name} in done")
+                    if content.game.justEnded:
+                        self.cancel(sc)
+                        logging.debug(f"subscription {self.event_name} in done")
         except AssertionError:
             pass
         except ValueError as e:

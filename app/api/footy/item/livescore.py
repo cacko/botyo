@@ -12,7 +12,6 @@ from dataclasses import dataclass
 from typing import Optional
 from itertools import chain
 from functools import reduce
-import logging
 
 class GameMatch(Match):
     minRatio = 80
@@ -70,7 +69,6 @@ class Livescore(LivescoreData):
         items =  self.items
         if self.inprogress:
             items = list(filter(lambda x: x.inProgress, items))
-        logging.debug(items)
         items.reverse()
         filteredIds = [
             x.id for x in
