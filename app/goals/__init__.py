@@ -12,7 +12,7 @@ from app.threesixfive.item.models import GoalEvent
 from datetime import datetime, timedelta
 
 GOAL_MATCH = re.compile(
-    r"^([\w ]+) *\[?(\d+)\]? *-  *\[?(\d+)\]? *([\w ]+)", re.IGNORECASE
+    r"^([\w ]+)[^\w]*(\d+)-(\d+)[^\w]*([\w ]+)", re.IGNORECASE
 )
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 
