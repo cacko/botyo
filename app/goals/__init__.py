@@ -184,7 +184,7 @@ class Goals(object, metaclass=GoalsMeta):
                 team1, score1, score2, team2 = map(str.strip, matched_teams.groups())
                 logging.debug(f"GOALS: matched teams {team1} {team2} {score1} {score2}")
                 yield TwitterNeedle(
-                    needle=TeamsNeedle(home=team1, away=team2),
+                    needle=TeamsNeedle(home=team1.lower(), away=team2.lower()),
                     goals=GoalNeedle(home=int(score1), away=int(score2)),
                     id=t_id,
                     text=t_text,

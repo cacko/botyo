@@ -305,8 +305,8 @@ class Subscription(metaclass=SubscriptionMeta):
                         event_id=int(self._event.idEvent),
                         game_event_id=x.order_id,
                         score=game.score,
-                        home=self._event.strHomeTeam,
-                        away=self._event.strAwayTeam,
+                        home=self._event.strHomeTeam.lower(),
+                        away=self._event.strAwayTeam.lower(),
                         timestamp=int(time.time()),
                         player=x.playerName
                     )
