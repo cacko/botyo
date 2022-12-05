@@ -55,6 +55,7 @@ class GameStatus(Enum):
     HT = "Halftime"
     SECOND_HALF = "2nd Half"
     FIRST_HALF = "1st Half"
+    ET = "Extra Time"
 
 
 class ShortGameStatus(Enum):
@@ -62,6 +63,7 @@ class ShortGameStatus(Enum):
     SECOND_HALF = "2nd"
     FINAL = "Final"
     HALF_TIME = "HT"
+    EXTRA_TIME = "Extra Time"
 
 
 class OrderWeight(Enum):
