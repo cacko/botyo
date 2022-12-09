@@ -14,6 +14,7 @@ class Payload:
     message: str
     source: Optional[str] = None
     lang: Optional[str] = None
+    detect_lang: Optional[bool] = None
 
 
 @dataclass_json()

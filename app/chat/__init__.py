@@ -1,6 +1,7 @@
 from app.chatyo import Payload, Response, getResponse
 from typing import Optional
 
+
 class ChatMeta(type):
 
     _instance = None
@@ -19,19 +20,15 @@ class ChatMeta(type):
     def reply(cls, text, source=None, lang: Optional[str] = None) -> Response:
         return cls().getResponse("chat/sarcastic", text, source, lang)
 
-class Chat(object, metaclass=ChatMeta):
 
+class Chat(object, metaclass=ChatMeta):
     def getResponse(
-            self,
-            path,
-            text,
-            source: Optional[str] = None,
-            lang: Optional[str] = None) -> Response:
+        self,
+        path,
+        text,
+        source: Optional[str] = None,
+        lang: Optional[str] = None,
+    ) -> Response:
         return getResponse(
-            path,
-            Payload(
-                message=text,
-                source=source,
-                lang=lang,
-            )
+            path, Payload(message=text, source=source, lang=lang, detect_lang=not lang)
         )
