@@ -7,7 +7,7 @@ class LyricsShell(Shell):
     OUTPUT_REPLACED = ["lyrics: fetched lyrics:",
                        "lyrics: lyrics already present:"]
 
-    executable = "conda"
+    executable = "mamba"
     executable_arguments = ["run", "-n", "base", "--live-stream", "beet", "lyrics", "-p"]
 
     def __post_init__(self):
