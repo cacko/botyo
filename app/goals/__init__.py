@@ -11,10 +11,9 @@ import re
 from app.threesixfive.item.models import GoalEvent
 from datetime import datetime, timedelta
 
-GOAL_MATCH = re.compile(
-    r"^([\w ]+)[^\w]*(\d+)-(\d+)[^\w]*([\w ]+)", re.IGNORECASE
-)
+GOAL_MATCH = re.compile(r"^([\w ]+)[^\w]*(\d+)-(\d+)[^\w]*([\w ]+)", re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
+GOAL_CHECK_EXPIRATION = timedelta(minutes=10)
 
 # (base) muzak at /store/cache/znayko/goals ❯ ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4
 # width=1280
@@ -124,9 +123,13 @@ class Query:
 
     @property
     def is_expired(self) -> bool:
-        return datetime.now() - datetime.fromtimestamp(self.timestamp) > timedelta(
-            hours=4
-        )
+        try:
+            return (
+                datetime.now() - datetime.fromtimestamp(self.timestamp)
+                > GOAL_CHECK_EXPIRATION
+            )
+        except AssertionError:
+            return False
 
 
 class Goal:
