@@ -70,6 +70,7 @@ class ShortGameStatus(Enum):
     SCHEDULED = "Sched."
     AFTER_PENALTIES = "After Pen"
     BEFORE_PENALTIES = "Before Pen."
+    INTO_ET = "Into ET"
 
 
 class OrderWeight(Enum):
