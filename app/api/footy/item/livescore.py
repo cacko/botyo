@@ -68,7 +68,7 @@ class Livescore(LivescoreData):
 
     def render(self, filt: str = "", group_by_league=True):
         items =  self.items
-        logging.debug(items)
+        logging.debug(items, filt)
         if self.inprogress:
             items = list(filter(lambda x: x.inProgress, items))
         items.reverse()
@@ -80,6 +80,7 @@ class Livescore(LivescoreData):
                 strLeague=filt
             ))
         ] if filt else []
+        logging.debug(filteredIds)
         filtered: list[ScoreRow] = [
             ScoreRow(
                 status=x.displayStatus,
@@ -97,6 +98,7 @@ class Livescore(LivescoreData):
                 ]
             )
         ]
+        logging.warning(filtered)
         if len(filtered) == 1:
             x = filtered[0]
             x.format = ScoreFormat.STANDALONE
