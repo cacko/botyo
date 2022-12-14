@@ -39,7 +39,6 @@ def scores_command(context: Context):
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
     except Exception as e:
-        logging.exception(e)
         return EmptyResult()
 
 
