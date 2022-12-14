@@ -96,10 +96,10 @@ class Livescore(LivescoreData):
                 ]
             )
         ]
-        logging.warning(filtered)
         logging.warning(items)
         if len(filtered) == 1:
             x = filtered[0]
+            logging.warning(x.row)
             x.format = ScoreFormat.STANDALONE
             itm = next(
                 filter(
