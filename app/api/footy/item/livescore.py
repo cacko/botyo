@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Optional
 from itertools import chain
 from functools import reduce
+from emoji import replace_emoji
 import logging
 
 class GameMatch(Match):
@@ -98,17 +99,14 @@ class Livescore(LivescoreData):
         ]
         if len(filtered) == 1:
             x = filtered[0]
-            logging.warning([x.home, x.away])
-            logging.warning(items)
             x.format = ScoreFormat.STANDALONE
             itm = next(
                 filter(
-                    lambda y: y.strHomeTeam == x.home and y.strAwayTeam == x.away,
+                    lambda y: y.strHomeTeam == x.row.home and y.strAwayTeam == x.row.away,
                     items
                 ),
                 None,
             )
-            logging.warning(itm)
             try:
                 assert itm
                 details =  ParserDetails.get(itm.details)
