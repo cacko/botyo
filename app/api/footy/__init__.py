@@ -38,7 +38,8 @@ def scores_command(context: Context):
         message = Footy.livescore().render(context.query if context.query else "", group_by_league=True)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
-    except Exception:
+    except Exception as e:
+        logging.exception(e)
         return EmptyResult()
 
 
