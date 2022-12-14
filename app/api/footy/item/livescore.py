@@ -96,15 +96,14 @@ class Livescore(LivescoreData):
                 ]
             )
         ]
-        logging.warning(items)
         if len(filtered) == 1:
             x = filtered[0]
-            logging.warning(x.row)
+            logging.warning([x.home, x.away])
+            logging.warning(items)
             x.format = ScoreFormat.STANDALONE
             itm = next(
                 filter(
-                    lambda y: y.strHomeTeam == x.home
-                    and y.strAwayTeam == x.away,
+                    lambda y: y.strHomeTeam == x.home and y.strAwayTeam == x.away,
                     items
                 ),
                 None,
