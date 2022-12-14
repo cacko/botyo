@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Optional
 from itertools import chain
 from functools import reduce
+import logging
 
 class GameMatch(Match):
     minRatio = 80
