@@ -1,6 +1,5 @@
 from typing import Optional, Any
 from app.goals import Goals as GoalsGenerator, Query as GoalQuery
-from datetime import datetime, timedelta
 import logging
 from pathlib import Path
 from app.threesixfive.item.models import GoalEvent
@@ -30,12 +29,13 @@ class GoalsMeta(type):
 
 class Goals(object, metaclass=GoalsMeta):
     
-    __last_update: datetime = datetime.fromtimestamp(0)
-    __interval: timedelta = timedelta(minutes=1)
-    
+    __queue: Optional[QueueDict] = None
+
     @property
     def queue(self) -> QueueDict:
-        return QueueDict("goals.queue")
+        if not self.__queue:
+            self.__queue = QueueDict("goals.queue")
+        return self.__queue
     
     def do_monitor(self, query: GoalQuery):
         self.queue[query.id] = query
@@ -52,9 +52,6 @@ class Goals(object, metaclass=GoalsMeta):
     def do_updates(self):
         if not len(self.queue):
             return
-        # if (datetime.now() - self.__last_update) < self.__interval:
-        #     return []
-        # self.__last_update = datetime.now()
         self.clean()
         for vi in GoalsGenerator.goals(list(self.queue.values())):
             try:

@@ -47,11 +47,11 @@ class QueueDict(dict, metaclass=QueueDictMeta):
         ).execute()
         return super().__setitem__(__k, __v)
 
-    def __delitem__(self, __v) -> None:
-        RedisStorage.pipeline().hdel(self.__storage_key, __v).persist(
+    def __delitem__(self, __k) -> None:
+        RedisStorage.pipeline().hdel(self.__storage_key, __k).persist(
             self.__storage_key
         ).execute()
-        return super().__delitem__(__v)
+        return super().__delitem__(__k)
 
     def dumps(self, v):
         return pickle.dumps(v)
