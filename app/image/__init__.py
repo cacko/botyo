@@ -9,6 +9,7 @@ from enum import Enum
 from botyo_server.output import TextOutput
 from emoji import emojize
 from app.image.models import AnalyzeReponse
+from typing import Optional
 
 
 class Action(Enum):
@@ -51,15 +52,15 @@ class ImageMeta(type):
     def variation(cls, attachment: Attachment) -> tuple[Attachment, dict]:
         return cls(attachment).do_variation()
 
-    def pokemon(cls, attachment: Attachment) -> tuple[Attachment, dict]:
-        return cls(attachment).do_pokemon()
+    def pokemon(cls, prompt: str) -> tuple[Attachment, dict]:
+        return cls().do_pokemon(prompt)
 
 
 class Image(object, metaclass=ImageMeta):
 
-    __attachment: Attachment
+    __attachment: Optional[Attachment] = None
 
-    def __init__(self, attachment: Attachment) -> None:
+    def __init__(self, attachment: Optional[Attachment] = None) -> None:
         self.__attachment = attachment
 
     def do_analyze(self):
@@ -98,14 +99,16 @@ class Image(object, metaclass=ImageMeta):
     def do_variation(self):
         return self.getResponse(Action.VARIATION)
 
-    def do_pokemon(self):
-        return self.getResponse(Action.POKEMON)
+    def do_pokemon(self, prompt: str):
+        return self.getResponse(Action.POKEMON, prompt)
 
-    def getResponse(self, action: Action, action_param=None):
-        path = action.value
-        if action_param:
-            path = f"{path}/{action_param}"
+    def __make_request(self, path: str):
         attachment = self.__attachment
+        if not attachment:
+            return Request(
+                f"{Config.image.base_url}/{path}",
+                method=Method.POST,
+            )
         assert isinstance(attachment, dict)
         p = Path(attachment.get("path", ""))
         kind = filetype.guess(p.as_posix())
@@ -119,33 +122,40 @@ class Image(object, metaclass=ImageMeta):
                     "file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})
                 },
             )
-            message = ""
-            is_multipart = req.is_multipart
-            if is_multipart:
-                multipart = req.multipart
-                cp = FileStorage.storage_path
-                for part in multipart.parts:
-                    content_type = part.headers.get(
-                        b"content-type", b""
-                    ).decode()  # type: ignore
-                    if "image/png" in content_type:
-                        assert kind
-                        fp = cp / f"{uuid4().hex}.{kind.extension}.png"
-                        fp.write_bytes(part.content)
-                        attachment = Attachment(
-                            path=fp.absolute().as_posix(),
-                            contentType="image/png",
-                        )
-                    elif "image/jpeg" in content_type:
-                        assert kind
-                        fp = cp / f"{uuid4().hex}.{kind.extension}.jpg"
-                        fp.write_bytes(part.content)
-                        attachment = Attachment(
-                            path=fp.absolute().as_posix(),
-                            contentType="image/jpeg",
-                        )
-                    else:
-                        message = part.text
-            else:
-                message = req.json
-            return attachment, message
+            return req
+
+    def getResponse(self, action: Action, action_param=None):
+        path = action.value
+        if action_param:
+            path = f"{path}/{action_param}"
+        attachment = self.__attachment
+        req = self.__make_request(path=path)
+        message = ""
+        is_multipart = req.is_multipart
+        if is_multipart:
+            multipart = req.multipart
+            cp = FileStorage.storage_path
+            kind = ""
+            for part in multipart.parts:
+                content_type = part.headers.get(b"content-type", b"").decode()
+                if "image/png" in content_type:
+                    assert kind
+                    fp = cp / f"{uuid4().hex}.{kind.extension}.png"
+                    fp.write_bytes(part.content)
+                    attachment = Attachment(
+                        path=fp.absolute().as_posix(),
+                        contentType="image/png",
+                    )
+                elif "image/jpeg" in content_type:
+                    assert kind
+                    fp = cp / f"{uuid4().hex}.{kind.extension}.jpg"
+                    fp.write_bytes(part.content)
+                    attachment = Attachment(
+                        path=fp.absolute().as_posix(),
+                        contentType="image/jpeg",
+                    )
+                else:
+                    message = part.text
+        else:
+            message = req.json
+        return attachment, message

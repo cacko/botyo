@@ -140,19 +140,17 @@ def image_polygon(context: Context):
     desc="variation of image",
 )  # type: ignore
 def image_variation(context: Context):
-    attachment = context.attachment
-    if not attachment:
-        return EmptyResult(method=ZMethod.IMAGE_VARIATION)
-    attachment, message = Image.variation(attachment)
-    if all([attachment is None, message is None]):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, _ = Image.variation(attachment)
+        assert attachment
         return RenderResult(
-            message="No shit",
+            attachment=attachment,
             method=ZMethod.IMAGE_VARIATION,
         )
-    return RenderResult(
-        attachment=attachment,
-        method=ZMethod.IMAGE_VARIATION,
-    )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_VARIATION)
 
 
 @bp.command(
@@ -161,10 +159,10 @@ def image_variation(context: Context):
 )  # type: ignore
 def image_pokemon(context: Context):
     try:
-        attachment = context.attachment
+        query = context.query
+        assert query
+        attachment, _ = Image.pokemon(query)
         assert attachment
-        attachment, message = Image.pokemon(attachment)
-        assert attachment and message
         return RenderResult(
             attachment=attachment,
             method=ZMethod.IMAGE_POKEMON,
