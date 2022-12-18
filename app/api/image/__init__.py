@@ -77,7 +77,8 @@ def image_classify(context: Context):
         assert message
         return RenderResult(
             message="\n".join(
-                [titlecase(x.get("label")) for x in message.get("response", [])]
+                [titlecase(x.get("label"))
+                 for x in message.get("response", [])]
             ),
             method=ZMethod.IMAGE_CLASSIFY,
         )
@@ -169,3 +170,21 @@ def image_pokemon(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_POKEMON)
+
+
+@bp.command(
+    method=ZMethod.INAGE_FROMTEXT,
+    desc="text to image",
+)  # type: ignore
+def image_fromtext(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, _ = Image.fromtext(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.INAGE_FROMTEXT,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.INAGE_FROMTEXT)
