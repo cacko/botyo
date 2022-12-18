@@ -166,22 +166,21 @@ def image_variation(context: Context):
     )
 
 
-
 @bp.command(
-    method=ZMethod.IMAGE_VARIATION,
-    desc="variation of image",
+    method=ZMethod.IMAGE_POKEMON,
+    desc="poklemon of image",
 )  # type: ignore
-def image_variation(context: Context):
+def image_pokemon(context: Context):
     attachment = context.attachment
     if not attachment:
-        return EmptyResult(method=ZMethod.IMAGE_VARIATION)
+        return EmptyResult(method=ZMethod.IMAGE_POKEMON)
     attachment, message = Image.variation(attachment)
     if all([attachment is None, message is None]):
         return RenderResult(
             message="No shit",
-            method=ZMethod.IMAGE_VARIATION,
+            method=ZMethod.IMAGE_POKEMON,
         )
     return RenderResult(
         attachment=attachment,
-        method=ZMethod.IMAGE_VARIATION,
+        method=ZMethod.IMAGE_POKEMON,
     )
