@@ -173,18 +173,18 @@ def image_pokemon(context: Context):
 
 
 @bp.command(
-    method=ZMethod.INAGE_FROMTEXT,
+    method=ZMethod.INAGE_TXT2IMG,
     desc="text to image",
 )  # type: ignore
 def image_fromtext(context: Context):
     try:
         query = context.query
         assert query
-        attachment, _ = Image.fromtext(query)
+        attachment, _ = Image.txt2img(query)
         assert attachment
         return RenderResult(
             attachment=attachment,
-            method=ZMethod.INAGE_FROMTEXT,
+            method=ZMethod.INAGE_TXT2IMG,
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.INAGE_FROMTEXT)
+        return EmptyResult(method=ZMethod.INAGE_TXT2IMG)

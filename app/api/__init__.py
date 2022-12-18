@@ -69,7 +69,7 @@ class ZMethod(Method, Enum):
     IMAGE_WALLPAPER = "image:wallpaper"
     IMAGE_VARIATION = "image:variation"
     IMAGE_POKEMON = "image:pokemon"
-    INAGE_FROMTEXT = "image:fromtext"
+    INAGE_TXT2IMG = "image:txt2img"
     EVENT_COUNTDOWN = "event:countdown"
     EVENT_CALENDAR = "event:calendar"
     EVENT_SCHEDULE = "event:schedule"

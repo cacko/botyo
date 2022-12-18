@@ -21,7 +21,7 @@ class Action(Enum):
     POLYGON = "image/polygon"
     VARIATION = "image/variation"
     POKEMON = "image/pokemon"
-    FROMTEXT = "image/fromtext"
+    TXT2IMG = "image/txt2img"
 
 
 class ImageMeta(type):
@@ -56,8 +56,8 @@ class ImageMeta(type):
     def pokemon(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_pokemon(prompt)
 
-    def fromtext(cls, prompt: str) -> tuple[Attachment, dict]:
-        return cls().do_fromtext(prompt)
+    def txt2img(cls, prompt: str) -> tuple[Attachment, dict]:
+        return cls().do_txt2img(prompt)
 
 
 class Image(object, metaclass=ImageMeta):
@@ -78,7 +78,8 @@ class Image(object, metaclass=ImageMeta):
                     analyses.dominant_emotion,
                     emojize(analyses.emotion_icon),
                 ],
-                ["Race: ", analyses.dominant_race, emojize(analyses.race_icon)],
+                ["Race: ", analyses.dominant_race,
+                    emojize(analyses.race_icon)],
                 ["Gender: ", analyses.gender, emojize(analyses.gender_icon)],
             ]
             TextOutput.addRows(["".join(map(str, row)) for row in rows])
@@ -106,8 +107,8 @@ class Image(object, metaclass=ImageMeta):
     def do_pokemon(self, prompt: str):
         return self.getResponse(Action.POKEMON, prompt)
 
-    def do_fromtext(self, prompt: str):
-        return self.getResponse(Action.FROMTEXT, prompt)
+    def do_txt2img(self, prompt: str):
+        return self.getResponse(Action.TXT2IMG, prompt)
 
     def __make_request(self, path: str):
         attachment = self.__attachment
@@ -125,7 +126,8 @@ class Image(object, metaclass=ImageMeta):
         return Request(
             f"{Config.image.base_url}/{path}",
             method=Method.POST,
-            files={"file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})},
+            files={"file": (f"{p.name}.{kind.extension}",
+                            fp, mime, {"Expires": "0"})},
         )
 
     def getResponse(self, action: Action, action_param=None):
