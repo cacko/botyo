@@ -13,20 +13,18 @@ bp = Blueprint("image")
     desc="Returns Emotion, Race, Gender, Age for image",
 )  # type: ignore
 def image_analyze(context: Context):
-    attachment = context.attachment
-    if not attachment:
-        return EmptyResult(method=ZMethod.IMAGE_ANALYZE)
-    attachment, message = Image.analyze(attachment)
-    if all([attachment is None, message is None]):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, message = Image.analyze(attachment)
+        assert attachment and message
         return RenderResult(
-            message="No matches",
+            message=message,
+            attachment=attachment,
             method=ZMethod.IMAGE_ANALYZE,
         )
-    return RenderResult(
-        message=message,
-        attachment=attachment,
-        method=ZMethod.IMAGE_ANALYZE,
-    )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_ANALYZE)
 
 
 @bp.command(
@@ -34,20 +32,18 @@ def image_analyze(context: Context):
     desc="tag faces in image",
 )  # type: ignore
 def image_Tag(context: Context):
-    attachment = context.attachment
-    if not attachment:
-        return EmptyResult(method=ZMethod.IMAGE_TAG)
-    attachment, message = Image.tag(attachment)
-    if all([attachment is None, message is None]):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, message = Image.tag(attachment)
+        assert attachment and message
         return RenderResult(
-            message="No matches",
+            message=message,
+            attachment=attachment,
             method=ZMethod.IMAGE_TAG,
         )
-    return RenderResult(
-        message=message,
-        attachment=attachment,
-        method=ZMethod.IMAGE_TAG,
-    )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TAG)
 
 
 @bp.command(
@@ -55,20 +51,18 @@ def image_Tag(context: Context):
     desc="howcute faces in image",
 )  # type: ignore
 def image_howcute(context: Context):
-    attachment = context.attachment
-    if not attachment:
-        return EmptyResult(method=ZMethod.IMAGE_HOWCUTE)
-    attachment, message = Image.howcute(attachment)
-    if all([attachment is None, message is None]):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, message = Image.howcute(attachment)
+        assert attachment and message
         return RenderResult(
-            message="No matches",
+            message=message,
+            attachment=attachment,
             method=ZMethod.IMAGE_HOWCUTE,
         )
-    return RenderResult(
-        message=message,
-        attachment=attachment,
-        method=ZMethod.IMAGE_HOWCUTE,
-    )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_HOWCUTE)
 
 
 @bp.command(
@@ -76,22 +70,19 @@ def image_howcute(context: Context):
     desc="Classify objects in images",
 )  # type: ignore
 def image_classify(context: Context):
-    attachment = context.attachment
-    if not attachment:
-        return EmptyResult(method=ZMethod.IMAGE_CLASSIFY)
-    attachment, message = Image.classify(attachment)
-    if message is None:
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, message = Image.classify(attachment)
+        assert message
         return RenderResult(
-            message="No matches",
+            message="\n".join(
+                [titlecase(x.get("label")) for x in message.get("response", [])]
+            ),
             method=ZMethod.IMAGE_CLASSIFY,
         )
-    assert message
-    return RenderResult(
-        message="\n".join(
-            [titlecase(x.get("label")) for x in message.get("response", [])]
-        ),
-        method=ZMethod.IMAGE_CLASSIFY,
-    )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_CLASSIFY)
 
 
 @bp.command(
@@ -99,25 +90,23 @@ def image_classify(context: Context):
     desc="pixel image",
 )  # type: ignore
 def image_pixel(context: Context):
-    attachment = context.attachment
-    query = context.query
     try:
-        assert query
-        query = int(query)
-    except (ValueError, AssertionError):
-        query = 8
-    if not attachment:
-        return EmptyResult(method=ZMethod.IMAGE_PIXEL)
-    attachment, message = Image.pixel(attachment, query)
-    if all([attachment is None, message is None]):
+        attachment = context.attachment
+        assert attachment
+        query = context.query
+        try:
+            assert query
+            query = int(query)
+        except (ValueError, AssertionError):
+            query = 8
+        attachment, message = Image.pixel(attachment, query)
+        assert attachment and message
         return RenderResult(
-            message="No shit",
+            attachment=attachment,
             method=ZMethod.IMAGE_PIXEL,
         )
-    return RenderResult(
-        attachment=attachment,
-        method=ZMethod.IMAGE_PIXEL,
-    )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_PIXEL)
 
 
 @bp.command(
@@ -171,16 +160,14 @@ def image_variation(context: Context):
     desc="poklemon of image",
 )  # type: ignore
 def image_pokemon(context: Context):
-    attachment = context.attachment
-    if not attachment:
-        return EmptyResult(method=ZMethod.IMAGE_POKEMON)
-    attachment, message = Image.variation(attachment)
-    if all([attachment is None, message is None]):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, message = Image.pokemon(attachment)
+        assert attachment and message
         return RenderResult(
-            message="No shit",
+            attachment=attachment,
             method=ZMethod.IMAGE_POKEMON,
         )
-    return RenderResult(
-        attachment=attachment,
-        method=ZMethod.IMAGE_POKEMON,
-    )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_POKEMON)
