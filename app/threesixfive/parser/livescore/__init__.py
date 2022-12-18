@@ -48,5 +48,6 @@ class Livescores:
 
     def __getIds(self, ev: ParserResponse) -> dict[str, Any]:
         keys = ("id", "idEvent")
-        values = (md5(f"{ev.team1}/{ev.team2}".lower().encode()).hexdigest(), ev.id)
+        values = (
+            md5(f"{ev.team1}/{ev.team2}".lower().encode()).hexdigest(), ev.id)
         return dict(zip(keys, values))

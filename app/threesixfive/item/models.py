@@ -10,7 +10,6 @@ import re
 from zoneinfo import ZoneInfo
 from coretime import time_hhmm
 from stringcase import constcase
-from hashlib import md5
 from app.core.config import Config as app_config
 from emoji import emojize
 import sys

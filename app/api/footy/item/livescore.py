@@ -88,7 +88,8 @@ class Livescore(LivescoreData):
                 score=x.displayScore,
                 away=x.strAwayTeam,
                 win=str(x.strWinDescription) if x.displayStatus == "AET" else "",
-                league=x.strLeague
+                league=x.strLeague,
+                is_international=x.is_international
             )
             for x in sorted(items, key=lambda itm: itm.sort)
             if any(
