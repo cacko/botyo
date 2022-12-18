@@ -177,8 +177,8 @@ class GoalsMeta(type):
 
 
 class Goals(object, metaclass=GoalsMeta):
-    def __needles(self, **kwds) -> Generator[TwitterNeedle, None, None]:
-        for t in Twitter.media(**kwds):
+    def __needles(self, tweets, **kwds) -> Generator[TwitterNeedle, None, None]:
+        for t in tweets:
             t_id, t_text = (
                 t.tweet.id if t.tweet.id else "",
                 t.tweet.text if t.tweet.text else "",
@@ -200,7 +200,8 @@ class Goals(object, metaclass=GoalsMeta):
         logging.debug(f"DO SEARCH: {query}")
         matcher = TeamsMatch(haystack=query)
         logging.debug(f"MATCHER HAYSTACK={query}")
-        for needle in self.__needles(**kwds):
+        tweets = Twitter.media(**kwds)
+        for needle in self.__needles(tweets=tweets, **kwds):
             try:
                 twitter_download(
                     url=needle.url, output_dir=__class__.output_dir.as_posix()
