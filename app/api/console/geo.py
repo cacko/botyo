@@ -45,7 +45,7 @@ class GeoLookup:
     @property
     def country_with_flag(self):
         if self.country:
-            return Country(name=self.country).country_with_flag
+            return Country(name=self.country).with_flag()
 
 
 class GeoMeta(type):

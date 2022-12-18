@@ -2,12 +2,12 @@ from datetime import datetime, timezone, timedelta
 
 from botyo_server.output import TextOutput, Column, Align
 from app.threesixfive.data import Data365
-from app.threesixfive.item.models import LeagueItem
+from app.threesixfive.data import LeagueItem
 from app.threesixfive.item.competition import CompetitionData
 from cachable import TimeCacheable
 from zoneinfo import ZoneInfo
 from itertools import groupby
-from app.core.country import Country
+
 
 class CompetitionItem(TimeCacheable):
     __data: CompetitionData
@@ -23,13 +23,14 @@ class CompetitionItem(TimeCacheable):
     def render(
             self, tz: ZoneInfo = ZoneInfo("Europe/London")
     ) -> str:
-        data =  self.data
+        data = self.data
         if not data:
             return ""
-        games =  data.games
+        games = data.games
         today = datetime.now(tz=timezone.utc)
         threshold = timedelta(days=1)
-        games = sorted(filter(lambda x: today - x.startTime < threshold , games), key=lambda x: x.startTime)
+        games = sorted(filter(lambda x: today - x.startTime <
+                       threshold, games), key=lambda x: x.startTime)
         for d, gms in groupby(games, lambda x: x.startTime.date()):
 
             rows = [
@@ -39,7 +40,13 @@ class CompetitionItem(TimeCacheable):
             ]
             rows.append(["", '-' * 36])
             rounds = ','.join(
-                list(filter(lambda x: len(x.strip()) > 0, [f"{g.roundName} {g.roundNum}" for g in gms])))
+                list(
+                    filter(
+                        lambda x: len(x.strip()) > 0,
+                        [f"{g.roundName} {g.roundNum}" for g in gms]
+                    )
+                )
+            )
             cols = [
                 Column(size=6, align=Align.RIGHT,
                        title=d.strftime("%a").upper()),
@@ -60,15 +67,15 @@ class Competitions:
 
     @property
     def competitions(self) -> list[LeagueItem]:
-        return  Data365.leagues
+        return Data365.leagues
 
     @property
     def current(self) -> list[LeagueItem]:
-        all =  self.competitions
+        all = self.competitions
         return list(filter(lambda x: x.id in self.leagues, all))
 
     def message(self, query: str = "") -> str:
-        comps =  self.current
+        comps = self.current
         comps = sorted(
             comps, key=lambda x: f"{x.country_name} {x.league_name}")
         TextOutput.addRows([

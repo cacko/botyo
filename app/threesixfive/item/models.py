@@ -15,6 +15,12 @@ from app.core.config import Config as app_config
 from emoji import emojize
 import sys
 from hashlib import md5
+from app.threesixfive.data import (
+    Data365,
+    LeagueItem,
+    COUNTRY_ID_INTERNATIONAL,
+    CountryItem
+)
 from app.core.country import Country as Flag
 
 WORLD_CUP_ID = 5930
@@ -59,6 +65,7 @@ class GameStatus(Enum):
     BEFORE_PENALTIES = "Before Penalties"
     PENALTIES = "Penalties"
     SCHEDULED = "Scheduled"
+
 
 class ShortGameStatus(Enum):
     FIRST_HALF = "1st"
@@ -105,29 +112,6 @@ class ActionIcon(Enum):
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
-class CountryItem:
-    id: int
-    name: str
-    totalGames: Optional[int] = None
-    liveGames: Optional[int] = None
-    nameForURL: Optional[str] = None
-    sportTypes: Optional[list[int]] = None
-
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class LeagueItem:
-    id: int
-    league_id: int
-    league_name: str
-    country_id: int
-    country_name: str
-    sport_id: int
-    sport_name: str
-
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
 class Event:
     id: str
     idEvent: int
@@ -159,7 +143,8 @@ class Event:
         if self.strStatus in STATUS_MAP:
             self.strStatus = STATUS_MAP[self.strStatus]
 
-        delta = (datetime.now(timezone.utc) - self.startTime).total_seconds() / 60
+        delta = (datetime.now(timezone.utc) -
+                 self.startTime).total_seconds() / 60
         try:
             self.displayStatus = GameStatus(self.strStatus).value
             if delta < 0 and self.displayStatus in [GameStatus.NS.value]:
@@ -218,6 +203,10 @@ class Country:
     nameForURL: int
     totalGames: Optional[int] = 0
     liveGames: Optional[int] = 0
+
+    @property
+    def is_international(self) -> bool:
+        return self.id == COUNTRY_ID_INTERNATIONAL
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -305,9 +294,6 @@ class Bracket:
     stages: list[Standing]
 
 
-
-
-
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class BracketsResponse:
@@ -315,7 +301,6 @@ class BracketsResponse:
     requestedUpdateId: int
     ttl: int
     brackets: Bracket
-
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -336,7 +321,9 @@ class Competition:
 
     @property
     def flag(self) -> str:
-        return ""
+        if self.id != COUNTRY_ID_INTERNATIONAL:
+            return ""
+        return Flag()
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -436,8 +423,28 @@ class GameCompetitor:
         return object.__getattribute__(self, __name)
 
     @property
+    def country(self) -> CountryItem:
+        country = next(
+            filter(
+                lambda x: x.id == self.countryId, Data365.countries
+            ), None
+        )
+        assert country
+        return country
+
+    @property
     def flag(self) -> str:
-        return ""
+        try:
+            return Flag(self.country.name).flag
+        except AssertionError:
+            return ""
+
+    @property
+    def name_with_flag(self) -> str:
+        try:
+            return Flag(self.country.name).with_flag(self.name)
+        except AssertionError:
+            return str(self.name)
 
     @property
     def score_int(self) -> int:
@@ -536,7 +543,8 @@ class Game:
         if self.roundNum is None:
             return ""
         " ".join(
-            list(filter(lambda x: x, [f"{self.roundName}", f"{self.roundNum:,0f}"]))
+            list(filter(lambda x: x, [
+                 f"{self.roundName}", f"{self.roundNum:,0f}"]))
         )
 
     @property
@@ -590,10 +598,37 @@ class Game:
         return f"{max(self.homeCompetitor.score_int, 0):.0f}:{max(self.awayCompetitor.score_int, 0):.0f}"
 
     @property
+    def league(self) -> LeagueItem:
+        league = next(
+            filter(
+                lambda x: x.id == self.competitionId, Data365.leagues
+            ),
+            None
+        )
+        assert league
+        return league
+
+    @property
     def displayTitle(self) -> str:
         assert self.homeCompetitor.name
         assert self.awayCompetitor.name
-        res = f"{Flag(name=self.homeCompetitor.name).country_with_flag} - {Flag(name=self.awayCompetitor.name).country_with_flag}"
+        league = self.league
+        assert league
+        if league.is_international:
+            res = " - ".join(
+                [
+                    f"{self.homeCompetitor.name_with_flag}",
+                    f"{self.awayCompetitor.name_with_flag}",
+                ]
+            )
+        else:
+            res = " - ".join(
+                [
+                    self.homeCompetitor.name,
+                    self.awayCompetitor.name,
+                ]
+            )
+
         if all([not self.not_started, not self.ended]):
             res = f"{res} {self.displayScore}"
         return res
@@ -956,7 +991,7 @@ class OddBoomaker:
     name: str  # Bet365",
     link: str  # https://www.bet365.com/olp/open-account/?affiliate=365_178380",
     nameForURL: str  # bet365",
-    color: str  ##007B5B",
+    color: str  # 007B5B",
     imageVersion: int  # 1
 
 

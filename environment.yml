@@ -32,6 +32,7 @@ dependencies:
   - libbrotlicommon=1.0.9
   - libbrotlidec=1.0.9
   - libbrotlienc=1.0.9
+  - libcxx=14.0.6
   - libdeflate=1.13
   - libedit=3.1.20191231
   - libffi=3.4.2
@@ -99,6 +100,7 @@ dependencies:
     - attrs==22.1.0
     - authlib==0.15.6
     - automat==20.2.0
+    - autopep8==2.0.1
     - babel==2.10.3
     - beautifulsoup4==4.11.1
     - black==22.8.0
@@ -189,7 +191,6 @@ dependencies:
     - pyasn1==0.4.8
     - pyasn1-modules==0.2.8
     - pycares==4.2.2
-    - pycodestyle==2.9.1
     - pycountry==22.3.5
     - pydantic==1.9.2
     - pydispatcher==2.0.5

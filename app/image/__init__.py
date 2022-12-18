@@ -21,6 +21,7 @@ class Action(Enum):
     POLYGON = "image/polygon"
     VARIATION = "image/variation"
     POKEMON = "image/pokemon"
+    FROMTEXT = "image/fromtext"
 
 
 class ImageMeta(type):
@@ -54,6 +55,9 @@ class ImageMeta(type):
 
     def pokemon(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_pokemon(prompt)
+
+    def fromtext(cls, prompt: str) -> tuple[Attachment, dict]:
+        return cls().do_fromtext(prompt)
 
 
 class Image(object, metaclass=ImageMeta):
@@ -101,6 +105,9 @@ class Image(object, metaclass=ImageMeta):
 
     def do_pokemon(self, prompt: str):
         return self.getResponse(Action.POKEMON, prompt)
+
+    def do_fromtext(self, prompt: str):
+        return self.getResponse(Action.FROMTEXT, prompt)
 
     def __make_request(self, path: str):
         attachment = self.__attachment

@@ -4,8 +4,9 @@ from dataclasses import dataclass
 
 from .item.subscription import Subscription, SubscriptionClient
 from fuzzelinho import Match, MatchMethod
-from app.threesixfive.item.models import Event, LeagueItem
-from app.threesixfive.item.team import TeamSearch, Team as DataTeam
+from app.threesixfive.data import LeagueItem
+from app.threesixfive.item.models import Event
+from app.threesixfive.item.team import TeamSearch
 from app.threesixfive.item.competition import CompetitionData
 from .item.player import Player
 from .item.stats import Stats
@@ -14,7 +15,11 @@ from .item.facts import Facts
 from .item.lineups import Lineups
 from .item.competitions import Competitions
 from .item.team import Team
-from app.threesixfive.exception import GameNotFound, TeamNotFound, CompetitionNotFound
+from app.threesixfive.exception import (
+    GameNotFound,
+    TeamNotFound,
+    CompetitionNotFound
+)
 from app.core.config import Config
 from emoji import emojize
 from apscheduler.job import Job
@@ -68,15 +73,25 @@ class FootyMeta(type):
 
     def subscribe(cls, client, query: str, groupID) -> str:
         try:
-            return cls().getSubscription(query=query, client=client, group=groupID)
+            return cls().getSubscription(
+                query=query,
+                client=client,
+                group=groupID
+            )
         except GameNotFound as e:
             raise e
 
     def unsubscribe(cls, client, query: str, group) -> str:
-        return cls().removeSubscription(query=query, client=client, group=group)
+        return cls().removeSubscription(
+            query=query,
+            client=client,
+            group=group
+        )
 
     def listjobs(cls, client, group) -> list[Job]:
-        return Subscription.forGroup(SubscriptionClient(client_id=client, group_id=group))
+        return Subscription.forGroup(
+            SubscriptionClient(client_id=client, group_id=group)
+        )
 
 
 class GameMatch(Match):
@@ -166,7 +181,7 @@ class Footy(object, metaclass=FootyMeta):
         )
 
     def getGoals(self, query: str) -> list[Goal]:
-        game = self.__queryGame(query)
+        _ = self.__queryGame(query)
         return []
 
     def getCompetition(self, query: str) -> CompetitionData:
@@ -209,6 +224,9 @@ class Footy(object, metaclass=FootyMeta):
             if not sub.isValid:
                 return "Event has ended".upper()
             sub.schedule(sc)
-            return f"{emojize(':bell:')} {item.strHomeTeam} vs {item.strAwayTeam}"
+            return " ".join([
+                f"{emojize(':bell:')}",
+                f"{item.strHomeTeam} vs {item.strAwayTeam}"
+            ])
         except Exception:
             raise GameNotFound

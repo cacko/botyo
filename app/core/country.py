@@ -1,6 +1,7 @@
 from pycountry import countries
 import flag
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -15,12 +16,13 @@ class Country:
         except LookupError:
             return ""
 
-    @property
-    def country_with_flag(self) -> str:
+    def with_flag(self, name: Optional[str] = None) -> str:
+        if not name:
+            name = self.name
         try:
             matches = countries.search_fuzzy(self.name)
             return flag.flagize(
-                f":{matches.pop(0).alpha_2}:{self.name}", subregions=False
+                f":{matches.pop(0).alpha_2}:{name}", subregions=False
             )
         except LookupError:
-            return self.name
+            return name

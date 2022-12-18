@@ -12,7 +12,6 @@ from app.threesixfive.url import Url
 from datetime import timedelta
 from app.core.store import TimeCachable
 
-
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class CompetitionCache(TimeCache):
@@ -27,7 +26,6 @@ class CompetitionData(TimeCachable):
     def __init__(self, competition_id: int):
         self.__competition_id = competition_id
 
-
     def load(self) -> bool:
         if self._struct is not None:
             return True
@@ -40,12 +38,11 @@ class CompetitionData(TimeCachable):
         req = Request(Url.competition_schedule(self.__competition_id))
         json = req.json
         response: CompetitionResponse = CompetitionResponse.from_dict(json)
-        return  self.tocache(response)
+        return self.tocache(response)
 
     @property
     def id(self):
         return self.__competition_id
-
 
     @property
     def competition(self) -> Competition:
@@ -70,4 +67,4 @@ class CompetitionData(TimeCachable):
             if not self._struct:
                 return None
         return self._struct.struct.countries[0
-         ]
+                                             ]

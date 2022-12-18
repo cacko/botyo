@@ -1,7 +1,8 @@
 
 from cachable.request import Request
 from app.core.store import RedisCachable
-from app.threesixfive.item.models import LeagueItem, Standing, StandingResponse
+from app.threesixfive.data import LeagueItem
+from app.threesixfive.item.models import Standing, StandingResponse
 from app.threesixfive.url import Url
 
 
@@ -21,7 +22,6 @@ class Standings(RedisCachable):
         if not self.load() or refresh:
             self._struct = self.__fetch()
         return self._struct.standings[0]
-
 
     def __fetch(self):
         req = Request(Url.standings(self.__league.league_id))

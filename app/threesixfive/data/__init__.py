@@ -1,7 +1,42 @@
 import json
 from pathlib import Path
 from app.core.config import Config
-from app.threesixfive.item.models import CountryItem, LeagueItem
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json, Undefined
+from typing import Optional
+
+COUNTRY_ID_INTERNATIONAL = 54
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
+class CountryItem:
+    id: int
+    name: str
+    totalGames: Optional[int] = None
+    liveGames: Optional[int] = None
+    nameForURL: Optional[str] = None
+    sportTypes: Optional[list[int]] = None
+
+    @property
+    def is_international(self) -> bool:
+        return self.id == COUNTRY_ID_INTERNATIONAL
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
+class LeagueItem:
+    id: int
+    league_id: int
+    league_name: str
+    country_id: int
+    country_name: str
+    sport_id: int
+    sport_name: str
+
+    @property
+    def is_international(self) -> bool:
+        return self.country_id == COUNTRY_ID_INTERNATIONAL
 
 
 class Data365Meta(type):
@@ -65,8 +100,12 @@ class Data365(object, metaclass=Data365Meta):
         countries_path = self.getCountriesPath()
         data = json.loads(countries_path.read_text())
         countries_json = json.dumps(data.get("countries"))
-        return CountryItem.schema().loads(countries_json, many=True)  # type: ignore
+        return CountryItem.schema().loads(  # type: ignore
+            countries_json, many=True
+        )
 
     def getLeagues(self) -> list[LeagueItem]:
         leagues_path = self.getLeaguesPath()
-        return LeagueItem.schema().loads(leagues_path.read_text(), many=True)  # type: ignore
+        return LeagueItem.schema().loads(  # type: ignore
+            leagues_path.read_text(), many=True
+        )

@@ -46,7 +46,7 @@ class Standings(StandingsData):
             rows.append(
                 [
                     f"{row.position:.0f}",
-                    Country(name=row.competitor.name).country_with_flag,
+                    Country(name=row.competitor.name).with_flag,
                     f"{row.points:.0f}",
                     f"{row.gamePlayed:.0f}",
                     f"{gd:+d}",
