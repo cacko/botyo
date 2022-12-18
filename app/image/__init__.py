@@ -107,7 +107,7 @@ class Image(object, metaclass=ImageMeta):
         if not attachment:
             return Request(
                 f"{Config.image.base_url}/{path}",
-                method=Method.GET,
+                method=Method.POST,
             )
         assert isinstance(attachment, dict)
         p = Path(attachment.get("path", ""))
@@ -115,40 +115,36 @@ class Image(object, metaclass=ImageMeta):
         mime = attachment.get("contentType")
         with p.open("rb") as fp:
             assert kind
-            req = Request(
+            return Request(
                 f"{Config.image.base_url}/{path}",
                 method=Method.POST,
                 files={
                     "file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})
                 },
             )
-            return req
 
     def getResponse(self, action: Action, action_param=None):
         path = action.value
         if action_param:
             path = f"{path}/{action_param}"
-        attachment = self.__attachment
         req = self.__make_request(path=path)
         message = ""
+        attachment = None
         is_multipart = req.is_multipart
         if is_multipart:
             multipart = req.multipart
             cp = FileStorage.storage_path
-            kind = ""
             for part in multipart.parts:
-                content_type = part.headers.get(b"content-type", b"").decode()
+                content_type = part.headers.get("content-type", b"").decode()
                 if "image/png" in content_type:
-                    assert kind
-                    fp = cp / f"{uuid4().hex}.{kind.extension}.png"
+                    fp = cp / f"{uuid4().hex}.png"
                     fp.write_bytes(part.content)
                     attachment = Attachment(
                         path=fp.absolute().as_posix(),
                         contentType="image/png",
                     )
                 elif "image/jpeg" in content_type:
-                    assert kind
-                    fp = cp / f"{uuid4().hex}.{kind.extension}.jpg"
+                    fp = cp / f"{uuid4().hex}.jpg"
                     fp.write_bytes(part.content)
                     attachment = Attachment(
                         path=fp.absolute().as_posix(),
