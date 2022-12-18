@@ -133,7 +133,7 @@ class Image(object, metaclass=ImageMeta):
             multipart = req.multipart
             cp = FileStorage.storage_path
             for part in multipart.parts:
-                content_type = part.headers.get("content-type", b"").decode()
+                content_type = part.headers.get(b"content-type", b"").decode()
                 if "image/png" in content_type:
                     fp = cp / f"{uuid4().hex}.png"
                     fp.write_bytes(part.content)
