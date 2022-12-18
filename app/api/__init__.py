@@ -68,6 +68,7 @@ class ZMethod(Method, Enum):
     IMAGE_POLYGON = "image:polygon"
     IMAGE_WALLPAPER = "image:wallpaper"
     IMAGE_VARIATION = "image:variation"
+    IMAGE_POKEMON = "image:pokemon"
     EVENT_COUNTDOWN = "event:countdown"
     EVENT_CALENDAR = "event:calendar"
     EVENT_SCHEDULE = "event:schedule"

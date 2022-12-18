@@ -164,3 +164,24 @@ def image_variation(context: Context):
         attachment=attachment,
         method=ZMethod.IMAGE_VARIATION,
     )
+
+
+
+@bp.command(
+    method=ZMethod.IMAGE_VARIATION,
+    desc="variation of image",
+)  # type: ignore
+def image_variation(context: Context):
+    attachment = context.attachment
+    if not attachment:
+        return EmptyResult(method=ZMethod.IMAGE_VARIATION)
+    attachment, message = Image.variation(attachment)
+    if all([attachment is None, message is None]):
+        return RenderResult(
+            message="No shit",
+            method=ZMethod.IMAGE_VARIATION,
+        )
+    return RenderResult(
+        attachment=attachment,
+        method=ZMethod.IMAGE_VARIATION,
+    )

@@ -19,6 +19,7 @@ class Action(Enum):
     PIXEL = "image/pixel"
     POLYGON = "image/polygon"
     VARIATION = "image/variation"
+    POKEMON = "image/pokemon"
 
 
 class ImageMeta(type):
@@ -50,6 +51,9 @@ class ImageMeta(type):
     def variation(cls, attachment: Attachment) -> tuple[Attachment, dict]:
         return cls(attachment).do_variation()
 
+    def pokemon(cls, attachment: Attachment) -> tuple[Attachment, dict]:
+        return cls(attachment).do_pokemon()
+
 
 class Image(object, metaclass=ImageMeta):
 
@@ -61,7 +65,7 @@ class Image(object, metaclass=ImageMeta):
     def do_analyze(self):
         attachment, message = self.getResponse(Action.ANALYZE)
         if message:
-            analyses: AnalyzeReponse = AnalyzeReponse.from_json(message)  # type: ignore
+            analyses: AnalyzeReponse = AnalyzeReponse.from_json(message)
             rows = [
                 ["Age: ", analyses.age],
                 [
@@ -93,6 +97,9 @@ class Image(object, metaclass=ImageMeta):
 
     def do_variation(self):
         return self.getResponse(Action.VARIATION)
+
+    def do_pokemon(self):
+        return self.getResponse(Action.POKEMON)
 
     def getResponse(self, action: Action, action_param=None):
         path = action.value
