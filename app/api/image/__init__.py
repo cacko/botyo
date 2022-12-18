@@ -141,3 +141,24 @@ def image_polygon(context: Context):
         attachment=attachment,
         method=ZMethod.IMAGE_POLYGON,
     )
+
+@bp.command(
+    method=ZMethod.IMAGE_VARIATION,
+    desc="variation of image",
+)  # type: ignore
+def image_variation(context: Context):
+    attachment = context.attachment
+    query = context.query
+    if not attachment:
+        return EmptyResult(method=ZMethod.IMAGE_VARIATION)
+    attachment, message = Image.polygon(attachment, query)
+    if all([attachment is None, message is None]):
+        return RenderResult(
+            message="No shit",
+            method=ZMethod.IMAGE_POLYGON,
+        )
+    return RenderResult(
+        message=message,
+        attachment=attachment,
+        method=ZMethod.IMAGE_POLYGON,
+    )
