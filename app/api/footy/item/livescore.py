@@ -15,6 +15,7 @@ from functools import reduce
 from emoji import replace_emoji
 import logging
 
+
 class GameMatch(Match):
     minRatio = 80
     method = MatchMethod.WRATIO
@@ -58,7 +59,7 @@ class Livescore(LivescoreData):
                 assert ev
                 assert ev.details
                 cache = Cache(ev.details)
-                content =  cache.content
+                content = cache.content
                 if not content:
                     continue
                 game = content.game
@@ -68,7 +69,7 @@ class Livescore(LivescoreData):
                 pass
 
     def render(self, filt: str = "", group_by_league=True):
-        items =  self.items
+        items = self.items
         if self.inprogress:
             items = list(filter(lambda x: x.inProgress, items))
         items.reverse()
@@ -109,7 +110,7 @@ class Livescore(LivescoreData):
             )
             try:
                 assert itm
-                details =  ParserDetails.get(itm.details)
+                details = ParserDetails.get(itm.details)
                 if details:
                     TextOutput.addRows([
                         x,

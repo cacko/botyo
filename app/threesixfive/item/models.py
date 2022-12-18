@@ -163,7 +163,7 @@ class Event:
                 self.sort = OrderWeight[
                     self.strStatus.translate(punctuation).upper()
                 ].value * abs(delta)
-        except KeyError as e:
+        except KeyError:
             self.sort = int(OrderWeight.JUNK.value * abs(delta))
         if any([self.intAwayScore == -1, self.intHomeScore == -1]):
             self.displayScore = ""
@@ -171,6 +171,19 @@ class Event:
             self.displayScore = ":".join(
                 [f"{self.intHomeScore:.0f}", f"{self.intAwayScore:.0f}"]
             )
+
+    @property
+    def is_international(self) -> bool:
+        try:
+            league = next(
+                filter(
+                    lambda x: x.id == self.idLeague, Data365.leagues
+                ), None
+            )
+            assert league
+            return league.is_international
+        except AssertionError:
+            return False
 
     @property
     def event_hash(self) -> str:

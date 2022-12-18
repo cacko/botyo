@@ -1,9 +1,9 @@
 from botyo_server.output import Align, Column, TextOutput
 from collections import namedtuple
 from enum import Enum
-from app.core.country import Country
 
-ScoreData = namedtuple("ScoreData", "status,home,away,score,win", defaults=["vs", ""])
+ScoreData = namedtuple(
+    "ScoreData", "status,home,away,score,win", defaults=["vs", ""])
 
 
 class ScoreFormat(Enum):
@@ -45,7 +45,8 @@ class ScoreRow:
         if not score:
             score = "vs"
         self.league = league
-        self.row = ScoreData(status=status, score=score, home=home, away=away, win=win)
+        self.row = ScoreData(status=status, score=score,
+                             home=home, away=away, win=win)
 
     def __str__(self) -> str:
         if self.format == ScoreFormat.STANDALONE:
@@ -86,11 +87,11 @@ class ScoreRow:
 
     @property
     def home(self) -> str:
-        return f"{Country(name=self.row.home).flag}{self.row.home}"
+        return self.row.home
 
     @property
     def away(self) -> str:
-        return f"{Country(name=self.row.away).flag}{self.row.away}"
+        return self.row.away
 
     @property
     def status(self):
