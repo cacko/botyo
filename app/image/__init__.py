@@ -24,8 +24,8 @@ class Action(Enum):
 
 
 class ImageMeta(type):
-    def __call__(cls, attachment: Attachment, *args, **kwds):
-        return type.__call__(cls, attachment, *args, **kwds)
+    def __call__(cls, attachment: Optional[Attachment] = None, *args, **kwds):
+        return type.__call__(cls, attachment=attachment, *args, **kwds)
 
     def tag(cls, attachment: Attachment) -> tuple[Attachment, str]:
         return cls(attachment).do_tag()
@@ -107,7 +107,7 @@ class Image(object, metaclass=ImageMeta):
         if not attachment:
             return Request(
                 f"{Config.image.base_url}/{path}",
-                method=Method.POST,
+                method=Method.GET,
             )
         assert isinstance(attachment, dict)
         p = Path(attachment.get("path", ""))
