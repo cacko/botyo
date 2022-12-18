@@ -85,8 +85,11 @@ def image_classify(context: Context):
             message="No matches",
             method=ZMethod.IMAGE_CLASSIFY,
         )
+    assert message
     return RenderResult(
-        message="\n".join([titlecase(x.get("label")) for x in message.get("response")]),
+        message="\n".join(
+            [titlecase(x.get("label")) for x in message.get("response", [])]
+        ),
         method=ZMethod.IMAGE_CLASSIFY,
     )
 
@@ -99,8 +102,9 @@ def image_pixel(context: Context):
     attachment = context.attachment
     query = context.query
     try:
+        assert query
         query = int(query)
-    except ValueError:
+    except (ValueError, AssertionError):
         query = 8
     if not attachment:
         return EmptyResult(method=ZMethod.IMAGE_PIXEL)
@@ -111,7 +115,6 @@ def image_pixel(context: Context):
             method=ZMethod.IMAGE_PIXEL,
         )
     return RenderResult(
-        message=message,
         attachment=attachment,
         method=ZMethod.IMAGE_PIXEL,
     )
@@ -125,8 +128,9 @@ def image_polygon(context: Context):
     attachment = context.attachment
     query = context.query
     try:
+        assert query
         query = int(query)
-    except ValueError:
+    except (ValueError, AssertionError):
         query = 800
     if not attachment:
         return EmptyResult(method=ZMethod.IMAGE_POLYGON)
@@ -137,10 +141,10 @@ def image_polygon(context: Context):
             method=ZMethod.IMAGE_POLYGON,
         )
     return RenderResult(
-        message=message,
         attachment=attachment,
         method=ZMethod.IMAGE_POLYGON,
     )
+
 
 @bp.command(
     method=ZMethod.IMAGE_VARIATION,
@@ -148,17 +152,15 @@ def image_polygon(context: Context):
 )  # type: ignore
 def image_variation(context: Context):
     attachment = context.attachment
-    query = context.query
     if not attachment:
         return EmptyResult(method=ZMethod.IMAGE_VARIATION)
-    attachment, message = Image.polygon(attachment, query)
+    attachment, message = Image.variation(attachment)
     if all([attachment is None, message is None]):
         return RenderResult(
             message="No shit",
-            method=ZMethod.IMAGE_POLYGON,
+            method=ZMethod.IMAGE_VARIATION,
         )
     return RenderResult(
-        message=message,
         attachment=attachment,
-        method=ZMethod.IMAGE_POLYGON,
+        method=ZMethod.IMAGE_VARIATION,
     )

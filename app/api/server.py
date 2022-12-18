@@ -12,7 +12,6 @@ from app.api.logo.team import TeamLogoPixel
 from requests import post
 from botyo_server.core import AppServer
 from butilka.server import Server, request, abort
-from bottle import DictProperty
 import logging
 
 
