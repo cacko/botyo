@@ -113,15 +113,13 @@ class Image(object, metaclass=ImageMeta):
         p = Path(attachment.get("path", ""))
         kind = filetype.guess(p.as_posix())
         mime = attachment.get("contentType")
-        with p.open("rb") as fp:
-            assert kind
-            return Request(
-                f"{Config.image.base_url}/{path}",
-                method=Method.POST,
-                files={
-                    "file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})
-                },
-            )
+        fp = p.open("rb")
+        assert kind
+        return Request(
+            f"{Config.image.base_url}/{path}",
+            method=Method.POST,
+            files={"file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})},
+        )
 
     def getResponse(self, action: Action, action_param=None):
         path = action.value
