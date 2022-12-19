@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Union
+from typing import Optional
 from datetime import datetime, timezone
 from dataclasses import dataclass, field
 from dataclasses_json import CatchAll, dataclass_json, config, Undefined
@@ -344,7 +344,13 @@ class Competition:
     def flag(self) -> str:
         if self.id != COUNTRY_ID_INTERNATIONAL:
             return ""
-        return Flag()
+        country = next(filter(
+            lambda x: x.id == self.countryId,
+            Data365.countries),
+            None
+        )
+        assert country
+        return Flag(country.name).flag
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -436,14 +442,14 @@ class GameCompetitor:
     symbolicName: Optional[str] = None
 
     def __getattribute__(self, __name: str):
-        if (
-            __name == "name"
-            and object.__getattribute__(self, "id") in app_config.favourites.teams
-        ):
+        if all([
+            __name == "name",
+            object.__getattribute__(self, "id") in app_config.favourites.teams
+        ]):
             return f"{object.__getattribute__(self, __name).upper()}"
         return object.__getattribute__(self, __name)
 
-    @property
+    @ property
     def country(self) -> CountryItem:
         country = next(
             filter(
@@ -453,21 +459,21 @@ class GameCompetitor:
         assert country
         return country
 
-    @property
+    @ property
     def flag(self) -> str:
         try:
             return Flag(self.country.name).flag
         except AssertionError:
             return ""
 
-    @property
+    @ property
     def name_with_flag(self) -> str:
         try:
             return Flag(self.country.name).with_flag(self.name)
         except AssertionError:
             return str(self.name)
 
-    @property
+    @ property
     def score_int(self) -> int:
         try:
             assert self.score
@@ -475,7 +481,7 @@ class GameCompetitor:
         except AssertionError:
             return 0
 
-    @property
+    @ property
     def shortName(self) -> str:
         try:
             if self.symbolicName:
@@ -489,23 +495,23 @@ class GameCompetitor:
             return ""
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
+@ dataclass_json(undefined=Undefined.EXCLUDE)
+@ dataclass
 class OddsRate:
     decimal: Optional[float] = None
     fractional: Optional[str] = None
     american: Optional[str] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
+@ dataclass_json(undefined=Undefined.EXCLUDE)
+@ dataclass
 class OddsOptions:
     num: int
     rate: OddsRate
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
+@ dataclass_json(undefined=Undefined.EXCLUDE)
+@ dataclass
 class Odds:
     lineId: int
     gameId: int
@@ -514,15 +520,15 @@ class Odds:
     options: list[OddsOptions]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
+@ dataclass_json(undefined=Undefined.EXCLUDE)
+@ dataclass
 class GameFact:
     id: str
     text: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
+@ dataclass_json(undefined=Undefined.EXCLUDE)
+@ dataclass
 class Game:
     id: int
     sportId: int
@@ -559,7 +565,7 @@ class Game:
     aggregateText: Optional[str] = ""
     icon: Optional[str] = ""
 
-    @property
+    @ property
     def round(self) -> Optional[str]:
         if self.roundNum is None:
             return ""
@@ -598,7 +604,10 @@ class Game:
             _status = GameStatus(status)
             if _status in (GameStatus.FT, GameStatus.AET, GameStatus.PPD):
                 return True
-            return _status == GameStatus.HT or re.match(r"^\d+$", status) is not None
+            return any([
+                _status == GameStatus.HT,
+                re.match(r"^\d+$", status) is not None
+            ])
         except ValueError:
             return False
 
@@ -616,7 +625,10 @@ class Game:
 
     @property
     def displayScore(self) -> str:
-        return f"{max(self.homeCompetitor.score_int, 0):.0f}:{max(self.awayCompetitor.score_int, 0):.0f}"
+        return ":".join([
+            f"{max(self.homeCompetitor.score_int, 0):.0f}",
+            f"{max(self.awayCompetitor.score_int, 0):.0f}"
+        ])
 
     @property
     def league(self) -> LeagueItem:
@@ -752,7 +764,10 @@ class GameDetails(Game):
         try:
             assert self.homeCompetitor
             assert self.awayCompetitor
-            return f"{self.homeCompetitor.score:.0f}:{self.awayCompetitor.score:.0f}"
+            return ":".join([
+                f"{self.homeCompetitor.score:.0f}",
+                f"{self.awayCompetitor.score:.0f}"
+            ])
         except AssertionError:
             return ""
 
@@ -1010,7 +1025,7 @@ class OddLineType:
 class OddBoomaker:
     id: int  # 14,
     name: str  # Bet365",
-    link: str  # https://www.bet365.com/olp/open-account/?affiliate=365_178380",
+    link: str  # https://www.bet365.com/olp/open-account/?affiliate"
     nameForURL: str  # bet365",
     color: str  # 007B5B",
     imageVersion: int  # 1
@@ -1043,7 +1058,7 @@ class OddBoomaker:
 #               "fractional": "7/6",
 #               "american": "+115"
 #             },
-#             "link": "https://www.bet365.com/olp/open-account/?affiliate=365_178380",
+#             "link": "https://www.bet365.com/olp/open-account/?affiliate",
 #             "trend": 3
 #           },
 #           {
@@ -1063,7 +1078,7 @@ class OddBoomaker:
 #               "fractional": "14/5",
 #               "american": "+280"
 #             },
-#             "link": "https://www.bet365.com/olp/open-account/?affiliate=365_178380",
+#             "link": "https://www.bet365.com/olp/open-account/?affiliate",
 #             "trend": 3
 #           },
 #           {
@@ -1083,7 +1098,7 @@ class OddBoomaker:
 #               "fractional": "7/4",
 #               "american": "+175"
 #             },
-#             "link": "https://www.bet365.com/olp/open-account/?affiliate=365_178380",
+#             "link": "https://www.bet365.com/olp/open-account/?affiliate=",
 #             "trend": 1
 #           }
 #         ]
