@@ -3,7 +3,6 @@ from botyo_server.output import TextOutput, Align, Column
 from coretime import time_hhmm
 from app.threesixfive.item.models import Competitor
 from app.threesixfive.item.team import Team as DataTeam, TeamStruct
-from app.core.country import Country
 
 
 class Team:
@@ -35,11 +34,16 @@ class Team:
             if game.homeCompetitor.id == self.__competitor.id:
                 assert game.awayCompetitor.name
                 g.append(
-                    game.awayCompetitor.name_with_flag if game.league.is_international else game.awayCompetitor.name)
+                    game.awayCompetitor.name_with_flag
+                    if game.league.is_international
+                    else game.awayCompetitor.name)
             else:
                 assert game.homeCompetitor.name
+                name = game.homeCompetitor.name
+                if game.league.is_international:
+                    name = game.homeCompetitor.name_with_flag
                 g.append(
-                    f"@{game.homeCompetitor.name_with_flag if game.league.is_international else game.homeCompetitor.name}")
+                    f"@ {name}")
 
             g.append(game.competitionDisplayName)
             startTime = game.startTime

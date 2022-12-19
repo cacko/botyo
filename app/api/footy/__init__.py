@@ -9,8 +9,6 @@ from app.threesixfive.data import Data365
 from app.core.config import Config
 from .footy import Footy
 from .item.competitions import CompetitionItem
-from app.threesixfive.exception import CompetitionNotFound, GameNotFound, TeamNotFound
-from apscheduler.job import Job
 from botyo_server.output import TextOutput
 from app.api import ZMethod
 import logging
@@ -35,10 +33,11 @@ class LeagueNeedle:
 )  # type: ignore
 def scores_command(context: Context):
     try:
-        message = Footy.livescore().render(context.query if context.query else "", group_by_league=True)
+        message = Footy.livescore().render(
+            context.query if context.query else "", group_by_league=True)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
-    except Exception as e:
+    except Exception:
         return EmptyResult()
 
 
@@ -48,7 +47,8 @@ def scores_command(context: Context):
 )  # type: ignore
 def live_command(context: Context):
     try:
-        message = Footy.livescore(live=True).render(context.query if context.query else "", group_by_league=True)
+        message = Footy.livescore(live=True).render(
+            context.query if context.query else "", group_by_league=True)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_SCORES)
     except Exception as e:
@@ -69,13 +69,16 @@ def subscribe_command(context: Context):
             client=context.client, groupID=context.group, query=context.query
         )
         return RenderResult(
-            method=ZMethod.FOOTY_SUBSCRIBE, message=response, group=context.group
+            method=ZMethod.FOOTY_SUBSCRIBE,
+            message=response,
+            group=context.group
         )
     except Exception:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_UNSUBSCRIBE, desc="cancels a subscribtion")  # type: ignore
+@bp.command(method=ZMethod.FOOTY_UNSUBSCRIBE,
+            desc="cancels a subscribtion")  # type: ignore
 def unsubscribe_command(context: Context):
     if any([not context.client, not context.group, not context.query]):
         return EmptyResult()
@@ -85,14 +88,17 @@ def unsubscribe_command(context: Context):
             client=context.client, group=context.group, query=context.query
         )
         return RenderResult(
-            method=ZMethod.FOOTY_UNSUBSCRIBE, message=response, group=context.group
+            method=ZMethod.FOOTY_UNSUBSCRIBE,
+            message=response,
+            group=context.group
         )
     except Exception:
         return EmptyResult()
 
 
 @bp.command(
-    method=ZMethod.FOOTY_SUBSCRIPTIONS, desc="show all subscriptions in the channel"
+    method=ZMethod.FOOTY_SUBSCRIPTIONS,
+    desc="show all subscriptions in the channel"
 )  # type: ignore
 def subscriptions_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group]):
@@ -110,7 +116,8 @@ def subscriptions_command(context: Context) -> RenderResult:
     )
 
 
-@bp.command(method=ZMethod.FOOTY_LEAGUES, desc="Enabled leagues")  # type: ignore
+@bp.command(method=ZMethod.FOOTY_LEAGUES,
+            desc="Enabled leagues")  # type: ignore
 def competitions_command(context: Context) -> RenderResult:
     try:
         competitions = Footy.competitions()
@@ -197,7 +204,8 @@ def standings_Command(context: Context):
             pass
         haystack = Data365.leagues
         if league_id:
-            league = next(filter(lambda x: x.league_id == league_id, haystack), None)
+            league = next(filter(lambda x: x.league_id ==
+                          league_id, haystack), None)
         else:
             haystack = list(
                 filter(lambda x: x.league_id in Config.ontv.leagues, haystack)
@@ -228,7 +236,8 @@ def team_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_FIXTURES, desc="League fixtures")  # type: ignore
+@bp.command(method=ZMethod.FOOTY_FIXTURES,
+            desc="League fixtures")  # type: ignore
 def fixtures_command(context: Context) -> RenderResult:
     try:
         assert context.query

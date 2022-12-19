@@ -190,11 +190,20 @@ class Event:
 
     @property
     def event_name(self) -> str:
-        return "/".join([s if s else "" for s in [self.strHomeTeam, self.strAwayTeam]])
+        return "/".join([
+            s if s else ""
+            for s in [self.strHomeTeam, self.strAwayTeam]
+        ])
 
     @property
     def inProgress(self) -> bool:
         return re.match(r"^\d+$", self.strStatus) is not None
+
+    @property
+    def win(self) -> str:
+        if self.displayStatus == "AET":
+            return f"{self.strWinDescription}"
+        return ""
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

@@ -15,7 +15,6 @@ from app.threesixfive.item.models import (
     Event,
     GameDetails,
     EventStatus,
-    GameStatus,
     ShortGameStatus,
     ResponseGame,
     SubscriptionEvent,
@@ -79,7 +78,8 @@ class Cache(RedisCachable):
         req = Request(url)
         try:
             json = req.json
-            response: ResponseGame = ResponseGame.from_dict(json)  # type: ignore
+            response: ResponseGame = ResponseGame.from_dict(  # type: ignore
+                json)
             return response
         except Exception as e:
             print(e)
@@ -112,7 +112,9 @@ class Cache(RedisCachable):
                 self.halftime = True
             if len(cached.events) < len(fresh.events):
                 content = self.content
-                self._struct.game.events = (content).events[len(cached.events) :]  # type: ignore
+                assert self._struct
+                self._struct.game.events = (
+                    content).events[len(cached.events):]  # type: ignore
                 return self._struct
             return None
         except GameNotFound:
@@ -150,7 +152,9 @@ class SubscriptionClient:
 
     def updateBotyo(self, message):
         result = RenderResult(
-            method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self.group_id
+            method=ZMethod.FOOTY_SUBSCRIBE,
+            message=message,
+            group=self.group_id
         )
         try:
             self.connection.send(
@@ -176,7 +180,9 @@ class SubscriptionClient:
         try:
             assert self.group_id
             resp = post(
-                f"{self.client_id}", headers=OTP(self.group_id).headers, json=payload
+                f"{self.client_id}",
+                headers=OTP(self.group_id).headers,
+                json=payload
             )
             return resp.status_code
         except ConnectionError:
@@ -352,7 +358,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         details = ParserDetails(None, response=updated)
                         events = details.events_pixel
                         sc.sendUpdate(events)
-                    except Exception as e:
+                    except Exception:
                         pass
                     if cache.halftime:
                         cache.halftime = False
@@ -392,7 +398,8 @@ class Subscription(metaclass=SubscriptionMeta):
                         pass
                     if content.game.justEnded:
                         self.cancel(sc)
-                        logging.debug(f"subscription {self.event_name} in done")
+                        logging.debug(
+                            f"subscription {self.event_name} in done")
         except AssertionError:
             pass
         except ValueError as e:
@@ -401,7 +408,10 @@ class Subscription(metaclass=SubscriptionMeta):
             logging.exception(e)
             # return self.cancel_all()
 
-    def updates(self, updated: Optional[ResponseGame] = None) -> Optional[list[str]]:
+    def updates(
+        self,
+        updated: Optional[ResponseGame] = None
+    ) -> Optional[list[str]]:
         try:
             if not updated:
                 return None
@@ -454,14 +464,16 @@ class Subscription(metaclass=SubscriptionMeta):
     def halftimeAnnoucementPixel(self):
         try:
             details = ParserDetails.get(str(self._event.details))
-            return DetailsEventPixel.halfTimeEvent(details, self._event.idLeague)
+            return DetailsEventPixel.halfTimeEvent(
+                details, self._event.idLeague)
         except AssertionError as e:
             logging.exception(e)
 
     @property
     def startAnnouncement(self) -> str | list[str]:
         TextOutput.addRows(
-            [" ".join([emojize(":goal_net:"), f"GAME STARTING: {self.event_name}"])]
+            [" ".join([emojize(":goal_net:"),
+                      f"GAME STARTING: {self.event_name}"])]
         )
         return TextOutput.render()
 
@@ -498,7 +510,8 @@ class Subscription(metaclass=SubscriptionMeta):
         if sc.is_rest:
             logo = LeagueImage(self._event.idLeague)
             logo_path = logo.path
-            pix = Pixelate(input=logo_path, padding=200, grid_lines=True, block_size=25)
+            pix = Pixelate(input=logo_path, padding=200,
+                           grid_lines=True, block_size=25)
             pix.resize((8, 8))
             sc.sendUpdate(
                 SubscriptionEvent(
@@ -514,8 +527,10 @@ class Subscription(metaclass=SubscriptionMeta):
                     league_id=self._event.idLeague,
                     job_id=self.id,
                     icon=pix.base64,
-                    home_team_icon=TeamLogoPixel(self._event.strHomeTeam).base64,
-                    away_team_icon=TeamLogoPixel(self._event.strAwayTeam).base64,
+                    home_team_icon=TeamLogoPixel(
+                        self._event.strHomeTeam).base64,
+                    away_team_icon=TeamLogoPixel(
+                        self._event.strAwayTeam).base64,
                     status=self._event.strStatus,
                 ),
             )
@@ -551,7 +566,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 except UnknownClientException:
                     pass
                 self.cancel(sc)
-            logging.debug(f"subscription before game {self.event_name} in done")
+            logging.debug(
+                f"subscription before game {self.event_name} in done")
         except ValueError:
             pass
         except Exception as e:
@@ -596,7 +612,10 @@ class Subscription(metaclass=SubscriptionMeta):
             _status = EventStatus(status)
             if _status in (EventStatus.FT, EventStatus.AET, EventStatus.PPD):
                 return True
-            return _status == EventStatus.HT or re.match(r"^\d+", status) is not None
+            return any([
+                _status == EventStatus.HT,
+                re.match(r"^\d+", status) is not None
+            ])
         except ValueError:
             return False
 
@@ -629,5 +648,5 @@ class Subscription(metaclass=SubscriptionMeta):
                     league_id=self._event.idLeague,
                 )
             ]
-        except AssertionError as e:
+        except AssertionError:
             pass

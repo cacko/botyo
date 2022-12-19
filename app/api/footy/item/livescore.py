@@ -87,7 +87,7 @@ class Livescore(LivescoreData):
                 home=x.strHomeTeam,
                 score=x.displayScore,
                 away=x.strAwayTeam,
-                win=str(x.strWinDescription) if x.displayStatus == "AET" else "",
+                win=x.win,
                 league=x.strLeague,
                 is_international=x.is_international
             )
@@ -104,7 +104,10 @@ class Livescore(LivescoreData):
             x.format = ScoreFormat.STANDALONE
             itm = next(
                 filter(
-                    lambda y: y.strHomeTeam == x.row.home and y.strAwayTeam == x.row.away,
+                    lambda y: all([
+                        y.strHomeTeam == x.row.home,
+                        y.strAwayTeam == x.row.away
+                    ]),
                     items
                 ),
                 None,
@@ -122,8 +125,8 @@ class Livescore(LivescoreData):
                 return None
         if group_by_league:
             filtered = list(chain.from_iterable([
-                [l.upper(), *g]
-                for l, g in reduce(to_groups, filtered, [])]))
+                [lg.upper(), *g]
+                for lg, g in reduce(to_groups, filtered, [])]))
 
         TextOutput.addRows(filtered)
         return (
