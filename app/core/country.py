@@ -12,7 +12,10 @@ class Country:
     def flag(self):
         try:
             matches = countries.search_fuzzy(self.name)
-            return flag.flagize(f":{matches.pop(0).alpha_2}:", subregions=False)
+            return flag.flagize(
+                f":{matches.pop(0).alpha_2}:",
+                subregions=False
+            )
         except LookupError:
             return ""
 
