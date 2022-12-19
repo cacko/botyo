@@ -155,24 +155,6 @@ def image_variation(context: Context):
 
 
 @bp.command(
-    method=ZMethod.IMAGE_POKEMON,
-    desc="poklemon of image",
-)  # type: ignore
-def image_pokemon(context: Context):
-    try:
-        query = context.query
-        assert query
-        attachment, _ = Image.pokemon(query)
-        assert attachment
-        return RenderResult(
-            attachment=attachment,
-            method=ZMethod.IMAGE_POKEMON,
-        )
-    except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_POKEMON)
-
-
-@bp.command(
     method=ZMethod.IMAGE_TXT2IMG,
     desc="text to image",
 )  # type: ignore

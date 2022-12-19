@@ -20,7 +20,6 @@ class Action(Enum):
     PIXEL = "image/pixel"
     POLYGON = "image/polygon"
     VARIATION = "image/variation"
-    POKEMON = "image/pokemon"
     TXT2IMG = "image/txt2img"
     MUTANT = "image/mutant"
 
@@ -53,9 +52,6 @@ class ImageMeta(type):
 
     def variation(cls, attachment: Attachment) -> tuple[Attachment, dict]:
         return cls(attachment).do_variation()
-
-    def pokemon(cls, prompt: str) -> tuple[Attachment, dict]:
-        return cls().do_pokemon(prompt)
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_txt2img(prompt)
@@ -108,9 +104,6 @@ class Image(object, metaclass=ImageMeta):
 
     def do_variation(self):
         return self.getResponse(Action.VARIATION)
-
-    def do_pokemon(self, prompt: str):
-        return self.getResponse(Action.POKEMON, prompt)
 
     def do_txt2img(self, prompt: str):
         return self.getResponse(Action.TXT2IMG, prompt)
