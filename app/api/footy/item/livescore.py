@@ -12,8 +12,6 @@ from dataclasses import dataclass
 from typing import Optional
 from itertools import chain
 from functools import reduce
-from emoji import replace_emoji
-import logging
 
 
 class GameMatch(Match):
@@ -32,7 +30,7 @@ class GameNeedle:
 def to_groups(res, row: ScoreRow):
     if not len(res):
         return [(row.league, [row])]
-    leagues = [l for l, _ in res]
+    leagues = [lg for lg, _ in res]
     try:
         idx = leagues.index(row.league)
         res[idx][1].append(row)
@@ -44,7 +42,14 @@ def to_groups(res, row: ScoreRow):
 
 class Livescore(LivescoreData):
 
-    def __init__(self, with_progress=False, leagues: list[int] = ..., with_details=False, inprogress=False):
+    def __init__(
+            self,
+            with_progress=False,
+            leagues:
+            list[int] = ...,
+            with_details=False,
+            inprogress=False
+    ):
         super().__init__(with_progress, leagues, with_details, inprogress)
 
     def precache(self):

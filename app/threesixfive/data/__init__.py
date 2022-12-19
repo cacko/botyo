@@ -76,24 +76,23 @@ class Data365(object, metaclass=Data365Meta):
             competitions = json.loads(competitions_path.read_text())
             countries = {c.get("id"): c for c in competitions.get("countries")}
             sports = {s.get("id"): s for s in competitions.get("sports")}
-            p.write_text(
-                json.dumps(
-                    [
-                        {
-                            "id": comp.get("id"),
-                            "league_id": comp.get("id"),
-                            "league_name": comp.get("name"),
-                            "country_id": comp.get("countryId"),
-                            "country_name": countries[comp.get("countryId")].get(
-                                "name"
-                            ),
-                            "sport_id": comp.get("sportId"),
-                            "sport_name": sports[comp.get("sportId")].get("name"),
-                        }
-                        for comp in competitions.get("competitions")
-                    ]
-                )
+            txt = json.dumps(
+                [
+                    {
+                        "id": comp.get("id"),
+                        "league_id": comp.get("id"),
+                        "league_name": comp.get("name"),
+                        "country_id": comp.get("countryId"),
+                        "country_name": countries[comp.get("countryId")].get(
+                            "name"
+                        ),
+                        "sport_id": comp.get("sportId"),
+                        "sport_name": sports[comp.get("sportId")].get("name"),
+                    }
+                    for comp in competitions.get("competitions")
+                ]
             )
+            p.write_text(txt)
         return p
 
     def getCountries(self) -> list[CountryItem]:

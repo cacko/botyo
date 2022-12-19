@@ -25,25 +25,24 @@ class Livescores:
         sports = {e.id: e for e in parser.sports}
         with Progress() as progress:
             for ev in progress.track(parser.events):
-                result.append(
-                    Event(
-                        strSport=sports[ev.sportId].name,  # type: ignore
-                        idLeague=ev.league_id,
-                        strLeague=ev.league,
-                        idHomeTeam=ev.team1Id,
-                        idAwayTeam=ev.team2Id,
-                        strHomeTeam=ev.team1,
-                        strAwayTeam=ev.team2,
-                        strStatus=ev.status,
-                        startTime=ev.startTime,
-                        intHomeScore=ev.team1Score if ev.status != "PPD" else -1,
-                        intAwayScore=ev.team2Score if ev.status != "PPD" else -1,
-                        sort=0,
-                        details=ev.details,
-                        strWinDescription=ev.winDescription,
-                        **self.__getIds(ev),
-                    )
+                obj = Event(
+                    strSport=sports[ev.sportId].name,  # type: ignore
+                    idLeague=ev.league_id,
+                    strLeague=ev.league,
+                    idHomeTeam=ev.team1Id,
+                    idAwayTeam=ev.team2Id,
+                    strHomeTeam=ev.team1,
+                    strAwayTeam=ev.team2,
+                    strStatus=ev.status,
+                    startTime=ev.startTime,
+                    intHomeScore=ev.team1Score if ev.status != "PPD" else -1,
+                    intAwayScore=ev.team2Score if ev.status != "PPD" else -1,
+                    sort=0,
+                    details=ev.details,
+                    strWinDescription=ev.winDescription,
+                    **self.__getIds(ev),
                 )
+                result.append(obj)
         return result
 
     def __getIds(self, ev: ParserResponse) -> dict[str, Any]:
