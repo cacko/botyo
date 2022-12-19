@@ -22,6 +22,7 @@ class Action(Enum):
     VARIATION = "image/variation"
     POKEMON = "image/pokemon"
     TXT2IMG = "image/txt2img"
+    MUTANT = "image/mutant"
 
 
 class ImageMeta(type):
@@ -59,6 +60,9 @@ class ImageMeta(type):
     def txt2img(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_txt2img(prompt)
 
+    def mutant(cls, prompt: str) -> tuple[Attachment, dict]:
+        return cls().do_mutant(prompt)
+
 
 class Image(object, metaclass=ImageMeta):
 
@@ -70,7 +74,8 @@ class Image(object, metaclass=ImageMeta):
     def do_analyze(self):
         attachment, message = self.getResponse(Action.ANALYZE)
         if message:
-            analyses: AnalyzeReponse = AnalyzeReponse.from_json(message)
+            analyses = AnalyzeReponse.from_json(  # type: ignore
+                message)
             rows = [
                 ["Age: ", analyses.age],
                 [
@@ -110,6 +115,9 @@ class Image(object, metaclass=ImageMeta):
     def do_txt2img(self, prompt: str):
         return self.getResponse(Action.TXT2IMG, prompt)
 
+    def do_mutant(self, prompt: str):
+        return self.getResponse(Action.MUTANT, prompt)
+
     def __make_request(self, path: str):
         attachment = self.__attachment
         if not attachment:
@@ -142,7 +150,9 @@ class Image(object, metaclass=ImageMeta):
             multipart = req.multipart
             cp = FileStorage.storage_path
             for part in multipart.parts:
-                content_type = part.headers.get(b"content-type", b"").decode()
+                content_type = part.headers.get(
+                    b"content-type", b""  # type: ignore
+                ).decode()
                 if "image/png" in content_type:
                     fp = cp / f"{uuid4().hex}.png"
                     fp.write_bytes(part.content)
