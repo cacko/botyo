@@ -29,6 +29,7 @@ class CompetitionItem(TimeCacheable):
         games = data.games
         today = datetime.now(tz=timezone.utc)
         threshold = timedelta(days=1)
+        assert games
         games = sorted(filter(lambda x: today - x.startTime <
                        threshold, games), key=lambda x: x.startTime)
         for d, gms in groupby(games, lambda x: x.startTime.date()):
