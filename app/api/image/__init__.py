@@ -3,7 +3,7 @@ from botyo_server.blueprint import Blueprint
 from botyo_server.socket.connection import Context
 from botyo_server.models import RenderResult, EmptyResult
 from app.api import ZMethod
-from app.core import to_float
+from app.core import to_int
 from stringcase import titlecase
 
 bp = Blueprint("image")
