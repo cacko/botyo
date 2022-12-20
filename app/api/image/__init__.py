@@ -3,6 +3,7 @@ from botyo_server.blueprint import Blueprint
 from botyo_server.socket.connection import Context
 from botyo_server.models import RenderResult, EmptyResult
 from app.api import ZMethod
+from app.core import to_float
 from stringcase import titlecase
 
 bp = Blueprint("image")
@@ -144,7 +145,8 @@ def image_variation(context: Context):
     try:
         attachment = context.attachment
         assert attachment
-        attachment, _ = Image.variation(attachment)
+        scale = to_float(context.query) if context.query else None
+        attachment, _ = Image.variation(attachment, scale)
         assert attachment
         return RenderResult(
             attachment=attachment,
