@@ -145,7 +145,7 @@ def image_variation(context: Context):
     try:
         attachment = context.attachment
         assert attachment
-        scale = to_float(context.query) if context.query else None
+        scale = to_int(context.query) if context.query else None
         attachment, _ = Image.variation(attachment, scale)
         assert attachment
         return RenderResult(

@@ -53,9 +53,9 @@ class ImageMeta(type):
     def variation(
         cls,
         attachment: Attachment,
-        scale: Optional[float] = None
+        images: Optional[int] = None
     ) -> tuple[Attachment, dict]:
-        return cls(attachment).do_variation(scale)
+        return cls(attachment).do_variation(images)
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_txt2img(prompt)
@@ -106,8 +106,8 @@ class Image(object, metaclass=ImageMeta):
     def do_polygon(self, frequency):
         return self.getResponse(Action.POLYGON, frequency)
 
-    def do_variation(self, scale: Optional[float] = None):
-        return self.getResponse(Action.VARIATION, scale)
+    def do_variation(self, images: Optional[int] = None):
+        return self.getResponse(Action.VARIATION, images)
 
     def do_txt2img(self, prompt: str):
         return self.getResponse(Action.TXT2IMG, prompt)
