@@ -165,16 +165,16 @@ class Image(object, metaclass=ImageMeta):
     def do_txt2img(self, prompt: str):
         return self.getResponse(Action.TXT2IMG, prompt)
 
-    def do_img2anything(self, prompt: str):
+    def do_img2anything(self, prompt: Optional[str] = None):
         return self.getResponse(Action.IMG2ANYTHING, prompt)
 
-    def do_img2arcane(self, prompt: str):
+    def do_img2arcane(self, prompt: Optional[str] = None):
         return self.getResponse(Action.IMG2ARCANE, prompt)
 
-    def do_img2disney(self, prompt: str):
+    def do_img2disney(self, prompt: Optional[str] = None):
         return self.getResponse(Action.IMG2DISNEY, prompt)
 
-    def do_img2img(self, prompt: str):
+    def do_img2img(self, prompt: Optional[str] = None):
         return self.getResponse(Action.IMG2IMG, prompt)
 
     def do_mutant(self, prompt: str):
