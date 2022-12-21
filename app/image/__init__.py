@@ -21,6 +21,9 @@ class Action(Enum):
     POLYGON = "image/polygon"
     VARIATION = "image/variation"
     TXT2IMG = "image/txt2img"
+    TXT2IANYTHING = "image/txt2anything"
+    TXT2ARCANE = "image/txt2arcane"
+    TXT2DISNEY = "image/txt2disney"
     MUTANT = "image/mutant"
 
 
@@ -59,6 +62,15 @@ class ImageMeta(type):
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_txt2img(prompt)
+
+    def txt2anything(cls, prompt: str) -> tuple[Attachment, dict]:
+        return cls().do_txt2anything(prompt)
+
+    def txt2arcane(cls, prompt: str) -> tuple[Attachment, dict]:
+        return cls().do_txt2arcane(prompt)
+
+    def txt2disney(cls, prompt: str) -> tuple[Attachment, dict]:
+        return cls().do_txt2disney(prompt)
 
     def mutant(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_mutant(prompt)
@@ -108,6 +120,15 @@ class Image(object, metaclass=ImageMeta):
 
     def do_variation(self, images: Optional[int] = None):
         return self.getResponse(Action.VARIATION, images)
+
+    def do_txt2anything(self, prompt: str):
+        return self.getResponse(Action.TXT2IANYTHING, prompt)
+
+    def do_txt2arcane(self, prompt: str):
+        return self.getResponse(Action.TXT2ARCANE, prompt)
+
+    def do_txt2disney(self, prompt: str):
+        return self.getResponse(Action.TXT2DISNEY, prompt)
 
     def do_txt2img(self, prompt: str):
         return self.getResponse(Action.TXT2IMG, prompt)
