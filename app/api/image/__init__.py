@@ -175,6 +175,60 @@ def image_fromtext(context: Context):
 
 
 @bp.command(
+    method=ZMethod.IMAGE_TXT2ANYTHING,
+    desc="text to anything",
+)  # type: ignore
+def text_to_antyhing(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, _ = Image.txt2anything(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2ANYTHING,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2ANYTHING)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2ARCANE,
+    desc="text to arcane",
+)  # type: ignore
+def text_to_arcane(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, _ = Image.txt2arcane(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2ARCANE,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2ARCANE)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2DISNEY,
+    desc="text to disney image",
+)  # type: ignore
+def text_to_disney(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, _ = Image.txt2disney(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2DISNEY,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2DISNEY)
+
+
+@bp.command(
     method=ZMethod.IMAGE_MUTANT,
     desc="text to mutant",
 )  # type: ignore
