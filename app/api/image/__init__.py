@@ -244,3 +244,75 @@ def image_mutant(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_MUTANT)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_IMG2DISNEY,
+    desc="image of disney image",
+)  # type: ignore
+def image2disney(context: Context):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, _ = Image.img2disney(attachment, context.query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_IMG2DISNEY,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_IMG2DISNEY)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_IMG2IMG,
+    desc="image of image",
+)  # type: ignore
+def image2image(context: Context):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, _ = Image.img2img(attachment, context.query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_IMG2IMG,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_IMG2IMG)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_IMG2ANYTHING,
+    desc="image of anything",
+)  # type: ignore
+def image2anything(context: Context):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, _ = Image.img2anything(attachment, context.query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_IMG2ANYTHING,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_IMG2ANYTHING)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_IMG2ARCANE,
+    desc="image of arcane",
+)  # type: ignore
+def image2arcane(context: Context):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, _ = Image.img2arcane(attachment, context.query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_IMG2ARCANE,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_IMG2ARCANE)
