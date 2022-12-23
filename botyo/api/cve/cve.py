@@ -2,7 +2,7 @@ from botyo.api.cve.components import CVEHeader
 from cachable.request import Request
 from datetime import timedelta
 from cachable.cacheable import TimeCacheable
-from cachable.storage import StorageMeta
+from cachable.storage.meta import StorageMeta
 from cachable.storage.redis import RedisStorage
 from stringcase import alphanumcase
 from botyo.server.output import TextOutput

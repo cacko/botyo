@@ -60,7 +60,7 @@ tasks:
   systemd-exec:
     desc: systemd exec
     cmds:
-      - direnv exec . mamba run --live-stream -n {{.PROJECT}} python -m botyo serve
+      - direnv exec . mamba run --live-stream -n {{.PROJECT}} python -m botyo.cli serve
 
   export:
     desc: export env
