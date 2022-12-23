@@ -8,7 +8,10 @@ from enum import EnumMeta, Enum
 from pathlib import Path
 import sys
 import requests
+from botyo.api import ZMethod
 
+
+m = ZMethod("LOGIN")
 
 class MethodMeta(EnumMeta):
 
