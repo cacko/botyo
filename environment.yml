@@ -195,6 +195,7 @@ dependencies:
     - pillow==9.2.0
     - pixelme==0.4.7
     - preshed==3.0.7
+    - progressor==1.0.14
     - prompt-toolkit==3.0.31
     - protego==0.2.1
     - protobuf==3.19.4
