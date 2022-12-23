@@ -2,7 +2,6 @@ from botyo.api.footy.footy import Footy
 from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
 from botyo.core.config import Config
 from botyo.core.otp import OTP
-from botyo.server.scheduler import Scheduler
 from botyo.threesixfive.item.models import CancelJobEvent
 from botyo.threesixfive.item.team import Team as DataTeam
 from botyo.threesixfive.item.league import LeagueImagePixel
@@ -18,7 +17,12 @@ import logging
 class _APIServer(Server):
     def __init__(self, *args, **kwargs):
         api_config = Config.api
-        super().__init__(host=api_config.host, port=api_config.port, *args, **kwargs)
+        super().__init__(
+            host=api_config.host,
+            port=api_config.port,
+            *args,
+            **kwargs
+        )
         self.setup_routing()
 
     def setup_routing(self):
@@ -67,7 +71,8 @@ class _APIServer(Server):
                 post(
                     data.get("webhook", ""),
                     headers=OTP(data.get("group", "")).headers,
-                    json=CancelJobEvent(job_id=id_parts[0]).to_dict(),  # type: ignore
+                    json=CancelJobEvent(
+                        job_id=id_parts[0]).to_dict(),  # type: ignore
                 )
                 return {"message": f"unsubscribed from {job.name}"}
         return {"message": "nothing unsubscribed"}
