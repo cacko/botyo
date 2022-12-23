@@ -1,0 +1,217 @@
+from pathlib import Path
+from socket import socket
+from botyo.server.command import CommandExec
+from botyo.server.models import (
+    ZSONMessage,
+    ZSONRequest,
+    ZSONResponse,
+    ZSONType,
+    Method,
+    CoreMethods,
+    RenderResult,
+    Attachment
+)
+import logging
+from binascii import hexlify, unhexlify
+from socketserver import StreamRequestHandler
+import tempfile
+import time
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json, Undefined
+from typing import Optional
+
+BYTEORDER = "little"
+CHUNKSIZE = 2**8
+
+
+class UnknownClientException(Exception):
+    pass
+
+
+class ConnectionMeta(type):
+
+    connections = {}
+
+    def client(cls, clientId: str) -> 'Connection':
+        if clientId not in cls.connections:
+            raise UnknownClientException
+        return cls.connections[clientId]
+
+
+class Connection(StreamRequestHandler, metaclass=ConnectionMeta):
+
+    __clientId: str = None
+    request: socket = None
+
+    @property
+    def id(self) -> str:
+        return self.__clientId
+
+    def setup(self) -> None:
+        self.request.setblocking(True)
+        return super().setup()
+
+    def handle(self):
+        logging.info(f"new client connection {self.request.getpeername()}")
+        while not self.server.is_closing:  # type: ignore
+            try:
+                partSize = self.getHeader()
+                if not partSize:
+                    time.sleep(0.5)
+                    continue
+                data = self.rfile.read(partSize)
+                msg_json = data.decode()
+                logging.debug(f">> RECEIVE msg {msg_json}")
+                message = ZSONMessage.from_json(msg_json)  # type: ignore
+                if message.ztype == ZSONType.REQUEST:
+                    request = ZSONRequest.from_json(msg_json)  # type: ignore
+                    if request.method == CoreMethods.LOGIN:
+                        if request.client in __class__.connections:
+                            logging.info(
+                                f">> Closing old registration {request.client}"
+                            )
+                            assert request.client
+                            __class__.client(request.client).request.close()
+                            del __class__.connections[request.client]
+                        assert request.client
+                        self.__clientId = request.client
+                        __class__.connections[self.__clientId] = self
+                        logging.info(
+                            f">> Client registration {self.__clientId}")
+                    elif request.attachment and any(
+                        [request.attachment.path, request.attachment.filename
+                         ]):
+                        if not request.attachment.path:
+                            assert request.attachment.filename
+                            request.attachment.path = request.attachment.filename
+                        download = self.__handleAttachment(
+                            Path(request.attachment.path).name)
+                        request.attachment.path = download.resolve().as_posix()
+                    self.onRequest(message=request)
+                    continue
+            except (BrokenPipeError):
+                return
+            except UnknownClientException:
+                logging.error(f"!! unknown client {self.__clientId}")
+                continue
+            except Exception as e:
+                logging.exception(e)
+                continue
+            finally:
+                time.sleep(0.5)
+
+    def onRequest(self, message: ZSONRequest):
+        try:
+            method = message.method
+            if method == CoreMethods.LOGIN:
+                return self.send(
+                    ZSONResponse(method=CoreMethods.LOGIN,
+                                 commands=CommandExec.definitions,
+                                 client=self.__clientId))
+            assert method
+            command = CommandExec.triggered(method, message)
+            assert command
+            context = Context(**message.to_dict())  # type: ignore
+            self.server.queue.put_nowait(  # type: ignore
+                (command, context, time.perf_counter()))
+            logging.debug(
+                f"QUEUE: {command} {self.__clientId} done put in queue")
+
+        except Exception as e:
+            logging.exception(e)
+
+    def getHeader(self) -> int:
+        try:
+            data = self.rfile.read(4)
+            assert data
+            return int.from_bytes(data, byteorder=BYTEORDER, signed=False)
+        except AssertionError:
+            return 0
+
+    def __handleAttachment(self, name) -> Path:
+        cache_path = Path(tempfile.gettempdir())
+        if not cache_path.exists():
+            cache_path.mkdir(parents=True)
+        p = cache_path / name
+        with p.open("wb") as f:
+            size = self.getHeader()
+            size = size * 2
+            logging.info(f">> ATTACHMENT size={size}")
+            while size:
+                to_read = CHUNKSIZE if size > CHUNKSIZE else size
+                chunk = self.rfile.read(to_read)
+                size -= len(chunk)
+                f.write(unhexlify(chunk))
+            logging.info(f">> ATTACHMENT saved {p.name}")
+        return p
+
+    def _request(self, method: Method):
+        req = ZSONRequest(method=method, source="")
+        data = req.encode()
+        self.wfile.write(
+            len(data).to_bytes(4, byteorder=BYTEORDER, signed=False))
+        self.wfile.write(data)
+        self.wfile.flush()
+
+    def send(self, response: ZSONResponse):
+        data = response.encode()
+        size = len(data)
+        self.wfile.write(size.to_bytes(4, byteorder=BYTEORDER, signed=False))
+        self.wfile.write(data)
+        self.wfile.flush()
+        try:
+            assert response.attachment
+            assert response.attachment.path
+            p = Path(response.attachment.path)
+            assert p.exists()
+            size = p.stat().st_size
+            self.wfile.write(
+                size.to_bytes(4, byteorder=BYTEORDER, signed=False), )
+            sent = 0
+            logging.debug(f">> SEND {size} ATTACHMENT")
+            with p.open("rb") as f:
+                while data := f.read(CHUNKSIZE):
+                    sent += self.wfile.write(hexlify(data))
+                    self.wfile.flush()
+            logging.debug(f">>>SEND {sent} BYTES")
+        except AssertionError:
+            pass
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
+class Context:
+
+    client: Optional[str] = None
+    query: Optional[str] = None
+    group: Optional[str] = None
+    lang: Optional[str] = None
+    source: Optional[str] = None
+    timezone: Optional[str] = "Europe/London"
+    attachment: Optional[Attachment] = None
+
+    @property
+    def connection(self):
+        assert self.client
+        return Connection.client(self.client)
+
+    def send(self, result: RenderResult):
+        response = ZSONResponse(message=result.message,
+                                attachment=result.attachment,
+                                client=self.client,
+                                group=self.group,
+                                method=result.method,
+                                plain=result.plain)
+        self.connection.send(response=response)
+
+
+class ReceiveMessagesError(Exception):
+    pass
+
+
+class SendMessageError(Exception):
+    pass
+
+
+class JsonRpcApiError(Exception):
+    pass
