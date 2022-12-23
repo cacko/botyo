@@ -18,6 +18,6 @@ t.py
 .cache/
 *.wav
 *.flac
-app/settings.yaml
+botyo/settings.yaml
 *.mp4
 *.jpg
