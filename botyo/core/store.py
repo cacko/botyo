@@ -1,15 +1,9 @@
-from cachable.storage.redis import RedisStorage as MainRedisStorage
+from cachable.storage.redis import RedisStorage
 from cachable.storage.file import FileStorage, CachableFileImage
 from cachable import TimeCacheable as MainTimeCachable, Cachable
 import pickle
 import logging
 from typing import Any
-
-
-class RedisStorage(MainRedisStorage):
-    @classmethod
-    def hmset(cls, name: str, mapping: dict):
-        return cls._redis.hmset(name, mapping)
 
 
 class QueueDictMeta(type):
