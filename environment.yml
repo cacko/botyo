@@ -1,4 +1,4 @@
-name: znayko
+name: botyo
 channels:
   - conda-forge
 dependencies:
@@ -195,7 +195,6 @@ dependencies:
     - pillow==9.2.0
     - pixelme==0.4.7
     - preshed==3.0.7
-    - prokopiy==0.1.2
     - prompt-toolkit==3.0.31
     - protego==0.2.1
     - protobuf==3.19.4
@@ -277,6 +276,5 @@ dependencies:
     - you-get==0.4.1620
     - zope-interface==5.4.0
 variables:
-  PIP_EXTRA_INDEX_URL: https://pypi.cacko.net/simple/
   allow_conda_downgrades: 'true'
-prefix: /Users/jago/miniforge3/envs/global/envs/znayko
+prefix: /Users/jago/miniforge3/envs/global/envs/botyo

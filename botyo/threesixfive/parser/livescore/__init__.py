@@ -1,5 +1,5 @@
 from botyo.threesixfive.item.models import Event
-from prokopiy import Progress
+from progressor import Progress
 from botyo.threesixfive.parser.livescore.parser import Parser, ParserResponse
 from hashlib import md5
 from typing import Any

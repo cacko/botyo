@@ -1,5 +1,6 @@
 from cachable.storage.redis import RedisStorage
-from cachable.storage.file import FileStorage, CachableFileImage
+from cachable.storage.file import FileStorage
+from cachable.storage.filestorage.image import CachableFileImage
 from cachable import TimeCacheable as MainTimeCachable, Cachable
 import pickle
 import logging
@@ -36,13 +37,17 @@ class QueueDict(dict, metaclass=QueueDictMeta):
         return items
 
     def __setitem__(self, __k, __v) -> None:
-        RedisStorage.pipeline().hset(self.__storage_key, __k, self.dumps(__v)).persist(
+        RedisStorage.pipeline().hset(
+            self.__storage_key, __k, self.dumps(__v)
+        ).persist(
             self.__storage_key
         ).execute()
         return super().__setitem__(__k, __v)
 
     def __delitem__(self, __k) -> None:
-        RedisStorage.pipeline().hdel(self.__storage_key, __k).persist(
+        RedisStorage.pipeline().hdel(
+            self.__storage_key, __k
+        ).persist(
             self.__storage_key
         ).execute()
         return super().__delitem__(__k)

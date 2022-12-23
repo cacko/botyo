@@ -8,7 +8,12 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from botyo.core.store import ImageCachable
 from botyo.threesixfive.url import Url
-from botyo.threesixfive.team import normalize_team, DEFAULT_BADGE, store_key, AssetKey
+from botyo.threesixfive.team import (
+    normalize_team,
+    DEFAULT_BADGE,
+    store_key,
+    AssetKey
+)
 import logging
 
 
@@ -101,7 +106,8 @@ class Parser:
         req = Request(self.__endpoint)
         json = req.json
         today = datetime.now(tz=timezone.utc).date()
-        self.__struct: ResponseScores = ResponseScores.from_dict(json)  # type: ignore
+        self.__struct = ResponseScores.from_dict(json)   # type: ignore
+
         self.__struct.games = [
             *filter(lambda g: g.startTime.date() == today, self.__struct.games)
         ]
@@ -129,6 +135,7 @@ class Parser:
                 assert game.awayCompetitor.score is not None
                 assert game.homeCompetitor.id
                 assert game.awayCompetitor.id
+                winDesc = game.winDescription if game.winDescription else ""
                 yield ParserResponse(
                     team1=game.homeCompetitor.name,
                     team2=game.awayCompetitor.name,
@@ -144,7 +151,7 @@ class Parser:
                     team1Id=game.homeCompetitor.id,
                     team2Id=game.awayCompetitor.id,
                     sportId=game.sportId,
-                    winDescription=game.winDescription if game.winDescription else "",
+                    winDescription=winDesc,
                     id=game.id,
                 )
                 if self.with_details:
