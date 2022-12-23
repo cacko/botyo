@@ -3,7 +3,7 @@
 version: "3"
 
 vars:
-  PROJECT: znayko
+  PROJECT: botyo
 
 tasks:
   default:
@@ -19,25 +19,25 @@ tasks:
   logs:
     desc: monitor logs
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;journalctl --user -u znayko -f --all'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;journalctl --user -u botyo -f --all'
 
   start:
     desc: start the service
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user start znayko'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user start botyo'
 
   restart:
     desc: restart the service
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user stop znayko'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user stop botyo'
       - ssh $REMOTE_HOST 'source ~/.zshrc;sleep 1'
-      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user start znayko'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user start botyo'
 
 
   stop:
     desc: stop the server
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user stop znayko'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;systemctl --user stop botyo'
 
   push:
     desc: commit and pushes current changes
@@ -49,7 +49,7 @@ tasks:
   pull:
     desc: pulls from git
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/znayko;git reset --hard;git pull'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/botyo;git reset --hard;git pull'
 
   pp:
     desc: push and pull
