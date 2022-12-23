@@ -7,7 +7,7 @@ from emoji import emojize
 from enum import Enum
 import logging
 
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 
 bp = Blueprint("kb")
 

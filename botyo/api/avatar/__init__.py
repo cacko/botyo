@@ -1,7 +1,7 @@
 from botyo.api.avatar.multiavatar import Avataaar, MultiAvatar
 from botyo.server.socket.connection import Context
 from botyo.server.models import Attachment, EmptyResult, RenderResult
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from botyo.server.blueprint import Blueprint
 
 bp = Blueprint("avatar")

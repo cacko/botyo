@@ -2,7 +2,7 @@ from botyo.chat import Chat
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import RenderResult, ZSONMatcher
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 
 
 bp = Blueprint("chat")

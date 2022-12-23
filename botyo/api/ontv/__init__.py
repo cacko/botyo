@@ -1,6 +1,6 @@
 from botyo.api.ontv.item.tv import TV
 from botyo.server.blueprint import Blueprint
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from botyo.server.models import RenderResult, EmptyResult
 from botyo.server.socket.connection import Context
 from zoneinfo import ZoneInfo

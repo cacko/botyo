@@ -2,7 +2,7 @@ from botyo.api.logo.team import Team
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import Attachment, RenderResult, EmptyResult
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 
 
 bp = Blueprint("logo")

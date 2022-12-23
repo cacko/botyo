@@ -3,7 +3,7 @@ from stringcase import titlecase
 from botyo.server.blueprint import Blueprint
 from botyo.server.output import TextOutput
 from botyo.server.socket.connection import Context
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from botyo.server.models import RenderResult, EmptyResult
 from botyo.demographics import Demographics, Gender, Race
 

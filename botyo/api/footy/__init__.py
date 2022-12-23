@@ -10,7 +10,7 @@ from botyo.core.config import Config
 from .footy import Footy
 from .item.competitions import CompetitionItem
 from botyo.server.output import TextOutput
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 import logging
 
 bp = Blueprint("footy")

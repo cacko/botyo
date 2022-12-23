@@ -2,7 +2,7 @@ from botyo.image import Image
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import RenderResult, EmptyResult
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from botyo.core import to_int
 from stringcase import titlecase
 

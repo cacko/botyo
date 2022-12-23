@@ -2,7 +2,7 @@ from botyo.api.cve.components import CVEHeader
 from hashlib import blake2b
 from botyo.server.scheduler import Scheduler
 from apscheduler.job import Job
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from botyo.server.socket.connection import Connection, UnknownClientException
 from botyo.server.models import RenderResult
 from .models import CVEResponse, CVEListItem

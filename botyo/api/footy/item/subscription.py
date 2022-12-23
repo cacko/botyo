@@ -20,7 +20,7 @@ from botyo.threesixfive.item.models import (
     SubscriptionEvent,
     GoalEvent,
 )
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from .player import Player
 from cachable.request import Request
 from enum import Enum

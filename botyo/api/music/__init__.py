@@ -2,7 +2,7 @@ from botyo.server.blueprint import Blueprint
 from botyo.server.output import to_mono
 from botyo.server.models import Attachment, EmptyResult, RenderResult
 from botyo.server.socket.connection import Context
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from botyo.music.song import Song
 from botyo.music.albumart import AlbumArt
 from botyo.music.lyrics import Lyrics

@@ -1,5 +1,5 @@
 from emoji import emojize
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from botyo.server.models import RenderResult
 from botyo.server.socket.connection import Context
 from botyo.server.blueprint import Blueprint

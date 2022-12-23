@@ -3,7 +3,7 @@ from botyo.server.socket.connection import Context
 from botyo.server.blueprint import Blueprint
 from botyo.chatyo import getResponse, Payload
 from flag import flag
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 
 bp = Blueprint("translate")
 

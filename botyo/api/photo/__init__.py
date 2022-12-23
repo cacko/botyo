@@ -1,6 +1,6 @@
 from botyo.server.blueprint import Blueprint
 from .fakeface import FakeFace
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from botyo.server.models import EmptyResult, RenderResult, Attachment
 from botyo.server.socket.connection import Context
 

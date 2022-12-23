@@ -7,7 +7,7 @@ from .dig import Dig
 from .whois import WhoIs
 from .tcptraceroute import TcpTraceroute
 from botyo.server.blueprint import Blueprint
-from botyo.api import ZMethod
+from botyo.server.models import ZMethod
 from botyo.api.console.geo import Geo
 
 
