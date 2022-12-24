@@ -11,7 +11,9 @@ from dataclasses import dataclass
 from .models.beats import Beats as BeatsModel
 from botyo.core.bytes import nearest_bytes
 from botyo.core.config import Config as app_config
-import logging 
+import logging
+from requests.exceptions import JSONDecodeError
+
 
 @dataclass_json
 @dataclass
@@ -23,6 +25,7 @@ class BeatsStruct:
     def __post_init__(self):
         if isinstance(self.path, str):
             self.path = Path(self.path)
+
 
 class Beats(Cachable):
 
@@ -72,7 +75,8 @@ class Beats(Cachable):
                 tempo=res.tempo,
             ).on_conflict(
                 conflict_target=[BeatsModel.path_id],
-                update={BeatsModel.beats: res.beats, BeatsModel.tempo: res.tempo},
+                update={BeatsModel.beats: res.beats,
+                        BeatsModel.tempo: res.tempo},
             ).execute()
         return res
 
@@ -87,18 +91,20 @@ class Beats(Cachable):
         return self._id
 
     def _load(self):
-        rs = Request(
-            url=app_config.beats.extractor_url,
-            params={
-                "path": self.__path.as_posix(),
-                "hop_length": self.__hop_length,
-                "margin": self.__margin,
-                "with_vocals": self.__with_vocals,
-            },
-        )
-        logging.debug(f"_load -> {rs.json}")
-        self._struct = BeatsStruct.from_dict(rs.json)
-        return self.tocache(self._struct)
+        try:
+            rs = Request(
+                url=app_config.beats.extractor_url,
+                params={
+                    "path": self.__path.as_posix(),
+                    "hop_length": self.__hop_length,
+                    "margin": self.__margin,
+                    "with_vocals": self.__with_vocals,
+                },
+            )
+            self._struct = BeatsStruct.from_dict(rs.json)
+            return self.tocache(self._struct)
+        except JSONDecodeError as e:
+            logging.error(e)
 
     @property
     def model(self) -> BeatsStruct:
