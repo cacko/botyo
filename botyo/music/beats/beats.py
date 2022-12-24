@@ -96,6 +96,7 @@ class Beats(Cachable):
                 "with_vocals": self.__with_vocals,
             },
         )
+        logging.debug(f"_load -> {rs.json}")
         self._struct = BeatsStruct.from_dict(rs.json)
         return self.tocache(self._struct)
 
