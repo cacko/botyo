@@ -24,6 +24,7 @@ class GeoLookup:
     ISP: Optional[GeoISP] = None
     city: Optional[str] = None
     country: Optional[str] = None
+    country_iso: Optional[str] = None
     ip: Optional[str] = None
     location: Optional[list[float]] = None
     subdivisions: Optional[str] = None
