@@ -82,6 +82,7 @@ class Twitter(object, metaclass=TwitterMeta):
                 kwds["since_id"] = since_id
         except:
             pass
+        logging.debug(f"TWITTER FETCH {kwds}")
         res = self.api.get_timelines(user_id=user.id, **kwds)
         assert isinstance(res, Response)
         tweets = res.data

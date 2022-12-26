@@ -15,7 +15,7 @@ from botyo.core.store import QueueDict
 GOAL_MATCH = re.compile(
     r"^([\w ]+)[^\w]*(\d+)-(\d+)[^\w]*([\w ]+)", re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
-GOAL_CHECK_EXPIRATION = timedelta(minutes=10)
+GOAL_CHECK_EXPIRATION = timedelta(minutes=20)
 
 # (base) muzak at /store/cache/znayko/goals ❯ ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4
 # width=1280
@@ -183,13 +183,13 @@ class GoalsMeta(type):
 
 class Goals(object, metaclass=GoalsMeta):
 
-    __video_data: Optional[QueueDict] = None
+    __videoData: Optional[QueueDict] = None
 
     @property
     def video_data(self) -> QueueDict:
-        if not self.__video_data:
-            self.__video_data = QueueDict("video.data")
-        return self.__video_data
+        if not self.__videoData:
+            self.__videoData = QueueDict("video.data")
+        return self.__videoData
 
     def __fetch(self, **kwds):
         tweets = Twitter.media(**kwds)
@@ -223,9 +223,12 @@ class Goals(object, metaclass=GoalsMeta):
         logging.debug(f"DO SEARCH: {query}")
         matcher = TeamsMatch(haystack=query)
         logging.debug(f"MATCHER HAYSTACK={query}")
-        self.__fetch(**kwds)
+        try:
+            self.__fetch(**kwds)
+        except Exception as e:
+            logging.error(f"FETCH ERROR {e}")
         for needle in list(self.video_data.values()):
-            logging.debug(f"NEEDLE: {needle}")
+            logging.debug(f">>> NEEDLE: {needle}")
             for dp in __class__.output_dir.glob(f"*[[]{needle.id}[]].mp4"):
                 logging.debug(f"NEEDLE FILE {dp}")
                 matched: list[Query] = matcher.fuzzy(needle.needle)
@@ -240,7 +243,10 @@ class Goals(object, metaclass=GoalsMeta):
                             game_event_id=q.game_event_id,
                             event_id=q.event_id,
                         )
-                        del self.video_data[needle.id]
+                        try:
+                            del self.video_data[needle.id]
+                        except KeyError:
+                            pass
 
     def get_downloads(self) -> list[DownloadItem]:
         return []
