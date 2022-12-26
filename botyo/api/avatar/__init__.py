@@ -4,11 +4,13 @@ from botyo.server.socket.connection import Context
 from botyo.server.models import Attachment, EmptyResult, RenderResult
 from botyo.server.models import ZMethod
 from botyo.server.blueprint import Blueprint
-from botyo.image import Image
+from argparse import ArgumentParser
 
 bp = Blueprint("avatar")
 
-
+parser = ArgumentParser(description="Avatar arguments")
+parser.add_argument('prompt', nargs='+')
+parser.add_argument('-n', '--new', action='store_true')
 # type: ignore
 @bp.command(method=ZMethod.AVATAR_AVATAR, desc="generates avatar for the input")
 def avatar_command(context: Context) -> RenderResult:

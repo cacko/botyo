@@ -17,12 +17,14 @@ class StableDiffusionAvatar(ImageCachable):
     __id = None
     __gender: Optional[Gender] = None
     __race: Optional[Race] = None
+    __new: bool = False
     SIZE = (512, 512)
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, is_new: bool = False):
         if not name:
             raise ValueError
         self._name = name
+        self.__new = is_new
 
     def _init(self):
         if self.isCached:
@@ -34,6 +36,12 @@ class StableDiffusionAvatar(ImageCachable):
             ap.rename(self._path)
         except Exception:
             pass
+
+    @property
+    def isCached(self) -> bool:
+        if self.__new:
+            return False
+        return super().isCached
 
     @property
     def gender(self) -> Gender:
