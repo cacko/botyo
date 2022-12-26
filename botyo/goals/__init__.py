@@ -209,7 +209,7 @@ class Goals(object, metaclass=GoalsMeta):
                     )
                 except Exception as e:
                     logging.error(f"TWITTER DOWNLOAD: {e}")
-                self.__needles[t_id] = TwitterNeedle(
+                self.video_data[t_id] = TwitterNeedle(
                     needle=TeamsNeedle(home=team1.lower(), away=team2.lower()),
                     goals=GoalNeedle(home=int(score1), away=int(score2)),
                     id=t_id,
