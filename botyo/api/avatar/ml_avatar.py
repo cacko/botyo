@@ -51,8 +51,8 @@ class StableDiffusionAvatar(ImageCachable):
     @property
     def cmd(self) -> str:
         return (
-            f"{self._name} portrait crazy {self.race.value} {self.gender.value} "
-            " as the character by artgrem, centered, greg rutkowski, ross tran, kuvshinov"
+            f"{self._name} crazy {self.race.value} {self.gender.value} "
+            " as the character by artgrem, profile shot, centered, greg rutkowski, ross tran, kuvshinov"
             "--width=512 --height=512 --guidance_scale=12"
         )
 
