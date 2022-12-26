@@ -10,14 +10,18 @@ import logging
 import re
 from botyo.threesixfive.item.models import GoalEvent
 from datetime import datetime, timedelta
+from botyo.core.store import QueueDict
 
-GOAL_MATCH = re.compile(r"^([\w ]+)[^\w]*(\d+)-(\d+)[^\w]*([\w ]+)", re.IGNORECASE)
+GOAL_MATCH = re.compile(
+    r"^([\w ]+)[^\w]*(\d+)-(\d+)[^\w]*([\w ]+)", re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 GOAL_CHECK_EXPIRATION = timedelta(minutes=10)
 
 # (base) muzak at /store/cache/znayko/goals ❯ ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4
 # width=1280
 # height=720
+
+
 class TeamsMatch(Match):
     minRatio = 80
     method = MatchMethod.WRATIO
@@ -160,7 +164,8 @@ class GoalsMeta(type):
         return root
 
     def goal_video(cls, q: Query) -> Optional[Path]:
-        fp = cls.output_dir / DownloadItem.get_filename(q.event_id, q.game_event_id)
+        fp = cls.output_dir / \
+            DownloadItem.get_filename(q.event_id, q.game_event_id)
         if fp.exists():
             logging.info(f"GOAL found at {fp}")
             return fp
@@ -177,16 +182,34 @@ class GoalsMeta(type):
 
 
 class Goals(object, metaclass=GoalsMeta):
-    def __needles(self, tweets, **kwds) -> Generator[TwitterNeedle, None, None]:
+
+    __video_data: Optional[QueueDict] = None
+
+    @property
+    def video_data(self) -> QueueDict:
+        if not self.__video_data:
+            self.__video_data = QueueDict("video.data")
+        return self.__video_data
+
+    def __fetch(self, **kwds):
+        tweets = Twitter.media(**kwds)
         for t in tweets:
             t_id, t_text = (
                 t.tweet.id if t.tweet.id else "",
                 t.tweet.text if t.tweet.text else "",
             )
             if matched_teams := GOAL_MATCH.search(t_text):
-                team1, score1, score2, team2 = map(str.strip, matched_teams.groups())
-                logging.debug(f"GOALS: matched teams {team1} {team2} {score1} {score2}")
-                yield TwitterNeedle(
+                team1, score1, score2, team2 = map(
+                    str.strip, matched_teams.groups())
+                logging.debug(
+                    f"GOALS: matched teams {team1} {team2} {score1} {score2}")
+                try:
+                    twitter_download(
+                        url=t.url, output_dir=__class__.output_dir.as_posix()
+                    )
+                except Exception as e:
+                    logging.error(f"TWITTER DOWNLOAD: {e}")
+                self.__needles[t_id] = TwitterNeedle(
                     needle=TeamsNeedle(home=team1.lower(), away=team2.lower()),
                     goals=GoalNeedle(home=int(score1), away=int(score2)),
                     id=t_id,
@@ -200,14 +223,8 @@ class Goals(object, metaclass=GoalsMeta):
         logging.debug(f"DO SEARCH: {query}")
         matcher = TeamsMatch(haystack=query)
         logging.debug(f"MATCHER HAYSTACK={query}")
-        tweets = Twitter.media(**kwds)
-        for needle in self.__needles(tweets=tweets, **kwds):
-            try:
-                twitter_download(
-                    url=needle.url, output_dir=__class__.output_dir.as_posix()
-                )
-            except Exception as e:
-                logging.error(f"TWITTER DOWNLOAD: {e}")
+        self.__fetch(**kwds)
+        for needle in list(self.video_data.values()):
             logging.debug(f"NEEDLE: {needle}")
             for dp in __class__.output_dir.glob(f"*[[]{needle.id}[]].mp4"):
                 logging.debug(f"NEEDLE FILE {dp}")
@@ -223,6 +240,7 @@ class Goals(object, metaclass=GoalsMeta):
                             game_event_id=q.game_event_id,
                             event_id=q.event_id,
                         )
+                        del self.video_data[needle.id]
 
     def get_downloads(self) -> list[DownloadItem]:
         return []
