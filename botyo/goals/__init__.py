@@ -32,6 +32,7 @@ class TeamsMatch(Match):
 class TeamsNeedle:
     home: str
     away: str
+    score: str
 
 
 @dataclass_json
@@ -210,7 +211,8 @@ class Goals(object, metaclass=GoalsMeta):
                 except Exception as e:
                     logging.error(f"TWITTER DOWNLOAD: {e}")
                 self.video_data[t_id] = TwitterNeedle(
-                    needle=TeamsNeedle(home=team1.lower(), away=team2.lower()),
+                    needle=TeamsNeedle(
+                        home=team1.lower(), away=team2.lower(), score=f"{score1}:{score2}"),
                     goals=GoalNeedle(home=int(score1), away=int(score2)),
                     id=t_id,
                     text=t_text,
@@ -234,19 +236,18 @@ class Goals(object, metaclass=GoalsMeta):
                 matched: list[Query] = matcher.fuzzy(needle.needle)
                 logging.debug(f"GOALS SEARCH MATCHED: {matched} from {needle}")
                 for q in matched:
-                    if sum(q.goals) == needle.goals.home + needle.goals.away:
-                        yield DownloadItem(
-                            text=needle.text,
-                            url=needle.url,
-                            id=q.id,
-                            path=dp.absolute(),
-                            game_event_id=q.game_event_id,
-                            event_id=q.event_id,
-                        )
-                        try:
-                            del self.video_data[needle.id]
-                        except KeyError:
-                            pass
+                    yield DownloadItem(
+                        text=needle.text,
+                        url=needle.url,
+                        id=q.id,
+                        path=dp.absolute(),
+                        game_event_id=q.game_event_id,
+                        event_id=q.event_id,
+                    )
+                    try:
+                        del self.video_data[needle.id]
+                    except KeyError:
+                        pass
 
     def get_downloads(self) -> list[DownloadItem]:
         return []
