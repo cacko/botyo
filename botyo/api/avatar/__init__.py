@@ -12,10 +12,13 @@ parser = ArgumentParser(description="Avatar arguments")
 parser.add_argument('prompt', nargs='+')
 parser.add_argument('-n', '--new', action='store_true')
 # type: ignore
+
+
 @bp.command(method=ZMethod.AVATAR_AVATAR, desc="generates avatar for the input")
 def avatar_command(context: Context) -> RenderResult:
     try:
-        avatar = StableDiffusionAvatar(context.query)
+        params = parser.parse_args(context.query.split(" "))
+        avatar = StableDiffusionAvatar(" ".join(params.prompt), params.new)
         path = avatar.path
         assert path.exists()
         return RenderResult(
