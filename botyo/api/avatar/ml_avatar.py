@@ -1,11 +1,7 @@
-from hashlib import blake2b
 from pathlib import Path
 from cachable.models import BinaryStruct
-from cairosvg import svg2png
-from multiavatar.multiavatar import multiavatar
 from botyo.core.store import ImageCachable
 from PIL import Image
-from random import choice
 import logging
 from typing import Optional
 from botyo.image import Image
@@ -55,7 +51,7 @@ class StableDiffusionAvatar(ImageCachable):
     @property
     def cmd(self) -> str:
         return (
-            f"{self._name} crazy {self.gender.value} {self.race.value}"
+            f"portrait {self._name} crazy {self.race.value} {self.gender.value} "
             " as the character of avatar by artgrem, greg rutkowski, ross tran, kuvshinov"
             "--width=512 --height=512 --guidance_scale=12"
         )
