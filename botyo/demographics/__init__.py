@@ -57,6 +57,10 @@ class DemographicsMeta(type):
         cls._instance = cls()
 
     def gender(cls, name: str) -> Gender:
+        if cls.isFaggot(name=name):
+            return Gender.F
+        if cls.isMale(name):
+            return Gender.M
         result = cls().getGender(split_with_quotes(name)[0])
         return result
 
