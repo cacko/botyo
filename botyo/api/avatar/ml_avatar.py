@@ -1,7 +1,6 @@
 from pathlib import Path
 from cachable.models import BinaryStruct
 from botyo.core.store import ImageCachable
-from PIL import Image
 import logging
 from typing import Optional
 from botyo.image import Image
