@@ -10,6 +10,18 @@ from botyo.server.output import TextOutput
 from emoji import emojize
 from botyo.image.models import AnalyzeReponse
 from typing import Optional
+from argparse import ArgumentParser
+from dataclasses import dataclass, asdict, field
+from corestring import split_with_quotes
+
+
+@dataclass
+class ImageGeneratorParams:
+    prompt: str
+    height: int = field(default=512)
+    width: int = field(default=512)
+    guidance_scale: float = field(default=7.5)
+    seed: Optional[int] = None
 
 
 class Action(Enum):
@@ -32,6 +44,9 @@ class Action(Enum):
 
 
 class ImageMeta(type):
+
+    __image_generator_parser: Optional[ArgumentParser] = None
+
     def __call__(cls, attachment: Optional[Attachment] = None, *args, **kwds):
         return type.__call__(cls, attachment=attachment, *args, **kwds)
 
@@ -56,6 +71,30 @@ class ImageMeta(type):
         cls, attachment: Attachment, frequency: int = 800
     ) -> tuple[Attachment, dict]:
         return cls(attachment).do_polygon(frequency)
+
+    @property
+    def image_generator_parser(cls) -> ArgumentParser:
+        if not cls.__image_generator_parser:
+            parser = ArgumentParser(description='Image Processing')
+            parser.add_argument('prompt', nargs='+')
+            parser.add_argument(
+                '--height', choice=range(512, 1024), default=512)
+            parser.add_argument('--width', type=range(512, 1024), default=512)
+            parser.add_argument('--guidance_scale', type-float, default=7.5)
+            parser.add_argument('--seed', type=int)
+            cls.__image_generator_parser = parser
+        return cls.__image_generator_parser
+
+    def image_generator_params(cls, prompt: str) -> ImageGeneratorParams:
+        parser = cls.image_generator_parser
+        parsed = parser.parse_args(split_with_quotes(prompt))
+        return ImageGeneratorParams(
+            prompt=parsed.prompt,
+            height=parsed.height,
+            width=parsed.width,
+            guidance_scale=parsed.guidance_scale,
+            seed=parsed.seed
+        )
 
     def variation(
         cls,
@@ -163,7 +202,12 @@ class Image(object, metaclass=ImageMeta):
         return self.getResponse(Action.TXT2DISNEY, prompt)
 
     def do_txt2img(self, prompt: str):
-        return self.getResponse(Action.TXT2IMG, prompt)
+        params = __class__.image_generator_params(prompt)
+        return self.getResponse(
+            Action.TXT2IMG,
+            params.prompt,
+            json=asdict(params)
+        )
 
     def do_img2anything(self, prompt: Optional[str] = None):
         return self.getResponse(Action.IMG2ANYTHING, prompt)
@@ -180,27 +224,29 @@ class Image(object, metaclass=ImageMeta):
     def do_mutant(self, prompt: str):
         return self.getResponse(Action.MUTANT, prompt)
 
-    def __make_request(self, path: str):
+    def __make_request(self, path: str, json: Optional[dict] = None):
         attachment = self.__attachment
-        if not attachment:
-            return Request(
-                f"{Config.image.base_url}/{path}",
-                method=Method.POST,
-            )
-        assert isinstance(attachment, dict)
-        p = Path(attachment.get("path", ""))
-        kind = filetype.guess(p.as_posix())
-        mime = attachment.get("contentType")
-        fp = p.open("rb")
-        assert kind
+        params = {}
+        if attachment:
+            assert isinstance(attachment, dict)
+            p = Path(attachment.get("path", ""))
+            kind = filetype.guess(p.as_posix())
+            mime = attachment.get("contentType")
+            fp = p.open("rb")
+            assert kind
+            params['files'] = {"file": (f"{p.name}.{kind.extension}",
+                                        fp, mime, {"Expires": "0"})}
+
+        if json:
+            params['json'] = json
+
         return Request(
             f"{Config.image.base_url}/{path}",
             method=Method.POST,
-            files={"file": (f"{p.name}.{kind.extension}",
-                            fp, mime, {"Expires": "0"})},
+            **params
         )
 
-    def getResponse(self, action: Action, action_param=None):
+    def getResponse(self, action: Action, action_param=None, json: Optional[dict] = None):
         path = action.value
         if action_param:
             path = f"{path}/{action_param}"

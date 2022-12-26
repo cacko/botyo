@@ -7,7 +7,7 @@ from botyo.core import to_int
 from stringcase import titlecase
 
 bp = Blueprint("image")
-
+ 
 
 @bp.command(
     method=ZMethod.IMAGE_ANALYZE,
