@@ -34,7 +34,7 @@ class StableDiffusionAvatar(ImageCachable):
         try:
             attachment, _ = Image.txt2img(prompt=self.cmd)
             assert attachment
-            ap = Path(attachment)
+            ap = Path(attachment.path)
             ap.rename(self._path)
         except Exception:
             pass
