@@ -68,7 +68,7 @@ class ImageMeta(type):
     @property
     def image_generator_parser(cls) -> ArgumentParser:
         if not cls.__image_generator_parser:
-            parser = ArgumentParser(description='Image Processing')
+            parser = ArgumentParser(description='Image Processing', add_help=False)
             parser.add_argument('prompt', nargs='+')
             parser.add_argument('-h',
                                 '--height', type=int, default=512)
