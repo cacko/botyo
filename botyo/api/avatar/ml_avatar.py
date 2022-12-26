@@ -46,10 +46,7 @@ class StableDiffusionAvatar(ImageCachable):
     @property
     def gender(self) -> Gender:
         if not self.__gender:
-            if Demographics.isMale(self._name):
-                self.__gender = Gender.M
-            else:
-                self.__gender = Demographics.gender(self._name)
+            self.__gender = Demographics.gender(self._name)
         return self.__gender
 
     @property

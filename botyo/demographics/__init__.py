@@ -61,7 +61,7 @@ class DemographicsMeta(type):
             return Gender.F
         if cls.isMale(name):
             return Gender.M
-        result = cls().getGender(split_with_quotes(name)[0])
+        result = cls().getGender(name)
         return result
 
     def race(cls, name: str) -> Race:

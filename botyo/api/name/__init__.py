@@ -42,13 +42,7 @@ def gender_command(context: Context):
     if not name:
         return EmptyResult(method=ZMethod.NAME_GENDER)
 
-    gender = None
-    if Demographics.isFaggot(name):
-        gender = Gender.G
-    elif Demographics.isMale(name):
-        gender = Gender.M
-    else:
-        gender = Demographics.gender(name)
+    gender = Demographics.gender(name)
 
     if not gender:
         return EmptyResult(method=ZMethod.NAME_GENDER)
