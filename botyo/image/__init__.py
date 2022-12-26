@@ -33,14 +33,7 @@ class Action(Enum):
     POLYGON = "image/polygon"
     VARIATION = "image/variation"
     TXT2IMG = "image/txt2img"
-    TXT2IANYTHING = "image/txt2anything"
-    TXT2ARCANE = "image/txt2arcane"
-    TXT2DISNEY = "image/txt2disney"
-    MUTANT = "image/mutant"
     IMG2IMG = "image/img2img"
-    IMG2ANYTHING = "image/img2anything"
-    IMG2ARCANE = "image/img2arcane"
-    IMG2DISNEY = "image/img2disney"
 
 
 class ImageMeta(type):
@@ -106,45 +99,12 @@ class ImageMeta(type):
     def txt2img(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_txt2img(prompt)
 
-    def txt2anything(cls, prompt: str) -> tuple[Attachment, dict]:
-        return cls().do_txt2anything(prompt)
-
-    def txt2arcane(cls, prompt: str) -> tuple[Attachment, dict]:
-        return cls().do_txt2arcane(prompt)
-
-    def txt2disney(cls, prompt: str) -> tuple[Attachment, dict]:
-        return cls().do_txt2disney(prompt)
-
-    def mutant(cls, prompt: str) -> tuple[Attachment, dict]:
-        return cls().do_mutant(prompt)
-
     def img2img(
         cls,
         attachment: Attachment,
         prompt: Optional[str] = None
     ) -> tuple[Attachment, dict]:
         return cls(attachment).do_img2img(prompt)
-
-    def img2anything(
-        cls,
-        attachment: Attachment,
-        prompt: Optional[str] = None
-    ) -> tuple[Attachment, dict]:
-        return cls(attachment).do_img2anything(prompt)
-
-    def img2arcane(
-        cls,
-        attachment: Attachment,
-        prompt: Optional[str] = None
-    ) -> tuple[Attachment, dict]:
-        return cls(attachment).do_img2arcane(prompt)
-
-    def img2disney(
-        cls,
-        attachment: Attachment,
-        prompt: Optional[str] = None
-    ) -> tuple[Attachment, dict]:
-        return cls(attachment).do_img2disney(prompt)
 
 
 class Image(object, metaclass=ImageMeta):
@@ -209,20 +169,13 @@ class Image(object, metaclass=ImageMeta):
             json=asdict(params)
         )
 
-    def do_img2anything(self, prompt: Optional[str] = None):
-        return self.getResponse(Action.IMG2ANYTHING, prompt)
-
-    def do_img2arcane(self, prompt: Optional[str] = None):
-        return self.getResponse(Action.IMG2ARCANE, prompt)
-
-    def do_img2disney(self, prompt: Optional[str] = None):
-        return self.getResponse(Action.IMG2DISNEY, prompt)
-
     def do_img2img(self, prompt: Optional[str] = None):
-        return self.getResponse(Action.IMG2IMG, prompt)
-
-    def do_mutant(self, prompt: str):
-        return self.getResponse(Action.MUTANT, prompt)
+        params = __class__.image_generator_params(prompt)
+        return self.getResponse(
+            Action.IMG2IMG,
+            params.prompt,
+            json=asdict(params)
+        )
 
     def __make_request(self, path: str, json: Optional[dict] = None):
         attachment = self.__attachment

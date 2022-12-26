@@ -117,7 +117,6 @@ class ZMethod(Method, Enum):
     IMAGE_VARIATION = "image:var"
     IMAGE_TXT2IMG = "image:txt2img"
     IMAGE_IMG2IMG = "image:img2img"
-    IMAGE_MUTANT = "image:mutant"
     EVENT_COUNTDOWN = "event:countdown"
     EVENT_CALENDAR = "event:calendar"
     EVENT_SCHEDULE = "event:schedule"
