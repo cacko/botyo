@@ -33,7 +33,7 @@ class MusicConfig:
 @dataclass
 class DemographicsConfig:
     faggots: Optional[list[str]] = None
-
+    males: Optional[list[str]] = None
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass

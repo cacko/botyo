@@ -45,6 +45,8 @@ def gender_command(context: Context):
     gender = None
     if Demographics.isFaggot(name):
         gender = Gender.G
+    elif Demographics.isMale(name):
+        gender = Gender.M
     else:
         gender = Demographics.gender(name)
 

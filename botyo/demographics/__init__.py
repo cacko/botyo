@@ -64,6 +64,13 @@ class DemographicsMeta(type):
         result = cls().getRace(name)
         return result
 
+    def isMale(cls, name: str) -> bool:
+        matcher = NameMatch([
+            NameNeedle(name=male)
+            for male in Config.demographics.males
+        ])
+        return len(matcher.fuzzy(NameNeedle(name=name))) > 0
+
     def isFaggot(cls, name: str) -> bool:
         matcher = NameMatch([
             NameNeedle(name=fag)
