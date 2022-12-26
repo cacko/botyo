@@ -70,11 +70,12 @@ class ImageMeta(type):
         if not cls.__image_generator_parser:
             parser = ArgumentParser(description='Image Processing')
             parser.add_argument('prompt', nargs='+')
-            parser.add_argument(
-                '--height', type=int, default=512)
-            parser.add_argument('--width', type=int, default=512)
-            parser.add_argument('--guidance_scale', type=float, default=7.5)
-            parser.add_argument('--seed', type=int)
+            parser.add_argument('-h',
+                                '--height', type=int, default=512)
+            parser.add_argument('-w', '--width', type=int, default=512)
+            parser.add_argument('-g', '--guidance_scale',
+                                type=float, default=7)
+            parser.add_argument('-s', '--seed', type=int)
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
