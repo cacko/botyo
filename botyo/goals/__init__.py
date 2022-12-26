@@ -208,7 +208,9 @@ class Goals(object, metaclass=GoalsMeta):
                 )
             except Exception as e:
                 logging.error(f"TWITTER DOWNLOAD: {e}")
+            logging.debug(f"NEEDLE: {needle}")
             for dp in __class__.output_dir.glob(f"*[[]{needle.id}[]].mp4"):
+                logging.debug(f"NEEDLE FILE {dp}")
                 matched: list[Query] = matcher.fuzzy(needle.needle)
                 logging.debug(f"GOALS SEARCH MATCHED: {matched} from {needle}")
                 for q in matched:
