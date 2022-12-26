@@ -12,20 +12,19 @@ bp = Blueprint("avatar")
 # type: ignore
 @bp.command(method=ZMethod.AVATAR_AVATAR, desc="generates avatar for the input")
 def avatar_command(context: Context) -> RenderResult:
-    avatar = StableDiffusionAvatar(context.query)
-    path = avatar.path
-    res = (
-        RenderResult(
+    try:
+        avatar = StableDiffusionAvatar(context.query)
+        path = avatar.path
+        assert path.exists()
+        return RenderResult(
             method=ZMethod.AVATAR_AVATAR,
             attachment=Attachment(
                 path=path.as_posix(),
                 contentType=avatar.contentType
             ),
         )
-        if path
-        else EmptyResult()
-    )
-    return res
+    except AssertionError:
+        return EmptyResult()
 
 
 # type: ignore

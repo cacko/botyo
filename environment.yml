@@ -278,4 +278,4 @@ dependencies:
     - zope-interface==5.4.0
 variables:
   allow_conda_downgrades: 'true'
-prefix: /Users/jago/miniforge3/envs/global/envs/botyo
+prefix: /Volumes/Devo/miniforge3/envs/botyo

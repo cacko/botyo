@@ -52,7 +52,6 @@ class StableDiffusionAvatar(ImageCachable):
             " digital painting, artstation, concept art, smooth, sharp focus, illustration, "
             "art by wlop, mars ravelo and greg rutkowski "
             "--width=512 --height=768 --guidance_scale=13"
-
         )
 
     @property
