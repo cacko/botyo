@@ -227,6 +227,7 @@ class Image(object, metaclass=ImageMeta):
     def __make_request(self, path: str, json: Optional[dict] = None):
         attachment = self.__attachment
         params = {}
+
         if attachment:
             assert isinstance(attachment, dict)
             p = Path(attachment.get("path", ""))
@@ -246,11 +247,16 @@ class Image(object, metaclass=ImageMeta):
             **params
         )
 
-    def getResponse(self, action: Action, action_param=None, json: Optional[dict] = None):
+    def getResponse(
+        self,
+        action: Action,
+        action_param=None,
+        json: Optional[dict] = None
+    ):
         path = action.value
         if action_param:
             path = f"{path}/{action_param}"
-        req = self.__make_request(path=path)
+        req = self.__make_request(path=path, json=json)
         message = ""
         attachment = None
         is_multipart = req.is_multipart
