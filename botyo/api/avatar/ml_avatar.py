@@ -12,7 +12,7 @@ from botyo.image import Image
 from corestring import string_hash
 
 
-from botyo.demographics import Demographics, Gender
+from botyo.demographics import Demographics, Gender, Race
 
 
 class StableDiffusionAvatar(ImageCachable):
@@ -21,7 +21,8 @@ class StableDiffusionAvatar(ImageCachable):
     _name: str
     __id = None
     __gender: Optional[Gender] = None
-    SIZE = (512, 768)
+    __race: Optional[Race] = None
+    SIZE = (512, 512)
 
     def __init__(self, name: str):
         if not name:
@@ -46,12 +47,17 @@ class StableDiffusionAvatar(ImageCachable):
         return self.__gender
 
     @property
+    def race(self) -> Gender:
+        if not self.__race:
+            self.__race = Demographics.race(self._name)
+        return self.__race
+
+    @property
     def cmd(self) -> str:
         return (
-            f"portrait of {self._name}, {self.gender.value},highly detailed,"
-            " digital painting, artstation, concept art, smooth, sharp focus, illustration, "
-            "art by wlop, mars ravelo and greg rutkowski "
-            "--width=512 --height=768 --guidance_scale=13"
+            f"{self._name} crazy {self.gender.value} {self.race.value}"
+            " as the character of avatar by artgrem, greg rutkowski, ross tran, kuvshinov"
+            "--width=512 --height=512 --guidance_scale=12"
         )
 
     @property
