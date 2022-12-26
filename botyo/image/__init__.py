@@ -89,7 +89,7 @@ class ImageMeta(type):
         parser = cls.image_generator_parser
         parsed = parser.parse_args(split_with_quotes(prompt))
         return ImageGeneratorParams(
-            prompt=parsed.prompt,
+            prompt=" ".join(parsed.prompt),
             height=parsed.height,
             width=parsed.width,
             guidance_scale=parsed.guidance_scale,
