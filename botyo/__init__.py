@@ -1,6 +1,5 @@
 import os
 import logging
-import structlog
 from cachable.storage.redis import RedisStorage
 from cachable.storage.file import FileStorage
 from botyo.core.config import Config as app_config
@@ -10,70 +9,10 @@ from pathlib import Path
 from botyo.api.server import APIServer
 import signal
 import sys
-import colorama
+import corelog
 
-
-RESET_ALL = colorama.Style.RESET_ALL
-BRIGHT = colorama.Style.BRIGHT
-DIM = colorama.Style.DIM
-RED = colorama.Fore.RED
-BLUE = colorama.Fore.BLUE
-CYAN = colorama.Fore.CYAN
-MAGENTA = colorama.Fore.MAGENTA
-YELLOW = colorama.Fore.YELLOW
-GREEN = colorama.Fore.GREEN
-RED_BACK = colorama.Back.RED
-
-
-class _ColorfulStyles:
-    reset = RESET_ALL
-    bright = BRIGHT
-
-    level_critical = RED
-    level_exception = RED
-    level_error = RED
-    level_warn = YELLOW
-    level_info = GREEN
-    level_debug = GREEN
-    level_notset = RED_BACK
-
-    timestamp = DIM
-    logger_name = BLUE
-    kv_key = CYAN
-    kv_value = MAGENTA
-
-
-structlog.configure(
-    processors=[
-        # Prepare event dict for `ProcessorFormatter`.
-        structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
-    ],
-    logger_factory=structlog.stdlib.LoggerFactory(),
-)
-
-formatter = structlog.stdlib.ProcessorFormatter(
-    processors=[
-        structlog.stdlib.ProcessorFormatter.remove_processors_meta,
-        structlog.stdlib.add_log_level,
-        structlog.stdlib.PositionalArgumentsFormatter(),
-        structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
-        structlog.dev.ConsoleRenderer(
-            exception_formatter="better_traceback",
-            level_styles=_ColorfulStyles
-        )
-    ],
-)
-
-handler = logging.StreamHandler()
-# Use OUR `ProcessorFormatter` to format all `logging` entries.
-handler.setFormatter(formatter)
-root_logger = logging.getLogger()
-root_logger.addHandler(handler)
-root_logger.setLevel(
-    getattr(logging, os.environ.get("BOTYO_LOG_LEVEL", "INFO"))
-)
-
+corelog.register(getattr(logging, os.environ.get("BOTYO_LOG_LEVEL", "INFO"))
+                 )
 
 app = Server(Path(__file__).parent.parent)
 app.servers.append(APIServer())
