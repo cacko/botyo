@@ -219,7 +219,8 @@ def standings_Command(context: Context):
         table = standings.render(group)
         res = RenderResult(method=ZMethod.FOOTY_STANDINGS, message=table)
         return res
-    except Exception:
+    except Exception as e:
+        logging.exception(e)
         return EmptyResult()
 
 
