@@ -135,7 +135,7 @@ dependencies:
     - coloredlogs==15.0.1
     - commonmark==0.9.1
     - constantly==15.1.0
-    - corelog==0.0.5
+    - corelog==0.0.6
     - corestring==0.1.1
     - coretime==0.1.2
     - cssselect==1.1.0

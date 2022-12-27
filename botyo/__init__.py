@@ -11,7 +11,7 @@ import signal
 import sys
 import corelog
 
-corelog.register(getattr(logging, os.environ.get("BOTYO_LOG_LEVEL", "INFO")))
+corelog.register(os.environ.get("BOTYO_LOG_LEVEL", "INFO"))
 
 app = Server(Path(__file__).parent.parent)
 app.servers.append(APIServer())
