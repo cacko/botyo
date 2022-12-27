@@ -10,6 +10,38 @@ from pathlib import Path
 from botyo.api.server import APIServer
 import signal
 import sys
+import colorama
+
+
+RESET_ALL = colorama.Style.RESET_ALL
+BRIGHT = colorama.Style.BRIGHT
+DIM = colorama.Style.DIM
+RED = colorama.Fore.RED
+BLUE = colorama.Fore.BLUE
+CYAN = colorama.Fore.CYAN
+MAGENTA = colorama.Fore.MAGENTA
+YELLOW = colorama.Fore.YELLOW
+GREEN = colorama.Fore.GREEN
+RED_BACK = colorama.Back.RED
+
+
+class _ColorfulStyles:
+    reset = RESET_ALL
+    bright = BRIGHT
+
+    level_critical = RED
+    level_exception = RED
+    level_error = RED
+    level_warn = YELLOW
+    level_info = GREEN
+    level_debug = GREEN
+    level_notset = RED_BACK
+
+    timestamp = DIM
+    logger_name = BLUE
+    kv_key = CYAN
+    kv_value = MAGENTA
+
 
 structlog.configure(
     processors=[
@@ -20,7 +52,17 @@ structlog.configure(
 )
 
 formatter = structlog.stdlib.ProcessorFormatter(
-    processors=[structlog.dev.ConsoleRenderer()],
+    processors=[
+        structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.dev.ConsoleRenderer(
+            exception_formatter="better_traceback",
+            level_styles=_ColorfulStyles
+        )
+    ],
 )
 
 handler = logging.StreamHandler()
