@@ -65,6 +65,7 @@ class Server(object, metaclass=ServerMeta):
         self.scheduler = Scheduler(scheduler, redis_url)
 
     def start(self, host, port):
+        Scheduler.remove_all_jobs()
         Scheduler.start()
         for srv in self.servers:
             srv.start()
