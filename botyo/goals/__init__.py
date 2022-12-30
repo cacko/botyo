@@ -24,7 +24,7 @@ GOAL_CHECK_EXPIRATION = timedelta(minutes=20)
 
 class TeamsMatch(Match):
     minRatio = 80
-    method = MatchMethod.PARTIALSET
+    method = MatchMethod.WRATIO
     exact_fields = ["score"]
 
 
