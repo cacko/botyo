@@ -67,7 +67,7 @@ class Connection(StreamRequestHandler, metaclass=ConnectionMeta):
                     request = ZSONRequest.from_json(msg_json)  # type: ignore
                     if request.method == CoreMethods.LOGIN:
                         if request.client in __class__.connections:
-                            logging.info(
+                            logging.debug(
                                 f">> Closing old registration {request.client}"
                             )
                             assert request.client
@@ -76,7 +76,7 @@ class Connection(StreamRequestHandler, metaclass=ConnectionMeta):
                         assert request.client
                         self.__clientId = request.client
                         __class__.connections[self.__clientId] = self
-                        logging.info(
+                        logging.debug(
                             f">> Client registration {self.__clientId}")
                     elif request.attachment and any(
                         [request.attachment.path, request.attachment.filename
@@ -136,13 +136,13 @@ class Connection(StreamRequestHandler, metaclass=ConnectionMeta):
         with p.open("wb") as f:
             size = self.getHeader()
             size = size * 2
-            logging.info(f">> ATTACHMENT size={size}")
+            logging.debug(f">> ATTACHMENT size={size}")
             while size:
                 to_read = CHUNKSIZE if size > CHUNKSIZE else size
                 chunk = self.rfile.read(to_read)
                 size -= len(chunk)
                 f.write(unhexlify(chunk))
-            logging.info(f">> ATTACHMENT saved {p.name}")
+            logging.debug(f">> ATTACHMENT saved {p.name}")
         return p
 
     def _request(self, method: Method):

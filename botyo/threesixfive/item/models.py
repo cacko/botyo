@@ -878,7 +878,6 @@ class DetailsEventPixel:
         return self.order if self.order else 0
 
     def __post_init__(self) -> None:
-        logging.warning(f"{self.event_name}")
         self.id = md5(f"{self.event_name}".lower().encode()).hexdigest()
 
     @property

@@ -57,7 +57,7 @@ class Server(object, metaclass=ServerMeta):
     def register(self, cmd: CommandExec):
         if cmd not in self.commands:
             self.commands.append(cmd)
-            logging.info(f"registering command {cmd.method.value}")
+            logging.debug(f"registering command {cmd.method.value}")
             CommandExec.registered.append(cmd)
 
     def register_scheduler(self, redis_url):
@@ -73,7 +73,7 @@ class Server(object, metaclass=ServerMeta):
             port=int(port),
             queue=self.queue
         ) as self.tcpserver:
-            logging.info(f"Serving requests on {host}:{port}")
+            logging.debug(f"Serving requests on {host}:{port}")
             while not self.tcpserver.is_closing:
                 try:
                     command, context, t = self.queue.get_nowait()

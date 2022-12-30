@@ -169,7 +169,7 @@ class GoalsMeta(type):
         fp = cls.output_dir / \
             DownloadItem.get_filename(q.event_id, q.game_event_id)
         if fp.exists():
-            logging.info(f"GOAL found at {fp}")
+            logging.debug(f"GOAL found at {fp}")
             return fp
         logging.error(f"GOAL NOT found at {fp}")
         return None

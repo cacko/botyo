@@ -57,7 +57,7 @@ def create_app():
 
 
 def handler_stop_signals(signum, frame):
-    logging.warning("Stopping app")
+    logging.info("Stopping app")
     app.terminate()
     sys.exit(0)
 

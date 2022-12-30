@@ -43,7 +43,6 @@ def cli(ctx: Environment, path):
                                 "beats": beats_list,
                             },
                         )
-                        logging.info(f"{resp.status_code}")
                     except Exception as e:
                         logging.error(e)
                     pf.write(f"{f}\n".encode())

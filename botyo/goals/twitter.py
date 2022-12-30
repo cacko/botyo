@@ -37,7 +37,7 @@ class TwitterMeta(type):
         }
 
         for t in cls().get_user_timeline(**{**kwds, **args}):
-            logging.info(t.tweet)
+            logging.debug(t.tweet)
             try:
                 assert t.tweet.attachments
                 result.append(t)

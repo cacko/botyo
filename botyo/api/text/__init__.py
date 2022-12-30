@@ -15,7 +15,6 @@ def dialog_commang(context: Context):
     if not msg:
         return None
     json = getResponse("text/generate", Payload(message=msg, source=context.source))
-    logging.warning(f">>TEXT_GENERATE {json}")
     res = RenderResult(message=json.response, method=ZMethod.TEXT_GENERATE)
     return res
 

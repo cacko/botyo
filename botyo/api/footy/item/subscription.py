@@ -441,7 +441,7 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def fulltimeAnnoucement(self):
-        logging.info(f"FOOT SUB: Full Time {self.event_name}")
+        logging.debug(f"FOOT SUB: Full Time {self.event_name}")
         logging.debug(f"subscription {self.event_name} in done")
         details = ParserDetails.get(str(self._event.details))
         icon = emojize(":chequered_flag:")

@@ -39,8 +39,8 @@ class Goals(object, metaclass=GoalsMeta):
     
     def do_monitor(self, query: GoalQuery):
         self.queue[query.id] = query
-        logging.info(f"GOALS: added {query} to query")
-        logging.info(f"GOALS: {self.queue}")
+        logging.debug(f"GOALS: added {query} to query")
+        logging.debug(f"GOALS: {self.queue}")
         
     def clean(self):
         try:
@@ -57,7 +57,7 @@ class Goals(object, metaclass=GoalsMeta):
             try:
                 vi.rename(GoalsGenerator.output_dir)
                 del self.queue[vi.id]
-                logging.info(vi)
+                logging.debug(vi)
             except KeyError:
                 pass
 

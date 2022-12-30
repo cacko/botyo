@@ -13,10 +13,10 @@ def cli(ctx: Environment):
         from botyo.music.beats.models.beats import Beats
         for beat in Beats.select():
             pid = string_hash(beat.path)
-            logging.info(f"{beat.path} {beat.path_id} {pid}")
+            logging.debug(f"{beat.path} {beat.path_id} {pid}")
             if pid != beat.path_id:
-                logging.info(f"pid differs {beat.path}")
+                logging.debug(f"pid differs {beat.path}")
                 beat.path_id = pid
                 beat.save()
     except Exception as e:
-        print(e)
+        logging.exception(e)

@@ -129,5 +129,5 @@ class Beats(Cachable):
         if not self.load():
             self._load()
         else:
-            logging.warning(f"Loading beats for {self.__path} from cache")
+            logging.debug(f"Loading beats for {self.__path} from cache")
         return self._struct.beats
