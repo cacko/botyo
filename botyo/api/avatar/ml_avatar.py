@@ -58,9 +58,10 @@ class StableDiffusionAvatar(ImageCachable):
     @property
     def cmd(self) -> str:
         return (
-            f"{self._name} crazy {self.race.value} {self.gender.value} "
-            " as the character by artgrem, profile shot, centered, greg rutkowski, ross tran, kuvshinov "
-            "--width=512 --height=512 --guidance_scale=12"
+            f"cute little anthropomorphic {self._name} cute and adorable, "
+            "pretty, beautiful, dnd character art portrait, matte fantasy painting, "
+            "deviantart artstation, by jason felix by steve argyle by tyler jacobson by peter mohrbacher, cinema "
+            "--width=512 --height=704 --guidance_scale=11"
         )
 
     @property

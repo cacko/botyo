@@ -4,7 +4,7 @@ import click
 from botyo.commands import coro
 from botyo.music.beats import Beats
 from pathlib import Path
-from prokopiy import Progress
+from progressor import Progress
 from requests import post
 from botyo.core.otp import OTP
 import filetype
@@ -36,7 +36,8 @@ def cli(ctx: Environment, path):
                     try:
                         resp = post(
                             "http://192.168.0.107:7988/beats",
-                            headers=OTP("YKXJZI2KGBLF4FPNRDLWETQ4VVNCWTXT").headers,
+                            headers=OTP(
+                                "YKXJZI2KGBLF4FPNRDLWETQ4VVNCWTXT").headers,
                             json={
                                 "path": beats.path.as_posix(),
                                 "tempo": tempo,
