@@ -11,6 +11,5 @@ from apscheduler.schedulers.background import BackgroundScheduler
 def cli(ctx: Environment):
     worker = BackgroundScheduler()
     scheduler = Scheduler(worker, ctx.redis_url)
-    print(scheduler)
-    scheduler.start()
-    print(scheduler.get_jobs())
+    Scheduler.start()
+    print(Scheduler.get_jobs())
