@@ -232,7 +232,7 @@ class Goals(object, metaclass=GoalsMeta):
             logging.error(f"FETCH ERROR {e}")
         for needle in list(self.video_data.values()):
             logging.debug(f">>> NEEDLE: {needle}")
-            for dp in __class__.output_dir.glob(f"*[[]{needle.id}[]].mp4*"):
+            for dp in __class__.output_dir.glob(f"*[[]{needle.id}[]].mp4"):
                 logging.debug(f"NEEDLE FILE {dp}")
                 matched: list[Query] = matcher.fuzzy(needle.needle)
                 logging.debug(f"GOALS SEARCH MATCHED: {matched} from {needle}")
