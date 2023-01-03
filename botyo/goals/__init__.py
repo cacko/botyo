@@ -171,7 +171,6 @@ class GoalsMeta(type):
         if fp.exists():
             logging.debug(f"GOAL found at {fp}")
             return fp
-        logging.error(f"GOAL NOT found at {fp}")
         return None
 
     def save_data(cls, data: GoalEvent) -> bool:

@@ -341,7 +341,6 @@ class Subscription(metaclass=SubscriptionMeta):
         Goals.poll()
         for qid in list(self.goals_queue.keys()):
             gq = self.goals_queue[qid]
-            logging.debug(f"CHECK GOALS: {gq}")
             if goal_video := Goals.video(gq):
                 self.sendGoal(gq.title, goal_video)
                 del self.goals_queue[qid]
