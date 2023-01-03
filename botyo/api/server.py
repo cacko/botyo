@@ -139,11 +139,14 @@ class _APIServer(Server):
         return [g.to_dict() for g in events]  # type: ignore
 
     def nowplaying(self):
-        data = request.json
-        logging.debug(type(data))
-        assert isinstance(data, dict)
-        _ = Track(**data)
-        Track.persist()
+        try:
+            data = request.json
+            logging.debug(type(data))
+            assert isinstance(data, dict)
+            _ = Track(**data)
+            Track.persist()
+        except AssertionError as e:
+            logging.error(e)
         return {}
 
     def stop(self):
