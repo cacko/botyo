@@ -207,7 +207,7 @@ class Goals(object, metaclass=GoalsMeta):
                     f"GOALS: matched teams {team1} {team2} {score1} {score2}")
                 try:
                     twitter_download(
-                        url=t.url, output_dir=__class__.output_dir.as_posix()
+                        url=t.url, output_dir=__class__.output_dir.as_posix(), merge=True
                     )
                 except Exception as e:
                     logging.error(f"TWITTER DOWNLOAD: {e}")
