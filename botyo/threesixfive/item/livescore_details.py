@@ -167,6 +167,8 @@ class ParserDetails(TimeCachable):
                     event_name=f"{self.home.name}/{self.away.name}",
                     order=ev.order,
                     status=self.game_status,
+                    home_team_id=self.home.id,
+                    away_team_id=self.away.id
                 )
             )
         return sorted(res, reverse=True, key=lambda x: x.order_id)

@@ -862,6 +862,8 @@ class DetailsEventPixel:
     time: int
     action: str
     is_old_event: bool
+    home_team_id: int 
+    away_team_id: int
     status: Optional[str] = None
     order: Optional[int] = 0
     team: Optional[str] = None
@@ -872,6 +874,7 @@ class DetailsEventPixel:
     event_name: Optional[str] = None
     id: Optional[str] = None
     league_id: Optional[int] = None
+
 
     @property
     def order_id(self) -> int:
@@ -914,6 +917,8 @@ class DetailsEventPixel:
             order=sys.maxsize,
             status=details.game_status,
             league_id=league_id,
+            home_team_id=details.home.id,
+            away_team_id=details.away.id
         )
 
     @classmethod
@@ -932,10 +937,19 @@ class DetailsEventPixel:
             order=sys.maxsize,
             status=details.game_status,
             league_id=league_id,
+            home_team_id=details.home.id,
+            away_team_id=details.away.id
         )
 
     @classmethod
-    def startTimeEvent(cls, event_name: str, event_id: int, league_id):
+    def startTimeEvent(
+        cls, 
+        event_name: str, 
+        event_id: int, 
+        league_id,
+        home_id: int,
+        away_id: int
+        ):
         return cls(
             time=0,
             action="Game Start",
@@ -944,6 +958,8 @@ class DetailsEventPixel:
             event_name=event_name,
             event_id=event_id,
             league_id=league_id,
+            home_team_id=home_id,
+            away_team_id=away_id
         )
 
 

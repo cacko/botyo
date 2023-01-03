@@ -480,7 +480,11 @@ class Subscription(metaclass=SubscriptionMeta):
     def startAnnouncementPixel(self) -> list[DetailsEventPixel]:
         return [
             DetailsEventPixel.startTimeEvent(
-                self.event_name, self._event.idEvent, self._event.idLeague
+                event_name=self.event_name,
+                event_id=self._event.idEvent,
+                league_id=self._event.idLeague,
+                home_id=self._event.idHomeTeam,
+                away_id=self._event.idAwayTeam
             )
         ]
 
@@ -645,6 +649,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     order=sys.maxsize,
                     status=details.game_status,
                     league_id=self._event.idLeague,
+                    home_team_id=details.home.id,
+                    away_team_id=details.away.id
                 )
             ]
         except AssertionError:
