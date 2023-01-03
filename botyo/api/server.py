@@ -140,6 +140,7 @@ class _APIServer(Server):
 
     def nowplaying(self):
         data = request.json
+        logging.debug(data)
         assert isinstance(data, dict)
         _ = Track(**data)
         Track.persist()
