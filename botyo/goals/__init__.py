@@ -15,7 +15,7 @@ from botyo.core.store import QueueDict
 GOAL_MATCH = re.compile(
     r"^([\w ]+)[^\w]*(\d+)-(\d+)[^\w]*([\w ]+)", re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
-GOAL_CHECK_EXPIRATION = timedelta(minutes=20)
+GOAL_CHECK_EXPIRATION = timedelta(minutes=10)
 
 # (base) muzak at /store/cache/znayko/goals ❯ ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4
 # width=1280
@@ -203,8 +203,6 @@ class Goals(object, metaclass=GoalsMeta):
             if matched_teams := GOAL_MATCH.search(t_text):
                 team1, score1, score2, team2 = map(
                     str.strip, matched_teams.groups())
-                logging.debug(
-                    f"GOALS: matched teams {team1} {team2} {score1} {score2}")
                 try:
                     twitter_download(
                         url=t.url, output_dir=__class__.output_dir.as_posix(), merge=True
@@ -223,19 +221,14 @@ class Goals(object, metaclass=GoalsMeta):
     def do_search(
         self, query: list[Query], **kwds
     ) -> Generator[DownloadItem, None, None]:
-        logging.debug(f"DO SEARCH: {query}")
         matcher = TeamsMatch(haystack=query)
-        logging.debug(f"MATCHER HAYSTACK={query}")
         try:
             self.__fetch(**kwds)
         except Exception as e:
             logging.error(f"FETCH ERROR {e}")
         for needle in list(self.video_data.values()):
-            logging.debug(f">>> NEEDLE: {needle}")
             for dp in __class__.output_dir.glob(f"*[[]{needle.id}[]].mp4"):
-                logging.debug(f"NEEDLE FILE {dp}")
                 matched: list[Query] = matcher.fuzzy(needle.needle)
-                logging.debug(f"GOALS SEARCH MATCHED: {matched} from {needle}")
                 for q in matched:
                     yield DownloadItem(
                         text=needle.text,
