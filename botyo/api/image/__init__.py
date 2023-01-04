@@ -5,6 +5,7 @@ from botyo.server.models import RenderResult, EmptyResult
 from botyo.server.models import ZMethod
 from botyo.core import to_int
 from stringcase import titlecase
+import logging
 
 bp = Blueprint("image")
 
@@ -107,7 +108,8 @@ def image_pixel(context: Context):
             attachment=attachment,
             method=ZMethod.IMAGE_PIXEL,
         )
-    except AssertionError:
+    except AssertionError as e:
+        logging.exception(e)
         return EmptyResult(method=ZMethod.IMAGE_PIXEL)
 
 
@@ -145,8 +147,7 @@ def image_variation(context: Context):
     try:
         attachment = context.attachment
         assert attachment
-        scale = to_int(context.query) if context.query else None
-        attachment, _ = Image.variation(attachment, scale)
+        attachment, _ = Image.variation(attachment, context.query)
         assert attachment
         return RenderResult(
             attachment=attachment,

@@ -23,6 +23,12 @@ class ImageGeneratorParams(BaseModel):
     seed: Optional[int] = None
 
 
+class VariationGeneratorParams(BaseModel):
+    guidance_scale: float = Field(default=7.5)
+    num_inference_steps: int = Field(default=50)
+    num_images_per_prompt: int = Field(default=1)
+
+
 class Action(Enum):
     ANALYZE = "face/analyze"
     TAG = "face/tag"
@@ -38,6 +44,7 @@ class Action(Enum):
 class ImageMeta(type):
 
     __image_generator_parser: Optional[ArgumentParser] = None
+    __variation_generator_parser: Optional[ArgumentParser] = None
 
     def __call__(cls, attachment: Optional[Attachment] = None, *args, **kwds):
         return type.__call__(cls, attachment=attachment, *args, **kwds)
@@ -65,9 +72,33 @@ class ImageMeta(type):
         return cls(attachment).do_polygon(frequency)
 
     @property
+    def variation_generator_parser(cls) -> ArgumentParser:
+        if not cls.__variation_generator_parser:
+            parser = ArgumentParser(
+                description="Variation Generator", add_help=False)
+            parser.add_argument(
+                '-n', '--num_images_per_prompt', type=int, default=1)
+            parser.add_argument('-g', '--guidance_scale',
+                                type=float, default=3)
+            parser.add_argument(
+                '-s', '--num_inference_steps', type=int, default=50)
+            cls.__variation_generator_parser = parser
+        return cls.__variation_generator_parser
+
+    def variation_generator_params(cls, prompt: str) -> VariationGeneratorParams:
+        parser = cls.variation_generator_parser
+        parsed = parser.parse_args(split_with_quotes(prompt))
+        return VariationGeneratorParams(
+            guidance_scale=parsed.guidance_scale,
+            num_images_per_prompt=parsed.num_images_per_prompt,
+            num_inference_steps=parsed.num_inference_steps
+        )
+
+    @property
     def image_generator_parser(cls) -> ArgumentParser:
         if not cls.__image_generator_parser:
-            parser = ArgumentParser(description='Image Processing', add_help=False)
+            parser = ArgumentParser(
+                description='Image Processing', add_help=False)
             parser.add_argument('prompt', nargs='+')
             parser.add_argument('-h',
                                 '--height', type=int, default=512)
@@ -92,9 +123,9 @@ class ImageMeta(type):
     def variation(
         cls,
         attachment: Attachment,
-        images: Optional[int] = None
+        prompt: Optional[str] = None
     ) -> tuple[Attachment, dict]:
-        return cls(attachment).do_variation(images)
+        return cls(attachment).do_variation(prompt)
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_txt2img(prompt)
@@ -149,17 +180,13 @@ class Image(object, metaclass=ImageMeta):
     def do_polygon(self, frequency):
         return self.getResponse(Action.POLYGON, frequency)
 
-    def do_variation(self, images: Optional[int] = None):
-        return self.getResponse(Action.VARIATION, images)
-
-    def do_txt2anything(self, prompt: str):
-        return self.getResponse(Action.TXT2IANYTHING, prompt)
-
-    def do_txt2arcane(self, prompt: str):
-        return self.getResponse(Action.TXT2ARCANE, prompt)
-
-    def do_txt2disney(self, prompt: str):
-        return self.getResponse(Action.TXT2DISNEY, prompt)
+    def do_variation(self, prompt: Optional[str] = None):
+        params = __class__.variation_generator_params(prompt)
+        return self.getResponse(
+            Action.VARIATION,
+            uuid4().hex,
+            json=params.dict()
+        )
 
     def do_txt2img(self, prompt: str):
         params = __class__.image_generator_params(prompt)
