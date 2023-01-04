@@ -102,8 +102,8 @@ def image_pixel(context: Context):
             query = int(query)
         except (ValueError, AssertionError):
             query = 8
-        attachment, message = Image.pixel(attachment, query)
-        assert attachment and message
+        attachment, _ = Image.pixel(attachment, query)
+        assert attachment
         return RenderResult(
             attachment=attachment,
             method=ZMethod.IMAGE_PIXEL,
