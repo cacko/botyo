@@ -193,7 +193,7 @@ class Image(object, metaclass=ImageMeta):
                                         fp, mime, {"Expires": "0"})}
 
         if json:
-            params['json'] = json
+            params['data'] = json
 
         return Request(
             f"{Config.image.base_url}/{path}",
