@@ -11,16 +11,15 @@ from emoji import emojize
 from botyo.image.models import AnalyzeReponse
 from typing import Optional
 from argparse import ArgumentParser
-from dataclasses import dataclass, asdict, field
+from pydantic import BaseModel, Field
 from corestring import split_with_quotes
 
 
-@dataclass
-class ImageGeneratorParams:
+class ImageGeneratorParams(BaseModel):
     prompt: str
-    height: int = field(default=512)
-    width: int = field(default=512)
-    guidance_scale: float = field(default=7.5)
+    height: int = Field(default=512)
+    width: int = Field(default=512)
+    guidance_scale: float = Field(default=7.5)
     seed: Optional[int] = None
 
 
@@ -167,7 +166,7 @@ class Image(object, metaclass=ImageMeta):
         return self.getResponse(
             Action.TXT2IMG,
             params.prompt,
-            json=asdict(params)
+            json=params.dict()
         )
 
     def do_img2img(self, prompt: Optional[str] = None):
@@ -175,7 +174,7 @@ class Image(object, metaclass=ImageMeta):
         return self.getResponse(
             Action.IMG2IMG,
             params.prompt,
-            json=asdict(params)
+            json=params.dict()
         )
 
     def __make_request(self, path: str, json: Optional[dict] = None):
