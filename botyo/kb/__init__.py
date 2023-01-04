@@ -99,10 +99,14 @@ class KnowledgeBase(RedisCachable):
         return self.__id
 
     @property
-    def summary(self) -> str:
-        if not self.load():
-            self.generate()
-        return self._struct.summary
+    def summary(self) -> Optional[str]:
+        try:
+            if not self.load():
+                self.generate()
+            assert self._struct
+            return self._struct.summary
+        except AssertionError:
+            return None
 
     @property
     def content(self) -> str:

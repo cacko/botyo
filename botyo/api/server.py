@@ -141,7 +141,6 @@ class _APIServer(Server):
     def nowplaying(self):
         try:
             data = request.json
-            logging.debug(type(data))
             assert isinstance(data, dict)
             _ = Track(**data)
             Track.persist()
