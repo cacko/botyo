@@ -47,7 +47,8 @@ class Response(BaseModel):
                     contentType=attachment.contentType,
                     data=b64encode(a_path.read_bytes()).decode()
                 ).dict()
-        except AssertionError:
+        except AssertionError as e:
+            logging.error(e)
             return None
 
 
