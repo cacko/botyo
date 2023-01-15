@@ -29,12 +29,12 @@ class CommandExecMeta(type):
                 filter(
                     lambda x: any(
                         [
-                            x.method.split(":")[-1] == trigger,
+                            x.method.value.split(":")[-1] == trigger,
                             len(trigger) > 2
                             and (
-                                x.method
+                                x.method.value
                                 if ":" in trigger
-                                else x.method.split(":")[-1]
+                                else x.method.value.split(":")[-1]
                             ).startswith(trigger),
                         ]
                     ),
