@@ -196,12 +196,14 @@ class Context:
         return Connection.client(self.client)
 
     def send(self, result: RenderResult):
-        response = ZSONResponse(message=result.message,
-                                attachment=result.attachment,
-                                client=self.client,
-                                group=self.group,
-                                method=result.method,
-                                plain=result.plain)
+        response = ZSONResponse(
+            message=result.message,
+            attachment=result.attachment,
+            client=self.client,
+            group=self.group,
+            method=result.method,
+            plain=result.plain
+        )
         self.connection.send(response=response)
 
 

@@ -79,9 +79,9 @@ class CommandExec(metaclass=CommandExecMeta):
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class CommandMatch(Match):
-    minRatio = 60
+    minRatio = 85
     extensionMatching = False
-    method = MatchMethod.TOKENSET
+    method = MatchMethod.PARTIALSET
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

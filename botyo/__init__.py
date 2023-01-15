@@ -5,8 +5,8 @@ from cachable.storage.file import FileStorage
 from botyo.core.config import Config as app_config
 from botyo.api.footy import Footy
 from botyo.server.server import Server
+from botyo.server.rest.server import APIServer
 from pathlib import Path
-from botyo.api.server import APIServer
 import signal
 import sys
 import corelog

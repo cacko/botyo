@@ -5,7 +5,7 @@ from botyo.api.footy import Footy
 from botyo.server.server import Server
 import os
 from pathlib import Path
-from botyo.api.server import APIServer
+from botyo.server.rest.server import APIServer
 import logging
 import signal
 import sys
