@@ -37,7 +37,9 @@ class ConnectionManager:
         self.active_connections.remove(websocket)
 
     async def process_command(self, msg: Message, client_id: str) -> RenderResult:
+        logging.debug(f"process command {msg}")
         command, query = CommandExec.parse(msg.message)
+        logging.debug(command)
         context = Context(
             client=client_id,
             query=query,
