@@ -37,10 +37,10 @@ class Response(BaseModel):
     plain: Optional[bool] = None
 
     @validator('attachment')
-    def static_attachment(cls, attachment: Optional[Attachment]):
+    def static_attachment(cls, attachment: Optional[WSAttachment]):
         try:
             assert attachment
-            a_path = Path(attachment.path)
+            a_path = Path(attachment.data)
             assert a_path.exists()
             with a_path:
                 return WSAttachment(
@@ -94,13 +94,19 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 logging.debug(f"receive {data}")
                 message = Message(**data)
                 response = await manager.process_command(message, client_id)
+                attachment = None
+                if response.attachment:
+                    attachment = WSAttachment(
+                        contentType=response.attachment.contentType,
+                        data=response.attachment.path
+                    )
                 await websocket.send_json(Response(
                     ztype=ZSONType.RESPONSE.value,
                     id=message.id,
                     message=response.message,
                     method=response.method.value,
                     plain=response.plain,
-                    attachment=response.attachment
+                    attachment=attachment
                 ).dict())
             except Exception as e:
                 logging.debug(e)
