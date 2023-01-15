@@ -4,7 +4,7 @@ from fastapi import (
 import logging
 from pydantic import BaseModel, Extra
 from enum import Enum
-from botyo.server.command import CommandDef, CommandExec
+from botyo.server.command import CommandExec
 from botyo.server.socket.connection import Context
 from botyo.core import perftime
 from botyo.server.models import RenderResult, ZSONType, ZMethod
@@ -45,7 +45,7 @@ class ConnectionManager:
             query=query,
             group=client_id
         )
-        assert isinstance(command, CommandDef)
+        assert isinstance(command, CommandExec)
         with perftime(f"Command {command.method.value}"):
             response = command.handler(context)
             return response
