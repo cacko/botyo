@@ -60,6 +60,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         while True:
             try:
                 data = await websocket.receive_text()
+                logging.debug(f"receive {data}")
                 assert isinstance(data, Message)
                 response = await manager.process_command(data, client_id)
                 await websocket.send_json(Response(
