@@ -7,7 +7,7 @@ from enum import Enum
 from botyo.server.command import CommandExec
 from botyo.server.socket.connection import Context
 from botyo.core import perftime
-from botyo.server.models import RenderResult, ZSONType
+from botyo.server.models import RenderResult, ZSONType, EmptyResult
 from typing import Optional
 
 
@@ -73,7 +73,16 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     method=response.method.value,
                     plain=response.plain
                 ).dict())
-            except AssertionError:
-                raise HTTPException(400)
+            except AssertionError as e:
+                logging.debug(e)
+                response = EmptyResult(
+                    method=response.method.value,
+                )
+                await websocket.send_json(Response(
+                    ztype=ZSONType.RESPONSE.value,
+                    message=response.message,
+                    method=response.method.value,
+                    plain=response.plain
+                ).dict())
     except WebSocketDisconnect:
         manager.disconnect(websocket)
