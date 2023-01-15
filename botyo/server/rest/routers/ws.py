@@ -6,9 +6,9 @@ from pydantic import BaseModel
 from enum import Enum
 
 
-# class Message(BaseModel):
-#     command: WSCommand
-#     content: str
+class Message(BaseModel):
+    command: WSCommand
+    content: str
 
 
 router = APIRouter()
@@ -27,6 +27,10 @@ class ConnectionManager:
 
     async def process_command(self, msg):
         logging.debug(msg)
+        return Message(
+            command="echo",
+            content=msg
+        )
         # try:
         #     match msg.commmand:
         #         # case WSCommand.LOOKUP:
@@ -65,8 +69,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             try:
                 data = await websocket.receive_text()
                 # assert isinstance(data, Message)
-                respponse = await manager.process_command(data)
-                websocket.send_json(respponse)
+                response = await manager.process_command(data)
+                await websocket.send_json(response.dict())
             except AssertionError:
                 raise HTTPException(400)
     except WebSocketDisconnect:
