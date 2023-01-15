@@ -61,8 +61,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             try:
                 data = await websocket.receive_text()
                 logging.debug(f"receive {data}")
-                assert isinstance(data, Message)
-                response = await manager.process_command(data, client_id)
+                message = Message(**data)
+                response = await manager.process_command(message, client_id)
                 await websocket.send_json(Response(
                     ztype=ZSONType.RESPONSE,
                     message=response.method,
