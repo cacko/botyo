@@ -7,7 +7,7 @@ from enum import Enum
 
 
 class Message(BaseModel):
-    command: WSCommand
+    command: str
     content: str
 
 
