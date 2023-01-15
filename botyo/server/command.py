@@ -18,6 +18,33 @@ from itertools import groupby
 class CommandExecMeta(type):
     registered = []
 
+    def parse(
+        cls, message: str, **kwds
+    ) -> tuple[Optional["CommandDef"], Optional[str]]:
+        message = message.lower()
+        trigger, args = [*message.split(" ", 1), ""][:2]
+        triggers = filter(lambda x: not x.matcher, cls.registered)
+        return (
+            next(
+                filter(
+                    lambda x: any(
+                        [
+                            x.method.split(":")[-1] == trigger,
+                            len(trigger) > 2
+                            and (
+                                x.method
+                                if ":" in trigger
+                                else x.method.split(":")[-1]
+                            ).startswith(trigger),
+                        ]
+                    ),
+                    triggers,
+                ),
+                None,
+            ),
+            args,
+        )
+
     @property
     def definitions(cls) -> list[CommandDef]:
         definitions = []

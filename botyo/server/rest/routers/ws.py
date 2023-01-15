@@ -2,14 +2,25 @@ from fastapi import (
     APIRouter, WebSocket, WebSocketDisconnect, HTTPException
 )
 import logging
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 from enum import Enum
+from botyo.server.command import CommandDef, CommandExec
+from botyo.server.socket.connection import Context
+from botyo.core import perftime
+from botyo.server.models import RenderResult, ZSONType, ZMethod
+from typing import Optional
 
+class Message(BaseModel, extra=Extra.ignore):
+    ztype: ZSONType
+    message: str
 
-class Message(BaseModel):
-    command: str
-    content: str
-
+class Response(BaseModel):
+    ztype: ZSONType
+    method: ZMethod
+    message: Optional[str] = None
+    error: Optional[str] = None
+    attachment: Optional[str] = None
+    plain: Optional[bool] = None
 
 router = APIRouter()
 
@@ -25,38 +36,17 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
-    async def process_command(self, msg):
-        logging.debug(msg)
-        return Message(
-            command="echo",
-            content=msg
+    async def process_command(self, msg: Message, client_id: str) -> RenderResult:
+        command, query = CommandExec.parse(msg.message)
+        context = Context(
+            client=client_id,
+            query=query,
+            group=client_id
         )
-        # try:
-        #     match msg.commmand:
-        #         # case WSCommand.LOOKUP:
-        #         #     ip = msg.content
-        #         #     assert validators.ip_address.ipv4(ip)
-        #         #     return MaxMind.lookup(ip).dict()
-        #         # case WSCommand.BACKGROUND:
-        #         #     geo_info = MaxMind.lookup(ip=ip)
-        #         #     image = LookupImage(geo=geo_info)
-        #         #     image_path = image.path
-        #         #     assert image_path
-        #         #     assert image_path.exists()
-        #         #     return {
-        #         #         "name": image_path.name,
-        #         #         "url": f"{app_config.web.backgrounds_path}/{image_path.name}",
-        #         #     }
-        #         case WSCommand.PING:
-        #             pass
-        #         case _:
-        #             pass
-        # except AssertionError:
-        #     raise HTTPException(400)
-
-    # async def send_personal_message(self, message: str, websocket: WebSocket):
-    #     await websocket.send_json(Message(source="ws", content=f"{message}").dict())
-
+        assert isinstance(command, CommandDef)
+        with perftime(f"Command {command.method.value}"):
+            response = command.handler(context)
+            return response
 
 manager = ConnectionManager()
 
@@ -68,9 +58,14 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         while True:
             try:
                 data = await websocket.receive_text()
-                # assert isinstance(data, Message)
-                response = await manager.process_command(data)
-                await websocket.send_json(response.dict())
+                assert isinstance(data, Message)
+                response = await manager.process_command(data, client_id)
+                await websocket.send_json(Response(
+                    ztype=ZSONType.RESPONSE,
+                    message=response.method,
+                    method=response.message,
+                    plain=response.plain
+                ).dict())
             except AssertionError:
                 raise HTTPException(400)
     except WebSocketDisconnect:
