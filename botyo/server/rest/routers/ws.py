@@ -13,11 +13,13 @@ from typing import Optional
 
 class Message(BaseModel, extra=Extra.ignore):
     ztype: ZSONType
+    id: str
     message: str
 
 
 class Response(BaseModel):
     ztype: str
+    id: str
     method: Optional[str] = None
     message: Optional[str] = None
     error: Optional[str] = None
@@ -69,6 +71,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 response = await manager.process_command(message, client_id)
                 await websocket.send_json(Response(
                     ztype=ZSONType.RESPONSE.value,
+                    id=message.id,
                     message=response.message,
                     method=response.method.value,
                     plain=response.plain
@@ -78,7 +81,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 response = EmptyResult()
                 await websocket.send_json(Response(
                     ztype=ZSONType.RESPONSE.value,
-                    message=response.message,
+                    id="error",
+                    error=response.message,
                     plain=response.plain
                 ).dict())
     except WebSocketDisconnect:
