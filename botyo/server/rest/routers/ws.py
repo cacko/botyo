@@ -76,7 +76,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     method=response.method.value,
                     plain=response.plain
                 ).dict())
-            except AssertionError as e:
+            except Exception as e:
                 logging.debug(e)
                 response = EmptyResult()
                 await websocket.send_json(Response(
