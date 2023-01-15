@@ -3,23 +3,24 @@ from fastapi import (
 )
 import logging
 from pydantic import BaseModel, Extra, validator
-from enum import Enum
 from botyo.server.command import CommandExec
 from botyo.server.socket.connection import Context
 from botyo.core import perftime
 from botyo.server.models import (
-    RenderResult, 
-    ZSONType, 
+    RenderResult,
+    ZSONType,
     EmptyResult,
-    Attachment
 )
 from typing import Optional
 from base64 import b64encode
 from pathlib import Path
+from PIL import Image
+
 
 class WSAttachment(BaseModel):
     contentType: str
     data: str
+
 
 class Message(BaseModel, extra=Extra.ignore):
     ztype: ZSONType
@@ -43,9 +44,15 @@ class Response(BaseModel):
             a_path = Path(attachment.data)
             assert a_path.exists()
             with a_path:
+                contentType = attachment.contentType
+                data = a_path.read_bytes()
+                if contentType.startswith("image/"):
+                    img = Image.open(a_path.as_posix())
+                    data = img.tobytes(encoder_name="webp")
+                    contentType = "image/webp"
                 return WSAttachment(
-                    contentType=attachment.contentType,
-                    data=b64encode(a_path.read_bytes()).decode()
+                    contentType=contentType,
+                    data=b64encode(data).decode()
                 ).dict()
         except AssertionError as e:
             logging.error(e)
