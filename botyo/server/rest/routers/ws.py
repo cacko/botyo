@@ -65,8 +65,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 response = await manager.process_command(message, client_id)
                 await websocket.send_json(Response(
                     ztype=ZSONType.RESPONSE,
-                    message=response.method,
-                    method=response.message,
+                    message=response.message,
+                    method=response.method,
                     plain=response.plain
                 ).dict())
             except AssertionError:
