@@ -18,7 +18,7 @@ class Message(BaseModel, extra=Extra.ignore):
 
 class Response(BaseModel):
     ztype: str
-    method: str
+    method: Optional[str] = None
     message: Optional[str] = None
     error: Optional[str] = None
     attachment: Optional[str] = None
@@ -75,13 +75,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 ).dict())
             except AssertionError as e:
                 logging.debug(e)
-                response = EmptyResult(
-                    method=response.method.value,
-                )
+                response = EmptyResult()
                 await websocket.send_json(Response(
                     ztype=ZSONType.RESPONSE.value,
                     message=response.message,
-                    method=response.method.value,
                     plain=response.plain
                 ).dict())
     except WebSocketDisconnect:
