@@ -35,7 +35,7 @@ class GeoLookup:
         if not self.location:
             return None
         loc = self.location
-        return f"https://maps.google.com/?q={loc[0]},{loc[1]}"
+        return f"https://maps.google.com/?q={loc[0]:.3f},{loc[1]:.3f}"
 
     @property
     def isp(self):
