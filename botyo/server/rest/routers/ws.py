@@ -98,7 +98,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     id=message.id,
                     message=response.message,
                     method=response.method.value,
-                    plain=response.plain
+                    plain=response.plain,
+                    attachment=response.attachment
                 ).dict())
             except Exception as e:
                 logging.debug(e)
