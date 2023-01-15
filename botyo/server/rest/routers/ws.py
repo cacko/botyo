@@ -10,17 +10,20 @@ from botyo.core import perftime
 from botyo.server.models import RenderResult, ZSONType
 from typing import Optional
 
+
 class Message(BaseModel, extra=Extra.ignore):
     ztype: ZSONType
     message: str
 
+
 class Response(BaseModel):
-    ztype: ZSONType
+    ztype: str
     method: str
     message: Optional[str] = None
     error: Optional[str] = None
     attachment: Optional[str] = None
     plain: Optional[bool] = None
+
 
 router = APIRouter()
 
@@ -50,6 +53,7 @@ class ConnectionManager:
             response = command.handler(context)
             return response
 
+
 manager = ConnectionManager()
 
 
@@ -64,7 +68,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 message = Message(**data)
                 response = await manager.process_command(message, client_id)
                 await websocket.send_json(Response(
-                    ztype=ZSONType.RESPONSE,
+                    ztype=ZSONType.RESPONSE.value,
                     message=response.message,
                     method=response.method.value,
                     plain=response.plain
