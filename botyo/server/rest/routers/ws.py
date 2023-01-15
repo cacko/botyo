@@ -45,14 +45,13 @@ class Response(BaseModel):
             assert a_path.exists()
             with a_path:
                 contentType = attachment.contentType
-                data = a_path.read_bytes()
                 if contentType.startswith("image/"):
                     img = Image.open(a_path.as_posix())
-                    data = img.tobytes(encoder_name="webp")
+                    img.save(a_path.as_posix(), format="webp")
                     contentType = "image/webp"
                 return WSAttachment(
                     contentType=contentType,
-                    data=b64encode(data).decode()
+                    data=b64encode(a_path.read_bytes()).decode()
                 ).dict()
         except AssertionError as e:
             logging.error(e)
