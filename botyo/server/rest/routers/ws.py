@@ -2,14 +2,24 @@ from fastapi import (
     APIRouter, WebSocket, WebSocketDisconnect, HTTPException
 )
 import logging
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, validator
 from enum import Enum
 from botyo.server.command import CommandExec
 from botyo.server.socket.connection import Context
 from botyo.core import perftime
-from botyo.server.models import RenderResult, ZSONType, EmptyResult
+from botyo.server.models import (
+    RenderResult, 
+    ZSONType, 
+    EmptyResult,
+    Attachment
+)
 from typing import Optional
+from base64 import b64encode
+from pathlib import Path
 
+class WSAttachment(BaseModel):
+    contentType: str
+    data: str
 
 class Message(BaseModel, extra=Extra.ignore):
     ztype: ZSONType
@@ -23,8 +33,22 @@ class Response(BaseModel):
     method: Optional[str] = None
     message: Optional[str] = None
     error: Optional[str] = None
-    attachment: Optional[str] = None
+    attachment: Optional[WSAttachment] = None
     plain: Optional[bool] = None
+
+    @validator('attachment')
+    def static_attachment(cls, attachment: Optional[Attachment]):
+        try:
+            assert attachment
+            a_path = Path(attachment.path)
+            assert a_path.exists()
+            with a_path:
+                return WSAttachment(
+                    contentType=attachment.contentType,
+                    data=b64encode(a_path.read_bytes()).decode()
+                ).dict()
+        except AssertionError:
+            return None
 
 
 router = APIRouter()
