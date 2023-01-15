@@ -116,7 +116,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     attachment=attachment
                 ).dict())
             except Exception as e:
-                logging.debug(e)
+                logging.error(e)
                 response = EmptyResult()
                 await websocket.send_json(Response(
                     ztype=ZSONType.RESPONSE.value,
