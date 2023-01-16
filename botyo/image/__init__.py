@@ -76,7 +76,7 @@ class ImageMeta(type):
     def variation_generator_parser(cls) -> ArgumentParser:
         if not cls.__variation_generator_parser:
             parser = ArgumentParser(
-                description="Variation Generator", add_help=False)
+                description="Variation Generator", add_help=False, exit_on_error=False)
             parser.add_argument(
                 '-n', '--num_images_per_prompt', type=int, default=1)
             parser.add_argument('-g', '--guidance_scale',
@@ -99,7 +99,7 @@ class ImageMeta(type):
     def image_generator_parser(cls) -> ArgumentParser:
         if not cls.__image_generator_parser:
             parser = ArgumentParser(
-                description='Image Processing', add_help=False)
+                description='Image Processing', add_help=False, exit_on_error=False)
             parser.add_argument('prompt', nargs='+')
             parser.add_argument('-h',
                                 '--height', type=int, default=512)
@@ -112,19 +112,16 @@ class ImageMeta(type):
         return cls.__image_generator_parser
 
     def image_generator_params(cls, prompt: str) -> ImageGeneratorParams:
-        try:
-            parser = cls.image_generator_parser
-            parsed = parser.parse_args(split_with_quotes(prompt))
-            return ImageGeneratorParams(
-                prompt=" ".join(parsed.prompt),
-                height=parsed.height,
-                width=parsed.width,
-                guidance_scale=parsed.guidance_scale,
-                num_inference_steps=parsed.num_inference_steps,
-                seed=parsed.seed
-            )
-        except ArgumentError:
-            raise AssertionError
+        parser = cls.image_generator_parser
+        parsed = parser.parse_args(split_with_quotes(prompt))
+        return ImageGeneratorParams(
+            prompt=" ".join(parsed.prompt),
+            height=parsed.height,
+            width=parsed.width,
+            guidance_scale=parsed.guidance_scale,
+            num_inference_steps=parsed.num_inference_steps,
+            seed=parsed.seed
+        )
 
     def variation(
         cls,
@@ -195,12 +192,15 @@ class Image(object, metaclass=ImageMeta):
         )
 
     def do_txt2img(self, prompt: str):
-        params = __class__.image_generator_params(prompt)
-        return self.getResponse(
-            Action.TXT2IMG,
-            params.prompt,
-            json=params.dict()
-        )
+        try:
+            params = __class__.image_generator_params(prompt)
+            return self.getResponse(
+                Action.TXT2IMG,
+                params.prompt,
+                json=params.dict()
+            )
+        except ArgumentError as e:
+            raise AssertionError(e.message)
 
     def do_img2img(self, prompt: Optional[str] = None):
         params = __class__.image_generator_params(prompt)
