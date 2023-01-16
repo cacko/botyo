@@ -10,7 +10,7 @@ from botyo.server.output import TextOutput
 from emoji import emojize
 from botyo.image.models import AnalyzeReponse
 from typing import Optional
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentError
 from pydantic import BaseModel, Field
 from corestring import split_with_quotes
 
@@ -112,16 +112,19 @@ class ImageMeta(type):
         return cls.__image_generator_parser
 
     def image_generator_params(cls, prompt: str) -> ImageGeneratorParams:
-        parser = cls.image_generator_parser
-        parsed = parser.parse_args(split_with_quotes(prompt))
-        return ImageGeneratorParams(
-            prompt=" ".join(parsed.prompt),
-            height=parsed.height,
-            width=parsed.width,
-            guidance_scale=parsed.guidance_scale,
-            num_inference_steps=parsed.num_inference_steps,
-            seed=parsed.seed
-        )
+        try:
+            parser = cls.image_generator_parser
+            parsed = parser.parse_args(split_with_quotes(prompt))
+            return ImageGeneratorParams(
+                prompt=" ".join(parsed.prompt),
+                height=parsed.height,
+                width=parsed.width,
+                guidance_scale=parsed.guidance_scale,
+                num_inference_steps=parsed.num_inference_steps,
+                seed=parsed.seed
+            )
+        except ArgumentError:
+            raise AssertionError
 
     def variation(
         cls,
