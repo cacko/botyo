@@ -72,7 +72,7 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
-    async def process_command(self, msg: Message, client_id: str) -> RenderResult:
+    def process_command(self, msg: Message, client_id: str) -> RenderResult:
         logging.debug(f"process command {msg}")
         command, query = CommandExec.parse(msg.message)
         logging.debug(command)
@@ -99,7 +99,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 data = await websocket.receive_json()
                 logging.debug(f"receive {data}")
                 message = Message(**data)
-                response = await manager.process_command(message, client_id)
+                response = manager.process_command(message, client_id)
                 attachment = None
                 if response.attachment:
                     attachment = WSAttachment(
