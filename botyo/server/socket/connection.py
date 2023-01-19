@@ -8,37 +8,24 @@ from botyo.server.models import (
     ZSONType,
     Method,
     CoreMethods,
-    RenderResult,
-    Attachment
 )
 import logging
 from binascii import hexlify, unhexlify
 from socketserver import StreamRequestHandler
 import tempfile
 import time
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json, Undefined
-from typing import Optional
+from botyo.server.connection import (
+    ConnectionMeta, 
+    Connection,
+    Context,
+    UnknownClientException
+)
 
 BYTEORDER = "little"
 CHUNKSIZE = 2**8
 
 
-class UnknownClientException(Exception):
-    pass
-
-
-class ConnectionMeta(type):
-
-    connections = {}
-
-    def client(cls, clientId: str) -> 'Connection':
-        if clientId not in cls.connections:
-            raise UnknownClientException
-        return cls.connections[clientId]
-
-
-class Connection(StreamRequestHandler, metaclass=ConnectionMeta):
+class SocketConnection(Connection, StreamRequestHandler, metaclass=ConnectionMeta):
 
     __clientId: str = None
     request: socket = None
@@ -176,44 +163,3 @@ class Connection(StreamRequestHandler, metaclass=ConnectionMeta):
             logging.debug(f">>>SEND {sent} BYTES")
         except AssertionError:
             pass
-
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Context:
-
-    client: Optional[str] = None
-    query: Optional[str] = None
-    group: Optional[str] = None
-    lang: Optional[str] = None
-    source: Optional[str] = None
-    timezone: Optional[str] = "Europe/London"
-    attachment: Optional[Attachment] = None
-
-    @property
-    def connection(self):
-        assert self.client
-        return Connection.client(self.client)
-
-    def send(self, result: RenderResult):
-        response = ZSONResponse(
-            message=result.message,
-            attachment=result.attachment,
-            client=self.client,
-            group=self.group,
-            method=result.method,
-            plain=result.plain
-        )
-        self.connection.send(response=response)
-
-
-class ReceiveMessagesError(Exception):
-    pass
-
-
-class SendMessageError(Exception):
-    pass
-
-
-class JsonRpcApiError(Exception):
-    pass

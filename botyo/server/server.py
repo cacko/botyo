@@ -12,7 +12,7 @@ from .config import Config
 from .core import AppServer, StoppableThread
 from .models import JunkMessage, NoCommand
 from .scheduler import Scheduler
-from .socket.connection import Context
+from .connection import Context
 from .socket.tcp import TCPReceiver
 
 

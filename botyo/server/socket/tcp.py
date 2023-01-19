@@ -1,6 +1,6 @@
 import threading
 import socketserver
-from botyo.server.socket.connection import Connection
+from botyo.server.socket.connection import SocketConnection
 from .base import BaseSocket
 from queue import Queue
 
@@ -76,7 +76,7 @@ class TCPReceiver(TCPServer):
         host,
         port,
         queue,
-        request_handler=Connection,
+        request_handler=SocketConnection,
         max_queue_size=0,
         timeout=None,
         daemon=True,
