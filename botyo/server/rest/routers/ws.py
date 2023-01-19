@@ -92,7 +92,7 @@ class WSConnection(Connection):
             plain=response.plain,
             attachment=attachment
         )
-        return run_sync(self.__websocket.send_json, resp.to_dict())
+        return run_sync(self.__websocket.send_json, resp.dict())
 
 
 
