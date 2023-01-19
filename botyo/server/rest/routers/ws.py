@@ -99,7 +99,7 @@ class WSConnection(Connection):
 class ConnectionManager:
 
     async def connect(self, websocket: WebSocket, client_id: str):
-        await WSConnection(websocket=websocket, client_id=client_id)
+        await WSConnection(websocket=websocket, client_id=client_id).accept()
 
     def disconnect(self, client_id):
         WSConnection.remove(client_id)
