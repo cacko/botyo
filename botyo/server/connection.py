@@ -22,11 +22,16 @@ class ConnectionMeta(type):
             raise UnknownClientException
         return cls.connections[clientId]
 
+    def remove(cls, clientId: str):
+        del cls.connections[clientId]
+
+
 
 class Connection(object, metaclass=ConnectionMeta):
 
-    def send(response: ZSONResponse):
+    def send(self, response: ZSONResponse):
         raise NotImplementedError
+
 
 
 

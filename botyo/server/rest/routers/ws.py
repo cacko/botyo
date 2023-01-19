@@ -4,17 +4,19 @@ from fastapi import (
 import logging
 from pydantic import BaseModel, Extra, validator
 from botyo.server.command import CommandExec
-from botyo.server.socket.connection import Context
+from botyo.server.connection import Context, Connection
 from botyo.core import perftime
 from botyo.server.models import (
     RenderResult,
     ZSONType,
     EmptyResult,
+    ZSONResponse
 )
 from typing import Optional
 from base64 import b64encode
 from pathlib import Path
 from PIL import Image
+from anyio.from_thread import run_sync
 
 
 class WSAttachment(BaseModel):
@@ -61,16 +63,46 @@ class Response(BaseModel):
 router = APIRouter()
 
 
+class WSConnection(Connection):
+    
+    __websocket: WebSocket
+    __clientId: str
+
+    def __init__(self, websocket: WebSocket, client_id:str) -> None:
+        self.__websocket = websocket
+        self.__clientId = client_id
+
+    async def accept(self):
+        __class__.connections[self.__clientId] = self
+        await self.__websocket.accept()
+
+    
+    def send(self, response: ZSONResponse):
+        attachment = None
+        if response.attachment:
+            attachment = WSAttachment(
+                contentType=response.attachment.contentType,
+                data=response.attachment.path
+            )
+        resp = Response(
+            ztype=ZSONType.RESPONSE.value,
+            id=response.id,
+            message=response.message,
+            method=response.method.value,
+            plain=response.plain,
+            attachment=attachment
+        )
+        return run_sync(self.__websocket.send_json, resp.to_dict())
+
+
+
 class ConnectionManager:
-    def __init__(self):
-        self.active_connections: list[WebSocket] = []
 
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
+    async def connect(self, websocket: WebSocket, client_id: str):
+        await WSConnection(websocket=websocket, client_id=client_id)
 
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
+    def disconnect(self, client_id):
+        WSConnection.remove(client_id)
 
     def process_command(self, msg: Message, client_id: str) -> RenderResult:
         logging.debug(f"process command {msg}")
@@ -84,7 +116,7 @@ class ConnectionManager:
         assert isinstance(command, CommandExec)
         with perftime(f"Command {command.method.value}"):
             response = command.handler(context)
-            return response
+            return context.send(response)
 
 
 manager = ConnectionManager()
@@ -92,28 +124,14 @@ manager = ConnectionManager()
 
 @router.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
-    await manager.connect(websocket)
+    await manager.connect(websocket, client_id)
     try:
         while True:
             try:
                 data = await websocket.receive_json()
                 logging.debug(f"receive {data}")
                 message = Message(**data)
-                response = manager.process_command(message, client_id)
-                attachment = None
-                if response.attachment:
-                    attachment = WSAttachment(
-                        contentType=response.attachment.contentType,
-                        data=response.attachment.path
-                    )
-                await websocket.send_json(Response(
-                    ztype=ZSONType.RESPONSE.value,
-                    id=message.id,
-                    message=response.message,
-                    method=response.method.value,
-                    plain=response.plain,
-                    attachment=attachment
-                ).dict())
+                manager.process_command(message, client_id)
             except Exception as e:
                 logging.error(e)
                 response = EmptyResult()
@@ -124,4 +142,4 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     plain=response.plain
                 ).dict())
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        manager.disconnect(client_id)
