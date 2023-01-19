@@ -25,7 +25,7 @@ BYTEORDER = "little"
 CHUNKSIZE = 2**8
 
 
-class SocketConnection(Connection, StreamRequestHandler, metaclass=ConnectionMeta):
+class SocketConnection(Connection, StreamRequestHandler):
 
     __clientId: str = None
     request: socket = None

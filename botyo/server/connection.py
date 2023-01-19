@@ -23,7 +23,7 @@ class ConnectionMeta(type):
         return cls.connections[clientId]
 
 
-class Connection(object):
+class Connection(object, metaclass=ConnectionMeta):
 
     def send(response: ZSONResponse):
         raise NotImplementedError
