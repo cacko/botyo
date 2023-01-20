@@ -32,7 +32,7 @@ class Connection(object, metaclass=ConnectionMeta):
     def send(self, response: ZSONResponse):
         raise NotImplementedError
 
-    async def send_async(self, result: RenderResult):
+    async def send_async(self, response: ZSONResponse):
         raise NotImplementedError
 
 
