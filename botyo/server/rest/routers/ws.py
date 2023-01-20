@@ -16,7 +16,6 @@ from typing import Optional
 from base64 import b64encode
 from pathlib import Path
 from PIL import Image
-from anyio.from_thread import run
 
 
 class WSAttachment(BaseModel):
@@ -73,11 +72,12 @@ class WSConnection(Connection):
         self.__clientId = client_id
 
     async def accept(self):
-        __class__.connections[self.__clientId] = self
         await self.__websocket.accept()
+        __class__.connections[self.__clientId] = self
 
 
     async def send_async(self, response: ZSONResponse):
+        logging.info(response)
         attachment = None
         if response.attachment:
             attachment = WSAttachment(
@@ -133,6 +133,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 message = Message(**data)
                 await manager.process_command(message, client_id)
             except Exception as e:
+                logging.info(e)
                 logging.exception(e)
                 response = EmptyResult()
                 await websocket.send_json(Response(
