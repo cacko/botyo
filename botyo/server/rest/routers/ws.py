@@ -77,7 +77,6 @@ class WSConnection(Connection):
 
 
     async def send_async(self, response: ZSONResponse):
-        logging.info(response)
         attachment = None
         if response.attachment:
             attachment = WSAttachment(
@@ -133,8 +132,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 message = Message(**data)
                 await manager.process_command(message, client_id)
             except Exception as e:
-                logging.info(e)
-                logging.exception(e)
+                logging.error(e)
                 response = EmptyResult()
                 await websocket.send_json(Response(
                     ztype=ZSONType.RESPONSE.value,
