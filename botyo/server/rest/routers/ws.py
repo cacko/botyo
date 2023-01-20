@@ -10,8 +10,7 @@ from botyo.server.models import (
     RenderResult,
     ZSONType,
     EmptyResult,
-    ZSONResponse, 
-    ZSONError
+    ZSONResponse
 )
 from typing import Optional
 from base64 import b64encode
