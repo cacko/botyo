@@ -133,7 +133,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 message = Message(**data)
                 await manager.process_command(message, client_id)
             except Exception as e:
-                logging.error(e)
+                logging.exception(e)
                 response = EmptyResult()
                 await websocket.send_json(Response(
                     ztype=ZSONType.RESPONSE.value,
