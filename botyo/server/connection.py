@@ -32,6 +32,8 @@ class Connection(object, metaclass=ConnectionMeta):
     def send(self, response: ZSONResponse):
         raise NotImplementedError
 
+    async def send_async(self, result: RenderResult):
+        raise NotImplementedError
 
 
 
@@ -62,6 +64,17 @@ class Context:
             plain=result.plain
         )
         self.connection.send(response=response)
+
+    async def send_async(self, result: RenderResult):
+        response = ZSONResponse(
+            message=result.message,
+            attachment=result.attachment,
+            client=self.client,
+            group=self.group,
+            method=result.method,
+            plain=result.plain
+        )
+        await self.connection.send_async(response=response)
 
 
 class ReceiveMessagesError(Exception):

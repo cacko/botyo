@@ -76,8 +76,8 @@ class WSConnection(Connection):
         __class__.connections[self.__clientId] = self
         await self.__websocket.accept()
 
-    
-    def send(self, response: ZSONResponse):
+
+    async def send_async(self, response: ZSONResponse):
         attachment = None
         if response.attachment:
             attachment = WSAttachment(
@@ -92,7 +92,7 @@ class WSConnection(Connection):
             plain=response.plain,
             attachment=attachment
         )
-        return run(self.__websocket.send_json, resp.dict())
+        await self.__websocket.send_json(resp.dict())
 
 
 
@@ -104,6 +104,19 @@ class ConnectionManager:
     def disconnect(self, client_id):
         WSConnection.remove(client_id)
 
+    async def process_command(self, msg: Message, client_id: str) -> RenderResult:
+        logging.debug(f"process command {msg}")
+        command, query = CommandExec.parse(msg.message)
+        logging.debug(command)
+        context = Context(
+            client=client_id,
+            query=query,
+            group=client_id
+        )
+        assert isinstance(command, CommandExec)
+        with perftime(f"Command {command.method.value}"):
+            response = command.handler(context)
+            await context.send_async(response)
 
 
 manager = ConnectionManager()
@@ -118,18 +131,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 data = await websocket.receive_json()
                 logging.debug(f"receive {data}")
                 message = Message(**data)
-                logging.debug(f"process command {message}")
-                command, query = CommandExec.parse(message.message)
-                logging.debug(command)
-                context = Context(
-                    client=client_id,
-                    query=query,
-                    group=client_id
-                )
-                assert isinstance(command, CommandExec)
-                with perftime(f"Command {command.method.value}"):
-                    response = command.handler(context)
-                    return context.send(response)
+                await manager.process_command(message, client_id)
             except Exception as e:
                 logging.error(e)
                 response = EmptyResult()
