@@ -85,7 +85,7 @@ class WSConnection(Connection):
             )
         resp = Response(
             ztype=ZSONType.RESPONSE.value,
-            id=response.id,
+            id=response.source,
             message=response.message,
             method=response.method.value,
             plain=response.plain,
@@ -110,7 +110,8 @@ class ConnectionManager:
         context = Context(
             client=client_id,
             query=query,
-            group=client_id
+            group=client_id,
+            source=msg.id
         )
         assert isinstance(command, CommandExec)
         with perftime(f"Command {command.method.value}"):
