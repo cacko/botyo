@@ -104,19 +104,6 @@ class ConnectionManager:
     def disconnect(self, client_id):
         WSConnection.remove(client_id)
 
-    def process_command(self, msg: Message, client_id: str) -> RenderResult:
-        logging.debug(f"process command {msg}")
-        command, query = CommandExec.parse(msg.message)
-        logging.debug(command)
-        context = Context(
-            client=client_id,
-            query=query,
-            group=client_id
-        )
-        assert isinstance(command, CommandExec)
-        with perftime(f"Command {command.method.value}"):
-            response = command.handler(context)
-            return context.send(response)
 
 
 manager = ConnectionManager()
@@ -131,7 +118,18 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 data = await websocket.receive_json()
                 logging.debug(f"receive {data}")
                 message = Message(**data)
-                manager.process_command(message, client_id)
+                logging.debug(f"process command {message}")
+                command, query = CommandExec.parse(message.message)
+                logging.debug(command)
+                context = Context(
+                    client=client_id,
+                    query=query,
+                    group=client_id
+                )
+                assert isinstance(command, CommandExec)
+                with perftime(f"Command {command.method.value}"):
+                    response = command.handler(context)
+                    return context.send(response)
             except Exception as e:
                 logging.error(e)
                 response = EmptyResult()
