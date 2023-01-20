@@ -169,16 +169,6 @@ class Attachment:
             self.filename = Path(self.path).name
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class RenderResult:
-    method: Optional[Method] = None
-    message: Optional[str] = ""
-    attachment: Optional[Attachment] = None
-    group: Optional[str] = None
-    plain: Optional[bool] = False
-
-
 NOT_FOUND = [
     "Няма нищо брат",
     "Отиде коня у реката",
@@ -198,6 +188,17 @@ NOT_FOUND_ICONS = [
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
+class RenderResult:
+    method: Optional[Method] = None
+    message: Optional[str] = ""
+    attachment: Optional[Attachment] = None
+    group: Optional[str] = None
+    plain: Optional[bool] = False
+    error: Optional[str] = None
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
 class EmptyResult(RenderResult):
 
     @property
@@ -209,14 +210,6 @@ class EmptyResult(RenderResult):
 
     def __post_init__(self):
         self.message = f"{emojize(choice(NOT_FOUND_ICONS))} {self.error_message}"
-
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ZSONError:
-    code: int
-    message: str
-    meaning: str
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -239,7 +232,7 @@ class ZSONMessage:
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class ZSONResponse(ZSONMessage):
-    error: Optional[ZSONError] = None
+    error: Optional[str] = None
     message: Optional[str] = None
     attachment: Optional[Attachment] = None
     ztype: ZSONType = ZSONType.RESPONSE

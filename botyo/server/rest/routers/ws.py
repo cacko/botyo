@@ -10,7 +10,8 @@ from botyo.server.models import (
     RenderResult,
     ZSONType,
     EmptyResult,
-    ZSONResponse
+    ZSONResponse, 
+    ZSONError
 )
 from typing import Optional
 from base64 import b64encode
@@ -27,7 +28,6 @@ class Message(BaseModel, extra=Extra.ignore):
     ztype: ZSONType
     id: str
     message: str
-
 
 class Response(BaseModel):
     ztype: str
@@ -89,7 +89,8 @@ class WSConnection(Connection):
             message=response.message,
             method=response.method.value,
             plain=response.plain,
-            attachment=attachment
+            attachment=attachment,
+            error=response.error
         )
         await self.__websocket.send_json(resp.dict())
 
@@ -103,19 +104,26 @@ class ConnectionManager:
     def disconnect(self, client_id):
         WSConnection.remove(client_id)
 
-    async def process_command(self, msg: Message, client_id: str) -> RenderResult:
-        logging.debug(f"process command {msg}")
-        command, query = CommandExec.parse(msg.message)
-        logging.debug(command)
-        context = Context(
-            client=client_id,
-            query=query,
-            group=client_id,
-            source=msg.id
-        )
-        assert isinstance(command, CommandExec)
-        with perftime(f"Command {command.method.value}"):
-            response = command.handler(context)
+    async def process_command(self, data: dict, client_id: str) -> RenderResult:
+        try:
+            msg = Message(**data)
+            assert isinstance(msg, Message)
+            logging.debug(f"process command {msg}")
+            command, query = CommandExec.parse(msg.message)
+            logging.debug(command)
+            context = Context(
+                client=client_id,
+                query=query,
+                group=client_id,
+                source=msg.id
+            )
+            assert isinstance(command, CommandExec)
+            with perftime(f"Command {command.method.value}"):
+                response = command.handler(context)
+                await context.send_async(response)
+        except Exception as e:
+            logging.error(e)
+            response = EmptyResult(error=e.__str__)
             await context.send_async(response)
 
 
@@ -127,19 +135,9 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     await manager.connect(websocket, client_id)
     try:
         while True:
-            try:
-                data = await websocket.receive_json()
-                logging.debug(f"receive {data}")
-                message = Message(**data)
-                await manager.process_command(message, client_id)
-            except Exception as e:
-                logging.error(e)
-                response = EmptyResult()
-                await websocket.send_json(Response(
-                    ztype=ZSONType.RESPONSE.value,
-                    id="error",
-                    error=response.message,
-                    plain=response.plain
-                ).dict())
+            data = await websocket.receive_json()
+            logging.debug(f"receive {data}")
+            await manager.process_command(data, client_id)
+
     except WebSocketDisconnect:
         manager.disconnect(client_id)

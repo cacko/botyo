@@ -73,7 +73,8 @@ class Context:
             group=self.group,
             method=result.method,
             plain=result.plain,
-            source=self.source
+            source=self.source,
+            error=result.error
         )
         await self.connection.send_async(response=response)
 
