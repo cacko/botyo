@@ -16,7 +16,7 @@ from typing import Optional
 from base64 import b64encode
 from pathlib import Path
 from PIL import Image
-from anyio.to_thread import run_sync
+from anyio.from_thread import run
 
 
 class WSAttachment(BaseModel):
@@ -92,7 +92,7 @@ class WSConnection(Connection):
             plain=response.plain,
             attachment=attachment
         )
-        return run_sync(self.__websocket.send_json, resp.dict())
+        return run(self.__websocket.send_json, resp.dict())
 
 
 
