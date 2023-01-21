@@ -4,7 +4,7 @@ from dataclasses_json import dataclass_json, Undefined
 from typing import Optional
 from emoji import emojize
 from random import choice
-from enum import EnumMeta, Enum
+from enum import EnumMeta, Enum, StrEnum
 from pathlib import Path
 import sys
 import requests
@@ -49,7 +49,7 @@ class Method(Enum, metaclass=MethodMeta):
         return self.value == __o.value
 
 
-class ZMethod(Method, Enum):
+class ZMethod(Method, StrEnum):
     LOGIN = "login"
     KNOWLEDGE_ARTICLE = "kb:article"
     KNOWLEDGE_ASK = "kb:ask"
@@ -123,12 +123,12 @@ class ZMethod(Method, Enum):
     EVENT_CANCEL = "event:cancel"
 
 
-class CoreMethods(Method, Enum):
+class CoreMethods(Method, StrEnum):
     LOGIN = "login"
     HELP = "help"
 
 
-class ZSONMatcher(Enum):
+class ZSONMatcher(StrEnum):
     PHRASE = "phrase"
     SOURCE = "source"
 
@@ -150,7 +150,7 @@ class CommandDef:
         return self.method.value.split(":")[-1].strip()
 
 
-class ZSONType(Enum):
+class ZSONType(StrEnum):
     REQUEST = "request"
     RESPONSE = "response"
 
