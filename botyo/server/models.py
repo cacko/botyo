@@ -223,7 +223,8 @@ class ZSONMessage:
     source: Optional[str] = None
 
     def __post_init__(self):
-        self.id = uuid4().hex
+        if not self.id:
+            self.id = uuid4().hex
 
     def encode(self) -> bytes:
         return self.to_json().encode()  # type: ignore
