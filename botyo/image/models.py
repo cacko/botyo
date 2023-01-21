@@ -1,5 +1,3 @@
-from dataclasses_json import dataclass_json, Undefined, config
-from dataclasses import dataclass, field
 from enum import StrEnum
 from stringcase import constcase
 from pydantic import BaseModel, Extra, Field
@@ -55,8 +53,8 @@ class RaceScores(BaseModel, extra=Extra.ignore):
     asian: float
     black: float
     indian: float
-    latino_hispanic: float = field(metadata=config(field_name="latino hispanic"))
-    middle_eastern: float = field(metadata=config(field_name="middle eastern"))
+    latino_hispanic: float = Field(alias="latino hispanic")
+    middle_eastern: float = Field(alias="middle eastern")
     white: float
 
     @property
