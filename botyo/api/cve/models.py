@@ -1,6 +1,6 @@
 from typing import Optional
 from enum import StrEnum
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 
 
 class AttackVector(StrEnum):
@@ -15,7 +15,7 @@ class BaseSeverity(StrEnum):
     CRITICAL = "CRITICAL"
 
 
-class CVSSV2(BaseModel, extra=Extra.ignore):
+class CVSSV2(BaseModel):
     version: str
     vectorString: str
     accessVector: str
@@ -24,7 +24,7 @@ class CVSSV2(BaseModel, extra=Extra.ignore):
     confidentialityImpact: str
     integrityImpact: str
     availabilityImpact: str
-    baseScore: 7.5
+    baseScore: float = Field(default=7.5)
 
 
 class ImpactMetricV2(BaseModel, extra=Extra.ignore):
