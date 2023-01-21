@@ -327,7 +327,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     Goals.save_metadata(goal_event)
                     Goals.monitor(goal_query)
                     self.goals_queue[goal_query.id] = goal_query
-        except AssertionError:
+        except AssertionError as e:
+            logging.exception(e)
             pass
 
     def checkGoals(self, updated: Optional[ResponseGame] = None):

@@ -1,5 +1,3 @@
-
-
 from dataclasses_json import dataclass_json, Undefined
 from botyo.server.output import Align, Column, TextOutput
 from botyo.server.models import (
@@ -7,7 +5,7 @@ from botyo.server.models import (
     ZSONMatcher,
     ZSONRequest,
     Method,
-    CommandDef
+    CommandDef,
 )
 from fuzzelinho import Match, MatchMethod
 from dataclasses import dataclass
@@ -48,34 +46,36 @@ class CommandExecMeta(type):
     @property
     def definitions(cls) -> list[CommandDef]:
         definitions = []
-        def keyfunc(x): return x.method.value
+
+        def keyfunc(x):
+            return x.method.value
 
         for cmd in sorted(cls.registered, key=keyfunc):
 
-            definitions.append(CommandDef(
-                method=cmd.method,
-                desc=cmd.desc,
-                matcher=cmd.matcher,
-                response=cmd.response
-            ))
+            definitions.append(
+                CommandDef(
+                    method=cmd.method,
+                    desc=cmd.desc,
+                    matcher=cmd.matcher,
+                    response=cmd.response,
+                )
+            )
 
         cols = [
             Column(size=42, align=Align.LEFT),
         ]
         rows = []
-        for g, c in groupby(filter(
-            lambda x: x.desc is not None, definitions),
-            key=lambda x: x.namespace
+        for g, c in groupby(
+            filter(lambda x: x.desc is not None, definitions), key=lambda x: x.namespace
         ):
             rows.append([g.upper()])
             rows = [*rows, *[[f"{d.action} - {d.desc}"] for d in c]]
 
         TextOutput.addColumns(cols, rows)
 
-        definitions.append(CommandDef(
-            method=CoreMethods.HELP,
-            response=TextOutput.render()
-        ))
+        definitions.append(
+            CommandDef(method=CoreMethods.HELP, response=TextOutput.render())
+        )
         return definitions
 
 
@@ -108,7 +108,7 @@ class CommandExec(metaclass=CommandExecMeta):
 class CommandMatch(Match):
     minRatio = 85
     extensionMatching = False
-    method = MatchMethod.PARTIALSET
+    method = MatchMethod.WRATIO
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

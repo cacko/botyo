@@ -41,7 +41,8 @@ class TwitterMeta(type):
             try:
                 assert t.tweet.attachments
                 result.append(t)
-            except AssertionError:
+            except AssertionError as e:
+                logging.exception(e)
                 pass
         return result
 
