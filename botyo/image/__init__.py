@@ -40,6 +40,7 @@ class Action(Enum):
     VARIATION = "image/variation"
     TXT2IMG = "image/txt2img"
     IMG2IMG = "image/img2img"
+    PORTRAIT = "image/portrait"
 
 
 class ImageMeta(type):
@@ -133,6 +134,9 @@ class ImageMeta(type):
     def txt2img(cls, prompt: str) -> tuple[Attachment, dict]:
         return cls().do_txt2img(prompt)
 
+    def portrait(cls, prompt: str) -> tuple[Attachment, dict]:
+        return cls().do_portrait(prompt)
+
     def img2img(
         cls,
         attachment: Attachment,
@@ -196,6 +200,17 @@ class Image(object, metaclass=ImageMeta):
             params = __class__.image_generator_params(prompt)
             return self.getResponse(
                 Action.TXT2IMG,
+                params.prompt,
+                json=params.dict()
+            )
+        except ArgumentError as e:
+            raise AssertionError(e.message)
+
+    def do_portrait(self, prompt: str):
+        try:
+            params = __class__.image_generator_params(prompt)
+            return self.getResponse(
+                Action.PORTRAIT,
                 params.prompt,
                 json=params.dict()
             )

@@ -115,6 +115,7 @@ class ZMethod(Method, StrEnum):
     IMAGE_POLYGON = "image:polygon"
     IMAGE_WALLPAPER = "image:wallpaper"
     IMAGE_VARIATION = "image:var"
+    IMAGE_PORTRAIT = "image:portrait"
     IMAGE_TXT2IMG = "image:txt2img"
     IMAGE_IMG2IMG = "image:img2img"
     EVENT_COUNTDOWN = "event:countdown"

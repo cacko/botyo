@@ -3,7 +3,6 @@ from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import RenderResult, EmptyResult
 from botyo.server.models import ZMethod
-from botyo.core import to_int
 from stringcase import titlecase
 import logging
 
@@ -79,8 +78,7 @@ def image_classify(context: Context):
         assert message
         return RenderResult(
             message="\n".join(
-                [titlecase(x.get("label"))
-                 for x in message.get("response", [])]
+                [titlecase(x.get("label")) for x in message.get("response", [])]
             ),
             method=ZMethod.IMAGE_CLASSIFY,
         )
@@ -191,3 +189,21 @@ def image2image(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_IMG2IMG)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_PORTRAIT,
+    desc="portrait generator",
+)  # type: ignore
+def image_portrait(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, _ = Image.portrait(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_PORTRAIT,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_PORTRAIT)

@@ -4,6 +4,7 @@ channels:
 dependencies:
   - appdirs=1.4.4
   - astroid=2.13.2
+  - black=22.12.0
   - brotli=1.0.9
   - brotli-bin=1.0.9
   - brotlipy=0.7.0
@@ -114,7 +115,7 @@ dependencies:
       - beautifulsoup4==4.11.1
       - better-exceptions==0.3.3
       - blis==0.7.9
-      - cachable==0.3.36
+      - cachable==0.3.37
       - cachetools==5.2.1
       - cairocffi==1.4.0
       - cairosvg==2.6.0
