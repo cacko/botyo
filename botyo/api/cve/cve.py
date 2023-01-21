@@ -38,7 +38,7 @@ class CVE(CVECachable):
         if self.__query:
             args["keyword"] = self.__query
         req = Request("https://services.nvd.nist.gov/rest/json/cves/1.0", params=args)
-        return self.tocache(CVEResponse.from_dict(json))  # type: ignore
+        return self.tocache(CVEResponse(**req.json))  # type: ignore
 
     @property
     def response(self) -> Optional[CVEResponse]:

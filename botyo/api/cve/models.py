@@ -1,24 +1,21 @@
-from dataclasses import dataclass
 from typing import Optional
-from dataclasses_json import dataclass_json, Undefined
-from enum import Enum
+from enum import StrEnum
+from pydantic import BaseModel, Extra
 
 
-class AttackVector(Enum):
+class AttackVector(StrEnum):
     NETWORK = "NETWORK"
 
 
-class AttackComplexity(Enum):
+class AttackComplexity(StrEnum):
     LOW = "LOW"
 
 
-class BaseSeverity(Enum):
+class BaseSeverity(StrEnum):
     CRITICAL = "CRITICAL"
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CVSSV2:
+class CVSSV2(BaseModel, extra=Extra.ignore):
     version: str
     vectorString: str
     accessVector: str
@@ -30,9 +27,7 @@ class CVSSV2:
     baseScore: 7.5
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ImpactMetricV2:
+class ImpactMetricV2(BaseModel, extra=Extra.ignore):
     cvssV2: CVSSV2
     severity: str
     exploitabilityScore: float
@@ -44,9 +39,7 @@ class ImpactMetricV2:
     userInteractionRequired: Optional[bool] = False
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CVSSV3:
+class CVSSV3(BaseModel, extra=Extra.ignore):
     version: str
     vectorString: str
     attackVector: str
@@ -61,50 +54,36 @@ class CVSSV3:
     baseSeverity: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ImpactMetricV3:
+class ImpactMetricV3(BaseModel, extra=Extra.ignore):
     cvssV3: CVSSV3
     exploitabilityScore: float
     impactScore: float
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Impact:
+class Impact(BaseModel, extra=Extra.ignore):
     baseMetricV3: Optional[ImpactMetricV3] = None
     baseMetricV2: Optional[ImpactMetricV2] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Configurations:
+class Configurations(BaseModel, extra=Extra.ignore):
     pass
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CVEMetaData:
+class CVEMetaData(BaseModel, extra=Extra.ignore):
     ID: str
     ASSIGNER: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CVEDescriptionData:
+class CVEDescriptionData(BaseModel, extra=Extra.ignore):
     lang: str
     value: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CVEDescription:
+class CVEDescription(BaseModel, extra=Extra.ignore):
     description_data: list[CVEDescriptionData]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CVEItem:
+class CVEItem(BaseModel, extra=Extra.ignore):
     data_type: str
     data_format: str
     data_version: str
@@ -112,9 +91,7 @@ class CVEItem:
     description: CVEDescription
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CVEListItem:
+class CVEListItem(BaseModel, extra=Extra.ignore):
     cve: CVEItem
     configurations: Configurations
     impact: Impact
@@ -128,8 +105,7 @@ class CVEListItem:
     @property
     def description(self) -> str:
         description = next(
-            filter(lambda x: x.lang == "en",
-                   self.cve.description.description_data),
+            filter(lambda x: x.lang == "en", self.cve.description.description_data),
             None,
         )
         return description.value if description else ""
@@ -151,9 +127,7 @@ class CVEListItem:
         return ""
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CVEResult:
+class CVEResult(BaseModel, extra=Extra.ignore):
     CVE_data_type: Optional[str] = None
     CVE_data_format: Optional[str] = None
     CVE_data_version: Optional[str] = None
@@ -161,9 +135,7 @@ class CVEResult:
     CVE_Items: list[CVEListItem] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CVEResponse:
+class CVEResponse(BaseModel, extra=Extra.ignore):
     result: CVEResult
     resultsPerPage: int
     startIndex: int
@@ -173,5 +145,4 @@ class CVEResponse:
     def ids(self) -> list[str]:
         if not self.totalResults:
             return []
-        return list(map(lambda x: x.cve.CVE_data_meta.ID,
-                        self.result.CVE_Items))
+        return list(map(lambda x: x.cve.CVE_data_meta.ID, self.result.CVE_Items))
