@@ -10,7 +10,8 @@ from botyo.server.models import (
     RenderResult,
     ZSONType,
     EmptyResult,
-    ZSONResponse
+    ZSONResponse,
+    ZSONRequest
 )
 from typing import Optional
 from base64 import b64encode
@@ -21,12 +22,6 @@ from PIL import Image
 class WSAttachment(BaseModel):
     contentType: str
     data: str
-
-
-class Message(BaseModel, extra=Extra.ignore):
-    ztype: ZSONType
-    id: str
-    message: str
 
 class Response(BaseModel):
     ztype: str
@@ -105,10 +100,10 @@ class ConnectionManager:
 
     async def process_command(self, data: dict, client_id: str) -> RenderResult:
         try:
-            msg = Message(**data)
-            assert isinstance(msg, Message)
+            msg = ZSONRequest(**data)
+            assert isinstance(msg, ZSONRequest)
             logging.debug(f"process command {msg}")
-            command, query = CommandExec.parse(msg.message)
+            command, query = CommandExec.parse(msg.query)
             logging.debug(command)
             context = Context(
                 client=client_id,
