@@ -33,7 +33,7 @@ class TwitterMeta(type):
             "exclude": "retweets,replies",
             "media_fields": "url,height",
             "expansions": ["attachments.media_keys"],
-            "tweet_fields": "attachments",
+            "tweet_fields": ["text","attachments","id"],
         }
 
         for t in cls().get_user_timeline(**{**kwds, **args}):
