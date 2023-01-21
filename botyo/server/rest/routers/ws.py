@@ -79,7 +79,7 @@ class WSConnection(Connection):
             )
         resp = Response(
             ztype=ZSONType.RESPONSE.value,
-            id=response.source,
+            id=response.id,
             message=response.message,
             method=response.method.value,
             plain=response.plain,

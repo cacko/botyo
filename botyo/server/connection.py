@@ -48,6 +48,7 @@ class Context:
     source: Optional[str] = None
     timezone: Optional[str] = "Europe/London"
     attachment: Optional[Attachment] = None
+    id: Optional[str] = None
 
     @property
     def connection(self):
@@ -74,7 +75,8 @@ class Context:
             method=result.method,
             plain=result.plain,
             source=self.source,
-            error=result.error
+            error=result.error,
+            id=self.id
         )
         await self.connection.send_async(response=response)
 
