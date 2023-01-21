@@ -11,7 +11,8 @@ from fuzzelinho import Match, MatchMethod
 from dataclasses import dataclass
 from typing import Callable, Optional
 from itertools import groupby
-
+from pydantic import BaseModel, Extra
+from pydantic.dataclasses import dataclass
 
 class CommandExecMeta(type):
     registered = []
@@ -78,8 +79,6 @@ class CommandExecMeta(type):
         )
         return definitions
 
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class CommandExec(metaclass=CommandExecMeta):
     method: Method

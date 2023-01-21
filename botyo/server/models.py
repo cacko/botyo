@@ -1,8 +1,8 @@
 from uuid import uuid4
-from typing import Optional
+from typing import Optional, TypeVar
 from emoji import emojize
 from random import choice
-from enum import EnumMeta, Enum, StrEnum
+from enum import EnumMeta, StrEnum, Enum
 from pathlib import Path
 import sys
 import requests
@@ -42,13 +42,7 @@ class MethodMeta(EnumMeta):
             start=start,
         )
 
-
-class Method(StrEnum, metaclass=MethodMeta):
-    def __eq__(self, __o: object) -> bool:
-        return self.value == __o.value
-
-
-class ZMethod(Method):
+class ZMethod(StrEnum, metaclass=MethodMeta):
     LOGIN = "login"
     KNOWLEDGE_ARTICLE = "kb:article"
     KNOWLEDGE_ASK = "kb:ask"
@@ -122,10 +116,21 @@ class ZMethod(Method):
     EVENT_SCHEDULE = "event:schedule"
     EVENT_CANCEL = "event:cancel"
 
+    # def __eq__(self, __o: object) -> bool:
+    #     return self.value == __o.value
 
-class CoreMethods(Method, StrEnum):
+
+
+class CoreMethods(StrEnum, metaclass=MethodMeta):
     LOGIN = "login"
     HELP = "help"
+
+    # def __eq__(self, __o: object) -> bool:
+    #     return self.value == __o.value
+
+
+
+Method = TypeVar("Method", ZMethod, CoreMethods)
 
 
 class ZSONMatcher(StrEnum):
