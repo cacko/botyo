@@ -11,7 +11,8 @@ from botyo.server.models import (
     ZSONType,
     EmptyResult,
     ZSONResponse,
-    ZSONRequest
+    ZSONRequest,
+    CoreMethods
 )
 from typing import Optional
 from base64 import b64encode
@@ -22,6 +23,7 @@ from PIL import Image
 class WSAttachment(BaseModel):
     contentType: str
     data: str
+
 
 class Response(BaseModel):
     ztype: str
@@ -57,18 +59,17 @@ router = APIRouter()
 
 
 class WSConnection(Connection):
-    
+
     __websocket: WebSocket
     __clientId: str
 
-    def __init__(self, websocket: WebSocket, client_id:str) -> None:
+    def __init__(self, websocket: WebSocket, client_id: str) -> None:
         self.__websocket = websocket
         self.__clientId = client_id
 
     async def accept(self):
         await self.__websocket.accept()
         __class__.connections[self.__clientId] = self
-
 
     async def send_async(self, response: ZSONResponse):
         attachment = None
@@ -89,11 +90,19 @@ class WSConnection(Connection):
         await self.__websocket.send_json(resp.dict())
 
 
-
 class ConnectionManager:
 
     async def connect(self, websocket: WebSocket, client_id: str):
         await WSConnection(websocket=websocket, client_id=client_id).accept()
+        context = Context(
+            client=client_id,
+        )
+        await context.send_async(
+            ZSONResponse(
+                method=CoreMethods.LOGIN,
+                commands=CommandExec.definitions,
+                client=self.__clientId)
+        )
 
     def disconnect(self, client_id):
         WSConnection.remove(client_id)
