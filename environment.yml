@@ -3,7 +3,6 @@ channels:
   - conda-forge
 dependencies:
   - appdirs=1.4.4
-  - astroid=2.13.2
   - brotli=1.0.9
   - brotli-bin=1.0.9
   - brotlipy=0.7.0
