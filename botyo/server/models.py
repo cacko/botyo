@@ -217,7 +217,7 @@ class ZSONMessage(BaseModel, extra=Extra.ignore):
             self.id = uuid4().hex
 
     def encode(self) -> bytes:
-        return self.to_json().encode()  # type: ignore
+        return self.json().encode()  # type: ignore
 
 
 class ZSONResponse(ZSONMessage):
