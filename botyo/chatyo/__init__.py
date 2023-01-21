@@ -1,25 +1,22 @@
-from dataclasses import dataclass
 import logging
 from uuid import uuid4
 from cachable.storage.file import FileStorage
 from cachable.request import Request, Method
-from dataclasses_json import dataclass_json
 from botyo.core.config import Config
 from typing import Optional
 from botyo.server.models import Attachment
+from pydantic import BaseModel, Extra, Field
 
-@dataclass_json()
-@dataclass()
-class Payload:
+
+class Payload(BaseModel, extra=Extra.ignore):
     message: str
     source: Optional[str] = None
     lang: Optional[str] = None
     detect_lang: Optional[bool] = None
 
 
-@dataclass_json()
-@dataclass()
-class Response:
+
+class Response(BaseModel, extra=Extra.ignore):
     response: str
     attachment: Optional[Attachment]
 
@@ -29,7 +26,7 @@ def getResponse(path: str, payload: Payload) -> Response:
     req = Request(
         url,
         Method.POST,
-        json=payload.to_dict()  # type: ignore
+        json=payload.dict()  # type: ignore
     )
     message = ""
     attachment = None

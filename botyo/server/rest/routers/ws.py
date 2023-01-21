@@ -70,13 +70,13 @@ class WSConnection(Connection):
     async def accept(self):
         await self.__websocket.accept()
         __class__.connections[self.__clientId] = self
-        await self.__websocket.send_json(
-            ZSONResponse(
+        cmds = ZSONResponse(
                 method=CoreMethods.LOGIN,
                 commands=CommandExec.definitions,
                 client=self.__clientId
-            ).to_dict()
-        )
+            ).dict()
+        logging.debug(cmds)
+        await self.__websocket.send_json(cmds)
 
     async def send_async(self, response: ZSONResponse):
         attachment = None
@@ -100,7 +100,8 @@ class WSConnection(Connection):
 class ConnectionManager:
 
     async def connect(self, websocket: WebSocket, client_id: str):
-        await WSConnection(websocket=websocket, client_id=client_id).accept()
+        connection = WSConnection(websocket=websocket, client_id=client_id)
+        await connection.accept()
 
     def disconnect(self, client_id):
         WSConnection.remove(client_id)

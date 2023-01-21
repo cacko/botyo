@@ -4,86 +4,70 @@ from pathlib import Path
 from typing import Optional
 from dataclasses_json import dataclass_json, Undefined
 from yaml import load, Loader
+from pydantic import BaseModel, Extra, Field
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class OntvConfig:
+class OntvConfig(BaseModel, extra=Extra.ignore):
     api_url: str
     leagues: list[int]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ThreeSixFiveConfig:
+
+class ThreeSixFiveConfig(BaseModel, extra=Extra.ignore):
     competitions_json: str
     leagues_json: str
     countries_json: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class MusicConfig:
+
+class MusicConfig(BaseModel, extra=Extra.ignore):
     api_url: str
     storage: str
     codec: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class DemographicsConfig:
+class DemographicsConfig(BaseModel, extra=Extra.ignore):
     faggots: Optional[list[str]] = None
     males: Optional[list[str]] = None
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CachableConfig:
+
+class CachableConfig(BaseModel, extra=Extra.ignore):
     path: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ChatyoConfig:
+class ChatyoConfig(BaseModel, extra=Extra.ignore):
     base_url: Optional[str]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ImageConfig:
+class ImageConfig(BaseModel, extra=Extra.ignore):
     base_url: Optional[str]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class GeoConfig:
+
+class GeoConfig(BaseModel, extra=Extra.ignore):
     base_url: Optional[str]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ApiConfig:
+
+class ApiConfig(BaseModel, extra=Extra.ignore):
     host: str
     port: int
     daemon_threads: bool
     nworkers: int
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class BeatsConfig:
+class BeatsConfig(BaseModel, extra=Extra.ignore):
     db_url: Optional[str]
     extractor_url: Optional[str]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class FavouritesConfig:
+
+class FavouritesConfig(BaseModel, extra=Extra.ignore):
     teams: list[int]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class GoalsConfig:
+
+class GoalsConfig(BaseModel, extra=Extra.ignore):
     twitter: str
     api_key: str
     api_secret: str
@@ -92,9 +76,7 @@ class GoalsConfig:
     bearer_token: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ConfigStruct:
+class ConfigStruct(BaseModel, extra=Extra.ignore):
     geo: GeoConfig
     ontv: OntvConfig
     music: MusicConfig
@@ -176,4 +158,4 @@ class Config(object, metaclass=ConfigMeta):
             environ.get("SETTINGS_PATH", Path(__file__).parent.parent / "settings.yaml")
         )
         data = load(settings.read_text(), Loader=Loader)
-        self.struct = ConfigStruct.from_dict(data)  # type: ignore
+        self.struct = ConfigStruct(**data)  # type: ignore

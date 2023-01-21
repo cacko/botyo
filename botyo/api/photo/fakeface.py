@@ -4,7 +4,7 @@ from typing import Optional
 from uuid import uuid1
 import logging
 from cachable.request import Request
-from dataclasses_json import dataclass_json
+from pydantic import BaseModel, Extra, Field
 from cachable.models import BinaryStruct
 from botyo.demographics import Gender
 from botyo.chatyo import getResponse, Payload
@@ -13,12 +13,10 @@ from botyo.core.store import ImageCachable
 BASE_URL = "https://fakeface.rest/face/json"
 
 
-@dataclass_json
-@dataclass
-class Query:
+class Query(BaseModel, extra=Extra.ignore):
     gender: Optional[str] = None
-    minimum_age: Optional[int] = 25
-    maximum_age: Optional[int] = 70
+    minimum_age: Optional[int] = Field(default=25)
+    maximum_age: Optional[int] = Field(default=70)
     t: Optional[str] = None
 
     def __post_init__(self):

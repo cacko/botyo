@@ -2,25 +2,19 @@ from argparse import ArgumentTypeError
 from functools import reduce
 from typing import Optional
 from cachable.request import Request
-from dataclasses_json import dataclass_json, Undefined
-from dataclasses import dataclass
 from botyo.core.config import Config
 from validators import ip_address, domain
 import socket
 from botyo.server.output import TextOutput, Column
 from botyo.core.country import Country
+from pydantic import BaseModel, Extra, Field
 
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class GeoISP:
+class GeoISP(BaseModel, extra=Extra.ignore):
     id: int
     name: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class GeoLookup:
+class GeoLookup(BaseModel, extra=Extra.ignore):
     ISP: Optional[GeoISP] = None
     city: Optional[str] = None
     country: Optional[str] = None

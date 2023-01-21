@@ -2,28 +2,19 @@ from math import floor
 from pprint import pprint
 from zoneinfo import ZoneInfo
 from cachable.request import Request
-from dataclasses import dataclass, field
-from dataclasses_json import dataclass_json, config, Undefined
 from datetime import datetime, timedelta, timezone
 from marshmallow import fields
 from botyo.server.output import TextOutput, Align, Column, shorten
 from coretime import time_hhmm
 from functools import reduce
+from pydantic import BaseModel, Extra, Field
+import json
 
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Event:
+class Event(BaseModel, extra=Extra.ignore):
     id: str
     event_id: int
     name: str
-    time: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso", tzinfo=timezone.utc),
-        )
-    )
+    time: datetime
     channels: list[str]
     tvchannels: list[int]
     sport: str
@@ -76,7 +67,7 @@ class TV:
     @property
     def events(self) -> list[Event]:
         body = self.__request.body
-        events: list[Event] = Event.schema().loads(body, many=True)
+        events= [Event(**x) for x in json.loads(body)]
         return filter(
             lambda x: all([not x.has_expired, x.league_id in self.LEAGUES]), events
         )

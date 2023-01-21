@@ -1,6 +1,4 @@
 from hashlib import blake2b
-from dataclasses_json import dataclass_json, Undefined
-from dataclasses import dataclass
 import wikipedia
 from wikipedia.exceptions import DisambiguationError
 import logging
@@ -8,17 +6,16 @@ from typing import Optional
 from cachable.request import Request
 from botyo.chatyo import Response, getResponse, Payload
 from botyo.core.store import RedisCachable
+from pydantic import BaseModel, Extra, Field
 
-@dataclass_json
-@dataclass
-class KbStruct:
+
+class KbStruct(BaseModel, extra=Extra.ignore):
     summary: str
     content: str
 
 
-@dataclass_json
-@dataclass
-class WikiSearchArguments:
+
+class WikiSearchArguments(BaseModel, extra=Extra.ignore):
     gsrsearch: str
     action: str = "query"
     origin: str = "*"
@@ -28,24 +25,19 @@ class WikiSearchArguments:
     gsrlimit: int = 5
 
 
-@dataclass_json
-@dataclass
-class PageItem:
+class PageItem(BaseModel, extra=Extra.ignore):
     pageid: int
     ns: int
     title: str
     index: int
 
 
-@dataclass_json
-@dataclass
-class QueryItem:
+class QueryItem(BaseModel, extra=Extra.ignore):
     pages: Optional[dict[str, PageItem]] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class QueryResponse:
+
+class QueryResponse(BaseModel, extra=Extra.ignore):
     query: Optional[QueryItem] = None
 
 
@@ -66,9 +58,9 @@ class KnowledgeBase(RedisCachable):
 
     def search(self) -> list[PageItem]:
         args = WikiSearchArguments(gsrsearch=self.__query)
-        req = Request(WikiApi.BASE, params=args.to_dict())
+        req = Request(WikiApi.BASE, params=args.dict())
         json = req.json
-        response: QueryResponse = QueryResponse.from_dict(json)
+        response: QueryResponse = QueryResponse(**json)
         if response.query:
             return list(response.query.pages.values())
         raise FileNotFoundError

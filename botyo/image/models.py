@@ -1,10 +1,11 @@
 from dataclasses_json import dataclass_json, Undefined, config
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from stringcase import constcase
+from pydantic import BaseModel, Extra, Field
 
 
-class EmotionIcon(Enum):
+class EmotionIcon(StrEnum):
     ANGRY = ":angry_face:"
     DISGUST = ":face_vomiting:"
     FEAR = ":face_screaming_in_fear:"
@@ -14,7 +15,7 @@ class EmotionIcon(Enum):
     SURPRISE = ":astonished_face:"
 
 
-class RaceIcon(Enum):
+class RaceIcon(StrEnum):
     ASIAN_MAN = ":globe_showing_Asia-Australia:"
     ASIAN_WOMAN = ":globe_showing_Asia-Australia:"
     BLACK_MAN = ":man_cook_dark_skin_tone:"
@@ -29,16 +30,14 @@ class RaceIcon(Enum):
     WHITE_WOMAN = ":woman_medium-light_skin_tone_white_hair:"
 
 
-class GenderIcon(Enum):
+class GenderIcon(StrEnum):
     MAN = ":male_sign:"
     WOMAN = ":female_sign:"
     FAGGOT = ":middle_finger:"
     UNKNOWN = ":alien:"
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class EmotionScores:
+class EmotionScores(BaseModel, extra=Extra.ignore):
     angry: float
     disgust: float
     fear: float
@@ -52,14 +51,11 @@ class EmotionScores:
         pass
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class RaceScores:
+class RaceScores(BaseModel, extra=Extra.ignore):
     asian: float
     black: float
     indian: float
-    latino_hispanic: float = field(
-        metadata=config(field_name="latino hispanic"))
+    latino_hispanic: float = field(metadata=config(field_name="latino hispanic"))
     middle_eastern: float = field(metadata=config(field_name="middle eastern"))
     white: float
 
@@ -68,18 +64,14 @@ class RaceScores:
         pass
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class FaceRegion:
+class FaceRegion(BaseModel, extra=Extra.ignore):
     h: int
     w: int
     x: int
     y: int
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class AnalyzeReponse:
+class AnalyzeReponse(BaseModel, extra=Extra.ignore):
     age: int
     dominant_emotion: str
     dominant_race: str
@@ -95,7 +87,7 @@ class AnalyzeReponse:
     @property
     def race_icon(self) -> str:
         parts = map(constcase, [self.dominant_race, self.gender])
-        return RaceIcon['_'.join(parts)].value
+        return RaceIcon["_".join(parts)].value
 
     @property
     def gender_icon(self) -> str:

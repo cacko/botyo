@@ -1,6 +1,4 @@
-from dataclasses import dataclass
 from uuid import uuid4
-from dataclasses_json import dataclass_json, Undefined
 from typing import Optional
 from emoji import emojize
 from random import choice
@@ -8,19 +6,21 @@ from enum import EnumMeta, Enum, StrEnum
 from pathlib import Path
 import sys
 import requests
+from pydantic import BaseModel, Extra, Field
 
 
 class MethodMeta(EnumMeta):
 
     _enums = {}
 
-    def __new__(metacls, cls, bases, classdict,  **kwds):
+    def __new__(metacls, cls, bases, classdict, **kwds):
         for x in classdict._member_names:
-            metacls._enums[classdict[x]] = ".".join(
-                [classdict["__module__"], cls])
+            metacls._enums[classdict[x]] = ".".join([classdict["__module__"], cls])
         return super().__new__(metacls, cls, bases, classdict, **kwds)
 
-    def __call__(cls, value, names=None, *, module=None, qualname=None, type=None, start=1):
+    def __call__(
+        cls, value, names=None, *, module=None, qualname=None, type=None, start=1
+    ):
         if names is None:  # simple value lookup
             klass = cls._enums[value]
             papp = Path(".") / "app"
@@ -32,7 +32,7 @@ class MethodMeta(EnumMeta):
                 mod = ".".join(klass.split(".")[:-1])
                 imp = __import__(mod, None, None, [enumklass])
                 return getattr(imp, enumklass)(value)
-            return eval(f"{enumklass}(\"{value}\")")
+            return eval(f'{enumklass}("{value}")')
         return cls._create_(
             value,
             names,
@@ -43,13 +43,12 @@ class MethodMeta(EnumMeta):
         )
 
 
-class Method(Enum, metaclass=MethodMeta):
-
+class Method(StrEnum, metaclass=MethodMeta):
     def __eq__(self, __o: object) -> bool:
         return self.value == __o.value
 
 
-class ZMethod(Method, StrEnum):
+class ZMethod(Method):
     LOGIN = "login"
     KNOWLEDGE_ARTICLE = "kb:article"
     KNOWLEDGE_ASK = "kb:ask"
@@ -134,13 +133,11 @@ class ZSONMatcher(StrEnum):
     SOURCE = "source"
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CommandDef:
+class CommandDef(BaseModel, extra=Extra.ignore):
     method: Method
     desc: Optional[str] = None
-    response:  Optional[str] = None
-    matcher:  Optional[ZSONMatcher] = None
+    response: Optional[str] = None
+    matcher: Optional[ZSONMatcher] = None
 
     @property
     def namespace(self) -> str:
@@ -156,11 +153,10 @@ class ZSONType(StrEnum):
     RESPONSE = "response"
 
 
-@dataclass
-class Attachment:
+class Attachment(BaseModel):
     path: Optional[str] = None
     contentType: Optional[str] = None
-    duration: Optional[int] = 0
+    duration: Optional[int] = Field(default=0)
     filename: Optional[str] = None
 
     def __post_init__(self):
@@ -179,33 +175,28 @@ NOT_FOUND = [
 ]
 
 NOT_FOUND_ICONS = [
-    ':axe:',
-    ':thinking_face:',
-    ':open_hands:',
-    ':horse_face: :bucket:',
-    ':man_walking: :left_arrow:'
+    ":axe:",
+    ":thinking_face:",
+    ":open_hands:",
+    ":horse_face: :bucket:",
+    ":man_walking: :left_arrow:",
 ]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class RenderResult:
+class RenderResult(BaseModel, extra=Extra.ignore):
     method: Optional[Method] = None
-    message: Optional[str] = ""
+    message: Optional[str] = Field(default="")
     attachment: Optional[Attachment] = None
     group: Optional[str] = None
-    plain: Optional[bool] = False
+    plain: Optional[bool] = Field(default=False)
     error: Optional[str] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
 class EmptyResult(RenderResult):
-
     @property
     def error_message(self):
         try:
-            return requests.get('https://commit.cacko.net/index.txt').text.strip()
+            return requests.get("https://commit.cacko.net/index.txt").text.strip()
         except Exception:
             return choice(NOT_FOUND)
 
@@ -213,9 +204,7 @@ class EmptyResult(RenderResult):
         self.message = f"{emojize(choice(NOT_FOUND_ICONS))} {self.error_message}"
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ZSONMessage:
+class ZSONMessage(BaseModel, extra=Extra.ignore):
     ztype: Optional[ZSONType] = None
     id: Optional[str] = None
     client: Optional[str] = None
@@ -231,13 +220,11 @@ class ZSONMessage:
         return self.to_json().encode()  # type: ignore
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
 class ZSONResponse(ZSONMessage):
     error: Optional[str] = None
     message: Optional[str] = None
     attachment: Optional[Attachment] = None
-    ztype: ZSONType = ZSONType.RESPONSE
+    ztype: ZSONType = Field(default=ZSONType.RESPONSE)
     commands: Optional[list[CommandDef]] = None
     plain: Optional[bool] = False
 
@@ -251,15 +238,13 @@ class ZSONResponse(ZSONMessage):
         return res if res.exists() else None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
 class ZSONRequest(ZSONMessage):
     source: Optional[str] = None
     lang: Optional[str] = None
     query: Optional[str] = None
     utf8mono: Optional[bool] = True
     attachment: Optional[Attachment] = None
-    ztype: ZSONType = ZSONType.REQUEST
+    ztype: ZSONType = Field(default=ZSONType.REQUEST)
 
 
 class NoCommand(Exception):
