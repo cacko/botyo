@@ -2,20 +2,13 @@ name: botyo
 channels:
   - conda-forge
 dependencies:
-  - _openmp_mutex=4.5
   - bzip2=1.0.8
   - ca-certificates=2022.12.7
-  - keyutils=1.6.1
   - krb5=1.20.1
-  - ld_impl_linux-aarch64=2.39
   - libedit=3.1.20191231
   - libffi=3.4.2
-  - libgcc-ng=12.2.0
-  - libgomp=12.2.0
-  - libnsl=2.0.0
   - libpq=15.1
   - libsqlite=3.40.0
-  - libstdcxx-ng=12.2.0
   - libuuid=2.32.1
   - libzlib=1.2.13
   - ncurses=6.3
