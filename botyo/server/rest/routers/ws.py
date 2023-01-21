@@ -109,7 +109,8 @@ class ConnectionManager:
                 client=client_id,
                 query=query,
                 group=client_id,
-                source=msg.id
+                id=msg.id,
+                source=msg.source
             )
             assert isinstance(command, CommandExec)
             with perftime(f"Command {command.method.value}"):
