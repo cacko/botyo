@@ -86,10 +86,10 @@ class WSConnection(Connection):
                 data=response.attachment.path
             )
         resp = Response(
-            ztype=ZSONType.RESPONSE.value,
+            ztype=ZSONType.RESPONSE,
             id=response.id,
             message=response.message,
-            method=response.method.value,
+            method=response.method,
             plain=response.plain,
             attachment=attachment,
             error=response.error
