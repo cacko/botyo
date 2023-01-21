@@ -12,7 +12,7 @@ from botyo.threesixfive.item.models import GoalEvent
 from datetime import datetime, timedelta
 from botyo.core.store import QueueDict
 
-GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([\w ]+)", re.IGNORECASE)
+GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n ]+)", re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 GOAL_CHECK_EXPIRATION = timedelta(minutes=10)
 
