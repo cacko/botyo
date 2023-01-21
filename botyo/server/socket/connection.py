@@ -49,9 +49,9 @@ class SocketConnection(Connection, StreamRequestHandler):
                 data = self.rfile.read(partSize)
                 msg_json = data.decode()
                 logging.debug(f">> RECEIVE msg {msg_json}")
-                message = ZSONMessage.from_json(msg_json)  # type: ignore
+                message = ZSONMessage.parse_raw(msg_json)  # type: ignore
                 if message.ztype == ZSONType.REQUEST:
-                    request = ZSONRequest.from_json(msg_json)  # type: ignore
+                    request = ZSONRequest.parse_raw(msg_json)  # type: ignore
                     if request.method == CoreMethods.LOGIN:
                         if request.client in __class__.connections:
                             logging.debug(
@@ -98,7 +98,7 @@ class SocketConnection(Connection, StreamRequestHandler):
             assert method
             command = CommandExec.triggered(method, message)
             assert command
-            context = Context(**message.to_dict())  # type: ignore
+            context = Context(**message.dict())  # type: ignore
             self.server.queue.put_nowait(  # type: ignore
                 (command, context, time.perf_counter()))
             logging.debug(
