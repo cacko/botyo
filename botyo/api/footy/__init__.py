@@ -59,6 +59,7 @@ def live_command(context: Context):
 @bp.command(
     method=ZMethod.FOOTY_SUBSCRIBE,
     desc="subscribes the channels for the live updates during the game",
+    subscription=True
 )  # type: ignore
 def subscribe_command(context: Context):
     if any([not context.client, not context.group, not context.query]):
@@ -78,7 +79,7 @@ def subscribe_command(context: Context):
 
 
 @bp.command(method=ZMethod.FOOTY_UNSUBSCRIBE,
-            desc="cancels a subscribtion")  # type: ignore
+            desc="cancels a subscribtion", subscription=True)  # type: ignore
 def unsubscribe_command(context: Context):
     if any([not context.client, not context.group, not context.query]):
         return EmptyResult()
@@ -98,7 +99,8 @@ def unsubscribe_command(context: Context):
 
 @bp.command(
     method=ZMethod.FOOTY_SUBSCRIPTIONS,
-    desc="show all subscriptions in the channel"
+    desc="show all subscriptions in the channel",
+    subscription=True
 )  # type: ignore
 def subscriptions_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group]):

@@ -8,7 +8,7 @@ from botyo.server.models import ZMethod
 bp = Blueprint("chat")
 
 
-@bp.command(method=ZMethod.CHAT_DIALOG, matcher=ZSONMatcher.SOURCE)  # type: ignore
+@bp.command(method=ZMethod.CHAT_DIALOG, matcher=ZSONMatcher.SOURCE, subscription=True)  # type: ignore
 def dialog_command(context: Context):
     msg = context.query
     if not msg:
@@ -22,6 +22,7 @@ def dialog_command(context: Context):
     method=ZMethod.CHAT_PHRASE,
     matcher=ZSONMatcher.PHRASE,
     response="you coming today",
+    subscription=True
 )  # type: ignore
 def phrase_command(context: Context):
     msg = context.query

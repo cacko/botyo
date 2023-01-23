@@ -50,6 +50,8 @@ class Blueprint(object, metaclass=BlueprintMeta):
         self,
         method: Method,
         desc: str = None,
+        subscription: bool = False,
+        icon: str = None,
         matcher: ZSONMatcher = None,
         response: str = None
     ):
