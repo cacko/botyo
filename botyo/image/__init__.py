@@ -290,4 +290,5 @@ class Image(object, metaclass=ImageMeta):
                 message = req.json
             except JSONDecodeError as e:
                 logging.error(e)
+                raise AssertionError()
         return attachment, message
