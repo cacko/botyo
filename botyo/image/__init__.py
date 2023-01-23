@@ -13,7 +13,8 @@ from typing import Optional
 from argparse import ArgumentParser, ArgumentError
 from pydantic import BaseModel, Field
 from corestring import split_with_quotes
-
+from requests.exceptions import JSONDecodeError
+import logging
 
 class ImageGeneratorParams(BaseModel):
     prompt: str
@@ -285,5 +286,8 @@ class Image(object, metaclass=ImageMeta):
                 else:
                     message = part.text
         else:
-            message = req.json
+            try:
+                message = req.json
+            except JSONDecodeError as e:
+                logging.error(e)
         return attachment, message
