@@ -14,7 +14,7 @@ from botyo.core.store import QueueDict
 
 GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n ]+)", re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
-GOAL_CHECK_EXPIRATION = timedelta(minutes=10)
+GOAL_CHECK_EXPIRATION = timedelta(minutes=15)
 
 # (base) muzak at /store/cache/znayko/goals ❯ ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4
 # width=1280
