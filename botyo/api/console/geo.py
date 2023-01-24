@@ -79,7 +79,7 @@ class Geo(object, metaclass=GeoMeta):
         if not self.__lookup_result:
             req = Request(f"{__class__.api_url}/api/lookup", params={"ip": self.__ip})
             json = req.json
-            self.__lookup_result = GeoLookup.from_dict(json)  # type: ignore
+            self.__lookup_result = GeoLookup(**json)  # type: ignore
 
         return self.__lookup_result
 
