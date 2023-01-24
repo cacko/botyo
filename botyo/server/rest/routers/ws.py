@@ -2,7 +2,7 @@ from fastapi import (
     APIRouter, WebSocket, WebSocketDisconnect, HTTPException
 )
 import logging
-from pydantic import BaseModel, Extra, validator
+from pydantic import BaseModel, Extra, validator, Field
 from botyo.server.command import CommandExec
 from botyo.server.connection import Context, Connection
 from botyo.core import perftime
@@ -24,6 +24,15 @@ class WSAttachment(BaseModel):
     contentType: str
     data: str
 
+class PingMessage(BaseModel, extra=Extra.ignore):
+    ztype: Optional[ZSONType] = None
+    id: Optional[str] = None
+    client: Optional[str] = None
+
+
+class PongMessage(BaseModel, extra=Extra.ignore):
+    ztype: Optional[ZSONType] = Field(default=ZSONType.PONG)
+    id: str
 
 class Response(BaseModel):
     ztype: str
@@ -140,7 +149,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         while True:
             data = await websocket.receive_json()
             logging.debug(f"receive {data}")
-            await manager.process_command(data, client_id)
-
+            if data.get("ztype") == ZSONType.PING.value:
+                ping = PingMessage(**data)
+                await websocket.send_json(PongMessage(id=ping.id).dict())
+            else:
+                await manager.process_command(data, client_id)
     except WebSocketDisconnect:
         manager.disconnect(client_id)

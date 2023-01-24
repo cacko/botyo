@@ -156,6 +156,8 @@ class CommandDef(BaseModel, extra=Extra.ignore):
 class ZSONType(StrEnum):
     REQUEST = "request"
     RESPONSE = "response"
+    PING = "ping"
+    PONG = "pong"
 
 
 class Attachment(BaseModel):
