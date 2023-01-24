@@ -23,7 +23,11 @@ class ConnectionMeta(type):
         return cls.connections[clientId]
 
     def remove(cls, clientId: str):
-        del cls.connections[clientId]
+        try:
+            assert clientId in cls.connections
+            del cls.connections[clientId]
+        except AssertionError:
+            pass
 
 
 
