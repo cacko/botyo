@@ -24,7 +24,7 @@ class Shell(object, metaclass=ShellMeta):
     OUTPUT_REPLACED = []
 
     def __init__(self, args: str):
-        self.args = shlex.split(args)
+        self.args = shlex.split(shlex.quote(args))
         self.__post_init__()
 
     def __post_init__(self):

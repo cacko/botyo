@@ -1,6 +1,7 @@
 
 from .shell import Shell
 from typing import Optional
+from shlex import quote
 
 class LyricsShell(Shell):
     OUTPUT_IGNORED = ["Tekst piosenki:", "Dodaj", "Historia"]
