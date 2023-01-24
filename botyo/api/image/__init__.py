@@ -191,19 +191,19 @@ def image2image(context: Context):
         return EmptyResult(method=ZMethod.IMAGE_IMG2IMG)
 
 
-@bp.command(
-    method=ZMethod.IMAGE_PORTRAIT,
-    desc="portrait generator",
-)  # type: ignore
-def image_portrait(context: Context):
-    try:
-        query = context.query
-        assert query
-        attachment, _ = Image.portrait(query)
-        assert attachment
-        return RenderResult(
-            attachment=attachment,
-            method=ZMethod.IMAGE_PORTRAIT,
-        )
-    except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_PORTRAIT)
+# @bp.command(
+#     method=ZMethod.IMAGE_PORTRAIT,
+#     desc="portrait generator",
+# )  # type: ignore
+# def image_portrait(context: Context):
+#     try:
+#         query = context.query
+#         assert query
+#         attachment, _ = Image.portrait(query)
+#         assert attachment
+#         return RenderResult(
+#             attachment=attachment,
+#             method=ZMethod.IMAGE_PORTRAIT,
+#         )
+#     except AssertionError:
+#         return EmptyResult(method=ZMethod.IMAGE_PORTRAIT)
