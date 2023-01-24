@@ -2,7 +2,7 @@ from fastapi import (
     APIRouter, WebSocket, WebSocketDisconnect, HTTPException
 )
 import logging
-from pydantic import BaseModel, Extra, validator, Field
+from pydantic import BaseModel, Extra, validator, Field, ValidationError
 from botyo.server.command import CommandExec
 from botyo.server.connection import Context, Connection
 from botyo.core import perftime
@@ -135,7 +135,7 @@ class ConnectionManager:
                 await context.send_async(response)
         except Exception as e:
             logging.error(e)
-            response = EmptyResult(error=e.__str__)
+            response = EmptyResult(error=f"{e.__str__}")
             await context.send_async(response)
 
 
