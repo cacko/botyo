@@ -194,7 +194,7 @@ def player_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_STANDINGS, desc="standings", icon-"signal_cellular_alt")  # type: ignore
+@bp.command(method=ZMethod.FOOTY_STANDINGS, desc="standings", icon="signal_cellular_alt")  # type: ignore
 def standings_Command(context: Context):
     try:
         query = context.query
@@ -228,7 +228,7 @@ def standings_Command(context: Context):
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_TEAM, desc="Team info", icon-"groups")  # type: ignore
+@bp.command(method=ZMethod.FOOTY_TEAM, desc="Team info", icon="groups")  # type: ignore
 def team_command(context: Context) -> RenderResult:
     try:
         assert context.query
