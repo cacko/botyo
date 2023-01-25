@@ -122,7 +122,7 @@ def subscriptions_command(context: Context) -> RenderResult:
     )
 
 
-@bp.command(method=ZMethod.FOOTY_LEAGUES, desc="Enabled leagues", icon-"emoji_events")  # type: ignore
+@bp.command(method=ZMethod.FOOTY_LEAGUES, desc="Enabled leagues", icon="emoji_events")  # type: ignore
 def competitions_command(context: Context) -> RenderResult:
     try:
         competitions = Footy.competitions()
