@@ -22,6 +22,7 @@ class ICONS(Enum):
 @bp.command(
     method=ZMethod.KNOWLEDGE_ARTICLE,
     desc="search and displayed the first match for a term from wikipedia",
+    icon="library_books"
 )  # type: ignore
 def article_command(context: Context):
     try:
@@ -39,6 +40,7 @@ def article_command(context: Context):
 @bp.command(
     method=ZMethod.KNOWLEDGE_ASK,
     desc="ask to learn",
+    icon="question_answer"
 )  # type: ignore
 def ask_command(context: Context):
     try:
@@ -63,6 +65,7 @@ def ask_command(context: Context):
 @bp.command(
     method=ZMethod.KNOWLEDGE_TELL,
     desc="ask to be told",
+    icon="short_text"
 )  # type: ignore
 def tell_command(context: Context):
     try:
@@ -83,6 +86,7 @@ def tell_command(context: Context):
 @bp.command(
     method=ZMethod.KNOWLEDGE_WTF,
     desc="wtf is that",
+    icon="contact_support"
 )  # type: ignore
 def wtf_command(context: Context):
     try:

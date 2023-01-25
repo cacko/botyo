@@ -8,7 +8,11 @@ from botyo.server.models import ZMethod
 bp = Blueprint("logo")
 
 
-@bp.command(method=ZMethod.LOGO_TEAM, desc="logo for the requested football team")  # type: ignore
+@bp.command(
+    method=ZMethod.LOGO_TEAM, 
+    desc="logo for the requested football team",
+    icon="badge"
+    )  # type: ignore
 def logo_command(context: Context):
     logo = Team(context.query)
     path = logo.path
