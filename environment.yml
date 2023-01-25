@@ -115,7 +115,7 @@ dependencies:
       - beautifulsoup4==4.11.1
       - better-exceptions==0.3.3
       - blis==0.7.9
-      - cachable==0.3.37
+      - cachable==0.3.38
       - cachetools==5.2.1
       - cairocffi==1.4.0
       - cairosvg==2.6.0
