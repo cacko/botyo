@@ -94,6 +94,7 @@ class CommandExec(metaclass=CommandExecMeta):
     subscription: Optional[bool] = Field(default=False)
     icon: Optional[str] = None
     args: Optional[str] = None
+    upload: Optional[bool] = FAlse
 
     @property
     def trigger(self) -> str:
