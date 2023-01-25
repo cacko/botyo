@@ -10,7 +10,7 @@ from botyo.server.models import ZMethod
 bp = Blueprint("cve")
 
 
-@bp.command(method=ZMethod.CVE_CVE, desc="Latest Common Vulnerabilities and Exposures.")  # type: ignore
+@bp.command(method=ZMethod.CVE_CVE, desc="Latest Common Vulnerabilities and Exposures.", icon="bug_report")  # type: ignore
 def cve_command(context: Context) -> RenderResult:
     try:
         cve = CVE(context.query)
