@@ -65,7 +65,7 @@ tasks:
   export:
     desc: export env
     cmds:
-      - mamba env export --no-builds --ignore-channels  -n {{.PROJECT}} > environment.yml
+      - mamba env export --no-builds --ignore-channels --from-history  -n {{.PROJECT}} > environment.yml
       - sed -i '' -e '/libcxx/d' environment.yml
 
 
