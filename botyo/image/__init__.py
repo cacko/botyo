@@ -22,6 +22,7 @@ class ImageGeneratorParams(BaseModel):
     width: int = Field(default=512)
     guidance_scale: float = Field(default=7.5)
     num_inference_steps: int = Field(default=50)
+    negative_prompt: Optional[str] = None
     seed: Optional[int] = None
 
 
@@ -103,6 +104,7 @@ class ImageMeta(type):
             parser = ArgumentParser(
                 description='Image Processing', add_help=False, exit_on_error=False)
             parser.add_argument('prompt', nargs='+')
+            parser.add_argument('negative_prompt', type=str, default=None)
             parser.add_argument('-h',
                                 '--height', type=int, default=512)
             parser.add_argument('-w', '--width', type=int, default=512)
@@ -110,6 +112,7 @@ class ImageMeta(type):
                                 type=float, default=7)
             parser.add_argument('-i', '--num_inference_steps', default=50)
             parser.add_argument('-s', '--seed', type=int)
+            parser.add_argument('-m', '--model', default="default")
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
