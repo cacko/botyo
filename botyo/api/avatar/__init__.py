@@ -8,12 +8,14 @@ from argparse import ArgumentParser
 bp = Blueprint("avatar")
 
 parser = ArgumentParser(description="Avatar arguments")
-parser.add_argument('prompt', nargs='+')
-parser.add_argument('-n', '--new', action='store_true')
+parser.add_argument("prompt", nargs="+")
+parser.add_argument("-n", "--new", action="store_true")
 # type: ignore
 
 
-@bp.command(method=ZMethod.AVATAR_AVATAR, desc="generates avatar for the input")
+@bp.command(
+    method=ZMethod.AVATAR_AVATAR, desc="generates avatar for the input", icon="face"
+)
 def avatar_command(context: Context) -> RenderResult:
     try:
         params = parser.parse_args(context.query.split(" "))
@@ -22,10 +24,7 @@ def avatar_command(context: Context) -> RenderResult:
         assert path.exists()
         return RenderResult(
             method=ZMethod.AVATAR_AVATAR,
-            attachment=Attachment(
-                path=path.as_posix(),
-                contentType=avatar.contentType
-            ),
+            attachment=Attachment(path=path.as_posix(), contentType=avatar.contentType),
         )
     except AssertionError:
         return EmptyResult()

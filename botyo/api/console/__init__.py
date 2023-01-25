@@ -14,7 +14,7 @@ from botyo.api.console.geo import Geo
 bp = Blueprint("console")
 
 
-@bp.command(method=ZMethod.CONSOLE_TRACEROUTE, desc="traceroute a host/ip")  # type: ignore
+@bp.command(method=ZMethod.CONSOLE_TRACEROUTE, desc="traceroute a host/ip", icon="turn_sharp_right")  # type: ignore
 def traceroute_command(context: Context):
     try:
         traceroute = Traceroute(context.query)
@@ -27,7 +27,7 @@ def traceroute_command(context: Context):
         return RenderResult(message=to_mono("are you stupid?"))
 
 
-@bp.command(method=ZMethod.CONSOLE_TCPTRACEROUTE, desc="tcptraceroute a host/ip")  # type: ignore
+@bp.command(method=ZMethod.CONSOLE_TCPTRACEROUTE, desc="tcptraceroute a host/ip", icon="roundabout_right")  # type: ignore
 def tcptraceroute_command(context: Context):
     try:
         traceroute = TcpTraceroute(context.query)
@@ -40,7 +40,7 @@ def tcptraceroute_command(context: Context):
         return RenderResult(message=to_mono("are you stupid?"))
 
 
-@bp.command(method=ZMethod.CONSOLE_DIG, desc="DNS lookup utility")  # type: ignore
+@bp.command(method=ZMethod.CONSOLE_DIG, desc="DNS lookup utility", icon="dns")  # type: ignore
 def dig_command(context: Context):
     try:
         dig = Dig(context.query)
@@ -56,6 +56,7 @@ def dig_command(context: Context):
 @bp.command(
     method=ZMethod.CONSOLE_WHOIS,
     desc="Internet domain name and network number directory service",
+    icon="alternate_email"
 )  # type: ignore
 def whois_command(context: Context):
     try:
@@ -69,7 +70,7 @@ def whois_command(context: Context):
         return RenderResult(message=to_mono("are you stupid?"))
 
 
-@bp.command(method=ZMethod.CONSOLE_GEO, desc="Geo info for given ip")  # type: ignore
+@bp.command(method=ZMethod.CONSOLE_GEO, desc="Geo info for given ip", icon="public")  # type: ignore
 def geo_command(context: Context):
     try:
         res = Geo(context.query).lookup()

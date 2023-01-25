@@ -8,7 +8,7 @@ from botyo.server.models import ZMethod
 bp = Blueprint("chat")
 
 
-@bp.command(method=ZMethod.CHAT_DIALOG, matcher=ZSONMatcher.SOURCE, subscription=True)  # type: ignore
+@bp.command(method=ZMethod.CHAT_DIALOG, matcher=ZSONMatcher.SOURCE, subscription=True, icon="chat")  # type: ignore
 def dialog_command(context: Context):
     msg = context.query
     if not msg:
@@ -33,7 +33,7 @@ def phrase_command(context: Context):
     return res
 
 
-@bp.command(method=ZMethod.CHAT_REPLY, desc="genereate reply")  # type: ignore
+@bp.command(method=ZMethod.CHAT_REPLY, desc="genereate reply", icon="chat_bubble_outline")  # type: ignore
 def reply_command(context: Context):
     msg = context.query
     if not msg:

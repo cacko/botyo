@@ -52,6 +52,7 @@ class Blueprint(object, metaclass=BlueprintMeta):
         desc: str = None,
         subscription: bool = False,
         icon: str = None,
+        args: str = None,
         matcher: ZSONMatcher = None,
         response: str = None
     ):
@@ -62,6 +63,9 @@ class Blueprint(object, metaclass=BlueprintMeta):
                 desc=desc,
                 matcher=matcher,
                 response=response,
+                subscription=subscription,
+                icon=icon,
+                args=args
             )
             self._commands[method.value] = cmd
 

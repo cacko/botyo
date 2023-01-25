@@ -11,8 +11,8 @@ from fuzzelinho import Match, MatchMethod
 from dataclasses import dataclass
 from typing import Callable, Optional
 from itertools import groupby
-from pydantic import BaseModel, Extra
 from pydantic.dataclasses import dataclass
+from pydantic import Field
 
 class CommandExecMeta(type):
     registered = []
@@ -86,6 +86,9 @@ class CommandExec(metaclass=CommandExecMeta):
     desc: Optional[str] = None
     matcher: Optional[ZSONMatcher] = None
     response: Optional[str] = None
+    subscription: Optional[bool] = Field(default=False)
+    icon: Optional[str] = None
+    args: Optional[str] = None
 
     @property
     def trigger(self) -> str:
