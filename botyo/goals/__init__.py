@@ -11,6 +11,7 @@ import re
 from botyo.threesixfive.item.models import GoalEvent
 from datetime import datetime, timedelta
 from botyo.core.store import QueueDict
+from threesixfive.team import normalize_team
 
 GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n ]+)", re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
@@ -210,7 +211,7 @@ class Goals(object, metaclass=GoalsMeta):
                     logging.error(f"TWITTER DOWNLOAD: {e}")
                 self.video_data[t_id] = TwitterNeedle(
                     needle=TeamsNeedle(
-                        home=team1.lower(), away=team2.lower(), score=f"{score1}:{score2}"),
+                        home=normalize_team(team1).lower(), away=normalize_team(team2).lower(), score=f"{score1}:{score2}"),
                     goals=GoalNeedle(home=int(score1), away=int(score2)),
                     id=t_id,
                     text=t_text,

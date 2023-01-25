@@ -1,4 +1,3 @@
-
 from stringcase import snakecase
 from pathlib import Path
 from enum import Enum
@@ -7,8 +6,13 @@ from functools import reduce
 
 DEFAULT_BADGE = Path(__file__).parent / "default.png"
 
-TEAM_NORMALISERS = {r"atl\.": "Atletico", r"paris sg": "PSG",
-                    r"nottm": "Nottingham", r"sheff": "Sheffield"}
+TEAM_NORMALISERS = {
+    r"atl\.": "Atletico",
+    r"paris sg": "PSG",
+    r"nottm": "Nottingham",
+    r"sheff": "Sheffield",
+    r"utd\.*": "United"
+}
 
 
 class AssetKey(Enum):
@@ -27,8 +31,7 @@ def store_key(obj: AssetKey, id: str) -> str:
 
 def normalize_team(team: str):
     return reduce(
-        lambda r, k: re.compile(k, re.IGNORECASE).sub(
-            TEAM_NORMALISERS.get(k), r),
+        lambda r, k: re.compile(k, re.IGNORECASE).sub(TEAM_NORMALISERS.get(k), r),
         TEAM_NORMALISERS.keys(),
-        team
+        team,
     )
