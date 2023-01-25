@@ -11,7 +11,7 @@ import re
 from botyo.threesixfive.item.models import GoalEvent
 from datetime import datetime, timedelta
 from botyo.core.store import QueueDict
-from threesixfive.team import normalize_team
+from botyo.threesixfive.team import normalize_team
 
 GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n ]+)", re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
