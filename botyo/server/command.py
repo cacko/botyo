@@ -61,7 +61,8 @@ class CommandExecMeta(type):
                     response=cmd.response,
                     icon=cmd.icon,
                     subscription=cmd.subscription,
-                    args=cmd.args
+                    args=cmd.args,
+                    upload=cmd.upload
 
                 )
             )

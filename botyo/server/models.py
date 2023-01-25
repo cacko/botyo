@@ -146,6 +146,7 @@ class CommandDef(BaseModel, extra=Extra.ignore):
     icon: Optional[str] = None
     subscription: Optional[bool] = Field(default=False)
     args: Optional[str] = None
+    upload: Optional[bool] = Field(default=False)
 
     @property
     def namespace(self) -> str:

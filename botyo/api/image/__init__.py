@@ -12,6 +12,7 @@ bp = Blueprint("image")
 @bp.command(
     method=ZMethod.IMAGE_ANALYZE,
     desc="Returns Emotion, Race, Gender, Age for image",
+    upload=True
 )  # type: ignore
 def image_analyze(context: Context):
     try:
@@ -31,6 +32,7 @@ def image_analyze(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TAG,
     desc="tag faces in image",
+    upload=True
 )  # type: ignore
 def image_Tag(context: Context):
     try:
@@ -50,6 +52,7 @@ def image_Tag(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_HOWCUTE,
     desc="howcute faces in image",
+    upload=True
 )  # type: ignore
 def image_howcute(context: Context):
     try:
@@ -69,6 +72,7 @@ def image_howcute(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_CLASSIFY,
     desc="Classify objects in images",
+    upload=True
 )  # type: ignore
 def image_classify(context: Context):
     try:
@@ -89,6 +93,7 @@ def image_classify(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_PIXEL,
     desc="pixel image",
+    upload=True
 )  # type: ignore
 def image_pixel(context: Context):
     try:
@@ -114,6 +119,7 @@ def image_pixel(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_POLYGON,
     desc="polygon image",
+    upload=True
 )  # type: ignore
 def image_polygon(context: Context):
     attachment = context.attachment
@@ -140,6 +146,7 @@ def image_polygon(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_VARIATION,
     desc="variation of image",
+    upload=True
 )  # type: ignore
 def image_variation(context: Context):
     try:
@@ -176,6 +183,7 @@ def image_fromtext(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_IMG2IMG,
     desc="image of image",
+    upload=True
 )  # type: ignore
 def image2image(context: Context):
     try:

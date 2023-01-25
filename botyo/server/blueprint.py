@@ -53,6 +53,7 @@ class Blueprint(object, metaclass=BlueprintMeta):
         subscription: bool = False,
         icon: str = None,
         args: str = None,
+        upload: bool = False,
         matcher: ZSONMatcher = None,
         response: str = None
     ):
@@ -65,7 +66,8 @@ class Blueprint(object, metaclass=BlueprintMeta):
                 response=response,
                 subscription=subscription,
                 icon=icon,
-                args=args
+                args=args,
+                upload=upload
             )
             self._commands[method.value] = cmd
 
