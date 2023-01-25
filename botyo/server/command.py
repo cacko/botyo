@@ -60,7 +60,7 @@ class CommandExecMeta(type):
                     matcher=cmd.matcher,
                     response=cmd.response,
                     icon=cmd.icon,
-                    subscribed=cmd.subscribed,
+                    subscription=cmd.subscription,
                     args=cmd.args
 
                 )
