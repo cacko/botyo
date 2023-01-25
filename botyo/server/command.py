@@ -59,6 +59,10 @@ class CommandExecMeta(type):
                     desc=cmd.desc,
                     matcher=cmd.matcher,
                     response=cmd.response,
+                    icon=cmd.icon,
+                    subscribed=cmd.subscribed,
+                    args=cmd.args
+
                 )
             )
 

@@ -143,6 +143,9 @@ class CommandDef(BaseModel, extra=Extra.ignore):
     desc: Optional[str] = None
     response: Optional[str] = None
     matcher: Optional[ZSONMatcher] = None
+    icon: Optional[str] = None
+    subscription: Optional[bool] = Field(default=False)
+    args: Optional[str] = None
 
     @property
     def namespace(self) -> str:
