@@ -43,6 +43,7 @@ class Action(Enum):
     TXT2IMG = "image/txt2img"
     IMG2IMG = "image/img2img"
     PORTRAIT = "image/portrait"
+    GPS2IMG = "image/img2gps"
 
 
 class ImageMeta(type):
@@ -151,6 +152,10 @@ class ImageMeta(type):
         return cls(attachment).do_img2img(prompt)
 
 
+    def gps2img(cls, prompt: str) -> tuple[Attachment, dict]:
+        return cls().do_gps2img(prompt)
+
+
 class Image(object, metaclass=ImageMeta):
 
     __attachment: Optional[Attachment] = None
@@ -211,6 +216,17 @@ class Image(object, metaclass=ImageMeta):
             )
         except ArgumentError as e:
             raise AssertionError(e.message)
+
+    def do_gps2img(self, prompt: str):
+        try:
+            params = __class__.image_generator_params(prompt)
+            return self.getResponse(
+                Action.GPS2IMG,
+                params.prompt,
+                json=params.dict()
+            )
+        except ArgumentError as e:
+            raise AssertionError(e.message) 
 
     def do_portrait(self, prompt: str):
         try:

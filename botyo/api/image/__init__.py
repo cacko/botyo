@@ -12,7 +12,8 @@ bp = Blueprint("image")
 @bp.command(
     method=ZMethod.IMAGE_ANALYZE,
     desc="Returns Emotion, Race, Gender, Age for image",
-    upload=True
+    upload=True,
+    icon="settings_accessibility"
 )  # type: ignore
 def image_analyze(context: Context):
     try:
@@ -32,7 +33,8 @@ def image_analyze(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TAG,
     desc="tag faces in image",
-    upload=True
+    upload=True,
+    icon="fingerprint"
 )  # type: ignore
 def image_Tag(context: Context):
     try:
@@ -52,7 +54,8 @@ def image_Tag(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_HOWCUTE,
     desc="howcute faces in image",
-    upload=True
+    upload=True,
+    icon="thumb_up"
 )  # type: ignore
 def image_howcute(context: Context):
     try:
@@ -72,7 +75,8 @@ def image_howcute(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_CLASSIFY,
     desc="Classify objects in images",
-    upload=True
+    upload=True,
+    icon="data_object"
 )  # type: ignore
 def image_classify(context: Context):
     try:
@@ -93,7 +97,8 @@ def image_classify(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_PIXEL,
     desc="pixel image",
-    upload=True
+    upload=True,
+    icon="pix"
 )  # type: ignore
 def image_pixel(context: Context):
     try:
@@ -119,7 +124,8 @@ def image_pixel(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_POLYGON,
     desc="polygon image",
-    upload=True
+    upload=True,
+    icon="hexagon"
 )  # type: ignore
 def image_polygon(context: Context):
     attachment = context.attachment
@@ -146,7 +152,8 @@ def image_polygon(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_VARIATION,
     desc="variation of image",
-    upload=True
+    upload=True,
+    icon="difference"
 )  # type: ignore
 def image_variation(context: Context):
     try:
@@ -165,6 +172,7 @@ def image_variation(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2IMG,
     desc="text to image",
+    icon="brush"
 )  # type: ignore
 def image_fromtext(context: Context):
     try:
@@ -183,7 +191,8 @@ def image_fromtext(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_IMG2IMG,
     desc="image of image",
-    upload=True
+    upload=True,
+    icojn="collections"
 )  # type: ignore
 def image2image(context: Context):
     try:
@@ -199,19 +208,20 @@ def image2image(context: Context):
         return EmptyResult(method=ZMethod.IMAGE_IMG2IMG)
 
 
-# @bp.command(
-#     method=ZMethod.IMAGE_PORTRAIT,
-#     desc="portrait generator",
-# )  # type: ignore
-# def image_portrait(context: Context):
-#     try:
-#         query = context.query
-#         assert query
-#         attachment, _ = Image.portrait(query)
-#         assert attachment
-#         return RenderResult(
-#             attachment=attachment,
-#             method=ZMethod.IMAGE_PORTRAIT,
-#         )
-#     except AssertionError:
-#         return EmptyResult(method=ZMethod.IMAGE_PORTRAIT)
+@bp.command(
+    method=ZMethod.IMAGE_GPS2IMG,
+    desc="generates image for given gps coordinates",
+    icon="satellite"
+)  # type: ignore
+def image2image(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, _ = Image.img2img(attachment, context.query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_IMG2IMG,
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_IMG2IMG)
