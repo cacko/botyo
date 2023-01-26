@@ -213,15 +213,15 @@ def image2image(context: Context):
     desc="generates image for given gps coordinates",
     icon="satellite"
 )  # type: ignore
-def image2image(context: Context):
+def gps2Image(context: Context):
     try:
         query = context.query
         assert query
-        attachment, _ = Image.img2img(attachment, context.query)
-        assert attachment
+        attachment, msg = Image.gps2img(context.query)
         return RenderResult(
             attachment=attachment,
-            method=ZMethod.IMAGE_IMG2IMG,
+            message=msg,
+            method=ZMethod.IMAGE_GPS2IMG,
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_IMG2IMG)
+        return EmptyResult(method=ZMethod.IMAGE_GPS2IMG)
