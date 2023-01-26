@@ -192,7 +192,7 @@ def image_fromtext(context: Context):
     method=ZMethod.IMAGE_IMG2IMG,
     desc="image of image",
     upload=True,
-    icojn="collections"
+    icon="collections"
 )  # type: ignore
 def image2image(context: Context):
     try:
