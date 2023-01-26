@@ -43,7 +43,7 @@ class Action(Enum):
     TXT2IMG = "image/txt2img"
     IMG2IMG = "image/img2img"
     PORTRAIT = "image/portrait"
-    GPS2IMG = "image/img2gps"
+    GPS2IMG = "image/gps2img"
 
 
 class ImageMeta(type):
@@ -152,7 +152,7 @@ class ImageMeta(type):
         return cls(attachment).do_img2img(prompt)
 
 
-    def gps2img(cls, prompt: str) -> tuple[Attachment, dict]:
+    def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_gps2img(prompt)
 
 
