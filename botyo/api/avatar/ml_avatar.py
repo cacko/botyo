@@ -18,7 +18,7 @@ class StableDiffusionAvatar(ImageCachable):
     __gender: Optional[Gender] = None
     __race: Optional[Race] = None
     __new: bool = False
-    SIZE = (512, 640)
+    SIZE = (512, 512)
 
     def __init__(self, name: str, is_new: bool = False):
         if not name:
@@ -57,11 +57,14 @@ class StableDiffusionAvatar(ImageCachable):
 
     @property
     def cmd(self) -> str:
+        object = [self._name]
+        if not all([self._name.startswith("<"), self._name.endswith(">")]):
+            object.append(self.gender)
+            object.append(self.race)
         return (
-            f"cute little anthropomorphic {self._name} cute and adorable, "
-            "pretty, beautiful, dnd character art portrait, matte fantasy painting, "
-            "deviantart artstation, by jason felix by steve argyle by tyler jacobson by peter mohrbacher, cinema "
-            "--width=512 --height=640 --guidance_scale=11"
+            f"portrait of {' '.join(object)}, "
+            "mattepainting concept blizzard pixar maya engine on stylized background "
+            "splash comics global illumination lighting artstation lois van baarle, ilya kuvshinov, rossdraws"
         )
 
     @property
