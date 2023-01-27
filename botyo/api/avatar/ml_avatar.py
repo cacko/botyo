@@ -62,7 +62,7 @@ class StableDiffusionAvatar(ImageCachable):
             object.append(self.gender)
             object.append(self.race)
         return (
-            f"portrait of {' '.join(object)}, "
+            f"profile picture of {' '.join(object)} as supercell character, "
             "mattepainting concept blizzard pixar maya engine on stylized background "
             "splash comics global illumination lighting artstation lois van baarle, ilya kuvshinov, rossdraws"
         )
