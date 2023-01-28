@@ -13,7 +13,7 @@ def get_app():
 
     origins = [
         "http://localhost:4200",
-        "https://geo.cacko.net"
+        "https://botyo.cacko.net"
     ]
 
     app.add_middleware(
@@ -23,8 +23,6 @@ def get_app():
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-
 
     app.include_router(api.router)
     app.include_router(ws.router)

@@ -1,5 +1,8 @@
 from fastapi import (
-    APIRouter, WebSocket, WebSocketDisconnect, HTTPException
+    APIRouter, 
+    WebSocket, 
+    WebSocketDisconnect,
+    HTTPException
 )
 import logging
 from pydantic import BaseModel, Extra, validator, Field, ValidationError
@@ -144,6 +147,7 @@ manager = ConnectionManager()
 
 @router.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
+    logging.info([f"{k} -> {v}" for k,v in websocket.headers.items()])
     await manager.connect(websocket, client_id)
     try:
         while True:
