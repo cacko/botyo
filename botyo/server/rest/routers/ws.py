@@ -164,11 +164,11 @@ async def get_cookie_or_token(
 async def websocket_endpoint(
     websocket: WebSocket,
     client_id: str,
-    cookie_or_token: str = Depends(get_cookie_or_token),
+    # cookie_or_token: str = Depends(get_cookie_or_token),
 ):
     logging.debug([f"{k} -> {v}" for k, v in websocket.headers.items()])
     await manager.connect(websocket, client_id)
-    logging.debug(f"Session cookie or query token value is: {cookie_or_token}")
+    # logging.debug(f"Session cookie or query token value is: {cookie_or_token}")
     try:
         while True:
             data = await websocket.receive_json()
