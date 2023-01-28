@@ -62,7 +62,7 @@ class StableDiffusionAvatar(ImageCachable):
             object.append(self.gender)
             object.append(self.race)
         return (
-            f"skill magic deepdream radiating a glowing aura,{' '.join(object)}, "
+            f"{' '.join(object)} skill magic deepdream radiating a glowing aura "
             "stuff loot legends stylized digital illustration video game icon "
             "artstation lois van baarle, ilya kuvshinov, rossdraws"
         )
