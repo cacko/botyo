@@ -123,6 +123,7 @@ class WSConnection(Connection):
                 contentType=response.attachment.contentType,
                 data=response.attachment.path,
             )
+        logging.debugg(response)
         resp = Response(
             ztype=ZSONType.RESPONSE,
             id=response.id,
