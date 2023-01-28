@@ -24,7 +24,7 @@ class ImageGeneratorParams(BaseModel):
     num_inference_steps: int = Field(default=50)
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
-    upscale: bool = Field(default=False)
+    upscale: Optional[bool] = None
 
 
 
