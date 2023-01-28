@@ -81,7 +81,8 @@ class Context:
             plain=result.plain,
             source=self.source,
             error=result.error,
-            id=self.id
+            id=self.id,
+            new_id=result.new_id
         )
         await self.connection.send_async(response=response)
 

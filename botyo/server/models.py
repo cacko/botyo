@@ -201,6 +201,7 @@ class RenderResult(BaseModel, extra=Extra.ignore):
     group: Optional[str] = None
     plain: Optional[bool] = Field(default=False)
     error: Optional[str] = None
+    new_id: Optional[str] = None
 
 
 class EmptyResult(RenderResult):
@@ -238,6 +239,7 @@ class ZSONResponse(ZSONMessage):
     ztype: ZSONType = Field(default=ZSONType.RESPONSE)
     commands: Optional[list[CommandDef]] = None
     plain: Optional[bool] = False
+    new_id: Optional[str] = None
 
     @property
     def attachment_path(self) -> Optional[Path]:

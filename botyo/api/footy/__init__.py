@@ -72,11 +72,16 @@ def subscribe_command(context: Context):
         return EmptyResult()
     try:
         assert context.query
-        response = Footy.subscribe(
-            client=context.client, groupID=context.group, query=context.query
+        result = Footy.subscribe(
+            client=context.client, 
+            groupID=context.group, 
+            query=context.query
         )
         return RenderResult(
-            method=ZMethod.FOOTY_SUBSCRIBE, message=response, group=context.group
+            method=ZMethod.FOOTY_SUBSCRIBE, 
+            message=result.message, 
+            group=context.group,
+            new_id=result.sub_id
         )
     except Exception:
         return EmptyResult()

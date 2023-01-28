@@ -1,7 +1,7 @@
 from typing import Optional
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
-
+from pydantic import BaseModel
 from .item.subscription import Subscription, SubscriptionClient
 from fuzzelinho import Match, MatchMethod
 from botyo.threesixfive.data import LeagueItem
@@ -15,14 +15,15 @@ from .item.facts import Facts
 from .item.lineups import Lineups
 from .item.competitions import Competitions
 from .item.team import Team
-from botyo.threesixfive.exception import (
-    GameNotFound,
-    TeamNotFound,
-    CompetitionNotFound
-)
+from botyo.threesixfive.exception import GameNotFound, TeamNotFound, CompetitionNotFound
 from botyo.core.config import Config
 from emoji import emojize
 from apscheduler.job import Job
+
+
+class SubscriptionResult(BaseModel):
+    message: str
+    sub_id: Optional[str] = None
 
 
 class Goal:
@@ -71,22 +72,14 @@ class FootyMeta(type):
     def competition(cls, query: str) -> CompetitionData:
         return cls().getCompetition(query)
 
-    def subscribe(cls, client, query: str, groupID) -> str:
+    def subscribe(cls, client, query: str, groupID) -> SubscriptionResult:
         try:
-            return cls().getSubscription(
-                query=query,
-                client=client,
-                group=groupID
-            )
+            return cls().getSubscription(query=query, client=client, group=groupID)
         except GameNotFound as e:
             raise e
 
     def unsubscribe(cls, client, query: str, group) -> str:
-        return cls().removeSubscription(
-            query=query,
-            client=client,
-            group=group
-        )
+        return cls().removeSubscription(query=query, client=client, group=group)
 
     def listjobs(cls, client, group) -> list[Job]:
         return Subscription.forGroup(
@@ -216,17 +209,22 @@ class Footy(object, metaclass=FootyMeta):
         icon = emojize(":dango:")
         return f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}"
 
-    def getSubscription(self, client: str, query: str, group) -> str:
+    def getSubscription(self, client: str, query: str, group) -> SubscriptionResult:
         try:
             item = self.__queryGame(query)
             sc = SubscriptionClient(client_id=client, group_id=group)
             sub = Subscription.get(event=item, sc=sc)
             if not sub.isValid:
-                return "Event has ended".upper()
+                return SubscriptionResult(message="Event has ended".upper())
             sub.schedule(sc)
-            return " ".join([
-                f"{emojize(':bell:')}",
-                f"{item.strHomeTeam} vs {item.strAwayTeam}"
-            ])
+            return SubscriptionResult(
+                message=" ".join(
+                    [
+                        f"{emojize(':bell:')}",
+                        f"{item.strHomeTeam} vs {item.strAwayTeam}",
+                    ]
+                ),
+                sub_id=sub.id,
+            )
         except Exception:
             raise GameNotFound
