@@ -21,6 +21,7 @@ from botyo.server.models import (
     ZSONResponse,
     ZSONRequest,
     CoreMethods,
+    ZMethod
 )
 from typing import Optional, Union
 from base64 import b64encode
@@ -92,6 +93,8 @@ class Response(BaseModel):
 
 
 router = APIRouter()
+
+
 class WSConnection(Connection):
 
     __websocket: WebSocket

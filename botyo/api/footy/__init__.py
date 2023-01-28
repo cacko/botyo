@@ -12,6 +12,9 @@ from .item.competitions import CompetitionItem
 from botyo.server.output import TextOutput
 from botyo.server.models import ZMethod
 import logging
+from pathlib import Path
+from random import choice
+import filetype
 
 bp = Blueprint("footy")
 
@@ -104,7 +107,7 @@ def unsubscribe_command(context: Context):
     method=ZMethod.FOOTY_SUBSCRIPTIONS,
     desc="show all subscriptions in the channel",
     subscription=True,
-    icon="subscriptions"
+    icon="subscriptions",
 )  # type: ignore
 def subscriptions_command(context: Context) -> RenderResult:
     if any([not context.client, not context.group]):
@@ -255,9 +258,16 @@ def fixtures_command(context: Context) -> RenderResult:
 @bp.command(method=ZMethod.FOOTY_GOALS, desc="Da Goals", icon="sports_soccer")  # type: ignore
 def goals_command(context: Context) -> RenderResult:
     try:
-        assert context.query
-        competition = CompetitionItem(Footy.competition(context.query))
-        message = competition.render()
-        return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
+        # assert context.query
+        gr = Path(Config.cachable.path) / "goals"
+        mp4 = choice(gr.glob("*.mp4"))
+        mime = filetype.guess_mime(mp4.as_posix())
+        # competition = CompetitionItem(Footy.competition(context.query))
+        # message = competition.render()
+        return RenderResult(
+            message="goals",
+            attachment=Attachment(contentType=mime, path=mp4.as_posix()),
+            method=ZMethod.FOOTY_GOALS,
+        )
     except Exception:
         return EmptyResult()
