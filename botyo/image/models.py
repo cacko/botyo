@@ -35,6 +35,11 @@ class GenderIcon(StrEnum):
     UNKNOWN = ":alien:"
 
 
+
+class BotyoPrompt(StrEnum):
+    MAGICGLOW = "[placeholder] skill magic deepdream radiating a glowing aura stuff loot legends stylized digital illustration video game icon artstation lois van baarle, ilya kuvshinov, rossdraws,"
+
+
 class EmotionScores(BaseModel, extra=Extra.ignore):
     angry: float
     disgust: float

@@ -26,11 +26,14 @@ from typing import Optional, Union
 from base64 import b64encode
 from pathlib import Path
 from PIL import Image
+from botyo.core.config import Config as app_config
+from fastapi.staticfiles import StaticFiles
 
 
 class WSAttachment(BaseModel):
     contentType: str
-    data: str
+    data: Optional[str] = None
+    url: Optional[str] = None
 
 
 class PingMessage(BaseModel, extra=Extra.ignore):
@@ -58,23 +61,42 @@ class Response(BaseModel):
         try:
             assert attachment
             a_path = Path(attachment.data)
+            a_store_path = Path(app_config.cachable.pat) / f"ws_{a_path.name}"
             assert a_path.exists()
             with a_path:
                 contentType = attachment.contentType
-                if contentType.startswith("image/"):
-                    img = Image.open(a_path.as_posix())
-                    img.save(a_path.as_posix(), format="webp")
-                    contentType = "image/webp"
-                return WSAttachment(
-                    contentType=contentType,
-                    data=b64encode(a_path.read_bytes()).decode(),
-                ).dict()
+                url = None
+                match contentType.split("/")[0]:
+                    case "image":
+                        img = Image.open(a_path.as_posix())
+                        img.save(a_path.as_posix(), format="webp")
+                        contentType = "image/webp"
+                        return WSAttachment(
+                            contentType=contentType,
+                            data=b64encode(a_path.read_bytes()).decode(),
+                        ).dict()
+                    case "audio":
+                        url = f"/ws/fp/{a_path.name}"
+                        a_path.rename(a_store_path)
+                        logging.info(f"copied {a_path} tp {a_store_path}")
+                    case "video":
+                        url = f"/ws/fp/{a_path.name}"
+                        a_path.rename(a_store_path)
+                    case _:
+                        raise AssertionError("inlvaida attachment type")
+                return WSAttachment(contentType=contentType, url=url).dict()
+
         except AssertionError as e:
             logging.error(e)
             return None
 
 
 router = APIRouter()
+router.mount(
+    "/ws/fp",
+    StaticFiles(directory=Path(app_config.cachable.path).as_posix()),
+    name="static",
+)
 
 
 class WSConnection(Connection):
