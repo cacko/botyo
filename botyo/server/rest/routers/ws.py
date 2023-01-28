@@ -55,6 +55,7 @@ class Response(BaseModel):
     error: Optional[str] = None
     attachment: Optional[WSAttachment] = None
     plain: Optional[bool] = None
+    new_id: Optional[str] = None
 
     @validator("attachment")
     def static_attachment(cls, attachment: Optional[WSAttachment]):
@@ -132,6 +133,7 @@ class WSConnection(Connection):
             plain=response.plain,
             attachment=attachment,
             error=response.error,
+            new_id=response.new_id,
         )
         await self.__websocket.send_json(resp.dict())
 
