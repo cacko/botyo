@@ -10,7 +10,7 @@ from fastapi import (
     status,
 )
 import logging
-from pydantic import BaseModel, Extra, validator, Field, ValidationError
+from pydantic import BaseModel, Extra, validator, Field
 from botyo.server.command import CommandExec
 from botyo.server.connection import Context, Connection
 from botyo.core import perftime
@@ -21,14 +21,13 @@ from botyo.server.models import (
     ZSONResponse,
     ZSONRequest,
     CoreMethods,
-    ZMethod
 )
 from typing import Optional, Union
 from base64 import b64encode
 from pathlib import Path
 from PIL import Image
 from botyo.core.config import Config as app_config
-from fastapi.staticfiles import StaticFiles
+import asyncio
 
 
 class WSAttachment(BaseModel):
@@ -113,6 +112,9 @@ class WSConnection(Connection):
             client=self.__clientId,
         ).dict()
         await self.__websocket.send_json(cmds)
+
+    def send(self, response: ZSONResponse):
+        asyncio.run(self.send_async(response))
 
     async def send_async(self, response: ZSONResponse):
         attachment = None

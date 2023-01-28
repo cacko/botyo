@@ -7,7 +7,7 @@ import logging
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json, Undefined
 from typing import Optional
-
+import asyncio
 
 class UnknownClientException(Exception):
     pass

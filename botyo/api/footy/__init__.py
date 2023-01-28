@@ -255,20 +255,20 @@ def fixtures_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_GOALS, desc="Da Goals", icon="sports_soccer")  # type: ignore
-def goals_command(context: Context) -> RenderResult:
-    try:
-        # assert context.query
-        gr = Path(Config.cachable.path) / "goals"
-        mp4 = choice(list(gr.glob("*.mp4")))
-        mime = filetype.guess_mime(mp4.as_posix())
-        # competition = CompetitionItem(Footy.competition(context.query))
-        # message = competition.render()
-        return RenderResult(
-            message="goals",
-            attachment=Attachment(contentType=mime, path=mp4.as_posix()),
-            method=ZMethod.FOOTY_GOALS,
-        )
-    except Exception as e:
-        logging.exception(e)
-        return EmptyResult()
+# @bp.command(method=ZMethod.FOOTY_GOALS, desc="Da Goals", icon="sports_soccer")  # type: ignore
+# def goals_command(context: Context) -> RenderResult:
+#     try:
+#         # assert context.query
+#         gr = Path(Config.cachable.path) / "goals"
+#         mp4 = choice(list(gr.glob("*.mp4")))
+#         mime = filetype.guess_mime(mp4.as_posix())
+#         # competition = CompetitionItem(Footy.competition(context.query))
+#         # message = competition.render()
+#         return RenderResult(
+#             message="goals",
+#             attachment=Attachment(contentType=mime, path=mp4.as_posix()),
+#             method=ZMethod.FOOTY_GOALS,
+#         )
+#     except Exception as e:
+#         logging.exception(e)
+#         return EmptyResult()
