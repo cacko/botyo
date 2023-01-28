@@ -260,7 +260,7 @@ def goals_command(context: Context) -> RenderResult:
     try:
         # assert context.query
         gr = Path(Config.cachable.path) / "goals"
-        mp4 = choice(gr.glob("*.mp4"))
+        mp4 = choice(list(gr.glob("*.mp4")))
         mime = filetype.guess_mime(mp4.as_posix())
         # competition = CompetitionItem(Footy.competition(context.query))
         # message = competition.render()
@@ -269,5 +269,6 @@ def goals_command(context: Context) -> RenderResult:
             attachment=Attachment(contentType=mime, path=mp4.as_posix()),
             method=ZMethod.FOOTY_GOALS,
         )
-    except Exception:
+    except Exception as e:
+        logging.exception(e)
         return EmptyResult()
