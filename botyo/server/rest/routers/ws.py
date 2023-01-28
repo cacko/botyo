@@ -87,7 +87,6 @@ class WSConnection(Connection):
                 commands=CommandExec.definitions,
                 client=self.__clientId
             ).dict()
-        logging.debug(cmds)
         await self.__websocket.send_json(cmds)
 
     async def send_async(self, response: ZSONResponse):
@@ -147,7 +146,7 @@ manager = ConnectionManager()
 
 @router.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
-    logging.info([f"{k} -> {v}" for k,v in websocket.headers.items()])
+    logging.debug([f"{k} -> {v}" for k,v in websocket.headers.items()])
     await manager.connect(websocket, client_id)
     try:
         while True:
