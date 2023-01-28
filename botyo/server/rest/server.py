@@ -5,16 +5,26 @@ from corethread import StoppableThread
 from fastapi import FastAPI
 from .routers import api, ws
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.routing import Mount
+from fastapi.staticfiles import StaticFiles
 from botyo.core.config import Config
+from botyo.core.config import Config as app_config
+from pathlib import Path
 
 
 def get_app():
-    app = FastAPI()
 
-    origins = [
-        "http://localhost:4200",
-        "https://botyo.cacko.net"
-    ]
+    app = FastAPI(
+        routes=[
+            Mount(
+                "/fp",
+                app=StaticFiles(directory=Path(app_config.cachable.path).as_posix()),
+                name="fp",
+            )
+        ]
+    )
+
+    origins = ["http://localhost:4200", "https://botyo.cacko.net"]
 
     app.add_middleware(
         CORSMiddleware,
@@ -28,15 +38,12 @@ def get_app():
     app.include_router(ws.router)
     return app
 
-class _APIServer(StoppableThread):
 
+class _APIServer(StoppableThread):
     def __init__(self, *args, **kwargs):
         api_config = Config.api
         server_config = uvicorn.Config(
-            app=get_app,
-            host=api_config.host, 
-            port=api_config.port,
-            factory=True
+            app=get_app, host=api_config.host, port=api_config.port, factory=True
         )
         self.__server = uvicorn.Server(server_config)
         super().__init__(*args, **kwargs)
@@ -47,11 +54,9 @@ class _APIServer(StoppableThread):
     def stop(self):
         super().stop()
         self.__server.should_exit = True
-    
 
 
 class APIServer(AppServer):
     def __init__(self) -> None:
         worker = _APIServer()
         super().__init__(worker)
-

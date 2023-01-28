@@ -76,11 +76,11 @@ class Response(BaseModel):
                             data=b64encode(a_path.read_bytes()).decode(),
                         ).dict()
                     case "audio":
-                        url = f"/ws/fp/{a_path.name}"
+                        url = f"fp/{a_store_path.name}"
                         a_path.rename(a_store_path)
                         logging.info(f"copied {a_path} tp {a_store_path}")
                     case "video":
-                        url = f"/ws/fp/{a_path.name}"
+                        url = f"fp/{a_store_path.name}"
                         a_path.rename(a_store_path)
                     case _:
                         raise AssertionError("inlvaida attachment type")
@@ -92,13 +92,6 @@ class Response(BaseModel):
 
 
 router = APIRouter()
-router.mount(
-    "/ws/fp",
-    StaticFiles(directory=Path(app_config.cachable.path).as_posix()),
-    name="static",
-)
-
-
 class WSConnection(Connection):
 
     __websocket: WebSocket
