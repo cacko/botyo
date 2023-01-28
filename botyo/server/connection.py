@@ -67,7 +67,8 @@ class Context:
             group=self.group,
             method=result.method,
             plain=result.plain,
-            id=self.id
+            id=self.id,
+            new_id=result.new_id
         )
         self.connection.send(response=response)
 
