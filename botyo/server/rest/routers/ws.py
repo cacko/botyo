@@ -76,11 +76,11 @@ class Response(BaseModel):
                             data=b64encode(a_path.read_bytes()).decode(),
                         ).dict()
                     case "audio":
-                        url = f"fp/{a_store_path.name}"
+                        url = f"ws/fp/{a_store_path.name}"
                         a_path.rename(a_store_path)
                         logging.info(f"copied {a_path} tp {a_store_path}")
                     case "video":
-                        url = f"fp/{a_store_path.name}"
+                        url = f"ws/fp/{a_store_path.name}"
                         a_path.rename(a_store_path)
                     case _:
                         raise AssertionError("inlvaida attachment type")

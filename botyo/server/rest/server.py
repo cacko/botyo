@@ -17,7 +17,7 @@ def get_app():
     app = FastAPI(
         routes=[
             Mount(
-                "/fp",
+                "/ws/fp",
                 app=StaticFiles(directory=Path(app_config.cachable.path).as_posix()),
                 name="fp",
             )
