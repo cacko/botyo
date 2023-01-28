@@ -61,7 +61,7 @@ class Response(BaseModel):
         try:
             assert attachment
             a_path = Path(attachment.data)
-            a_store_path = Path(app_config.cachable.pat) / f"ws_{a_path.name}"
+            a_store_path = Path(app_config.cachable.path) / f"ws_{a_path.name}"
             assert a_path.exists()
             with a_path:
                 contentType = attachment.contentType
