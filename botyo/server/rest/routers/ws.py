@@ -1,8 +1,13 @@
 from fastapi import (
-    APIRouter, 
-    WebSocket, 
+    APIRouter,
+    WebSocket,
     WebSocketDisconnect,
-    HTTPException
+    HTTPException,
+    Cookie,
+    Query,
+    Depends,
+    WebSocketException,
+    status,
 )
 import logging
 from pydantic import BaseModel, Extra, validator, Field, ValidationError
@@ -15,9 +20,9 @@ from botyo.server.models import (
     EmptyResult,
     ZSONResponse,
     ZSONRequest,
-    CoreMethods
+    CoreMethods,
 )
-from typing import Optional
+from typing import Optional, Union
 from base64 import b64encode
 from pathlib import Path
 from PIL import Image
@@ -26,6 +31,7 @@ from PIL import Image
 class WSAttachment(BaseModel):
     contentType: str
     data: str
+
 
 class PingMessage(BaseModel, extra=Extra.ignore):
     ztype: Optional[ZSONType] = None
@@ -37,6 +43,7 @@ class PongMessage(BaseModel, extra=Extra.ignore):
     ztype: Optional[ZSONType] = Field(default=ZSONType.PONG)
     id: str
 
+
 class Response(BaseModel):
     ztype: str
     id: str
@@ -46,7 +53,7 @@ class Response(BaseModel):
     attachment: Optional[WSAttachment] = None
     plain: Optional[bool] = None
 
-    @validator('attachment')
+    @validator("attachment")
     def static_attachment(cls, attachment: Optional[WSAttachment]):
         try:
             assert attachment
@@ -60,7 +67,7 @@ class Response(BaseModel):
                     contentType = "image/webp"
                 return WSAttachment(
                     contentType=contentType,
-                    data=b64encode(a_path.read_bytes()).decode()
+                    data=b64encode(a_path.read_bytes()).decode(),
                 ).dict()
         except AssertionError as e:
             logging.error(e)
@@ -83,10 +90,10 @@ class WSConnection(Connection):
         await self.__websocket.accept()
         __class__.connections[self.__clientId] = self
         cmds = ZSONResponse(
-                method=CoreMethods.LOGIN,
-                commands=CommandExec.definitions,
-                client=self.__clientId
-            ).dict()
+            method=CoreMethods.LOGIN,
+            commands=CommandExec.definitions,
+            client=self.__clientId,
+        ).dict()
         await self.__websocket.send_json(cmds)
 
     async def send_async(self, response: ZSONResponse):
@@ -94,7 +101,7 @@ class WSConnection(Connection):
         if response.attachment:
             attachment = WSAttachment(
                 contentType=response.attachment.contentType,
-                data=response.attachment.path
+                data=response.attachment.path,
             )
         resp = Response(
             ztype=ZSONType.RESPONSE,
@@ -103,13 +110,12 @@ class WSConnection(Connection):
             method=response.method,
             plain=response.plain,
             attachment=attachment,
-            error=response.error
+            error=response.error,
         )
         await self.__websocket.send_json(resp.dict())
 
 
 class ConnectionManager:
-
     async def connect(self, websocket: WebSocket, client_id: str):
         connection = WSConnection(websocket=websocket, client_id=client_id)
         await connection.accept()
@@ -129,7 +135,7 @@ class ConnectionManager:
                 query=query,
                 group=client_id,
                 id=msg.id,
-                source=msg.source
+                source=msg.source,
             )
             assert isinstance(command, CommandExec)
             with perftime(f"Command {command.method.value}"):
@@ -144,10 +150,25 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
+async def get_cookie_or_token(
+    websocket: WebSocket,
+    session: Union[str, None] = Cookie(default=None),
+    token: Union[str, None] = Query(default=None),
+):
+    if session is None and token is None:
+        raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
+    return session or token
+
+
 @router.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: str):
-    logging.debug([f"{k} -> {v}" for k,v in websocket.headers.items()])
+async def websocket_endpoint(
+    websocket: WebSocket,
+    client_id: str,
+    cookie_or_token: str = Depends(get_cookie_or_token),
+):
+    logging.debug([f"{k} -> {v}" for k, v in websocket.headers.items()])
     await manager.connect(websocket, client_id)
+    logging.debug(f"Session cookie or query token value is: {cookie_or_token}")
     try:
         while True:
             data = await websocket.receive_json()
