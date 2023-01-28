@@ -78,8 +78,7 @@ class Cache(RedisCachable):
         req = Request(url)
         try:
             json = req.json
-            response: ResponseGame = ResponseGame.from_dict(  # type: ignore
-                json)
+            response: ResponseGame = ResponseGame.from_dict(json)  # type: ignore
             return response
         except Exception as e:
             print(e)
@@ -113,8 +112,9 @@ class Cache(RedisCachable):
             if len(cached.events) < len(fresh.events):
                 content = self.content
                 assert self._struct
-                self._struct.game.events = (
-                    content).events[len(cached.events):]  # type: ignore
+                self._struct.game.events = (content).events[
+                    len(cached.events) :
+                ]  # type: ignore
                 return self._struct
             return None
         except GameNotFound:
@@ -145,16 +145,14 @@ class SubscriptionClient:
     def connection(self) -> Connection:
         return Connection.client(self.client_id)
 
-    def sendUpdate(self, data):
+    def sendUpdate(self, data, msgId: Optional[str] = None):
         if self.is_rest:
             return self.updateREST(data)
-        return self.updateBotyo(data)
+        return self.updateBotyo(data, msgId)
 
-    def updateBotyo(self, message):
+    def updateBotyo(self, message, msgId: Optional[str] = None):
         result = RenderResult(
-            method=ZMethod.FOOTY_SUBSCRIBE,
-            message=message,
-            group=self.group_id
+            method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self.group_id
         )
         try:
             self.connection.send(
@@ -165,6 +163,7 @@ class SubscriptionClient:
                     group=result.group,
                     method=result.method,
                     plain=result.plain,
+                    id=msgId,
                 )
             )
         except UnknownClientException:
@@ -180,9 +179,7 @@ class SubscriptionClient:
         try:
             assert self.group_id
             resp = post(
-                f"{self.client_id}",
-                headers=OTP(self.group_id).headers,
-                json=payload
+                f"{self.client_id}", headers=OTP(self.group_id).headers, json=payload
             )
             return resp.status_code
         except ConnectionError:
@@ -257,7 +254,7 @@ class Subscription(metaclass=SubscriptionMeta):
     def cancel(self, sc: SubscriptionClient):
         try:
             if sc.is_rest:
-                sc.sendUpdate(CancelJobEvent(job_id=self.id))
+                sc.sendUpdate(CancelJobEvent(job_id=self.id), self.id)
             self.subscriptions.remove(sc)
             if not len(self.subscriptions):
                 Scheduler.cancel_jobs(self.id)
@@ -294,6 +291,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         group=result.group,
                         method=result.method,
                         plain=result.plain,
+                        id=self.id
                     )
                 )
             except UnknownClientException:
@@ -314,7 +312,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         home=self._event.strHomeTeam.lower(),
                         away=self._event.strAwayTeam.lower(),
                         timestamp=int(time.time()),
-                        player=x.playerName
+                        player=x.playerName,
                     )
                     goal_event = GoalEvent(
                         event_id=int(self._event.idEvent),
@@ -357,19 +355,19 @@ class Subscription(metaclass=SubscriptionMeta):
                     try:
                         details = ParserDetails(None, response=updated)
                         events = details.events_pixel
-                        sc.sendUpdate(events)
+                        sc.sendUpdate(events, self.id)
                     except Exception:
                         pass
                     if cache.halftime:
                         cache.halftime = False
-                        sc.sendUpdate(self.halftimeAnnoucementPixel)
+                        sc.sendUpdate(self.halftimeAnnoucementPixel, self.id)
                     else:
-                        sc.sendUpdate(self.progressUpdatePixel)
+                        sc.sendUpdate(self.progressUpdatePixel, self.id)
                 elif chatUpdate:
                     TextOutput.clean()
                     TextOutput.addRows(chatUpdate)
                     try:
-                        sc.sendUpdate(TextOutput.render())
+                        sc.sendUpdate(TextOutput.render(), self.id)
                     except UnknownClientException:
                         pass
             self.checkGoals(updated)
@@ -382,24 +380,20 @@ class Subscription(metaclass=SubscriptionMeta):
             if any(
                 [
                     ShortGameStatus(content.game.shortStatusText)
-                    in [
-                        ShortGameStatus.FINAL,
-                        ShortGameStatus.AFTER_PENALTIES
-                    ],
+                    in [ShortGameStatus.FINAL, ShortGameStatus.AFTER_PENALTIES],
                 ]
             ):
                 for sc in self.subscriptions:
                     try:
                         if sc.is_rest:
-                            sc.sendUpdate(self.fulltimeAnnoucementPixel)
+                            sc.sendUpdate(self.fulltimeAnnoucementPixel, self.id)
                         else:
-                            sc.sendUpdate(self.fulltimeAnnoucement)
+                            sc.sendUpdate(self.fulltimeAnnoucement, self.id)
                     except UnknownClientException:
                         pass
                     if content.game.justEnded:
                         self.cancel(sc)
-                        logging.debug(
-                            f"subscription {self.event_name} in done")
+                        logging.debug(f"subscription {self.event_name} in done")
         except AssertionError:
             pass
         except ValueError as e:
@@ -408,10 +402,7 @@ class Subscription(metaclass=SubscriptionMeta):
             logging.exception(e)
             # return self.cancel_all()
 
-    def updates(
-        self,
-        updated: Optional[ResponseGame] = None
-    ) -> Optional[list[str]]:
+    def updates(self, updated: Optional[ResponseGame] = None) -> Optional[list[str]]:
         try:
             if not updated:
                 return None
@@ -422,7 +413,7 @@ class Subscription(metaclass=SubscriptionMeta):
             assert details.home
             assert details.away
             res = ScoreRow(
-                status=f"{details.game_time:.0f}\"",
+                status=f'{details.game_time:.0f}"',
                 home=details.home.name,
                 away=details.away.name,
                 score=details.score,
@@ -464,16 +455,14 @@ class Subscription(metaclass=SubscriptionMeta):
     def halftimeAnnoucementPixel(self):
         try:
             details = ParserDetails.get(str(self._event.details))
-            return DetailsEventPixel.halfTimeEvent(
-                details, self._event.idLeague)
+            return DetailsEventPixel.halfTimeEvent(details, self._event.idLeague)
         except AssertionError as e:
             logging.exception(e)
 
     @property
     def startAnnouncement(self) -> str | list[str]:
         TextOutput.addRows(
-            [" ".join([emojize(":goal_net:"),
-                      f"GAME STARTING: {self.event_name}"])]
+            [" ".join([emojize(":goal_net:"), f"GAME STARTING: {self.event_name}"])]
         )
         return TextOutput.render()
 
@@ -485,7 +474,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 event_id=self._event.idEvent,
                 league_id=self._event.idLeague,
                 home_id=self._event.idHomeTeam,
-                away_id=self._event.idAwayTeam
+                away_id=self._event.idAwayTeam,
             )
         ]
 
@@ -504,9 +493,9 @@ class Subscription(metaclass=SubscriptionMeta):
             for sc in self.subscriptions:
                 try:
                     if sc.is_rest:
-                        sc.sendUpdate(self.startAnnouncementPixel)
+                        sc.sendUpdate(self.startAnnouncementPixel, self.id)
                     else:
-                        sc.sendUpdate(self.startAnnouncement)
+                        sc.sendUpdate(self.startAnnouncement, self.id)
                 except UnknownClientException:
                     pass
 
@@ -514,8 +503,7 @@ class Subscription(metaclass=SubscriptionMeta):
         if sc.is_rest:
             logo = LeagueImage(self._event.idLeague)
             logo_path = logo.path
-            pix = Pixelate(input=logo_path, padding=200,
-                           grid_lines=True, block_size=25)
+            pix = Pixelate(input=logo_path, padding=200, grid_lines=True, block_size=25)
             pix.resize((8, 8))
             sc.sendUpdate(
                 SubscriptionEvent(
@@ -531,12 +519,11 @@ class Subscription(metaclass=SubscriptionMeta):
                     league_id=self._event.idLeague,
                     job_id=self.id,
                     icon=pix.base64,
-                    home_team_icon=TeamLogoPixel(
-                        self._event.strHomeTeam).base64,
-                    away_team_icon=TeamLogoPixel(
-                        self._event.strAwayTeam).base64,
+                    home_team_icon=TeamLogoPixel(self._event.strHomeTeam).base64,
+                    away_team_icon=TeamLogoPixel(self._event.strAwayTeam).base64,
                     status=self._event.strStatus,
                 ),
+                self.id,
             )
         if self.inProgress:
             return self.start()
@@ -566,12 +553,11 @@ class Subscription(metaclass=SubscriptionMeta):
             text = TextOutput.render()
             for sc in filter(lambda s: not s.is_rest, self.subscriptions):
                 try:
-                    sc.sendUpdate(text)
+                    sc.sendUpdate(text, self.id)
                 except UnknownClientException:
                     pass
                 self.cancel(sc)
-            logging.debug(
-                f"subscription before game {self.event_name} in done")
+            logging.debug(f"subscription before game {self.event_name} in done")
         except ValueError:
             pass
         except Exception as e:
@@ -616,10 +602,9 @@ class Subscription(metaclass=SubscriptionMeta):
             _status = EventStatus(status)
             if _status in (EventStatus.FT, EventStatus.AET, EventStatus.PPD):
                 return True
-            return any([
-                _status == EventStatus.HT,
-                re.match(r"^\d+", status) is not None
-            ])
+            return any(
+                [_status == EventStatus.HT, re.match(r"^\d+", status) is not None]
+            )
         except ValueError:
             return False
 
@@ -651,7 +636,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     status=details.game_status,
                     league_id=self._event.idLeague,
                     home_team_id=details.home.id,
-                    away_team_id=details.away.id
+                    away_team_id=details.away.id,
                 )
             ]
         except AssertionError:

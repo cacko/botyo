@@ -66,7 +66,8 @@ class Context:
             client=self.client,
             group=self.group,
             method=result.method,
-            plain=result.plain
+            plain=result.plain,
+            id=self.id
         )
         self.connection.send(response=response)
 
