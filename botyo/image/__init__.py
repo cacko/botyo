@@ -25,6 +25,7 @@ class ImageGeneratorParams(BaseModel):
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
     upscale: Optional[bool] = None
+    model: str = Field(default="default")
 
 
 
@@ -129,7 +130,7 @@ class ImageMeta(type):
             width=parsed.width,
             guidance_scale=parsed.guidance_scale,
             num_inference_steps=parsed.num_inference_steps,
-            negatrive_prompt=parsed.negative_prompt,
+            negative_prompt=parsed.negative_prompt,
             model=parsed.model,
             seed=parsed.seed
         )
