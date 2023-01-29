@@ -44,7 +44,7 @@ class FakeFace(ImageCachable):
             params = Query()
             if gender in [Gender.M, Gender.F]:
                 params.gender = gender.value
-            res = Request(BASE_URL, params=params.to_dict())  # type: ignore
+            res = Request(BASE_URL, params=params.dict())
             json = res.json
             photo_url = json.get("image_url")
             res = Request(photo_url)
