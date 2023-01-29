@@ -59,8 +59,8 @@ class StableDiffusionAvatar(ImageCachable):
     def cmd(self) -> str:
         object = [self._name]
         if not all([self._name.startswith("<"), self._name.endswith(">")]):
-            object.append(self.gender)
-            object.append(self.race)
+            object.append(self.gender.value)
+            object.append(self.race.value)
         return (
             f"{' '.join(object)} skill magic deepdream radiating a glowing aura "
             "stuff loot legends stylized digital illustration video game icon "
