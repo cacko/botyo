@@ -152,7 +152,7 @@ class SubscriptionClient:
 
     def updateBotyo(self, message, msgId: Optional[str] = None):
         result = RenderResult(
-            method=ZMethod.FOOTY_SUBSCRIBE, message=message, group=self.group_id
+            method=ZMethod.FOOTY_SUBSCRIPTION_UPDATE, message=message, group=self.group_id
         )
         try:
             self.connection.send(
@@ -274,7 +274,7 @@ class Subscription(metaclass=SubscriptionMeta):
             if sc.is_rest:
                 continue
             result = RenderResult(
-                method=ZMethod.FOOTY_SUBSCRIBE,
+                method=ZMethod.FOOTY_SUBSCRIPTION_UPDATE,
                 message=message,
                 attachment=Attachment(
                     path=attachment.as_posix(),

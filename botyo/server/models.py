@@ -79,6 +79,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     FOOTY_PLAYER = "ft:player"
     FOOTY_STATS = "ft:stats"
     FOOTY_SUBSCRIBE = "ft:subscribe"
+    FOOTY_SUBSCRIPTION_UPDATE = "footy_subscription:update"
     FOOTY_UNSUBSCRIBE = "ft:unsubscribe"
     FOOTY_SUBSCRIPTIONS = "ft:listsubscriptions"
     FOOTY_FIXTURES = "ft:fixtures"
