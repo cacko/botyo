@@ -205,11 +205,12 @@ class Footy(object, metaclass=FootyMeta):
         item = self.__queryGame(query)
         sc = SubscriptionClient(client_id=client, group_id=group)
         sub = Subscription.get(event=item, sc=sc)
+        sub_id = sub.id;
         sub.cancel(sc)
         icon = emojize(":dango:")
         return SubscriptionResult(
             message=f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}",
-            sub_id=sub.id
+            sub_id=sub_id
         )
 
     def getSubscription(self, client: str, query: str, group) -> SubscriptionResult:

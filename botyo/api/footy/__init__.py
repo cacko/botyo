@@ -104,7 +104,7 @@ def unsubscribe_command(context: Context):
         return RenderResult(
             method=ZMethod.FOOTY_UNSUBSCRIBE, 
             message=result.message,
-            id=result.sub_id, 
+            new_id=result.sub_id, 
             group=context.group,
 
         )
