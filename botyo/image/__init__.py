@@ -132,7 +132,8 @@ class ImageMeta(type):
             num_inference_steps=parsed.num_inference_steps,
             negative_prompt=parsed.negative_prompt,
             model=parsed.model,
-            seed=parsed.seed
+            seed=parsed.seed,
+            upscale=parsed.upscale
         )
 
     def variation(
