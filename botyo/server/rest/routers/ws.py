@@ -70,7 +70,7 @@ class Response(BaseModel):
     def static_attachment(cls, attachment: Optional[WSAttachment]):
         try:
             assert attachment
-            a_path = Path(attachment.data)
+            a_path = Path(attachment.url)
             a_store_path = (
                 cls.store_root()
                 / f"{string_hash(a_path.name, str(time.time()))}{a_path.suffix}"
@@ -130,7 +130,7 @@ class WSConnection(Connection):
         if response.attachment:
             attachment = WSAttachment(
                 contentType=response.attachment.contentType,
-                data=response.attachment.path,
+                url=response.attachment.path,
             )
         logging.debug(response)
         resp = Response(
