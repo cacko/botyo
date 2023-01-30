@@ -14,7 +14,7 @@ def get_app():
         routes=[
             Mount(
                 "/ws/fp",
-                app=StaticFiles(directory=ws.Response.store_root.as_posix()),
+                app=StaticFiles(directory=ws.Response.store_root().as_posix()),
                 name="fp",
             )
         ]

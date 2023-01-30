@@ -31,6 +31,8 @@ from corestring import string_hash
 import time
 
 
+
+
 class WSAttachment(BaseModel):
     contentType: str
     url: str
@@ -57,7 +59,7 @@ class Response(BaseModel):
     plain: Optional[bool] = None
     new_id: Optional[str] = None
 
-    @property
+    @classmethod
     def store_root(cls) -> Path:
         root = Path(app_config.cachable.path) / "ws"
         if not root.exists():
@@ -70,7 +72,7 @@ class Response(BaseModel):
             assert attachment
             a_path = Path(attachment.data)
             a_store_path = (
-                cls.store_root
+                cls.store_root()
                 / f"{string_hash(a_path.name, str(time.time()))}{a_path.suffix}"
             )
             assert a_path.exists()
@@ -80,7 +82,7 @@ class Response(BaseModel):
                     case "image":
                         img = Image.open(a_path.as_posix())
                         a_store_path = (
-                            cls.store_root
+                            cls.store_root()
                             / f"{string_hash(a_path.stem, str(time.time()))}.webp"
                         )
                         img.save(a_store_path.as_posix(), format="webp")
