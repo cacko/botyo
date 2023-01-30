@@ -18,8 +18,8 @@ import logging
 
 class ImageGeneratorParams(BaseModel):
     prompt: str
-    height: int = Field(default=512)
-    width: int = Field(default=512)
+    height: int = Field(default=768)
+    width: int = Field(default=768)
     guidance_scale: float = Field(default=7.5)
     num_inference_steps: int = Field(default=50)
     negative_prompt: Optional[str] = None
@@ -110,8 +110,8 @@ class ImageMeta(type):
             parser.add_argument('prompt', nargs='+')
             parser.add_argument('-n', '--negative_prompt', type=str, default="")
             parser.add_argument('-h',
-                                '--height', type=int, default=512)
-            parser.add_argument('-w', '--width', type=int, default=512)
+                                '--height', type=int, default=768)
+            parser.add_argument('-w', '--width', type=int, default=768)
             parser.add_argument('-g', '--guidance_scale',
                                 type=float, default=7)
             parser.add_argument('-i', '--num_inference_steps', default=50)
