@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from botyo.core.store import QueueDict
 from botyo.threesixfive.team import normalize_team
 
-GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n ]+)", re.IGNORECASE)
+GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n]+)", re.IGNORECASE|re.MULTILINE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 GOAL_CHECK_EXPIRATION = timedelta(minutes=15)
 
