@@ -78,7 +78,7 @@ class FootyMeta(type):
         except GameNotFound as e:
             raise e
 
-    def unsubscribe(cls, client, query: str, group) -> str:
+    def unsubscribe(cls, client, query: str, group) -> SubscriptionResult:
         return cls().removeSubscription(query=query, client=client, group=group)
 
     def listjobs(cls, client, group) -> list[Job]:
@@ -201,13 +201,16 @@ class Footy(object, metaclass=FootyMeta):
         player = Player.find(query)
         return player
 
-    def removeSubscription(self, client: str, query: str, group) -> str:
+    def removeSubscription(self, client: str, query: str, group) -> SubscriptionResult:
         item = self.__queryGame(query)
         sc = SubscriptionClient(client_id=client, group_id=group)
         sub = Subscription.get(event=item, sc=sc)
         sub.cancel(sc)
         icon = emojize(":dango:")
-        return f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}"
+        return SubscriptionResult(
+            message=f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}",
+            sub_id=sub.id
+        )
 
     def getSubscription(self, client: str, query: str, group) -> SubscriptionResult:
         try:

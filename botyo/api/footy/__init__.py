@@ -98,11 +98,15 @@ def unsubscribe_command(context: Context):
         return EmptyResult()
     try:
         assert context.query
-        response = Footy.unsubscribe(
+        result = Footy.unsubscribe(
             client=context.client, group=context.group, query=context.query
         )
         return RenderResult(
-            method=ZMethod.FOOTY_UNSUBSCRIBE, message=response, group=context.group
+            method=ZMethod.FOOTY_UNSUBSCRIBE, 
+            message=result.message,
+            new_id=result.sub_id, 
+            group=context.group,
+
         )
     except Exception:
         return EmptyResult()
