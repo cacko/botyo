@@ -1,6 +1,5 @@
 import uvicorn
 from botyo.server.core import AppServer
-import logging
 from corethread import StoppableThread
 from fastapi import FastAPI
 from .routers import api, ws
@@ -8,9 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import Mount
 from fastapi.staticfiles import StaticFiles
 from botyo.core.config import Config
-from botyo.core.config import Config as app_config
-from pathlib import Path
-
 
 def get_app():
 
@@ -18,7 +14,7 @@ def get_app():
         routes=[
             Mount(
                 "/ws/fp",
-                app=StaticFiles(directory=Path(app_config.cachable.path).as_posix()),
+                app=StaticFiles(directory=ws.Response.store_root.as_posix()),
                 name="fp",
             )
         ]

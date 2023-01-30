@@ -2,7 +2,6 @@ from fastapi import (
     APIRouter,
     WebSocket,
     WebSocketDisconnect,
-    HTTPException,
     Cookie,
     Query,
     Depends,
@@ -23,17 +22,18 @@ from botyo.server.models import (
     CoreMethods,
 )
 from typing import Optional, Union
-from base64 import b64encode
 from pathlib import Path
 from PIL import Image
 from botyo.core.config import Config as app_config
 import asyncio
+from shutil import copy
+from corestring import string_hash
+import time
 
 
 class WSAttachment(BaseModel):
     contentType: str
-    data: Optional[str] = None
-    url: Optional[str] = None
+    url: str
 
 
 class PingMessage(BaseModel, extra=Extra.ignore):
@@ -57,36 +57,42 @@ class Response(BaseModel):
     plain: Optional[bool] = None
     new_id: Optional[str] = None
 
+    @property
+    def store_root(cls) -> Path:
+        root = Path(app_config.cachable.path) / "ws"
+        if not root.exists():
+            root.mkdir(parents=True)
+        return root
+
     @validator("attachment")
     def static_attachment(cls, attachment: Optional[WSAttachment]):
         try:
             assert attachment
             a_path = Path(attachment.data)
-            a_store_path = Path(app_config.cachable.path) / f"ws_{a_path.name}"
+            a_store_path = (
+                cls.store_root
+                / f"{string_hash(a_path.name, str(time.time()))}{a_path.suffix}"
+            )
             assert a_path.exists()
             with a_path:
                 contentType = attachment.contentType
-                url = None
                 match contentType.split("/")[0]:
                     case "image":
                         img = Image.open(a_path.as_posix())
-                        img.save(a_path.as_posix(), format="webp")
-                        contentType = "image/webp"
-                        return WSAttachment(
-                            contentType=contentType,
-                            data=b64encode(a_path.read_bytes()).decode(),
-                        ).dict()
+                        a_store_path = (
+                            cls.store_root
+                            / f"{string_hash(a_path.stem, str(time.time()))}.webp"
+                        )
+                        img.save(a_store_path.as_posix(), format="webp")
                     case "audio":
-                        url = f"ws/fp/{a_store_path.name}"
-                        a_path.rename(a_store_path)
-                        logging.info(f"copied {a_path} tp {a_store_path}")
+                        copy(a_path.as_posix(), a_store_path.as_posix())
                     case "video":
-                        url = f"ws/fp/{a_store_path.name}"
-                        a_path.rename(a_store_path)
+                        copy(a_path.as_posix(), a_store_path.as_posix())
                     case _:
-                        raise AssertionError("inlvaida attachment type")
-                return WSAttachment(contentType=contentType, url=url).dict()
-
+                        raise AssertionError("invalid attachment type")
+                return WSAttachment(
+                    contentType=contentType, url=f"ws/fp/{a_store_path.name}"
+                ).dict()
         except AssertionError as e:
             logging.error(e)
             return None
