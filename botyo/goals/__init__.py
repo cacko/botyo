@@ -199,8 +199,9 @@ class Goals(object, metaclass=GoalsMeta):
                 t.tweet.id if t.tweet.id else "",
                 t.tweet.text if t.tweet.text else "",
             )
-            logging.debug(f"TWEET -> {t_text.split('\n')[0]}")
-            if matched_teams := GOAL_MATCH.search(t_text.split("\n")[0]):
+            first_line = t_text.split("\n")[0]
+            logging.debug(f"TWEET: {first_line}")
+            if matched_teams := GOAL_MATCH.search(first_line):
                 team1, score1, score2, team2 = map(
                     str.strip, matched_teams.groups())
                 try:
