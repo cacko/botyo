@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from botyo.core.store import QueueDict
 from botyo.threesixfive.team import normalize_team
 
-GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n]+)", re.IGNORECASE|re.MULTILINE)
+GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n]+)", re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 GOAL_CHECK_EXPIRATION = timedelta(minutes=15)
 
@@ -199,8 +199,8 @@ class Goals(object, metaclass=GoalsMeta):
                 t.tweet.id if t.tweet.id else "",
                 t.tweet.text if t.tweet.text else "",
             )
-            logging.debug(f"TWEET -> {t_text}")
-            if matched_teams := GOAL_MATCH.search(t_text):
+            logging.debug(f"TWEET -> {t_text.split("\n")[0]}")
+            if matched_teams := GOAL_MATCH.search(t_text.split("\n")[0]):
                 team1, score1, score2, team2 = map(
                     str.strip, matched_teams.groups())
                 try:

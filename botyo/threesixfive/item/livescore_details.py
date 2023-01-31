@@ -187,8 +187,8 @@ class ParserDetails(TimeCachable):
     @property
     def score(self) -> str:
         try:
-            assert self.home
-            assert self.away
+            assert self.home > -1
+            assert self.away > -1
             return f"{self.home.score:.0f}:{self.away.score:.0f}"
         except AssertionError:
             return ""
@@ -206,9 +206,13 @@ class ParserDetails(TimeCachable):
 
     @property
     def game_time(self) -> Optional[int]:
-        if not self._struct or not self._struct.struct.game:
+        try:
+            assert self._struct
+            assert self._struct.struct.game
+            assert self._struct.struct.game.gameTime > 0
+            return self._struct.struct.game.gameTime
+        except AssertionError:
             return None
-        return self._struct.struct.game.gameTime
 
     @property
     def facts(self) -> Optional[list[GameFact]]:

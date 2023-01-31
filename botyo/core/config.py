@@ -69,12 +69,12 @@ class GoalsConfig(BaseModel, extra=Extra.ignore):
 
 
 class S3Config(BaseModel):
-    aws_cloudfront_host: str
+    cloudfront_host: str
     aws_access_key_id: str
     aws_secret_access_key: str
-    aws_s3_region: str
-    aws_storage_bucket_name: str
-    aws_directory: str
+    region_name: str
+    storage_bucket_name: str
+    directory: str
 
 
 class ConfigStruct(BaseModel, extra=Extra.ignore):

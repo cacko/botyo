@@ -412,6 +412,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 return None
             assert details.home
             assert details.away
+            assert details.
             res = ScoreRow(
                 status=f'{details.game_time:.0f}"',
                 home=details.home.name,
