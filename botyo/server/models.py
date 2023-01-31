@@ -256,7 +256,7 @@ class ZSONRequest(ZSONMessage):
     source: Optional[str] = None
     lang: Optional[str] = None
     query: Optional[str] = None
-    utf8mono: Optional[bool] = True
+    utf8mono: bool = Field(default=True)
     attachment: Optional[Attachment] = None
     ztype: ZSONType = Field(default=ZSONType.REQUEST)
 

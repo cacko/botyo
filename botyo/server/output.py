@@ -166,13 +166,13 @@ class Output(object, metaclass=OutputMeta):
                     content: tuple[str],
                     with_header=False):
         rows = [
-            " ".join([
+            "".join([
                 self.to_mono(col.cell(cell))
                 for col, cell in zip(columns, cnt)
             ]) for cnt in content
         ]
         if with_header:
-            cols = " ".join([self.to_mono(col.header) for col in columns])
+            cols = "".join([self.to_mono(col.header) for col in columns])
             self.items = [
                 *self.items,
                 self.align_whitespace(cols),
