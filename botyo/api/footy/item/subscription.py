@@ -330,14 +330,14 @@ class Subscription(metaclass=SubscriptionMeta):
             pass
 
     def checkGoals(self, updated: Optional[ResponseGame] = None):
-        try:
-            assert updated
-            assert updated.game
-            if updated.game.events:
-                self.processGoals(updated.game)
-        except AssertionError as e:
-            logging.exception(e)
-            pass
+        if updated:
+            try:
+                assert updated.game
+                if updated.game.events:
+                    self.processGoals(updated.game)
+            except AssertionError as e:
+                logging.exception(e)
+                pass
         Goals.poll()
         for qid in list(self.goals_queue.keys()):
             gq = self.goals_queue[qid]
