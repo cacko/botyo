@@ -60,7 +60,6 @@ dependencies:
   - mypy_extensions
   - ncurses=6.3
   - nettle
-  - openssl
   - p11-kit
   - packaging
   - pathspec
