@@ -204,6 +204,7 @@ class Goals(object, metaclass=GoalsMeta):
             if matched_teams := GOAL_MATCH.search(first_line):
                 team1, score1, score2, team2 = map(
                     str.strip, matched_teams.groups())
+                logging.debug([team1, score1, score2, team2])
                 try:
                     twitter_download(
                         url=t.url, output_dir=__class__.output_dir.as_posix(), merge=True
