@@ -9,7 +9,7 @@ import logging
 bp = Blueprint("text")
 
 
-@bp.command(method=ZMethod.TEXT_GENERATE, desc="continue the sentence" icon="create")  # type: ignore
+@bp.command(method=ZMethod.TEXT_GENERATE, desc="continue the sentence", icon="create")  # type: ignore
 def dialog_commang(context: Context):
     msg = context.query
     if not msg:
