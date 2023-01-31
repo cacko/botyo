@@ -21,7 +21,7 @@ def translate_cmd(method: ZMethod, context: Context, flag_code: str):
     return res
 
 
-@bp.command(method=ZMethod.TRANSLATE_EN_ES, desc="en -> es")  # type: ignore
+@bp.command(method=ZMethod.TRANSLATE_EN_ES, desc="en -> es", icon="")  # type: ignore
 def enes_command(context: Context):
     return translate_cmd(ZMethod.TRANSLATE_EN_ES, context, "ES")
 

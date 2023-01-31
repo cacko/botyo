@@ -9,7 +9,7 @@ import logging
 bp = Blueprint("text")
 
 
-@bp.command(method=ZMethod.TEXT_GENERATE, desc="continue the sentence")  # type: ignore
+@bp.command(method=ZMethod.TEXT_GENERATE, desc="continue the sentence" icon="create")  # type: ignore
 def dialog_commang(context: Context):
     msg = context.query
     if not msg:
@@ -19,7 +19,7 @@ def dialog_commang(context: Context):
     return res
 
 
-@bp.command(method=ZMethod.TEXT_DETECT, desc="find the tongue")  # type: ignore
+@bp.command(method=ZMethod.TEXT_DETECT, desc="find the tongue", icon="translate")  # type: ignore
 def detect_commmand(context: Context):
     msg = context.query
     if not msg:

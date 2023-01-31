@@ -7,7 +7,7 @@ from botyo.server.socket.connection import Context
 bp = Blueprint("photo")
 
 
-@bp.command(method=ZMethod.PHOTO_FAKE, desc="fake photo")  # type: ignore
+@bp.command(method=ZMethod.PHOTO_FAKE, desc="fake photo", icon="f8de")  # type: ignore
 def photo_command(context: Context):
     fakeface = FakeFace(context.query)
     path = fakeface.path

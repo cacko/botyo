@@ -35,7 +35,7 @@ class RaceIcon(Enum):
     FAGGOT = ":middle_finger:"
 
 
-@bp.command(method=ZMethod.NAME_GENDER, desc="genderiya")  # type: ignore
+@bp.command(method=ZMethod.NAME_GENDER, desc="gender from name", icon="transgender")  # type: ignore
 def gender_command(context: Context):
     name = context.query
 
@@ -53,7 +53,7 @@ def gender_command(context: Context):
     return res
 
 
-@bp.command(method=ZMethod.NAME_RACE, desc="Batko's Life Matters")  # type: ignore
+@bp.command(method=ZMethod.NAME_RACE, desc="Batko's Life Matters", icon="diversity_3")  # type: ignore
 def race_command(context: Context):
     name = context.query
 

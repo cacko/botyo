@@ -12,7 +12,7 @@ import logging
 bp = Blueprint("music")
 
 
-@bp.command(method=ZMethod.MUSIC_SONG, desc="searches for song and attaches it")  # type: ignore
+@bp.command(method=ZMethod.MUSIC_SONG, desc="searches for song and attaches it", icon="audiotrack")  # type: ignore
 def song_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -31,7 +31,7 @@ def song_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.MUSIC_ALBUMART, desc="album art")  # type: ignore
+@bp.command(method=ZMethod.MUSIC_ALBUMART, desc="album art", icon="album")  # type: ignore
 def albumart_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -49,7 +49,7 @@ def albumart_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.MUSIC_LYRICS, desc="dump lyrics of a song")  # type: ignore
+@bp.command(method=ZMethod.MUSIC_LYRICS, desc="dump lyrics of a song", icon="lyrics")  # type: ignore
 def lyrics_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -64,7 +64,7 @@ def lyrics_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.MUSIC_NOWPLAYING_SONG, desc="current song playing")  # type: ignore
+@bp.command(method=ZMethod.MUSIC_NOWPLAYING_SONG, desc="current song playing", icon="speaker")  # type: ignore
 def nowplaying_song_command(context: Context) -> RenderResult:
     try:
         track = Track.trackdata
@@ -82,7 +82,7 @@ def nowplaying_song_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.MUSIC_NOWPLAYING_ART, desc="current album art playing")  # type: ignore
+@bp.command(method=ZMethod.MUSIC_NOWPLAYING_ART, desc="current album art playing", icon="playlist_add_check_circle")  # type: ignore
 def nowplaying_art_command(context: Context) -> RenderResult:
     try:
         track = Track.trackdata

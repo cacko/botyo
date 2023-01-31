@@ -13,6 +13,7 @@ bp = Blueprint("ontv")
 @bp.command(
     method=ZMethod.ONTV_TV,
     desc="TV Schedule",
+    icon="tv"
 )  # type: ignore
 def tv_command(context: Context) -> RenderResult:
     tv = TV(
