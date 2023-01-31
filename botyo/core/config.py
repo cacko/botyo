@@ -1,8 +1,6 @@
 from os import environ
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
-from dataclasses_json import dataclass_json, Undefined
 from yaml import load, Loader
 from pydantic import BaseModel, Extra, Field
 
@@ -12,12 +10,10 @@ class OntvConfig(BaseModel, extra=Extra.ignore):
     leagues: list[int]
 
 
-
 class ThreeSixFiveConfig(BaseModel, extra=Extra.ignore):
     competitions_json: str
     leagues_json: str
     countries_json: str
-
 
 
 class MusicConfig(BaseModel, extra=Extra.ignore):
@@ -43,10 +39,8 @@ class ImageConfig(BaseModel, extra=Extra.ignore):
     base_url: Optional[str]
 
 
-
 class GeoConfig(BaseModel, extra=Extra.ignore):
     base_url: Optional[str]
-
 
 
 class ApiConfig(BaseModel, extra=Extra.ignore):
@@ -61,10 +55,8 @@ class BeatsConfig(BaseModel, extra=Extra.ignore):
     extractor_url: Optional[str]
 
 
-
 class FavouritesConfig(BaseModel, extra=Extra.ignore):
     teams: list[int]
-
 
 
 class GoalsConfig(BaseModel, extra=Extra.ignore):
@@ -74,6 +66,15 @@ class GoalsConfig(BaseModel, extra=Extra.ignore):
     access_token: str
     access_secret: str
     bearer_token: str
+
+
+class S3Config(BaseModel):
+    aws_cloudfront_host: str
+    aws_access_key_id: str
+    aws_secret_access_key: str
+    aws_s3_region: str
+    aws_storage_bucket_name: str
+    aws_directory: str
 
 
 class ConfigStruct(BaseModel, extra=Extra.ignore):
@@ -89,6 +90,7 @@ class ConfigStruct(BaseModel, extra=Extra.ignore):
     goals: Optional[GoalsConfig] = None
     chatyo: Optional[ChatyoConfig] = None
     image: Optional[ImageConfig] = None
+    s3: Optional[S3Config] = None
 
 
 class ConfigMeta(type):
@@ -146,6 +148,10 @@ class ConfigMeta(type):
     @property
     def goals(cls) -> GoalsConfig:
         return cls().struct.goals
+
+    @property
+    def s3(cls) -> S3Config:
+        return cls().struct.s3
 
 
 class Config(object, metaclass=ConfigMeta):
