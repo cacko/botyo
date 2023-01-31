@@ -192,7 +192,8 @@ class ParserDetails(TimeCachable):
             assert self.home.score > -1
             assert self.away.score > -1
             return f"{self.home.score:.0f}:{self.away.score:.0f}"
-        except AssertionError:
+        except AssertionError as e:
+            logging.exception(e)
             return ""
 
     @property
@@ -213,7 +214,8 @@ class ParserDetails(TimeCachable):
             assert self._struct.struct.game
             assert self._struct.struct.game.gameTime > 0
             return self._struct.struct.game.gameTime
-        except AssertionError:
+        except AssertionError as e:
+            logging.exception(e)
             return None
 
     @property
@@ -249,6 +251,7 @@ class ParserDetails(TimeCachable):
             assert self.home.name
             assert self.away.name
             return unidecode(f"{self.home.name.upper()} vs {self.away.name.upper()}")
-        except AssertionError:
+        except AssertionError as e:
+            logging.exception(e)
             return "Unknown"
         

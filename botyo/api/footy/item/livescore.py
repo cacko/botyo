@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Optional
 from itertools import chain
 from functools import reduce
+import logging
 
 
 class GameMatch(Match):
@@ -70,7 +71,8 @@ class Livescore(LivescoreData):
                 game = content.game
                 if game is not None:
                     Player.store(game)
-            except AssertionError:
+            except AssertionError as e:
+                logging.exception(e)
                 pass
 
     def render(self, filt: str = "", group_by_league=True):
@@ -126,7 +128,8 @@ class Livescore(LivescoreData):
                         *map(str, details.rendered)
                     ])
                     return TextOutput.render()
-            except (GameNotFound, AssertionError):
+            except (GameNotFound, AssertionError) as e:
+                logging.exception(e)
                 return None
         if group_by_league:
             filtered = list(chain.from_iterable([

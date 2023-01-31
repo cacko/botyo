@@ -3,6 +3,7 @@ from typing import Generator
 from botyo.threesixfive.item.livescore_details import (
     ParserDetails as ParserDetailsData
 )
+import logging
 
 
 class ParserDetails(ParserDetailsData):
@@ -22,5 +23,6 @@ class ParserDetails(ParserDetailsData):
                 else:
                     row = f"{ev.displayTime:^5}{ev.icon}"
                     yield f"{row:^42}"
-            except AssertionError:
+            except AssertionError as e:
+                logging.exception(e)
                 pass

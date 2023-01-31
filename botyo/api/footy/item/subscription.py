@@ -335,7 +335,8 @@ class Subscription(metaclass=SubscriptionMeta):
             assert updated.game
             if updated.game.events:
                 self.processGoals(updated.game)
-        except AssertionError:
+        except AssertionError as e:
+            logging.exception(e)
             pass
         Goals.poll()
         for qid in list(self.goals_queue.keys()):
@@ -394,7 +395,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     if content.game.justEnded:
                         self.cancel(sc)
                         logging.debug(f"subscription {self.event_name} in done")
-        except AssertionError:
+        except AssertionError as e:
+            logging.exception(e)
             pass
         except ValueError as e:
             logging.exception(e)
@@ -421,7 +423,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 league=self._event.strLeague,
             )
             return [*rows, str(res)]
-        except AssertionError:
+        except AssertionError as e:
+            logging.exception(e)
             return None
 
     def client(self, client_id: str) -> Optional[Connection]:

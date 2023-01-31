@@ -5,7 +5,7 @@ from .livescore_details import ParserDetails
 from .models import Event, GameMember, LineupMember, LineupMemberStatus
 from botyo.core.store import RedisCachable
 from typing import Optional
-
+import logging
 
 @dataclass_json
 @dataclass
@@ -77,7 +77,8 @@ class Lineups(RedisCachable):
                 members=details.members
             )
             return self.tocache(self._struct)
-        except AssertionError:
+        except AssertionError as e:
+            logging.exception(e)
             return None
 
     def __getStarting(self, members: list[LineupMember]) -> list[LineupMember]:
