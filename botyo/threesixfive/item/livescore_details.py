@@ -187,8 +187,10 @@ class ParserDetails(TimeCachable):
     @property
     def score(self) -> str:
         try:
-            assert self.home > -1
-            assert self.away > -1
+            assert self.home
+            assert self.away
+            assert self.home.score > -1
+            assert self.away.score > -1
             return f"{self.home.score:.0f}:{self.away.score:.0f}"
         except AssertionError:
             return ""
