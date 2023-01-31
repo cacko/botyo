@@ -15,6 +15,8 @@ from pydantic import BaseModel, Field
 from corestring import split_with_quotes
 from requests.exceptions import JSONDecodeError
 import logging
+from functools import reduce
+
 
 class ImageGeneratorParams(BaseModel):
     prompt: str
@@ -24,9 +26,8 @@ class ImageGeneratorParams(BaseModel):
     num_inference_steps: int = Field(default=50)
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
-    upscale: Optional[bool] = None
+    upscale: int = Field(default=0)
     model: str = Field(default="default")
-
 
 
 class VariationGeneratorParams(BaseModel):
@@ -83,13 +84,11 @@ class ImageMeta(type):
     def variation_generator_parser(cls) -> ArgumentParser:
         if not cls.__variation_generator_parser:
             parser = ArgumentParser(
-                description="Variation Generator", add_help=False, exit_on_error=False)
-            parser.add_argument(
-                '-n', '--num_images_per_prompt', type=int, default=1)
-            parser.add_argument('-g', '--guidance_scale',
-                                type=float, default=3)
-            parser.add_argument(
-                '-s', '--num_inference_steps', type=int, default=50)
+                description="Variation Generator", add_help=False, exit_on_error=False
+            )
+            parser.add_argument("-n", "--num_images_per_prompt", type=int, default=1)
+            parser.add_argument("-g", "--guidance_scale", type=float, default=3)
+            parser.add_argument("-s", "--num_inference_steps", type=int, default=50)
             cls.__variation_generator_parser = parser
         return cls.__variation_generator_parser
 
@@ -99,25 +98,24 @@ class ImageMeta(type):
         return VariationGeneratorParams(
             guidance_scale=parsed.guidance_scale,
             num_images_per_prompt=parsed.num_images_per_prompt,
-            num_inference_steps=parsed.num_inference_steps
+            num_inference_steps=parsed.num_inference_steps,
         )
 
     @property
     def image_generator_parser(cls) -> ArgumentParser:
         if not cls.__image_generator_parser:
             parser = ArgumentParser(
-                description='Image Processing', add_help=False, exit_on_error=False)
-            parser.add_argument('prompt', nargs='+')
-            parser.add_argument('-n', '--negative_prompt', type=str, default="")
-            parser.add_argument('-h',
-                                '--height', type=int, default=512)
-            parser.add_argument('-w', '--width', type=int, default=512)
-            parser.add_argument('-g', '--guidance_scale',
-                                type=float, default=7)
-            parser.add_argument('-i', '--num_inference_steps', default=50)
-            parser.add_argument('-s', '--seed', type=int)
-            parser.add_argument('-m', '--model', default="default")
-            parser.add_argument('-u', '--upscale',  action='store_true')
+                description="Image Processing", add_help=False, exit_on_error=False
+            )
+            parser.add_argument("prompt", nargs="+")
+            parser.add_argument("-n", "--negative_prompt", type=str, default="")
+            parser.add_argument("-h", "--height", type=int, default=512)
+            parser.add_argument("-w", "--width", type=int, default=512)
+            parser.add_argument("-g", "--guidance_scale", type=float, default=7)
+            parser.add_argument("-i", "--num_inference_steps", default=50)
+            parser.add_argument("-s", "--seed", type=int)
+            parser.add_argument("-m", "--model", default="default")
+            parser.add_argument("-u", "--upscale", action="store_true")
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
@@ -133,13 +131,11 @@ class ImageMeta(type):
             negative_prompt=parsed.negative_prompt,
             model=parsed.model,
             seed=parsed.seed,
-            upscale=parsed.upscale
+            upscale= int(parsed.upscale)
         )
 
     def variation(
-        cls,
-        attachment: Attachment,
-        prompt: Optional[str] = None
+        cls, attachment: Attachment, prompt: Optional[str] = None
     ) -> tuple[Attachment, dict]:
         return cls(attachment).do_variation(prompt)
 
@@ -150,12 +146,9 @@ class ImageMeta(type):
         return cls().do_portrait(prompt)
 
     def img2img(
-        cls,
-        attachment: Attachment,
-        prompt: Optional[str] = None
+        cls, attachment: Attachment, prompt: Optional[str] = None
     ) -> tuple[Attachment, dict]:
         return cls(attachment).do_img2img(prompt)
-
 
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_gps2img(prompt)
@@ -171,8 +164,7 @@ class Image(object, metaclass=ImageMeta):
     def do_analyze(self):
         attachment, message = self.getResponse(Action.ANALYZE)
         if message:
-            analyses = AnalyzeReponse.from_json(  # type: ignore
-                message)
+            analyses = AnalyzeReponse.from_json(message)  # type: ignore
             rows = [
                 ["Age: ", analyses.age],
                 [
@@ -180,8 +172,7 @@ class Image(object, metaclass=ImageMeta):
                     analyses.dominant_emotion,
                     emojize(analyses.emotion_icon),
                 ],
-                ["Race: ", analyses.dominant_race,
-                    emojize(analyses.race_icon)],
+                ["Race: ", analyses.dominant_race, emojize(analyses.race_icon)],
                 ["Gender: ", analyses.gender, emojize(analyses.gender_icon)],
             ]
             TextOutput.addRows(["".join(map(str, row)) for row in rows])
@@ -205,52 +196,33 @@ class Image(object, metaclass=ImageMeta):
 
     def do_variation(self, prompt: Optional[str] = None):
         params = __class__.variation_generator_params(prompt)
-        return self.getResponse(
-            Action.VARIATION,
-            uuid4().hex,
-            json=params.dict()
-        )
+        return self.getResponse(Action.VARIATION, uuid4().hex, json=params.dict())
 
     def do_txt2img(self, prompt: str):
         try:
             params = __class__.image_generator_params(prompt)
-            return self.getResponse(
-                Action.TXT2IMG,
-                params.prompt,
-                json=params.dict()
-            )
+
+            return self.getResponse(Action.TXT2IMG, params.prompt, json=params.dict())
         except ArgumentError as e:
             raise AssertionError(e.message)
 
     def do_gps2img(self, prompt: str):
         try:
             params = __class__.image_generator_params(prompt)
-            return self.getResponse(
-                Action.GPS2IMG,
-                params.prompt,
-                json=params.dict()
-            )
+            return self.getResponse(Action.GPS2IMG, params.prompt, json=params.dict())
         except ArgumentError as e:
-            raise AssertionError(e.message) 
+            raise AssertionError(e.message)
 
     def do_portrait(self, prompt: str):
         try:
             params = __class__.image_generator_params(prompt)
-            return self.getResponse(
-                Action.PORTRAIT,
-                params.prompt,
-                json=params.dict()
-            )
+            return self.getResponse(Action.PORTRAIT, params.prompt, json=params.dict())
         except ArgumentError as e:
             raise AssertionError(e.message)
 
     def do_img2img(self, prompt: Optional[str] = None):
         params = __class__.image_generator_params(prompt)
-        return self.getResponse(
-            Action.IMG2IMG,
-            params.prompt,
-            json=params.dict()
-        )
+        return self.getResponse(Action.IMG2IMG, params.prompt, json=params.dict())
 
     def __make_request(self, path: str, json: Optional[dict] = None):
         attachment = self.__attachment
@@ -263,23 +235,20 @@ class Image(object, metaclass=ImageMeta):
             mime = attachment.get("contentType")
             fp = p.open("rb")
             assert kind
-            params['files'] = {"file": (f"{p.name}.{kind.extension}",
-                                        fp, mime, {"Expires": "0"})}
+            params["files"] = {
+                "file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})
+            }
 
         if json:
-            params['data'] = json
+            params["data"] = reduce(
+                lambda r, x: {**r, **({x: json[x]} if json[x] else {})}, json.keys(), {}
+            )
+            logging.debug(params["data"])
 
-        return Request(
-            f"{Config.image.base_url}/{path}",
-            method=Method.POST,
-            **params
-        )
+        return Request(f"{Config.image.base_url}/{path}", method=Method.POST, **params)
 
     def getResponse(
-        self,
-        action: Action,
-        action_param=None,
-        json: Optional[dict] = None
+        self, action: Action, action_param=None, json: Optional[dict] = None
     ):
         path = action.value
         if action_param:
