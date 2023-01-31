@@ -203,11 +203,11 @@ async def websocket_endpoint(
     try:
         while True:
             data = await websocket.receive_json()
-            logging.debug(f"receive {data}")
             if data.get("ztype") == ZSONType.PING.value:
                 ping = PingMessage(**data)
                 await websocket.send_json(PongMessage(id=ping.id).dict())
             else:
+                logging.debug(f"receive {data}")
                 await manager.process_command(data, client_id)
     except WebSocketDisconnect:
         manager.disconnect(client_id)
