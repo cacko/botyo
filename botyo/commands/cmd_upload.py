@@ -9,15 +9,16 @@ import logging
 
 
 @click.command("upload", short_help="upload file to s3")
-@click.argument("path")
+@click.argument("paths", nargs=-1)
 @pass_environment
 @coro
-def cli(ctx: Environment, path):
-    try:
-        src = Path(path)
-        assert src.exists()
-        res = S3.upload(src, src.name)
-        click.echo(res)
-    except Exception as e:
-        print_exc(e)
-        logging.error(e)
+def cli(ctx: Environment, paths: list[str]):
+    for path in paths:
+        try:
+            src = Path(path)
+            assert src.exists()
+            res = S3.upload(src, src.name)
+            click.echo(res)
+        except Exception as e:
+            print_exc(e)
+            logging.error(e)
