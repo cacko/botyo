@@ -29,6 +29,7 @@ import asyncio
 from shutil import copy
 from corestring import string_hash
 import time
+from botyo.core.s3 import S3
 
 
 
@@ -86,14 +87,16 @@ class Response(BaseModel):
                             / f"{string_hash(a_path.stem, str(time.time()))}.webp"
                         )
                         img.save(a_store_path.as_posix(), format="webp")
+                        S3.upload(a_store_path, a_store_path.name)
+                        a_store_path.unlink(missing_ok=True)
                     case "audio":
-                        copy(a_path.as_posix(), a_store_path.as_posix())
+                        S3.upload(a_path, a_store_path.name)
                     case "video":
-                        copy(a_path.as_posix(), a_store_path.as_posix())
+                        S3.upload(a_path, a_store_path.name)
                     case _:
                         raise AssertionError("invalid attachment type")
                 return WSAttachment(
-                    contentType=contentType, url=f"ws/fp/{a_store_path.name}"
+                    contentType=contentType, url=f"botyo/{a_store_path.name}"
                 ).dict()
         except AssertionError as e:
             logging.error(e)
