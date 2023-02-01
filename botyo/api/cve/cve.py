@@ -9,6 +9,7 @@ from botyo.server.output import TextOutput
 from .models import CVEResponse
 from typing import Optional
 import re
+import logging
 
 CVE_ID_MATCH = re.compile(r'(CVE-\d+-\d+)')
 
@@ -44,7 +45,9 @@ class CVE(CVECachable):
         if query:
             args["keywordSearch"] = query
         req = Request("https://services.nvd.nist.gov/rest/json/cves/2.0", params=args)
-        return self.tocache(CVEResponse(**req.json))
+        json = req.json
+        logging.debug(json)
+        return self.tocache(CVEResponse(**json))
 
     @property
     def response(self) -> Optional[CVEResponse]:
