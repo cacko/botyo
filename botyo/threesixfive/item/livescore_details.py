@@ -61,7 +61,7 @@ class ParserDetails(TimeCachable):
         try:
             req = Request(self.__url)
             json = req.json
-            res: ResponseGame = ResponseGame.from_dict(json)  # type: ignore
+            res = ResponseGame(**json)
             self._struct = self.tocache(res)
             Player.store(res.game)
         except Exception as e:

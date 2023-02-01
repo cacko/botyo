@@ -1,9 +1,6 @@
 import logging
-from typing import Optional
+from typing import Optional, Any
 from datetime import datetime, timezone
-from dataclasses import dataclass, field
-from dataclasses_json import CatchAll, dataclass_json, config, Undefined
-from marshmallow import fields
 from enum import IntEnum, Enum
 from string import punctuation
 import re
@@ -18,8 +15,9 @@ from botyo.threesixfive.data import (
     Data365,
     LeagueItem,
     COUNTRY_ID_INTERNATIONAL,
-    CountryItem
+    CountryItem,
 )
+from pydantic import BaseModel, Field, Extra
 from botyo.core.country import Country as Flag
 
 WORLD_CUP_ID = 5930
@@ -109,9 +107,7 @@ class ActionIcon(Enum):
     GOAL__DISALLOWED = ":double_exclamation_mark:"
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Event:
+class Event(BaseModel, extra=Extra.ignore):
     id: str
     idEvent: int
     strSport: str
@@ -122,28 +118,22 @@ class Event:
     strHomeTeam: str
     strAwayTeam: str
     strStatus: str
-    startTime: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso", tzinfo=timezone.utc),
-        )
-    )
-    intHomeScore: Optional[int] = -1
-    intAwayScore: Optional[int] = -1
+    startTime: datetime
+    intHomeScore: int = Field(default=-1)
+    intAwayScore: int = Field(default=-1)
     sort: int = 0
     details: Optional[str] = None
-    displayScore: Optional[str] = ""
-    displayStatus: Optional[str] = ""
-    source: Optional[str] = ""
-    strWinDescription: Optional[str] = ""
+    displayScore: str = Field(default="")
+    displayStatus: str = Field(default="")
+    source: str = Field(default="")
+    strWinDescription: str = Field(default="")
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
         if self.strStatus in STATUS_MAP:
             self.strStatus = STATUS_MAP[self.strStatus]
 
-        delta = (datetime.now(timezone.utc) -
-                 self.startTime).total_seconds() / 60
+        delta = (datetime.now(timezone.utc) - self.startTime).total_seconds() / 60
         try:
             self.displayStatus = GameStatus(self.strStatus).value
             if delta < 0 and self.displayStatus in [GameStatus.NS.value]:
@@ -175,9 +165,7 @@ class Event:
     def is_international(self) -> bool:
         try:
             league = next(
-                filter(
-                    lambda x: x.id == self.idLeague, Data365.leagues
-                ), None
+                filter(lambda x: x.id == self.idLeague, Data365.leagues), None
             )
             assert league
             return league.is_international
@@ -190,10 +178,7 @@ class Event:
 
     @property
     def event_name(self) -> str:
-        return "/".join([
-            s if s else ""
-            for s in [self.strHomeTeam, self.strAwayTeam]
-        ])
+        return "/".join([s if s else "" for s in [self.strHomeTeam, self.strAwayTeam]])
 
     @property
     def inProgress(self) -> bool:
@@ -206,33 +191,27 @@ class Event:
         return ""
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Sport:
+class Sport(BaseModel, extra=Extra.ignore):
     id: int
     name: Optional[str] = None
     nameForURL: Optional[str] = None
-    totalGames: Optional[int] = 0
-    liveGames: Optional[int] = 0
+    totalGames: int = Field(default=0)
+    liveGames: int = Field(default=0)
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Country:
+class Country(BaseModel, extra=Extra.ignore):
     id: int
     name: str
     nameForURL: int
-    totalGames: Optional[int] = 0
-    liveGames: Optional[int] = 0
+    totalGames: int = Field(default=0)
+    liveGames: int = Field(default=0)
 
     @property
     def is_international(self) -> bool:
         return self.id == COUNTRY_ID_INTERNATIONAL
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Competitor:
+class Competitor(BaseModel, extra=Extra.ignore):
     id: int
     countryId: int
     sportId: int
@@ -246,9 +225,7 @@ class Competitor:
     imageVersion: Optional[int] = None
 
 
-@dataclass_json(undefined=Undefined.INCLUDE)
-@dataclass
-class StandingRow:
+class StandingRow(BaseModel, extra=Extra.ignore):
     competitor: Competitor
     gamePlayed: Optional[int] = None
     gamesWon: Optional[int] = None
@@ -267,9 +244,10 @@ class StandingRow:
     groupNum: Optional[int] = None
     pct: Optional[str] = None
     position: Optional[int] = None
-    unknown: Optional[CatchAll] = None
+    unknown: Optional[Any] = None
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
         try:
             assert self.unknown
             self.forward = self.unknown.get("for")
@@ -277,16 +255,12 @@ class StandingRow:
             pass
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class StandingGroup:
+class StandingGroup(BaseModel, extra=Extra.ignore):
     num: int
     name: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Standing:
+class Standing(BaseModel, extra=Extra.ignore):
     competitionId: int
     groups: Optional[list[StandingGroup]] = None
     seasonNum: Optional[int] = None
@@ -297,36 +271,28 @@ class Standing:
     rows: Optional[list[StandingRow]] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class StandingResponse:
+class StandingResponse(BaseModel, extra=Extra.ignore):
     lastUpdateId: int
     requestedUpdateId: int
     ttl: int
     standings: list[Standing]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Bracket:
+class Bracket(BaseModel, extra=Extra.ignore):
     lastUpdateId: int
     requestedUpdateId: int
     ttl: int
     stages: list[Standing]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class BracketsResponse:
+class BracketsResponse(BaseModel, extra=Extra.ignore):
     lastUpdateId: int
     requestedUpdateId: int
     ttl: int
     brackets: Bracket
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Competition:
+class Competition(BaseModel, extra=Extra.ignore):
     id: int
     countryId: int
     sportId: int
@@ -344,18 +310,14 @@ class Competition:
     def flag(self) -> str:
         if self.id != COUNTRY_ID_INTERNATIONAL:
             return ""
-        country = next(filter(
-            lambda x: x.id == self.countryId,
-            Data365.countries),
-            None
+        country = next(
+            filter(lambda x: x.id == self.countryId, Data365.countries), None
         )
         assert country
         return Flag(country.name).flag
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class GameMember:
+class GameMember(BaseModel, extra=Extra.ignore):
     competitorId: Optional[int] = None
     name: Optional[str] = None
     id: Optional[int] = None
@@ -374,24 +336,18 @@ class GameMember:
             return f"{self.name}"
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class LineupPosition:
+class LineupPosition(BaseModel, extra=Extra.ignore):
     id: int
     name: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class MemberStat:
+class MemberStat(BaseModel, extra=Extra.ignore):
     value: str
     name: str
     shortName: Optional[str] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class LineupMember:
+class LineupMember(BaseModel, extra=Extra.ignore):
     id: int
     status: LineupMemberStatus
     statusText: str
@@ -399,18 +355,14 @@ class LineupMember:
     stats: Optional[list[MemberStat]] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Lineup:
+class Lineup(BaseModel, extra=Extra.ignore):
     status: Optional[str] = None
     formation: Optional[str] = None
-    hasFieldPositions: Optional[bool] = False
+    hasFieldPositions: bool = Field(default=False)
     members: Optional[list[LineupMember]] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class GameStatistic:
+class GameStatistic(BaseModel, extra=Extra.ignore):
     id: int
     name: str
     categoryId: int
@@ -421,9 +373,7 @@ class GameStatistic:
     isPrimary: Optional[bool]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class GameCompetitor:
+class GameCompetitor(BaseModel, extra=Extra.ignore):
     id: Optional[int] = None
     countryId: Optional[int] = None
     sportId: Optional[int] = None
@@ -442,38 +392,38 @@ class GameCompetitor:
     symbolicName: Optional[str] = None
 
     def __getattribute__(self, __name: str):
-        if all([
-            __name == "name",
-            object.__getattribute__(self, "id") in app_config.favourites.teams
-        ]):
+        if all(
+            [
+                __name == "name",
+                object.__getattribute__(self, "id") in app_config.favourites.teams,
+            ]
+        ):
             return f"{object.__getattribute__(self, __name).upper()}"
         return object.__getattribute__(self, __name)
 
-    @ property
+    @property
     def country(self) -> CountryItem:
         country = next(
-            filter(
-                lambda x: x.id == self.countryId, Data365.countries
-            ), None
+            filter(lambda x: x.id == self.countryId, Data365.countries), None
         )
         assert country
         return country
 
-    @ property
+    @property
     def flag(self) -> str:
         try:
             return Flag(self.country.name).flag
         except AssertionError:
             return ""
 
-    @ property
+    @property
     def name_with_flag(self) -> str:
         try:
             return Flag(self.country.name).with_flag(self.name)
         except AssertionError:
             return str(self.name)
 
-    @ property
+    @property
     def score_int(self) -> int:
         try:
             assert self.score
@@ -481,7 +431,7 @@ class GameCompetitor:
         except AssertionError:
             return 0
 
-    @ property
+    @property
     def shortName(self) -> str:
         try:
             if self.symbolicName:
@@ -495,24 +445,18 @@ class GameCompetitor:
             return ""
 
 
-@ dataclass_json(undefined=Undefined.EXCLUDE)
-@ dataclass
-class OddsRate:
+class OddsRate(BaseModel, extra=Extra.ignore):
     decimal: Optional[float] = None
     fractional: Optional[str] = None
     american: Optional[str] = None
 
 
-@ dataclass_json(undefined=Undefined.EXCLUDE)
-@ dataclass
-class OddsOptions:
+class OddsOptions(BaseModel, extra=Extra.ignore):
     num: int
     rate: OddsRate
 
 
-@ dataclass_json(undefined=Undefined.EXCLUDE)
-@ dataclass
-class Odds:
+class Odds(BaseModel, extra=Extra.ignore):
     lineId: int
     gameId: int
     bookmakerId: int
@@ -520,27 +464,17 @@ class Odds:
     options: list[OddsOptions]
 
 
-@ dataclass_json(undefined=Undefined.EXCLUDE)
-@ dataclass
-class GameFact:
+class GameFact(BaseModel, extra=Extra.ignore):
     id: str
     text: str
 
 
-@ dataclass_json(undefined=Undefined.EXCLUDE)
-@ dataclass
-class Game:
+class Game(BaseModel, extra=Extra.ignore):
     id: int
     sportId: int
     competitionId: int
     competitionDisplayName: str
-    startTime: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )
+    startTime: datetime
     statusGroup: int
     statusText: str
     shortStatusText: str
@@ -550,10 +484,10 @@ class Game:
     homeCompetitor: GameCompetitor
     awayCompetitor: GameCompetitor
     odds: Optional[Odds] = None
-    roundName: Optional[str] = ""
+    roundName: str = Field(default="")
     roundNum: Optional[int] = None
-    seasonNum: Optional[int] = 0
-    stageNum: Optional[int] = 0
+    seasonNum: int = Field(default=0)
+    stageNum: int = Field(default=0)
     justEnded: Optional[bool] = None
     hasLineups: Optional[bool] = None
     hasMissingPlayers: Optional[bool] = None
@@ -561,17 +495,16 @@ class Game:
     hasTVNetworks: Optional[bool] = None
     hasBetsTeaser: Optional[bool] = None
     matchFacts: Optional[list[GameFact]] = None
-    winDescription: Optional[str] = ""
-    aggregateText: Optional[str] = ""
-    icon: Optional[str] = ""
+    winDescription: str = Field(default="")
+    aggregateText: str = Field(default="")
+    icon: str = Field(default="")
 
-    @ property
+    @property
     def round(self) -> Optional[str]:
         if self.roundNum is None:
             return ""
         " ".join(
-            list(filter(lambda x: x, [
-                 f"{self.roundName}", f"{self.roundNum:,0f}"]))
+            list(filter(lambda x: x, [f"{self.roundName}", f"{self.roundNum:,0f}"]))
         )
 
     @property
@@ -604,10 +537,9 @@ class Game:
             _status = GameStatus(status)
             if _status in (GameStatus.FT, GameStatus.AET, GameStatus.PPD):
                 return True
-            return any([
-                _status == GameStatus.HT,
-                re.match(r"^\d+$", status) is not None
-            ])
+            return any(
+                [_status == GameStatus.HT, re.match(r"^\d+$", status) is not None]
+            )
         except ValueError:
             return False
 
@@ -625,18 +557,17 @@ class Game:
 
     @property
     def displayScore(self) -> str:
-        return ":".join([
-            f"{max(self.homeCompetitor.score_int, 0):.0f}",
-            f"{max(self.awayCompetitor.score_int, 0):.0f}"
-        ])
+        return ":".join(
+            [
+                f"{max(self.homeCompetitor.score_int, 0):.0f}",
+                f"{max(self.awayCompetitor.score_int, 0):.0f}",
+            ]
+        )
 
     @property
     def league(self) -> LeagueItem:
         league = next(
-            filter(
-                lambda x: x.id == self.competitionId, Data365.leagues
-            ),
-            None
+            filter(lambda x: x.id == self.competitionId, Data365.leagues), None
         )
         assert league
         return league
@@ -701,30 +632,26 @@ class EVENT_SUBTYPE_NAME(Enum):
         return cls.UNKNOWN
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class GameEventType:
+class GameEventType(BaseModel, extra=Extra.ignore):
     id: Optional[int] = None
     name: Optional[str] = None
     subTypeId: Optional[int] = None
     subTypeName: Optional[str] = None
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class GameEvent:
-    competitorId: Optional[int] = 0
+class GameEvent(BaseModel, extra=Extra.ignore):
+    competitorId: int = Field(default=0)
     eventType: Optional[GameEventType] = None
-    statusId: Optional[int] = 0
-    stageId: Optional[int] = 0
-    order: Optional[int] = 0
-    num: Optional[int] = 0
-    gameTime: Optional[int] = 0
-    addedTime: Optional[int] = 0
+    statusId: int = Field(default=0)
+    stageId: int = Field(default=0)
+    order: int = Field(default=0)
+    num: int = Field(default=0)
+    gameTime: int = Field(default=0)
+    addedTime: int = Field(default=0)
     gameTimeDisplay: Optional[str] = None
-    gameTimeAndStatusDisplayType: Optional[int] = 0
-    playerId: Optional[int] = 0
-    isMajor: Optional[bool] = False
+    gameTimeAndStatusDisplayType: int = Field(default=0)
+    playerId: int = Field(default=0)
+    isMajor: bool = Field(default=False)
     extraPlayers: Optional[list[int]] = None
 
     @property
@@ -751,8 +678,6 @@ class GameEvent:
         return ""
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
 class GameDetails(Game):
     events: Optional[list[GameEvent]] = None
     members: Optional[list[GameMember]] = None
@@ -764,17 +689,14 @@ class GameDetails(Game):
         try:
             assert self.homeCompetitor
             assert self.awayCompetitor
-            return ":".join([
-                f"{self.homeCompetitor.score:.0f}",
-                f"{self.awayCompetitor.score:.0f}"
-            ])
+            return ":".join(
+                [f"{self.homeCompetitor.score:.0f}", f"{self.awayCompetitor.score:.0f}"]
+            )
         except AssertionError:
             return ""
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ResponseGame:
+class ResponseGame(BaseModel, extra=Extra.ignore):
     lastUpdateId: int
     requestedUpdateId: int
     game: GameDetails
@@ -794,9 +716,7 @@ class ResponseGame:
         return self.game.shortStatusText
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ResponseScores:
+class ResponseScores(BaseModel, extra=Extra.ignore):
     lastUpdateId: int
     requestedUpdateId: int
     ttl: int
@@ -814,12 +734,10 @@ class Position(IntEnum):
     NONE = 3
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class DetailsEvent:
+class DetailsEvent(BaseModel, extra=Extra.ignore):
     time: str
     action: str
-    order: Optional[int] = 0
+    order: int = Field(default=0)
     team: Optional[str] = None
     player: Optional[str] = None
     extraPlayers: Optional[list[str]] = None
@@ -840,13 +758,12 @@ class DetailsEvent:
             id = constcase(self.action)
             icon = EVENT_ICON[id]
             return emojize(icon.value)
-        except ValueError:
+        except ValueError as e:
+            logging.exception(e)
             return ""
 
 
-@dataclass_json
-@dataclass
-class GoalEvent:
+class GoalEvent(BaseModel, extra=Extra.ignore):
     event_id: int
     game_event_id: int
     time: str
@@ -855,17 +772,15 @@ class GoalEvent:
     score: str
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class DetailsEventPixel:
+class DetailsEventPixel(BaseModel, extra=Extra.ignore):
     event_id: int
     time: int
     action: str
     is_old_event: bool
-    home_team_id: int 
+    home_team_id: int
     away_team_id: int
     status: Optional[str] = None
-    order: Optional[int] = 0
+    order: int = Field(default=0)
     team: Optional[str] = None
     player: Optional[str] = None
     extraPlayers: Optional[list[str]] = None
@@ -874,7 +789,6 @@ class DetailsEventPixel:
     event_name: Optional[str] = None
     id: Optional[str] = None
     league_id: Optional[int] = None
-
 
     @property
     def order_id(self) -> int:
@@ -918,7 +832,7 @@ class DetailsEventPixel:
             status=details.game_status,
             league_id=league_id,
             home_team_id=details.home.id,
-            away_team_id=details.away.id
+            away_team_id=details.away.id,
         )
 
     @classmethod
@@ -938,18 +852,13 @@ class DetailsEventPixel:
             status=details.game_status,
             league_id=league_id,
             home_team_id=details.home.id,
-            away_team_id=details.away.id
+            away_team_id=details.away.id,
         )
 
     @classmethod
     def startTimeEvent(
-        cls, 
-        event_name: str, 
-        event_id: int, 
-        league_id,
-        home_id: int,
-        away_id: int
-        ):
+        cls, event_name: str, event_id: int, league_id, home_id: int, away_id: int
+    ):
         return cls(
             time=0,
             action="Game Start",
@@ -959,20 +868,12 @@ class DetailsEventPixel:
             event_id=event_id,
             league_id=league_id,
             home_team_id=home_id,
-            away_team_id=away_id
+            away_team_id=away_id,
         )
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class SubscriptionEvent:
-    start_time: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )
+class SubscriptionEvent(BaseModel, extra=Extra.ignore):
+    start_time: datetime
     action: str
     league: str
     league_id: int
@@ -984,26 +885,23 @@ class SubscriptionEvent:
     event_name: str
     job_id: str
     icon: str
-    status: Optional[str] = ""
+    status: str = Field(default="")
     id: Optional[str] = None
     home_team_icon: Optional[str] = None
     away_team_icon: Optional[str] = None
 
-    def __post_init__(self) -> None:
+    def __init__(self, **data):
+        super().__init__(**data)
         event_name = f"{self.home_team}/{self.away_team}"
         self.id = md5(f"{event_name}".lower().encode()).hexdigest()
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CancelJobEvent:
+class CancelJobEvent(BaseModel, extra=Extra.ignore):
     job_id: str
     action: str = "Cancel Job"
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class SearchResponse:
+class SearchResponse(BaseModel, extra=Extra.ignore):
     competitors: Optional[list[Competitor]] = None
     competitions: Optional[list[Competition]] = None
 
@@ -1020,9 +918,7 @@ class SearchResponse:
         return list(filter(lambda x: x.sportId == 1, self.competitions))
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CompetitionResponse:
+class CompetitionResponse(BaseModel, extra=Extra.ignore):
     sports: list[Sport]
     countries: list[Country]
     competitions: list[Competition]

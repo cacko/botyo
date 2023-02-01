@@ -138,8 +138,7 @@ class Player(Cachable):
                 member = next(
                     filter(lambda x: x.id == lineupMember.id, members), None)
                 assert member
-                game: PlayerGame = PlayerGame.from_dict(  # type: ignore
-                    game_details.to_dict())   # type: ignore
+                game = PlayerGame(**game_details.dict())
                 team: GameCompetitor = competitors[member.competitorId]
                 game.teamId = team.id
                 game.teamName = team.name
@@ -161,7 +160,7 @@ class Player(Cachable):
         data = RedisStorage.hget(cls.hash_key, matches[0].name.encode())
         if not data:
             raise PlayerNotFound
-        struct = PlayerStruct.from_dict(pickle.loads(data))  # type: ignore
+        struct = PlayerStruct(**pickle.loads(data))
         return cls(
             game=struct.game,
             member=struct.member,
@@ -170,12 +169,12 @@ class Player(Cachable):
 
     def fromcache(self):
         if data := RedisStorage.hget(__class__.hash_key, self.id):
-            return PlayerStruct.from_dict(pickle.loads(data))  # type: ignore
+            return PlayerStruct(**pickle.loads(data))
         return None
 
     def tocache(self, res):
         RedisStorage.pipeline().hset(
-            __class__.hash_key, self.id, pickle.dumps(res.to_dict())
+            __class__.hash_key, self.id, pickle.dumps(res.dict())
         ).persist(__class__.hash_key).execute()
         return res
 

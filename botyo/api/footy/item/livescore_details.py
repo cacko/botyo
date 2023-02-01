@@ -25,4 +25,3 @@ class ParserDetails(ParserDetailsData):
                     yield f"{row:^42}"
             except AssertionError as e:
                 logging.exception(e)
-                pass

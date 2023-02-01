@@ -29,7 +29,7 @@ async def get_team_schedule(
                 logo = LeagueImagePixel(game.competitionId)
                 n64 = logo.base64
                 game.icon = n64
-                res.append(game.to_dict())  # type: ignore
+                res.append(game.dict())
             return res
         except ValueError:
             pass
@@ -40,7 +40,7 @@ async def get_team_schedule(
             logo = LeagueImagePixel(game.competitionId)
             n64 = logo.base64
             game.icon = n64
-            res.append(game.to_dict())  # type: ignore
+            res.append(game.dict())
         return res
     except AssertionError:
         raise HTTPException(status_code=404)
@@ -87,7 +87,7 @@ async def post_unsubscribe(request: Request):
                 data.get("webhook", ""),
                 headers=OTP(data.get("group", "")).headers,
                 json=CancelJobEvent(
-                    job_id=id_parts[0]).to_dict(),  # type: ignore
+                    job_id=id_parts[0]).dict(),
             )
             return {"message": f"unsubscribed from {job.name}"}
     return {"message": "nothing unsubscribed"}
@@ -115,7 +115,7 @@ def get_league_schedule(query: str):
         logo = LeagueImagePixel(data_league.id)
         n64 = logo.base64
         game.icon = n64
-        res.append(game.to_dict())  # type: ignore
+        res.append(game.dict())
     return res
 
 
@@ -125,7 +125,7 @@ def get_livescore():
     if not obj:
         raise HTTPException(404)
     events = obj.items
-    return [g.to_dict() for g in events]  # type: ignore
+    return [g.dict() for g in events] 
 
 
 @router.get("/api/beats", tags=["api"])

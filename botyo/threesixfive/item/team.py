@@ -37,8 +37,7 @@ class TeamSearch(RedisCachable):
     def __fetch(self):
         req = Request(Url.search(self.__query))
         json = req.json
-        results: list[Competitor] = SearchResponse.from_dict(  # type: ignore
-            json).results
+        results: list[Competitor] = SearchResponse(**json).results
         self.__struct = results[0] if len(results) else None
         return self.tocache(self.__struct)
 
@@ -85,7 +84,7 @@ class Team(TimeCachable):
     def __fetch(self):
         req = Request(Url.team_games(self.__competitor_id))
         json = req.json
-        team: TeamStruct = TeamStruct.from_dict(json)  # type: ignore
+        team = TeamStruct(**json)
         return self.tocache(team)
 
     @property

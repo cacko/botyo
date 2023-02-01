@@ -78,7 +78,7 @@ class Cache(RedisCachable):
         req = Request(url)
         try:
             json = req.json
-            response: ResponseGame = ResponseGame.from_dict(json)  # type: ignore
+            response = ResponseGame(**json)
             return response
         except Exception as e:
             print(e)
@@ -172,9 +172,9 @@ class SubscriptionClient:
     def updateREST(self, data):
         payload = []
         if isinstance(data, list):
-            payload = [d.to_dict() for d in data]
-        elif hasattr(data, "to_dict"):
-            payload = data.to_dict()
+            payload = [d.dict() for d in data]
+        elif hasattr(data, "dict"):
+            payload = data.dict()
         logging.debug(payload)
         try:
             assert self.group_id
@@ -337,7 +337,6 @@ class Subscription(metaclass=SubscriptionMeta):
                     self.processGoals(updated.game)
             except AssertionError as e:
                 logging.exception(e)
-                pass
         Goals.poll()
         for qid in list(self.goals_queue.keys()):
             gq = self.goals_queue[qid]
@@ -369,8 +368,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     TextOutput.addRows(chatUpdate)
                     try:
                         sc.sendUpdate(TextOutput.render(), self.id)
-                    except UnknownClientException:
-                        pass
+                    except UnknownClientException as e:
+                        logging.exception(e)
             self.checkGoals(updated)
             content = cache.content
             assert content
@@ -390,19 +389,17 @@ class Subscription(metaclass=SubscriptionMeta):
                             sc.sendUpdate(self.fulltimeAnnoucementPixel, self.id)
                         else:
                             sc.sendUpdate(self.fulltimeAnnoucement, self.id)
-                    except UnknownClientException:
-                        pass
+                    except UnknownClientException as e:
+                        logging.exception(e)
                     if content.game.justEnded:
                         self.cancel(sc)
                         logging.debug(f"subscription {self.event_name} in done")
         except AssertionError as e:
             logging.exception(e)
-            pass
         except ValueError as e:
             logging.exception(e)
         except Exception as e:
             logging.exception(e)
-            # return self.cancel_all()
 
     def updates(self, updated: Optional[ResponseGame] = None) -> Optional[list[str]]:
         try:
@@ -430,7 +427,8 @@ class Subscription(metaclass=SubscriptionMeta):
     def client(self, client_id: str) -> Optional[Connection]:
         try:
             return Connection.client(client_id)
-        except UnknownClientException:
+        except UnknownClientException as e:
+            logging.exception(e)
             return None
 
     @property

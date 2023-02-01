@@ -79,7 +79,7 @@ class BadgeFetcher:
 
     def _job(self, executor):
         for item in self.queue:
-            badge = Badge(**item.to_dict())  # type: ignore
+            badge = Badge(**item.dict())
             if not badge.isCached:
                 yield executor.submit(badges, badge)
 
@@ -106,7 +106,7 @@ class Parser:
         req = Request(self.__endpoint)
         json = req.json
         today = datetime.now(tz=timezone.utc).date()
-        self.__struct = ResponseScores.from_dict(json)   # type: ignore
+        self.__struct = ResponseScores(**json)
 
         self.__struct.games = [
             *filter(lambda g: g.startTime.date() == today, self.__struct.games)

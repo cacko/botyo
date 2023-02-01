@@ -39,8 +39,7 @@ class CompetitionData(TimeCachable):
     def __fetch(self):
         req = Request(Url.competition_schedule(self.__competition_id))
         json = req.json
-        response = CompetitionResponse.from_dict(  # type:ignore
-            json)
+        response = CompetitionResponse(**json)
         return self.tocache(response)
 
     @property
