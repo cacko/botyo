@@ -8,6 +8,9 @@ from stringcase import alphanumcase
 from botyo.server.output import TextOutput
 from .models import CVEResponse
 from typing import Optional
+import re
+
+CVE_ID_MATCH = re.compile(r'(CVE-\d+-\d+)')
 
 
 class CVECachable(TimeCacheable):
@@ -35,10 +38,14 @@ class CVE(CVECachable):
 
     def fetch(self):
         args = {}
-        if self.__query:
-            args["keyword"] = self.__query
+        query = self.__query.strip()
+        if cve_match := CVE_ID_MATCH.search(self.__query):
+            args["cveId"] = cve_match.group(1)
+            query.replace(args["cveId"], "")
+        if query:
+            args["keyword"] = query
         req = Request("https://services.nvd.nist.gov/rest/json/cves/1.0", params=args)
-        return self.tocache(CVEResponse(**req.json))  # type: ignore
+        return self.tocache(CVEResponse(**req.json))
 
     @property
     def response(self) -> Optional[CVEResponse]:
