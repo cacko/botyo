@@ -62,7 +62,7 @@ class StableDiffusionAvatar(ImageCachable):
             object.append(self.gender.value)
             object.append(self.race.value)
         return (
-            f"profile picture of  {' '.join(object)} <geroy>, "
+            f"profile picture of  {' '.join(object)}, "
             "in the style of artgerm, gerald brom, atey ghailan and mike mignola, "
             "vibrant colors and hard shadows and strong rim light, plain background, "
             "comic cover art, trending on artstation -u"
