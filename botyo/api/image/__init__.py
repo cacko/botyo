@@ -197,14 +197,14 @@ def portrait_fromtext(context: Context):
     try:
         query = context.query
         assert query
-        attachment, _ = Image.txt2img(query)
+        attachment, _ = Image.txt2portrait(query)
         assert attachment
         return RenderResult(
             attachment=attachment,
-            method=ZMethod.IMAGE_TXT2IMG,
+            method=ZMethod.IMAGE_TXT2PORTRAIT,
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2IMG)
+        return EmptyResult(method=ZMethod.IMAGE_TXT2PORTRAIT)
 
 
 @bp.command(
