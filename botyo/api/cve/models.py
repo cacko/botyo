@@ -2,7 +2,7 @@ from typing import Optional
 from enum import StrEnum
 from pydantic import BaseModel, Extra, Field
 from datetime import datetime
-
+from pydantic_computed import Computed, computed
 
 class AttackVector(StrEnum):
     NETWORK = "NETWORK"
@@ -73,30 +73,33 @@ class CVEItem(BaseModel, extra=Extra.ignore):
     references = list[CVEReference]
     published: datetime
     lastModified: datetime
+    description: Computed[str]
+    severity: Computed[str]
+    attackVector: Computed[str]
 
-    # @property
-    # def description(self) -> str:
-    #     description = next(
-    #         filter(lambda x: x.lang == "en", self.descriptions),
-    #         None,
-    #     )
-    #     return description.value if description else ""
+    @computed('description')
+    def description(self) -> str:
+        description = next(
+            filter(lambda x: x.lang == "en", self.descriptions),
+            None,
+        )
+        return description.value if description else ""
 
-    # @property
-    # def severity(self) -> str:
-    #     if self.metrics.cvssMetricV31 is not None:
-    #         return ",".join(
-    #             [x.cvssData.baseSeverity for x in self.metrics.cvssMetricV31]
-    #         )
-    #     return ""
+    @computed('severity')
+    def severity(self) -> str:
+        if self.metrics.cvssMetricV31 is not None:
+            return ",".join(
+                [x.cvssData.baseSeverity for x in self.metrics.cvssMetricV31]
+            )
+        return ""
 
-    # @property
-    # def attackVector(self) -> str:
-    #     if self.metrics.cvssMetricV31 is not None:
-    #         return ",".join(
-    #             [x.cvssData.attackVector for x in self.metrics.cvssMetricV31]
-    #         )
-    #     return ""
+    @computed('attackVector')
+    def attackVector(self) -> str:
+        if self.metrics.cvssMetricV31 is not None:
+            return ",".join(
+                [x.cvssData.attackVector for x in self.metrics.cvssMetricV31]
+            )
+        return ""
 
 
 class Vulnerabilities(BaseModel, extra=Extra.ignore):
@@ -108,8 +111,9 @@ class CVEResponse(BaseModel, extra=Extra.ignore):
     resultsPerPage: int
     startIndex: int
     totalResults: int
+    ids: Computed[list[str]]
 
-    @property
+    @computed('ids')
     def ids(self) -> list[str]:
         if not self.totalResults:
             return []
