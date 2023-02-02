@@ -19,8 +19,31 @@ class CVEReference(BaseModel, extra=Extra.ignore):
     url: str
     source: str
 
-
 class CVSSV2Data(BaseModel, extra=Extra.ignore):
+    version: str
+    vectorString: str
+    accessVector: str
+    accessComplexity: str
+    authentication: str
+    confidentialityImpact: str
+    integrityImpact: str
+    availabilityImpact: str
+    baseScore: float
+
+class CVSSV2(BaseModel, extra=Extra.ignore):
+    source: str
+    type: str
+    cvssData: CVSSV2Data
+    baseSeverity: str
+    exploitabilityScore: float
+    impactScore: float
+    acInsufInfo: bool
+    obtainAllPrivilege: bool
+    obtainUserPrivilege: bool
+    obtainOtherPrivilege: bool
+    userInteractionRequired: bool
+
+class CVSSV31Data(BaseModel, extra=Extra.ignore):
     version: str
     vectorString: str
     attackVector: str
@@ -35,10 +58,10 @@ class CVSSV2Data(BaseModel, extra=Extra.ignore):
     baseSeverity: str
 
 
-class CVSSV2(BaseModel, extra=Extra.ignore):
+class CVSSV31(BaseModel, extra=Extra.ignore):
     source: str
     type: Optional[str]
-    cvssData: CVSSV2Data
+    cvssData: CVSSV31Data
     exploitabilityScore: float
     impactScore: float
 
@@ -49,7 +72,8 @@ class CVEDescription(BaseModel, extra=Extra.ignore):
 
 
 class CVEMetrics(BaseModel, extra=Extra.ignore):
-    cvssMetricV2: list[CVSSV2]
+    cvssMetricV31: Optional[list[CVSSV31]]
+    cvssMetricV2: Optional[list[CVSSV2]]
 
 
 class CVEItem(BaseModel, extra=Extra.ignore):
@@ -75,6 +99,10 @@ class CVEItem(BaseModel, extra=Extra.ignore):
             return ",".join(
                 [x.cvssData.baseSeverity for x in self.metrics.cvssMetricV31]
             )
+        if self.metrics.cvssMetricV2 is not None:
+            return ",".join(
+                [x.baseSeverity for x in self.metrics.cvssMetricV2]
+            ) 
         return ""
 
     @property
@@ -83,6 +111,10 @@ class CVEItem(BaseModel, extra=Extra.ignore):
             return ",".join(
                 [x.cvssData.attackVector for x in self.metrics.cvssMetricV31]
             )
+        if self.metrics.cvssMetricV2 is not None:
+            return ",".join(
+                [x.cvssData.accessVector for x in self.metrics.cvssMetricV2]
+            )    
         return ""
 
 
