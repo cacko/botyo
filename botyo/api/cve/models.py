@@ -74,29 +74,29 @@ class CVEItem(BaseModel, extra=Extra.ignore):
     published: datetime
     lastModified: datetime
 
-    @property
-    def description(self) -> str:
-        description = next(
-            filter(lambda x: x.lang == "en", self.descriptions),
-            None,
-        )
-        return description.value if description else ""
+    # @property
+    # def description(self) -> str:
+    #     description = next(
+    #         filter(lambda x: x.lang == "en", self.descriptions),
+    #         None,
+    #     )
+    #     return description.value if description else ""
 
-    @property
-    def severity(self) -> str:
-        if self.metrics.cvssMetricV31 is not None:
-            return ",".join(
-                [x.cvssData.baseSeverity for x in self.metrics.cvssMetricV31]
-            )
-        return ""
+    # @property
+    # def severity(self) -> str:
+    #     if self.metrics.cvssMetricV31 is not None:
+    #         return ",".join(
+    #             [x.cvssData.baseSeverity for x in self.metrics.cvssMetricV31]
+    #         )
+    #     return ""
 
-    @property
-    def attackVector(self) -> str:
-        if self.metrics.cvssMetricV31 is not None:
-            return ",".join(
-                [x.cvssData.attackVector for x in self.metrics.cvssMetricV31]
-            )
-        return ""
+    # @property
+    # def attackVector(self) -> str:
+    #     if self.metrics.cvssMetricV31 is not None:
+    #         return ",".join(
+    #             [x.cvssData.attackVector for x in self.metrics.cvssMetricV31]
+    #         )
+    #     return ""
 
 
 class Vulnerabilities(BaseModel, extra=Extra.ignore):
