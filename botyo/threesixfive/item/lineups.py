@@ -1,22 +1,19 @@
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 from botyo.threesixfive.item.models import GameCompetitor
 from .livescore_details import ParserDetails
 from .models import Event, GameMember, LineupMember, LineupMemberStatus
 from botyo.core.store import RedisCachable
 from typing import Optional
 import logging
+from pydantic import BaseModel, Field, Extra
 
-@dataclass_json
-@dataclass
-class TeamLineup:
+
+
+class TeamLineup(BaseModel, extra=Extra.ignore):
     lineup: list[LineupMember]
     team: GameCompetitor
 
 
-@dataclass_json
-@dataclass
-class LineupCache:
+class LineupCache(BaseModel, extra=Extra.ignore):
     home: TeamLineup
     away: TeamLineup
     members: list[GameMember]

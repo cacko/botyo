@@ -1,12 +1,11 @@
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 from .livescore_details import ParserDetails
 from .models import Event, GameCompetitor
 from typing import Optional
+from pydantic import BaseModel, Field, Extra
 
-@dataclass_json
-@dataclass
-class TeamStats:
+
+
+class TeamStats(BaseModel, extra=Extra.ignore):
     home: GameCompetitor
     away: GameCompetitor
 

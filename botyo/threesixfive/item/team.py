@@ -5,24 +5,19 @@ from .models import (
 )
 from cachable.request import Request
 from cachable.models import TimeCache
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json, Undefined
 from hashlib import blake2s
 from botyo.threesixfive.url import Url
 from datetime import timedelta
 from typing import Optional
 from botyo.core.store import RedisCachable, TimeCachable
+from pydantic import BaseModel, Field, Extra
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class TeamStruct:
+class TeamStruct(BaseModel, extra=Extra.ignore):
     competitors: list[Competitor]
     games: list[Game]
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
 class TeamCache(TimeCache):
     struct: TeamStruct
 

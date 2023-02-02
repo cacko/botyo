@@ -174,7 +174,7 @@ class Player(Cachable):
 
     def tocache(self, res):
         RedisStorage.pipeline().hset(
-            __class__.hash_key, self.id, pickle.dumps(res.dict())
+            __class__.hash_key, self.id, pickle.dumps(res.to_dict())
         ).persist(__class__.hash_key).execute()
         return res
 

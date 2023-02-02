@@ -6,8 +6,6 @@ from .models import (
 )
 from cachable.request import Request
 from cachable.models import TimeCache
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json, Undefined
 from botyo.threesixfive.url import Url
 from datetime import timedelta
 from botyo.core.store import TimeCachable

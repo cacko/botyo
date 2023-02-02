@@ -13,19 +13,16 @@ from .models import (
 from botyo.threesixfive.exception import GameNotFound
 from cachable.request import Request
 from typing import Optional
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json, Undefined
 from unidecode import unidecode
 from datetime import timezone
 from cachable.models import TimeCache
 from botyo.core.store import TimeCachable
 import logging
 from typing import Optional
+from pydantic import BaseModel, Field, Extra
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class ParserDetailsResponse:
+class ParserDetailsResponse(BaseModel, extra=Extra.ignore):
     events: Optional[list[DetailsEvent]] = None
 
 
