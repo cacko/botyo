@@ -1,7 +1,7 @@
 from enum import StrEnum
 from pydantic import BaseModel, Extra
 from datetime import datetime
-
+from typing import Optional
 
 class AttackVector(StrEnum):
     NETWORK = "NETWORK"
@@ -37,7 +37,7 @@ class CVSSV31Data(BaseModel, extra=Extra.ignore):
 
 class CVSSV31(BaseModel, extra=Extra.ignore):
     source: str
-    type: str
+    type: Optional[str]
     cvssData: CVSSV31Data
     exploitabilityScore: float
     impactScore: float
