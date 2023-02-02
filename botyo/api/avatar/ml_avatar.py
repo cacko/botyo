@@ -18,7 +18,7 @@ class StableDiffusionAvatar(ImageCachable):
     __gender: Optional[Gender] = None
     __race: Optional[Race] = None
     __new: bool = False
-    SIZE = (512, 512)
+    SIZE = (2048, 2048)
 
     def __init__(self, name: str, is_new: bool = False):
         if not name:
