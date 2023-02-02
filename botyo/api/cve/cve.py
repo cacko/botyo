@@ -11,7 +11,7 @@ from typing import Optional
 import re
 import logging
 
-CVE_ID_MATCH = re.compile(r'^(CVE-[^\s]+)\s(.+)', re.IGNORECASE)
+CVE_ID_MATCH = re.compile(r'^(CVE-\d+-\d+)\s(.+)', re.IGNORECASE)
 
 
 class CVECachable(TimeCacheable):
