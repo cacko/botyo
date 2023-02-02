@@ -66,7 +66,7 @@ class CVE(CVECachable):
         assert self.response
         response: CVEResponse = self.response
         rows = [
-            CVEHeader(cve.id, cve.description, cve.severity, cve.attackVector)
+            CVEHeader(cve.cve.id, cve.cve.description, cve.cve.severity, cve.cve.attackVector)
             for cve in response.vulnerabilities
         ]
         TextOutput.addRows(rows)
