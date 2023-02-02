@@ -1,8 +1,7 @@
-from typing import Optional
 from enum import StrEnum
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
 from datetime import datetime
-from pydantic_computed import Computed, computed
+
 
 class AttackVector(StrEnum):
     NETWORK = "NETWORK"
@@ -14,18 +13,6 @@ class AttackComplexity(StrEnum):
 
 class BaseSeverity(StrEnum):
     CRITICAL = "CRITICAL"
-
-
-class CVSSV2(BaseModel):
-    version: str
-    vectorString: str
-    accessVector: str
-    accessComplexity: str
-    authentication: str
-    confidentialityImpact: str
-    integrityImpact: str
-    availabilityImpact: str
-    baseScore: float = Field(default=7.5)
 
 
 class CVEReference(BaseModel, extra=Extra.ignore):
@@ -70,14 +57,11 @@ class CVEItem(BaseModel, extra=Extra.ignore):
     sourceIdentifier: str
     descriptions: list[CVEDescription]
     metrics: CVEMetrics
-    references = list[CVEReference]
+    references: list[CVEReference]
     published: datetime
     lastModified: datetime
-    description: Computed[str]
-    severity: Computed[str]
-    attackVector: Computed[str]
 
-    @computed('description')
+    @property
     def description(self) -> str:
         description = next(
             filter(lambda x: x.lang == "en", self.descriptions),
@@ -85,7 +69,7 @@ class CVEItem(BaseModel, extra=Extra.ignore):
         )
         return description.value if description else ""
 
-    @computed('severity')
+    @property
     def severity(self) -> str:
         if self.metrics.cvssMetricV31 is not None:
             return ",".join(
@@ -93,7 +77,7 @@ class CVEItem(BaseModel, extra=Extra.ignore):
             )
         return ""
 
-    @computed('attackVector')
+    @property
     def attackVector(self) -> str:
         if self.metrics.cvssMetricV31 is not None:
             return ",".join(
@@ -102,18 +86,17 @@ class CVEItem(BaseModel, extra=Extra.ignore):
         return ""
 
 
-class Vulnerabilities(BaseModel, extra=Extra.ignore):
+class Vulnerability(BaseModel, extra=Extra.ignore):
     cve: CVEItem
 
 
 class CVEResponse(BaseModel, extra=Extra.ignore):
-    vulnerabilities: list[Vulnerabilities]
+    vulnerabilities: list[Vulnerability]
     resultsPerPage: int
     startIndex: int
     totalResults: int
-    ids: Computed[list[str]]
 
-    @computed('ids')
+    @property
     def ids(self) -> list[str]:
         if not self.totalResults:
             return []

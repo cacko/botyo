@@ -1,5 +1,5 @@
 from botyo.api.cve.cve import CVE
-from botyo.api.cve.subscription import Subscription
+# from botyo.api.cve.subscription import Subscription
 from botyo.server.blueprint import Blueprint
 from botyo.server.output import TextOutput
 from botyo.server.models import RenderResult, EmptyResult
