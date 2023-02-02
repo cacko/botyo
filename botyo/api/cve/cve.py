@@ -11,7 +11,7 @@ from typing import Optional
 import re
 import logging
 
-CVE_ID_MATCH = re.compile(r'(CVE-\d+-\d+)')
+CVE_ID_MATCH = re.compile(r'(CVE-\d+-\d+)', re.IGNORECASE)
 
 
 class CVECachable(TimeCacheable):
@@ -42,6 +42,7 @@ class CVE(CVECachable):
         query = self.__query.strip()
         if cve_match := CVE_ID_MATCH.search(self.__query):
             args["cveId"] = cve_match.group(1)
+            query.replace(args["cveId"], "")
         if query:
             args["keywordSearch"] = query
         req = Request("https://services.nvd.nist.gov/rest/json/cves/2.0", params=args)
@@ -66,7 +67,7 @@ class CVE(CVECachable):
         response: CVEResponse = self.response
         rows = [
             CVEHeader(cve.id, cve.description, cve.severity, cve.attackVector)
-            for cve in response.result.CVE_Items
+            for cve in response.vulnerabilities
         ]
         TextOutput.addRows(rows)
         return TextOutput.render()

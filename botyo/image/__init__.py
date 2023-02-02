@@ -46,7 +46,7 @@ class Action(Enum):
     VARIATION = "image/variation"
     TXT2IMG = "image/txt2img"
     IMG2IMG = "image/img2img"
-    PORTRAIT = "image/portrait"
+    PORTRAIT = "image/txt2portrait"
     GPS2IMG = "image/gps2img"
 
 
