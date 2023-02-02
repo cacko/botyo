@@ -20,7 +20,7 @@ class CVEReference(BaseModel, extra=Extra.ignore):
     source: str
 
 
-class CVSSV31Data(BaseModel, extra=Extra.ignore):
+class CVSSV2Data(BaseModel, extra=Extra.ignore):
     version: str
     vectorString: str
     attackVector: str
@@ -35,10 +35,10 @@ class CVSSV31Data(BaseModel, extra=Extra.ignore):
     baseSeverity: str
 
 
-class CVSSV31(BaseModel, extra=Extra.ignore):
+class CVSSV2(BaseModel, extra=Extra.ignore):
     source: str
     type: Optional[str]
-    cvssData: CVSSV31Data
+    cvssData: CVSSV2Data
     exploitabilityScore: float
     impactScore: float
 
@@ -49,7 +49,7 @@ class CVEDescription(BaseModel, extra=Extra.ignore):
 
 
 class CVEMetrics(BaseModel, extra=Extra.ignore):
-    cvssMetricV31: list[CVSSV31]
+    cvssMetricV2: list[CVSSV2]
 
 
 class CVEItem(BaseModel, extra=Extra.ignore):
