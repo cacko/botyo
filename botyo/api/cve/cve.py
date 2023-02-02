@@ -41,9 +41,8 @@ class CVE(CVECachable):
         args = {}
         query = self.__query.strip()
         if cve_match := CVE_ID_MATCH.search(self.__query):
-            args["cveId"] = cve_match.group(1)
-            query.replace(args["cveId"], "")
-        if query:
+            args["cveId"] = cve_match.group(1).upper()
+        elif query:
             args["keywordSearch"] = query
         req = Request("https://services.nvd.nist.gov/rest/json/cves/2.0", params=args)
         json = req.json
