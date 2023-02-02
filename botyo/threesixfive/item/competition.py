@@ -12,10 +12,9 @@ from botyo.threesixfive.url import Url
 from datetime import timedelta
 from botyo.core.store import TimeCachable
 from typing import Optional
+import logging
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
 class CompetitionCache(TimeCache):
     struct: CompetitionResponse
 
@@ -40,6 +39,7 @@ class CompetitionData(TimeCachable):
         req = Request(Url.competition_schedule(self.__competition_id))
         json = req.json
         response = CompetitionResponse(**json)
+        logging.debug(response)
         return self.tocache(response)
 
     @property

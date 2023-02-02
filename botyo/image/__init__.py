@@ -164,7 +164,7 @@ class Image(object, metaclass=ImageMeta):
     def do_analyze(self):
         attachment, message = self.getResponse(Action.ANALYZE)
         if message:
-            analyses = AnalyzeReponse.from_json(message)  # type: ignore
+            analyses = AnalyzeReponse(**message)
             rows = [
                 ["Age: ", analyses.age],
                 [

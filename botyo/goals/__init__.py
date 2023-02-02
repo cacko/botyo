@@ -179,7 +179,7 @@ class GoalsMeta(type):
         )
         if fp.exists():
             return True
-        return fp.write_text(data.to_json()) > 0  # type: ignore
+        return fp.write_text(data.json()) > 0  # type: ignore
 
 
 class Goals(object, metaclass=GoalsMeta):
