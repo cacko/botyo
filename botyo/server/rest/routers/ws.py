@@ -199,6 +199,7 @@ class ConnectionManager:
     async def process_command(self, name: int) -> Optional[RenderResult]:
         logging.debug(f"worker {name} ready to fetch")
         data, client_id = await self.queue.get()
+        logging.debug(f"<<<<<<<<<< worker {data} fetch")
         context = None
         try:
             msg = ZSONRequest(**data)
