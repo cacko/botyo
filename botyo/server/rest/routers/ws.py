@@ -237,6 +237,7 @@ class ConnectionManager:
 
 
 manager = ConnectionManager()
+_ = manager.start(4)
 
 async def get_cookie_or_token(
     websocket: WebSocket,
