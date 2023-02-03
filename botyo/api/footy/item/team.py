@@ -43,7 +43,7 @@ class Team:
                 if game.league.is_international:
                     name = game.homeCompetitor.name_with_flag
                 g.append(
-                    f"@ {name}")
+                    f"@{name}")
 
             g.append(game.competitionDisplayName)
             startTime = game.startTime

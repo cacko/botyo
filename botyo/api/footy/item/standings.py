@@ -41,7 +41,7 @@ class Standings(StandingsData):
     def __renderGroup(self, standing_rows, name=None):
         rows = []
         for row in sorted(standing_rows, key=lambda x: x.position):
-            gd = int(row.forward - row.against)
+            gd = row.forward - row.against
             rows.append(
                 [
                     f"{row.position:.0f}",

@@ -231,8 +231,8 @@ class StandingRow(BaseModel, extra=Extra.ignore):
     gamesWon: Optional[int] = None
     gamesLost: Optional[int] = None
     gamesEven: Optional[int] = None
-    forward: Optional[int] = None
-    against: Optional[int] = None
+    forward: int = Field(default=0)
+    against: int = Field(default=0)
     ratio: Optional[int] = None
     points: Optional[int] = None
     strike: Optional[int] = None
