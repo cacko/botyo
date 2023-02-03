@@ -223,7 +223,7 @@ async def websocket_endpoint(
                 await websocket.send_json(PongMessage(id=ping.id).dict())
             else:
                 logging.debug(f"receive {data}")
-                res = manager.process_command(data, client_id)
-=                logging.debug(">>>>>> AFTER QUEUE")
+                asyncio.create_task(manager.process_command(data, client_id))
+                logging.debug(">>>>>> AFTER QUEUE")
     except WebSocketDisconnect:
         manager.disconnect(client_id)
