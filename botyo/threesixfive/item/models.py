@@ -391,16 +391,6 @@ class GameCompetitor(BaseModel, extra=Extra.ignore):
     statistics: Optional[list[GameStatistic]] = None
     symbolicName: Optional[str] = None
 
-    def __getattribute__(self, __name: str):
-        if all(
-            [
-                __name == "name",
-                object.__getattribute__(self, "id") in app_config.favourites.teams,
-            ]
-        ):
-            return f"{object.__getattribute__(self, __name).upper()}"
-        return object.__getattribute__(self, __name)
-
     @property
     def country(self) -> CountryItem:
         country = next(
