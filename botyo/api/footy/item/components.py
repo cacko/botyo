@@ -56,15 +56,15 @@ class ScoreRow:
         if self.format == ScoreFormat.STANDALONE:
             cols = (
                 Column(size=16, align=Align.LEFT),
-                Column(size=5, align=Align.RIGHT),
+                Column(size=5, align=Align.CENTER),
                 Column(size=5, align=Align.CENTER),
                 Column(size=16, align=Align.RIGHT),
             )
             row = (
-                f"{self.home.upper()} ",
+                f"{self.home.upper()}",
                 self.row.status,
                 self.row.score,
-                f" {self.away.upper()}",
+                f"{self.away.upper()}",
             )
         elif self.format == ScoreFormat.LIST:
             cols = (
@@ -75,9 +75,9 @@ class ScoreRow:
             )
             row = (
                 self.row.status,
-                f"{self.home} ",
+                f" {self.home}",
                 self.row.score,
-                f" {self.away}",
+                f"{self.away}",
             )
         else:
             raise NotImplementedError
