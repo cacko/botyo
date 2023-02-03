@@ -2,11 +2,6 @@ from fastapi import (
     APIRouter,
     WebSocket,
     WebSocketDisconnect,
-    Cookie,
-    Query,
-    Depends,
-    WebSocketException,
-    status,
 )
 import logging
 from pydantic import BaseModel, Extra, validator, Field
@@ -21,9 +16,8 @@ from botyo.server.models import (
     ZSONRequest,
     CommandDef,
     CoreMethods,
-    ZMethod
 )
-from typing import Optional, Union
+from typing import Optional
 from pathlib import Path
 from PIL import Image
 from botyo.core.config import Config as app_config
@@ -203,7 +197,6 @@ class ConnectionManager:
                     with perftime(f"Command {command.method.value}"):
                         response = command.handler(context)
                         await context.send_async(response)
-            self.queue.task_done()
         except Exception as e:
             logging.exception(e)
             response = EmptyResult(error=f"{e.__str__}")
@@ -213,25 +206,14 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-async def get_cookie_or_token(
-    websocket: WebSocket,
-    session: Union[str, None] = Cookie(default=None),
-    token: Union[str, None] = Query(default=None),
-):
-    if session is None and token is None:
-        raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
-    return session or token
-
 
 @router.websocket("/ws/{client_id}")
 async def websocket_endpoint(
     websocket: WebSocket,
-    client_id: str,
-    # cookie_or_token: str = Depends(get_cookie_or_token),
+    client_id: str
 ):
     logging.debug([f"{k} -> {v}" for k, v in websocket.headers.items()])
     await manager.connect(websocket, client_id)
-    # logging.debug(f"Session cookie or query token value is: {cookie_or_token}")
     try:
         while True:
             data = await websocket.receive_json()
@@ -241,7 +223,7 @@ async def websocket_endpoint(
                 await websocket.send_json(PongMessage(id=ping.id).dict())
             else:
                 logging.debug(f"receive {data}")
-                asyncio.create_task(manager.process_command(data, client_id))
-                logging.debug(">>>>>> AFTER QUEUE")
+                res = manager.process_command(data, client_id)
+=                logging.debug(">>>>>> AFTER QUEUE")
     except WebSocketDisconnect:
         manager.disconnect(client_id)
