@@ -51,8 +51,8 @@ class _APIServer(StoppableThread):
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        asyncio.create_task(manager.start(3))
         self.__server.run()
+        asyncio.create_task(manager.start(3))
 
     def stop(self):
         super().stop()
