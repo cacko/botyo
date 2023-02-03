@@ -176,7 +176,7 @@ class ConnectionManager:
             logging.debug(f"process command {msg}")
             assert msg.query
             match msg.method:
-                case ZMethod.LOGIN:
+                case CoreMethods.LOGIN:
                     connection = Connection.client(clientId=client_id)
                     assert isinstance(connection, WSConnection)
                     connection.auth(msg.query)
