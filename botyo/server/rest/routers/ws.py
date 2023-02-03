@@ -163,26 +163,6 @@ class WSConnection(Connection):
 
 class ConnectionManager:
         
-    def __init__(self) -> None:
-        self.queue = asyncio.Queue()
-
-    async def start(self, n_consumers:int):
-        logging.debug(">>>>>> MANAGER START")
-        consumers = [
-            asyncio.create_task(self._consume(n)) for n in range(1, n_consumers + 1)
-        ]
-        await asyncio.gather(*consumers, return_exceptions=True) 
-        await self.queue.join()
-        logging.debug(">>>>>> MANAGER START 2")
-
-    async def _consume(self, name: int) -> None:
-        while True:
-            try:
-                logging.debug(">>>>>> CONSUME START")
-                await self.process_command(name)
-            except Exception:
-                continue
-    
     async def connect(self, websocket: WebSocket, client_id: str):
         connection = WSConnection(websocket=websocket, client_id=client_id)
         await connection.accept()
@@ -190,10 +170,7 @@ class ConnectionManager:
     def disconnect(self, client_id):
         WSConnection.remove(client_id)
 
-    async def process_command(self, name: int) -> Optional[RenderResult]:
-        logging.debug(f"worker {name} ready to fetch")
-        data, client_id = await self.queue.get()
-        logging.debug(f"<<<<<<<<<< worker {data} fetch")
+    async def process_command(self, data, client_id) -> Optional[RenderResult]:
         context = None
         try:
             msg = ZSONRequest(**data)
@@ -264,7 +241,7 @@ async def websocket_endpoint(
                 await websocket.send_json(PongMessage(id=ping.id).dict())
             else:
                 logging.debug(f"receive {data}")
-                await manager.queue.put((data, client_id))
+                asyncio.create_task(manager.process_command(data, client_id))
                 logging.debug(">>>>>> AFTER QUEUE")
     except WebSocketDisconnect:
         manager.disconnect(client_id)
