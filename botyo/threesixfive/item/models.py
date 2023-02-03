@@ -202,7 +202,7 @@ class Sport(BaseModel, extra=Extra.ignore):
 class Country(BaseModel, extra=Extra.ignore):
     id: int
     name: str
-    nameForURL: int
+    nameForURL: Optional[str] = None
     totalGames: int = Field(default=0)
     liveGames: int = Field(default=0)
 
