@@ -37,7 +37,6 @@ dependencies:
   - jpeg=9e
   - krb5=1.20.1
   - lame=3.100
-  - lazy-object-proxy=1.9.0
   - libbrotlicommon=1.0.9
   - libbrotlidec=1.0.9
   - libbrotlienc=1.0.9
