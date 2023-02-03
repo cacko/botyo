@@ -167,6 +167,7 @@ class ConnectionManager:
         self.queue = asyncio.Queue()
 
     async def start(self, n_consumers:int):
+        logging.debug(">>>>>> MANAGER START")
         consumers = [
             asyncio.create_task(self._consume(n)) for n in range(1, n_consumers + 1)
         ]
@@ -177,6 +178,7 @@ class ConnectionManager:
     async def _consume(self, name: int) -> None:
         while True:
             try:
+                logging.debug(">>>>>> CONSUME START")
                 await self.process_command(name)
             except Exception:
                 continue
