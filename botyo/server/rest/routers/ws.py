@@ -163,11 +163,15 @@ class WSConnection(Connection):
 
 class ConnectionManager:
     
+    __started = False
+    
     def __init__(self) -> None:
         self.queue = asyncio.Queue()
 
-            
     async def start(self, n_consumers:int):
+        if self.__started:
+            return
+        self.__started = True
         consumers = [
             asyncio.create_task(self._consume(n)) for n in range(1, n_consumers + 1)
         ]
@@ -233,7 +237,6 @@ class ConnectionManager:
 
 
 manager = ConnectionManager()
-asyncio.create_task(manager.start(3))
 
 
 async def get_cookie_or_token(
@@ -253,6 +256,7 @@ async def websocket_endpoint(
     # cookie_or_token: str = Depends(get_cookie_or_token),
 ):
     logging.debug([f"{k} -> {v}" for k, v in websocket.headers.items()])
+    asyncio.create_task(manager.start(3))
     await manager.connect(websocket, client_id)
     # logging.debug(f"Session cookie or query token value is: {cookie_or_token}")
     try:
