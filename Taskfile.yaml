@@ -65,7 +65,7 @@ tasks:
   export:
     desc: export env
     cmds:
-      - mamba env export --no-builds --ignore-channels --from-history  -n {{.PROJECT}} > environment.yml
+      - mamba env export --no-builds -n {{.PROJECT}} > environment.yml
 
 
   install:

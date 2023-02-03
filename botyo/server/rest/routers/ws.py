@@ -19,19 +19,24 @@ from botyo.server.models import (
     EmptyResult,
     ZSONResponse,
     ZSONRequest,
+    CommandDef,
     CoreMethods,
+    ZMethod
 )
 from typing import Optional, Union
 from pathlib import Path
 from PIL import Image
 from botyo.core.config import Config as app_config
 import asyncio
-from shutil import copy
+from botyo.firebase.auth import Auth, AuthUser
 from corestring import string_hash
 import time
 from botyo.core.s3 import S3
 
 
+
+class WSException(Exception):
+    pass
 
 
 class WSAttachment(BaseModel):
@@ -59,6 +64,7 @@ class Response(BaseModel):
     attachment: Optional[WSAttachment] = None
     plain: Optional[bool] = None
     new_id: Optional[str] = None
+    commands: Optional[list[CommandDef]] = None
 
     @classmethod
     def store_root(cls) -> Path:
@@ -110,6 +116,7 @@ class WSConnection(Connection):
 
     __websocket: WebSocket
     __clientId: str
+    __user: Optional[AuthUser]
 
     def __init__(self, websocket: WebSocket, client_id: str) -> None:
         self.__websocket = websocket
@@ -118,24 +125,28 @@ class WSConnection(Connection):
     async def accept(self):
         await self.__websocket.accept()
         __class__.connections[self.__clientId] = self
-        cmds = ZSONResponse(
-            method=CoreMethods.LOGIN,
-            commands=CommandExec.definitions,
-            client=self.__clientId,
-        ).dict()
-        await self.__websocket.send_json(cmds)
+
+    def auth(self, token: str):
+        self.__user = Auth.verify(token=token)
 
     def send(self, response: ZSONResponse):
+        if not self.__user:
+            raise WSException("user is not authenticated")
         asyncio.run(self.send_async(response))
 
     async def send_async(self, response: ZSONResponse):
+        if not self.__user:
+            raise WSException("user is not authenticated")
         attachment = None
         if response.attachment:
+            assert response.attachment.contentType
+            assert response.attachment.path
             attachment = WSAttachment(
                 contentType=response.attachment.contentType,
                 url=response.attachment.path,
             )
         logging.debug(response)
+        assert response.id
         resp = Response(
             ztype=ZSONType.RESPONSE,
             id=response.id,
@@ -157,28 +168,43 @@ class ConnectionManager:
     def disconnect(self, client_id):
         WSConnection.remove(client_id)
 
-    async def process_command(self, data: dict, client_id: str) -> RenderResult:
+    async def process_command(self, data: dict, client_id: str) -> Optional[RenderResult]:
+        context = None
         try:
             msg = ZSONRequest(**data)
             assert isinstance(msg, ZSONRequest)
             logging.debug(f"process command {msg}")
-            command, query = CommandExec.parse(msg.query)
-            logging.debug(command)
-            context = Context(
-                client=client_id,
-                query=query,
-                group=client_id,
-                id=msg.id,
-                source=msg.source,
-            )
-            assert isinstance(command, CommandExec)
-            with perftime(f"Command {command.method.value}"):
-                response = command.handler(context)
-                await context.send_async(response)
+            assert msg.query
+            match msg.method:
+                case ZMethod.LOGIN:
+                    connection = Connection.client(clientId=client_id)
+                    assert isinstance(connection, WSConnection)
+                    connection.auth(msg.query)
+                    cmds = ZSONResponse(
+                        method=CoreMethods.LOGIN,
+                        commands=CommandExec.definitions,
+                        client=client_id,
+                    )
+                    await connection.send_async(cmds)               
+                case _:
+                    command, query = CommandExec.parse(msg.query)
+                    logging.debug(command)
+                    context = Context(
+                        client=client_id,
+                        query=query,
+                        group=client_id,
+                        id=msg.id,
+                        source=msg.source,
+                    )
+                    assert isinstance(command, CommandExec)
+                    with perftime(f"Command {command.method.value}"):
+                        response = command.handler(context)
+                        await context.send_async(response)
         except Exception as e:
             logging.error(e)
             response = EmptyResult(error=f"{e.__str__}")
-            await context.send_async(response)
+            if context:
+                await context.send_async(response)
 
 
 manager = ConnectionManager()
@@ -208,6 +234,7 @@ async def websocket_endpoint(
             data = await websocket.receive_json()
             if data.get("ztype") == ZSONType.PING.value:
                 ping = PingMessage(**data)
+                assert ping.id
                 await websocket.send_json(PongMessage(id=ping.id).dict())
             else:
                 logging.debug(f"receive {data}")

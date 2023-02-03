@@ -20,5 +20,4 @@ def cli(ctx: Environment, paths: list[str]):
             res = S3.upload(src, src.name)
             click.echo(res)
         except Exception as e:
-            print_exc(e)
             logging.error(e)

@@ -1,5 +1,6 @@
 from cachable.storage.redis import RedisStorage
 from cachable.storage.file import FileStorage
+from botyo.firebase.service_account import ServiceAccount
 from botyo.core.config import Config as app_config
 from botyo.api.footy import Footy
 from botyo.server.server import Server
@@ -10,13 +11,12 @@ import logging
 import signal
 import sys
 
-
 app = Server(Path(__file__).parent.parent)
 app.servers.append(APIServer())
 
 RedisStorage.register(os.environ.get("BOTYO_REDIS_URL", ""))
 FileStorage.register(Path(app_config.cachable.path))
-
+ServiceAccount.register(Path(os.environ.get("BOTYO_SERVICE_ACCOUNT", "")))
 Footy.register(app)
 
 

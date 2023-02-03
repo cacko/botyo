@@ -15,25 +15,31 @@ class MethodMeta(EnumMeta):
 
     def __new__(metacls, cls, bases, classdict, **kwds):
         for x in classdict._member_names:
-            metacls._enums[classdict[x]] = ".".join([classdict["__module__"], cls])
+            metacls._enums[classdict[x]] = ".".join(
+                [classdict["__module__"], cls])
         return super().__new__(metacls, cls, bases, classdict, **kwds)
 
-    def __call__(
-        cls, value, names=None, *, module=None, qualname=None, type=None, start=1
-    ):
+    def __call__(cls,
+                 value,
+                 names=None,
+                 *,
+                 module=None,
+                 qualname=None,
+                 type=None,
+                 start=1):
         if names is None:  # simple value lookup
             klass = cls._enums[value]
             papp = Path(".") / "app"
             enumklass = klass.split(".")[-1]
             if enumklass == cls.__name__:
-                return cls.__new__(cls, value)
+                return cls.__new__(cls, value) #type: ignore
             if klass.startswith("app."):
-                sys.path.insert(0, papp)
+                sys.path.insert(0, papp) #type: ignore
                 mod = ".".join(klass.split(".")[:-1])
                 imp = __import__(mod, None, None, [enumklass])
                 return getattr(imp, enumklass)(value)
             return eval(f'{enumklass}("{value}")')
-        return cls._create_(
+        return cls._create_( #type: ignore
             value,
             names,
             module=module,
@@ -41,6 +47,7 @@ class MethodMeta(EnumMeta):
             type=type,
             start=start,
         )
+
 
 class ZMethod(StrEnum, metaclass=MethodMeta):
     LOGIN = "login"
@@ -122,14 +129,12 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     #     return self.value == __o.value
 
 
-
 class CoreMethods(StrEnum, metaclass=MethodMeta):
     LOGIN = "login"
     HELP = "help"
 
     # def __eq__(self, __o: object) -> bool:
     #     return self.value == __o.value
-
 
 
 Method = TypeVar("Method", ZMethod, CoreMethods)
@@ -141,7 +146,7 @@ class ZSONMatcher(StrEnum):
 
 
 class CommandDef(BaseModel, extra=Extra.ignore):
-    method: Method
+    method: ZMethod|CoreMethods
     desc: Optional[str] = None
     response: Optional[str] = None
     matcher: Optional[ZSONMatcher] = None
@@ -197,7 +202,7 @@ NOT_FOUND_ICONS = [
 
 
 class RenderResult(BaseModel, extra=Extra.ignore):
-    method: Optional[Method] = None
+    method: Optional[ZMethod|CoreMethods] = None
     message: Optional[str] = Field(default="")
     attachment: Optional[Attachment] = None
     group: Optional[str] = None
@@ -207,10 +212,12 @@ class RenderResult(BaseModel, extra=Extra.ignore):
 
 
 class EmptyResult(RenderResult):
+
     @property
     def error_message(self):
         try:
-            return requests.get("https://commit.cacko.net/index.txt").text.strip()
+            return requests.get(
+                "https://commit.cacko.net/index.txt").text.strip()
         except Exception:
             return choice(NOT_FOUND)
 
@@ -223,7 +230,7 @@ class ZSONMessage(BaseModel, extra=Extra.ignore):
     id: Optional[str] = None
     client: Optional[str] = None
     group: Optional[str] = None
-    method: Optional[Method] = None
+    method: Optional[ZMethod|CoreMethods] = None
     source: Optional[str] = None
 
     def __post_init__(self):
