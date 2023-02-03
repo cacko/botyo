@@ -135,7 +135,8 @@ class ImageMeta(type):
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
-    def image_generator_params(cls, prompt: Optional[str]) -> ImageGeneratorParams:
+    def image_generator_params(cls,
+                               prompt: Optional[str]) -> ImageGeneratorParams:
         parser = cls.image_generator_parser
         if not prompt:
             return ImageGeneratorParams(prompt="")
@@ -251,7 +252,7 @@ class Image(object, metaclass=ImageMeta):
             raise AssertionError(e.message)
 
     def do_img2img(self, prompt: Optional[str] = None):
-        
+
         params = __class__.image_generator_params(prompt)
         return self.getResponse(Action.IMG2IMG,
                                 params.prompt,
@@ -304,7 +305,7 @@ class Image(object, metaclass=ImageMeta):
             cp = FileStorage.storage_path
             for part in multipart.parts:
                 content_type = part.headers.get(
-                    b"content-type", # type: ignore
+                    b"content-type",  # type: ignore
                     b""  # type: ignore
                 ).decode()
                 if "image/png" in content_type:
