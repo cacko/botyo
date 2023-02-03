@@ -173,10 +173,11 @@ class ConnectionManager:
         ]
         await self.queue.join()
         logging.debug(">>>>>> MANAGER START 2")
-        for c in consumers:
-            c.cancel()    
+
         logging.debug(">>>>>> MANAGER START 3")
         await asyncio.gather(*consumers, return_exceptions=True)
+        for c in consumers:
+            c.cancel()    
         logging.debug(">>>>>> MANAGER START 4 ")
 
            
