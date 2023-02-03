@@ -34,7 +34,7 @@ class AuthMeta(type):
 
     def __call__(cls, *args: Any, **kwds: Any) -> Any:
         if not cls._instance:
-            cls._instance = super().__call__(*args, **kwds)
+            cls._instance = type.__call__(cls, *args, **kwds)
         return cls._instance
     
     def verify(cls, token: str) -> Optional[AuthUser]:
@@ -51,4 +51,6 @@ class Auth(object, metaclass=AuthMeta):
         firebase_admin.initialize_app(ServiceAccount.credentials)
 
     def verify_token(self, token:str) -> AuthUser:
-        return AuthUser(**auth.verify_id_token(token))
+        res = auth.verify_id_token(token)
+        logging.warning(f"verification res={res}")
+        return AuthUser(**res)

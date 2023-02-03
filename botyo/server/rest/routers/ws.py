@@ -127,7 +127,9 @@ class WSConnection(Connection):
         __class__.connections[self.__clientId] = self
 
     def auth(self, token: str):
+        logging.info(f"veryfing login token={token}")
         self.__user = Auth.verify(token=token)
+        logging.debug(self.__user)
 
     def send(self, response: ZSONResponse):
         if not self.__user:
