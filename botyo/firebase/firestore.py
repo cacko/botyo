@@ -1,8 +1,7 @@
 from typing import Generator, Any
 from .service_account import ServiceAccount
 from google.cloud.firestore_v1.document import (DocumentReference)
-from google.cloud.firestore import Client, CollectionReference
-import firebase_admin
+from google.cloud.firestore import CollectionReference
 from firebase_admin import firestore
 
 
@@ -22,8 +21,7 @@ class FirestoreClient(object, metaclass=FirestoreClientMeta):
     __batchIds = []
 
     def __init__(self):
-        app = firebase_admin.initialize_app(ServiceAccount.credentials)
-        self.__client = firestore.client()
+        self.__client = firestore.client(app=ServiceAccount.app)
 
     def collections(self,
                     path=None) -> Generator[CollectionReference, None, None]:

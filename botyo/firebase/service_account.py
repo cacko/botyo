@@ -1,5 +1,5 @@
 from pathlib import Path
-from firebase_admin import credentials
+from firebase_admin import credentials, App, initialize_app
 from typing import Optional
 
 
@@ -26,13 +26,19 @@ class ServiceAccountMeta(type):
         return cls.__admin_json
 
     @property
-    def credentials(cls) -> credentials.Certificate:
-        return cls().get_credentials()
+    def app(cls) -> App:
+        return cls().get_app()
 
 
 class ServiceAccount(object, metaclass=ServiceAccountMeta):
 
     __credentials: Optional[credentials.Certificate] = None
+    __app: Optional[App] = None
+    
+    def get_app(self) -> App:
+        if not self.__app:
+            self.__app = initialize_app(self.get_credentials())
+        return self.__app
 
     def get_credentials(self) -> credentials.Certificate:
         if not self.__credentials:
