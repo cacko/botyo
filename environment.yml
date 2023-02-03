@@ -27,7 +27,6 @@ dependencies:
   - fontconfig=2.14.1
   - fonts-conda-ecosystem=1
   - fonts-conda-forge=1
-  - fonttools=4.38.0
   - freetype=2.12.1
   - gettext=0.21.1
   - icu=70.1
