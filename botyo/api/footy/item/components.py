@@ -61,10 +61,10 @@ class ScoreRow:
                 Column(size=16, align=Align.RIGHT),
             )
             row = (
-                self.home.upper(),
+                f"{self.home.upper()} ",
                 self.row.status,
                 self.row.score,
-                self.away.upper(),
+                f" {self.away.upper()}",
             )
         elif self.format == ScoreFormat.LIST:
             cols = (
@@ -75,9 +75,9 @@ class ScoreRow:
             )
             row = (
                 self.row.status,
-                self.home,
+                f"{self.home} ",
                 self.row.score,
-                self.away,
+                f" {self.away}",
             )
         else:
             raise NotImplementedError

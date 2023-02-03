@@ -30,7 +30,6 @@ def clean_markdown(s: str):
 
 
 def truncate(value: str, size=200, ellipsis="..."):
-    value = value.strip()
     if not len(value) > size:
         return value
     limit = size - len(ellipsis)
@@ -49,8 +48,8 @@ def shorten(text: str, size: int, placeholder: str = "..", extraSize=0):
         return text
     size += max([0, extraSize])
     if len(text) <= size:
-        return text.strip()
-    return f"{text.strip()[:size-len(placeholder)].strip()}{placeholder}"
+        return text
+    return f"{text[:size-len(placeholder)]}{placeholder}"
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -241,7 +240,7 @@ class Output(object, metaclass=OutputMeta):
 
     def split_with_quotes(self, text: str) -> list[str]:
         return [
-            x.strip() for x in filter(lambda x: len(x.strip()) > 0,
+            x for x in filter(lambda x: len(x) > 0,
                                       text.split('"' if '"' in text else " "))
         ]
 

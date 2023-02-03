@@ -21,7 +21,7 @@ class ParserDetails(ParserDetailsData):
                     row = f"{' '.join([ev.player, ev.icon]):>16}{ev.displayTime:>5}"
                     yield f"{row:>42}"
                 else:
-                    row = f"{ev.displayTime:^5}{ev.icon}"
+                    row = f"{ev.displayTime:^5} {ev.icon}"
                     yield f"{row:^42}"
             except AssertionError as e:
                 logging.exception(e)

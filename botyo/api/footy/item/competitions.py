@@ -36,14 +36,14 @@ class CompetitionItem(TimeCacheable):
 
             rows = [
                 [g.displayStatus,
-                 g.displayTitle]
+                 f" {g.displayTitle}"]
                 for g in gms
             ]
             rows.append(["", '-' * 36])
             rounds = ','.join(
                 list(
                     filter(
-                        lambda x: len(x.strip()) > 0,
+                        lambda x: len(x) > 0,
                         [f"{g.roundName} {g.roundNum}" for g in gms]
                     )
                 )
@@ -52,7 +52,7 @@ class CompetitionItem(TimeCacheable):
                 Column(size=6, align=Align.RIGHT,
                        title=d.strftime("%a").upper()),
                 Column(size=36, align=Align.LEFT,
-                       title=f'{d.strftime("%b %d %Y").upper()} {rounds}')
+                       title=f' {d.strftime("%b %d %Y").upper()} {rounds}')
             ]
 
             TextOutput.addColumns(cols, rows, with_header=True)
