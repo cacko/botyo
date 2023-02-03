@@ -256,7 +256,6 @@ async def websocket_endpoint(
     # cookie_or_token: str = Depends(get_cookie_or_token),
 ):
     logging.debug([f"{k} -> {v}" for k, v in websocket.headers.items()])
-    asyncio.create_task(manager.start(3))
     await manager.connect(websocket, client_id)
     # logging.debug(f"Session cookie or query token value is: {cookie_or_token}")
     try:
@@ -269,5 +268,6 @@ async def websocket_endpoint(
             else:
                 logging.debug(f"receive {data}")
                 await manager.queue.put((data, client_id))
+                logging.debug(">>>>>> AFTER QUEUE PUT")
     except WebSocketDisconnect:
         manager.disconnect(client_id)
