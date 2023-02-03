@@ -158,6 +158,7 @@ class WSConnection(Connection):
             attachment=attachment,
             error=response.error,
             new_id=response.new_id,
+            commands=response.commands
         )
         await self.__websocket.send_json(resp.dict())
 
@@ -203,7 +204,7 @@ class ConnectionManager:
                         response = command.handler(context)
                         await context.send_async(response)
         except Exception as e:
-            logging.error(e)
+            logging.exception(e)
             response = EmptyResult(error=f"{e.__str__}")
             if context:
                 await context.send_async(response)
