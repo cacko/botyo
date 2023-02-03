@@ -5,7 +5,7 @@ from typing import Optional
 
 class ServiceAccountMeta(type):
     _instance: Optional['ServiceAccount'] = None
-    __admin_json: Optional[Path] = None
+    _admin_json: Optional[Path] = None
 
     SCOPES = [
         "https://www.googleapis.com/auth/userinfo.email",
@@ -18,12 +18,12 @@ class ServiceAccountMeta(type):
         return cls._instance
 
     def register(cls, service_account_file: Path):
-        cls.__admin_json = service_account_file
+        cls._admin_json = service_account_file
 
     @property
     def admin_json(cls) -> Path:
-        assert cls.__admin_json
-        return cls.__admin_json
+        assert cls._admin_json
+        return cls._admin_json
 
     @property
     def app(cls) -> App:

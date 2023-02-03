@@ -5,6 +5,7 @@ from cachable.storage.file import FileStorage
 from botyo.core.config import Config as app_config
 from botyo.api.footy import Footy
 from botyo.server.server import Server
+from botyo.firebase.service_account import ServiceAccount
 from botyo.server.rest.server import APIServer
 from pathlib import Path
 import signal
@@ -15,7 +16,7 @@ corelog.register(os.environ.get("BOTYO_LOG_LEVEL", "INFO"))
 
 app = Server(Path(__file__).parent.parent)
 app.servers.append(APIServer())
-
+ServiceAccount.register(Path(os.environ.get("BOTYO_SERVICE_ACCOUNT", "")))
 RedisStorage.register(os.environ.get("BOTYO_REDIS_URL", ""))
 FileStorage.register(Path(app_config.cachable.path))
 
