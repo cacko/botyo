@@ -162,16 +162,11 @@ class WSConnection(Connection):
 
 
 class ConnectionManager:
-    
-    __started = False
-    
+        
     def __init__(self) -> None:
         self.queue = asyncio.Queue()
 
     async def start(self, n_consumers:int):
-        if self.__started:
-            return
-        self.__started = True
         consumers = [
             asyncio.create_task(self._consume(n)) for n in range(1, n_consumers + 1)
         ]
@@ -237,7 +232,6 @@ class ConnectionManager:
 
 
 manager = ConnectionManager()
-_ = manager.start(4)
 
 async def get_cookie_or_token(
     websocket: WebSocket,
