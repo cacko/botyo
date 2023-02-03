@@ -20,6 +20,7 @@ from botyo.server.connection import (
     Context,
     UnknownClientException
 )
+from typing import Optional
 
 BYTEORDER = "little"
 CHUNKSIZE = 2**8
@@ -27,18 +28,20 @@ CHUNKSIZE = 2**8
 
 class SocketConnection(Connection, StreamRequestHandler):
 
-    __clientId: str = None
-    request: socket = None
+    __clientId: Optional[str] = None
+    request: Optional[socket] = None
 
     @property
-    def id(self) -> str:
+    def id(self) -> Optional[str]:
         return self.__clientId
 
     def setup(self) -> None:
+        assert self.request
         self.request.setblocking(True)
         return super().setup()
 
     def handle(self):
+        assert self.request
         logging.info(f"new client connection {self.request.getpeername()}")
         while not self.server.is_closing:  # type: ignore
             try:

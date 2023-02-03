@@ -66,24 +66,20 @@ tasks:
     desc: export env
     cmds:
       - mamba env export --no-builds -n {{.PROJECT}} > environment.yml
-      - sed -i '' -e '/libcxx/d' environment.yml
+
+  export-remote:
+    desc: export env
+    cmds:
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/botyo;mamba env export --no-builds -n {{.PROJECT}} > environment-remote.yml'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/botyo;task push'
+      - git pull
 
   install:
-    desc: calls poetry install and npm ci
-    cmds:
-      - task: pp
-      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/{{.PROJECT}}; mamba env update -n {{.PROJECT}} -f environment.yml --prune'
-
-  update:
     desc: update package
     cmds:
-      - mamba run --live-stream -n {{.PROJECT}} pip install {{.CLI_ARGS}} -U
-      - task: export
-      - sed -i '' -e '/libcxx/d' environment.yml
-      - task: pp
-      - task: install
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/botyo;mamba run --live-stream -n {{.PROJECT}} pip install {{.CLI_ARGS}} -U'
+      - task: export-remote
       - task: deploy
-
 
   deploy:
     desc: shortcut for stop -> push -> pull -> restart
