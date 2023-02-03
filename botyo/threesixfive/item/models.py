@@ -231,7 +231,7 @@ class StandingRow(BaseModel, extra=Extra.ignore):
     gamesWon: Optional[int] = None
     gamesLost: Optional[int] = None
     gamesEven: Optional[int] = None
-    forward: int = Field(default=0)
+    forward: int = Field(default=0, alias="for")
     against: int = Field(default=0)
     ratio: Optional[int] = None
     points: Optional[int] = None
@@ -245,15 +245,6 @@ class StandingRow(BaseModel, extra=Extra.ignore):
     pct: Optional[str] = None
     position: Optional[int] = None
     unknown: Optional[Any] = None
-
-    def __init__(self, **data):
-        super().__init__(**data)
-        try:
-            assert self.unknown
-            self.forward = self.unknown.get("for")
-        except AssertionError:
-            pass
-
 
 class StandingGroup(BaseModel, extra=Extra.ignore):
     num: int
