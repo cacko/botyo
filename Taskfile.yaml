@@ -66,7 +66,7 @@ tasks:
     desc: export env
     cmds:
       - mamba env export --no-builds -n {{.PROJECT}} > environment.yml
-
+      - sed -i '' -e '/libcxx/d' environment.yml
 
   install:
     desc: calls poetry install and npm ci
