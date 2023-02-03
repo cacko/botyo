@@ -22,8 +22,8 @@ class ImageGeneratorParams(BaseModel):
     prompt: str
     height: int = Field(default=512)
     width: int = Field(default=512)
-    guidance_scale: float = Field(default=7.5)
-    num_inference_steps: int = Field(default=30)
+    guidance_scale: float = Field(default=7)
+    num_inference_steps: int = Field(default=50)
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
     upscale: int = Field(default=0)
@@ -31,8 +31,8 @@ class ImageGeneratorParams(BaseModel):
 
 
 class VariationGeneratorParams(BaseModel):
-    guidance_scale: float = Field(default=7.5)
-    num_inference_steps: int = Field(default=30)
+    guidance_scale: float = Field(default=7)
+    num_inference_steps: int = Field(default=50)
     num_images_per_prompt: int = Field(default=1)
 
 
@@ -127,8 +127,8 @@ class ImageMeta(type):
             parser.add_argument("-g",
                                 "--guidance_scale",
                                 type=float,
-                                default=7.5)
-            parser.add_argument("-i", "--num_inference_steps", default=30)
+                                default=7)
+            parser.add_argument("-i", "--num_inference_steps", default=50)
             parser.add_argument("-s", "--seed", type=int)
             parser.add_argument("-m", "--model", default="default")
             parser.add_argument("-u", "--upscale", action="store_true")

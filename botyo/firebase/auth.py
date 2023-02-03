@@ -42,5 +42,4 @@ class Auth(object, metaclass=AuthMeta):
     def verify_token(self, token: str) -> AuthUser:
         res = firebase_admin.auth.verify_id_token(token,
                                                   app=ServiceAccount.app)
-        logging.warning(f"verification res={res}")
         return AuthUser(**res)
