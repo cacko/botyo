@@ -238,7 +238,6 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-
 async def get_cookie_or_token(
     websocket: WebSocket,
     session: Union[str, None] = Cookie(default=None),
@@ -256,7 +255,6 @@ async def websocket_endpoint(
     # cookie_or_token: str = Depends(get_cookie_or_token),
 ):
     logging.debug([f"{k} -> {v}" for k, v in websocket.headers.items()])
-    asyncio.run(manager.start(4))
     await manager.connect(websocket, client_id)
     # logging.debug(f"Session cookie or query token value is: {cookie_or_token}")
     try:
