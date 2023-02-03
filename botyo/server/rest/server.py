@@ -43,7 +43,6 @@ class _APIServer(StoppableThread):
             host=api_config.host, 
             port=api_config.port, 
             use_colors=True,
-            workers=2,
             factory=True
         )
         self.__server = uvicorn.Server(server_config)
