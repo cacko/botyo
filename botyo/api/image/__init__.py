@@ -188,23 +188,23 @@ def image_fromtext(context: Context):
         return EmptyResult(method=ZMethod.IMAGE_TXT2IMG)
 
 
-@bp.command(
-    method=ZMethod.IMAGE_TXT2PORTRAIT,
-    desc="text to portrait",
-    icon="portrait"
-)  # type: ignore
-def portrait_fromtext(context: Context):
-    try:
-        query = context.query
-        assert query
-        attachment, _ = Image.txt2portrait(query)
-        assert attachment
-        return RenderResult(
-            attachment=attachment,
-            method=ZMethod.IMAGE_TXT2PORTRAIT,
-        )
-    except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2PORTRAIT)
+# @bp.command(
+#     method=ZMethod.IMAGE_TXT2PORTRAIT,
+#     desc="text to portrait",
+#     icon="portrait"
+# )  # type: ignore
+# def portrait_fromtext(context: Context):
+#     try:
+#         query = context.query
+#         assert query
+#         attachment, _ = Image.txt2portrait(query)
+#         assert attachment
+#         return RenderResult(
+#             attachment=attachment,
+#             method=ZMethod.IMAGE_TXT2PORTRAIT,
+#         )
+#     except AssertionError:
+#         return EmptyResult(method=ZMethod.IMAGE_TXT2PORTRAIT)
 
 
 @bp.command(
