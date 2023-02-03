@@ -79,7 +79,6 @@ dependencies:
   - pycparser=2.21
   - pyopenssl=23.0.0
   - pyparsing=3.0.9
-  - pysocks=1.7.1
   - python=3.11.0
   - python-dateutil=2.8.2
   - python_abi=3.11
