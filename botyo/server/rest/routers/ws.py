@@ -187,6 +187,7 @@ class ConnectionManager:
                         method=CoreMethods.LOGIN,
                         commands=CommandExec.definitions,
                         client=client_id,
+                        id=msg.id,
                     )
                     await connection.send_async(cmds)               
                 case _:
