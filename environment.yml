@@ -63,7 +63,6 @@ dependencies:
   - mypy_extensions=0.4.3
   - ncurses=6.3
   - nettle=3.8.1
-  - openssl=3.0.7
   - p11-kit=0.24.1
   - packaging=23.0
   - pathspec=0.10.3
