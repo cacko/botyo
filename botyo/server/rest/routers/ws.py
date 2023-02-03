@@ -116,7 +116,7 @@ class WSConnection(Connection):
 
     __websocket: WebSocket
     __clientId: str
-    __user: Optional[AuthUser]
+    __user: Optional[AuthUser] = None
 
     def __init__(self, websocket: WebSocket, client_id: str) -> None:
         self.__websocket = websocket
