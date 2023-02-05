@@ -64,15 +64,18 @@ class Column:
     def cell(self, val):
         if self.fullsize:
             return val
-        return f"{shorten(val, self.size):{self.align.value}{self.size}}"
+        txt = shorten(val, self.size)
+        return f"{txt:{self.align.value}{self.size}}"
 
     @property
     def header(self):
-        return f"{shorten(self.title, self.size):{self.align.value}{self.size}}"
+        txt = shorten(self.title, self.size)
+        return f"{txt:{self.align.value}{self.size}}"
 
     @property
     def leading(self):
-        return f"{shorten(self.title, floor(self.size/4)):{self.align.value}{floor(self.size/4)}}"
+        txt = shorten(self.title, floor(self.size / 4))
+        return f"{txt:{self.align.value}{floor(self.size/4)}}"
 
 
 WHITESPACE = 8199
@@ -241,7 +244,7 @@ class Output(object, metaclass=OutputMeta):
     def split_with_quotes(self, text: str) -> list[str]:
         return [
             x for x in filter(lambda x: len(x) > 0,
-                                      text.split('"' if '"' in text else " "))
+                              text.split('"' if '"' in text else " "))
         ]
 
 
