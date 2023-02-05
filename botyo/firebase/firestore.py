@@ -1,7 +1,9 @@
 from typing import Generator, Any
 from .service_account import ServiceAccount
-from google.cloud.firestore_v1.document import (DocumentReference)
-from google.cloud.firestore import CollectionReference
+from google.cloud.firestore_v1.document import (
+    DocumentReference
+)
+from google.cloud.firestore import CollectionReference, Client
 from firebase_admin import firestore
 
 
@@ -19,6 +21,7 @@ class FirestoreClient(object, metaclass=FirestoreClientMeta):
     BATCH_SIZE = 200
     __batch = None
     __batchIds = []
+    __client: Client
 
     def __init__(self):
         self.__client = firestore.client(app=ServiceAccount.app)
@@ -30,6 +33,11 @@ class FirestoreClient(object, metaclass=FirestoreClientMeta):
         else:
             ref = self.__client.document(path)
             yield from ref.collections()
+            
+    def put(self, path: str, data: Any) -> DocumentReference:
+        collection = self.__client.collection(path)
+        _, ref = collection.add(data)
+        return ref
 
     # def documents(
     #     self, collection: CollectionReference

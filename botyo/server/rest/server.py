@@ -3,24 +3,13 @@ from botyo.server.core import AppServer
 from corethread import StoppableThread
 from fastapi import FastAPI
 from .routers import api, ws
-from .routers.ws import manager
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.routing import Mount
-from fastapi.staticfiles import StaticFiles
 from botyo.core.config import Config
-import asyncio
+
 
 def get_app():
 
-    app = FastAPI(
-        routes=[
-            Mount(
-                "/ws/fp",
-                app=StaticFiles(directory=ws.Response.store_root().as_posix()),
-                name="fp",
-            )
-        ]
-    )
+    app = FastAPI()
 
     origins = ["http://localhost:4200", "https://botyo.cacko.net"]
 
@@ -41,11 +30,11 @@ class _APIServer(StoppableThread):
     def __init__(self, *args, **kwargs):
         api_config = Config.api
         server_config = uvicorn.Config(
-            app=get_app, 
-            host=api_config.host, 
-            port=api_config.port, 
+            app=get_app,
+            host=api_config.host,
+            port=api_config.port,
             use_colors=True,
-            factory=True
+            factory=True,
         )
         self.__server = uvicorn.Server(server_config)
         super().__init__(*args, **kwargs)

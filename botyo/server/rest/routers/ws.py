@@ -16,6 +16,7 @@ from botyo.server.models import (
     ZSONRequest,
     CommandDef,
     CoreMethods,
+    ZMethod
 )
 from typing import Optional
 from pathlib import Path
@@ -26,7 +27,7 @@ from botyo.firebase.auth import Auth, AuthUser
 from corestring import string_hash
 import time
 from botyo.core.s3 import S3
-
+from botyo.firebase.firestore import FirestoreClient
 
 
 class WSException(Exception):
@@ -72,20 +73,16 @@ class Response(BaseModel):
         try:
             assert attachment
             a_path = Path(attachment.url)
-            a_store_path = (
-                cls.store_root()
-                / f"{string_hash(a_path.name, str(time.time()))}{a_path.suffix}"
-            )
+            hsh = string_hash(a_path.name, str(time.time()))
+            a_store_path = cls.store_root() / f"{hsh}{a_path.suffix}"
             assert a_path.exists()
             with a_path:
                 contentType = attachment.contentType
                 match contentType.split("/")[0]:
                     case "image":
                         img = Image.open(a_path.as_posix())
-                        a_store_path = (
-                            cls.store_root()
-                            / f"{string_hash(a_path.stem, str(time.time()))}.webp"
-                        )
+                        hsh = string_hash(a_path.stem, str(time.time()))
+                        a_store_path = cls.store_root() / f"{hsh}.webp"
                         img.save(a_store_path.as_posix(), format="webp")
                         S3.upload(a_store_path, a_store_path.name)
                         a_store_path.unlink(missing_ok=True)
@@ -150,13 +147,17 @@ class WSConnection(Connection):
             attachment=attachment,
             error=response.error,
             new_id=response.new_id,
-            commands=response.commands
+            commands=response.commands,
         )
-        await self.__websocket.send_json(resp.dict())
+        match response.method:
+            case ZMethod.FOOTY_SUBSCRIPTION_UPDATE:
+                path = f"subscriptions/{response.id}"
+                FirestoreClient().put(path=path, data=resp.dict())
+            case _:
+                await self.__websocket.send_json(resp.dict())
 
 
 class ConnectionManager:
-        
     async def connect(self, websocket: WebSocket, client_id: str):
         connection = WSConnection(websocket=websocket, client_id=client_id)
         await connection.accept()
@@ -182,7 +183,7 @@ class ConnectionManager:
                         client=client_id,
                         id=msg.id,
                     )
-                    await connection.send_async(cmds)               
+                    await connection.send_async(cmds)
                 case _:
                     command, query = CommandExec.parse(msg.query)
                     logging.debug(command)
@@ -208,10 +209,7 @@ manager = ConnectionManager()
 
 
 @router.websocket("/ws/{client_id}")
-async def websocket_endpoint(
-    websocket: WebSocket,
-    client_id: str
-):
+async def websocket_endpoint(websocket: WebSocket, client_id: str):
     logging.debug([f"{k} -> {v}" for k, v in websocket.headers.items()])
     await manager.connect(websocket, client_id)
     try:
