@@ -127,6 +127,7 @@ class Cache(RedisCachable):
 @dataclass
 class UpdateData:
     message: str | list[DetailsEventPixel] | SubscriptionEvent
+    score_message: str
     msgId: Optional[str] = None
     icon: Optional[str] = None
 
@@ -161,12 +162,11 @@ class SubscriptionClient:
         return self.updateBotyo(data)
 
     def updateBotyo(self, data: UpdateData):
-        result = RenderResult(
-            method=ZMethod.FOOTY_SUBSCRIPTION_UPDATE,
-            icon=data.icon,
-            message=str(data.message),
-            group=self.group_id,
-        )
+        result = RenderResult(method=ZMethod.FOOTY_SUBSCRIPTION_UPDATE,
+                              icon=data.icon,
+                              message=str(data.message),
+                              group=self.group_id,
+                              headline=data.score_message)
         try:
             self.connection.send(
                 ZSONResponse(message=result.message,
@@ -176,6 +176,7 @@ class SubscriptionClient:
                              method=result.method,
                              plain=bool(result.plain),
                              id=data.msgId,
+                             headline=result.headline,
                              icon=data.icon))
         except UnknownClientException:
             pass
@@ -267,6 +268,7 @@ class Subscription(metaclass=SubscriptionMeta):
             if sc.is_rest:
                 sc.sendUpdate(
                     UpdateData(message=str(CancelJobEvent(job_id=self.id)),
+                               score_message="",
                                msgId=self.id))
             self.subscriptions.remove(sc)
             if not len(self.subscriptions):
@@ -282,28 +284,31 @@ class Subscription(metaclass=SubscriptionMeta):
             if gq.event_id == self._event.idEvent:
                 del self.goals_queue[gid]
 
-    def sendGoal(self, message: str, attachment: Path):
+    def sendGoal(self,
+                 message: str,
+                 attachment: Path,
+                 player: Optional[str] = None):
         for sc in self.subscriptions:
             if sc.is_rest:
                 continue
-            result = RenderResult(
-                method=ZMethod.FOOTY_SUBSCRIPTION_UPDATE,
-                message=(message),
-                attachment=Attachment(
-                    path=attachment.as_posix(),
-                    contentType="video/mp4",
-                ),
-                group=sc.group_id,
-            )
+            result = RenderResult(method=ZMethod.FOOTY_SUBSCRIPTION_UPDATE,
+                                  attachment=Attachment(
+                                      path=attachment.as_posix(),
+                                      contentType="video/mp4",
+                                  ),
+                                  message=f"{player}",
+                                  group=sc.group_id,
+                                  headline=message)
             try:
                 sc.connection.send(
                     ZSONResponse(
-                        message=result.message,
                         attachment=result.attachment,
                         client=sc.client_id,
                         group=result.group,
                         method=result.method,
                         plain=bool(result.plain),
+                        headline=result.headline,
+                        message=result.message,
                         id=self.id,
                     ))
             except UnknownClientException:
@@ -312,10 +317,14 @@ class Subscription(metaclass=SubscriptionMeta):
     def processGoals(self, game: GameDetails):
         try:
             events = game.events
+            members = game.members
             assert isinstance(events, list)
+            assert isinstance(members, list)
             for x in events:
                 if x.is_goal:
                     logging.debug(f"GOAL event at {self.event_name}")
+                    member = next(
+                        filter(lambda m: m.id == x.playerId, members), None)
                     goal_query = GoalQuery(
                         event_name=self.event_name,
                         event_id=int(self._event.idEvent),
@@ -324,13 +333,13 @@ class Subscription(metaclass=SubscriptionMeta):
                         home=self._event.strHomeTeam.lower(),
                         away=self._event.strAwayTeam.lower(),
                         timestamp=int(time.time()),
-                        player=x.playerName,
+                        player=member.shortName if member else "",
                     )
                     goal_event = GoalEvent(
                         event_id=int(self._event.idEvent),
                         event_name=self.event_name,
                         game_event_id=x.order_id,
-                        player=x.playerName,
+                        player=str(member.shortName if member else ""),
                         score=game.score,
                         time=x.displayTime,
                     )
@@ -353,7 +362,7 @@ class Subscription(metaclass=SubscriptionMeta):
         for qid in list(self.goals_queue.keys()):
             gq = self.goals_queue[qid]
             if goal_video := Goals.video(gq):
-                self.sendGoal(gq.title, goal_video)
+                self.sendGoal(gq.title, goal_video, gq.player)
                 del self.goals_queue[qid]
 
     def trigger(self):
@@ -361,7 +370,7 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            chatUpdate, icon = self.updates(updated)
+            scoreUpdate, chatUpdate, icon = self.updates(updated)
             if not icon:
                 logo = LeagueImage(self._event.idLeague)
                 logo_path = logo.path
@@ -378,18 +387,22 @@ class Subscription(metaclass=SubscriptionMeta):
                     try:
                         details = ParserDetails(None, response=updated)
                         events = details.events_pixel
-                        sc.sendUpdate(UpdateData(message=events,
-                                                 msgId=self.id))
+                        sc.sendUpdate(
+                            UpdateData(message=events,
+                                       score_message=scoreUpdate,
+                                       msgId=self.id))
                     except Exception:
                         pass
                     if cache.halftime:
                         cache.halftime = False
                         sc.sendUpdate(
                             UpdateData(message=[self.halftimeAnnoucementPixel],
+                                       score_message="",
                                        msgId=self.id))
                     else:
                         sc.sendUpdate(
                             UpdateData(message=self.progressUpdatePixel,
+                                       score_message="",
                                        msgId=self.id))
                 elif chatUpdate:
                     TextOutput.clean()
@@ -397,6 +410,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     try:
                         sc.sendUpdate(
                             UpdateData(message=TextOutput.render(),
+                                       score_message=scoreUpdate,
                                        msgId=self.id,
                                        icon=icon))
                     except UnknownClientException as e:
@@ -419,10 +433,12 @@ class Subscription(metaclass=SubscriptionMeta):
                             sc.sendUpdate(
                                 UpdateData(
                                     message=[self.fulltimeAnnoucementPixel],
+                                    score_message=scoreUpdate,
                                     msgId=self.id))
                         else:
                             sc.sendUpdate(
                                 UpdateData(message=self.fulltimeAnnoucement,
+                                           score_message=scoreUpdate,
                                            icon=Emoji.b64(
                                                emojize(":chequered_flag:")),
                                            msgId=self.id))
@@ -442,14 +458,14 @@ class Subscription(metaclass=SubscriptionMeta):
     def updates(
         self,
         updated: Optional[ResponseGame] = None
-    ) -> tuple[Optional[list[str]], Optional[str]]:
+    ) -> tuple[str, Optional[list[str]], Optional[str]]:
         try:
             if not updated:
-                return None, None
+                return "", None, None
             details = ParserDetails(None, response=updated)
             rows = details.rendered
             if not rows:
-                return None, None
+                return "", None, None
             assert details.home
             assert details.away
             res = ScoreRow(
@@ -462,10 +478,9 @@ class Subscription(metaclass=SubscriptionMeta):
             )
             icon = reduce(lambda r, x: x.icon64
                           if x.icon64 else r, details.events, "")
-            return [*rows, str(res)], icon
-        except AssertionError as e:
-            logging.exception(e)
-            return None, None
+            return str(res), [*rows], icon
+        except AssertionError:
+            return "", None, None
 
     def client(self, client_id: str) -> Optional[Connection]:
         try:
@@ -531,11 +546,13 @@ class Subscription(metaclass=SubscriptionMeta):
                     if sc.is_rest:
                         sc.sendUpdate(
                             UpdateData(message=[self.startAnnouncementPixel],
+                                       score_message="",
                                        msgId=self.id))
                     else:
                         sc.sendUpdate(
                             UpdateData(message=self.startAnnouncement,
                                        icon=Emoji.b64(emojize(":goal_net:")),
+                                       score_message="",
                                        msgId=self.id))
                 except UnknownClientException:
                     pass
@@ -572,6 +589,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         self._event.strAwayTeam).base64,
                     status=self._event.strStatus,
                 ),
+                           score_message="",
                            msgId=self.id,
                            icon=pix.base64))
         if self.inProgress:
@@ -601,7 +619,10 @@ class Subscription(metaclass=SubscriptionMeta):
             text = TextOutput.render()
             for sc in filter(lambda s: not s.is_rest, self.subscriptions):
                 try:
-                    sc.sendUpdate(UpdateData(message=text, msgId=self.id))
+                    sc.sendUpdate(
+                        UpdateData(message=text,
+                                   score_message="",
+                                   msgId=self.id))
                 except UnknownClientException:
                     pass
                 self.cancel(sc)

@@ -210,6 +210,7 @@ class RenderResult(BaseModel, extra=Extra.ignore):
     error: Optional[str] = None
     new_id: Optional[str] = None
     icon: Optional[str] = None
+    headline: Optional[str] = None
 
 
 class EmptyResult(RenderResult):
@@ -252,6 +253,7 @@ class ZSONResponse(ZSONMessage):
     plain: bool = Field(default=False)
     new_id: Optional[str] = None
     icon: Optional[str] = None
+    headline: Optional[str] = None
 
     @property
     def attachment_path(self) -> Optional[Path]:
