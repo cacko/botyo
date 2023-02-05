@@ -391,11 +391,10 @@ class Subscription(metaclass=SubscriptionMeta):
                     TextOutput.clean()
                     TextOutput.addRows(chatUpdate)
                     try:
-                        sc.sendUpdate(UpdateData(
-                            message=TextOutput.render(), 
-                            msgId=self.id,
-                            icon=pix.base64
-                            ))
+                        sc.sendUpdate(
+                            UpdateData(message=TextOutput.render(),
+                                       msgId=self.id,
+                                       icon=pix.base64))
                     except UnknownClientException as e:
                         logging.exception(e)
             self.checkGoals(updated)
@@ -413,13 +412,15 @@ class Subscription(metaclass=SubscriptionMeta):
                 for sc in self.subscriptions:
                     try:
                         if sc.is_rest:
-                            sc.sendUpdate(UpdateData(message=[self.fulltimeAnnoucementPixel],
-                                          msgId=self.id))
+                            sc.sendUpdate(
+                                UpdateData(
+                                    message=[self.fulltimeAnnoucementPixel],
+                                    msgId=self.id))
                         else:
-                            sc.sendUpdate(UpdateData(
-                                message=self.fulltimeAnnoucement, 
-                                icon=
-                                msgId=self.id))
+                            sc.sendUpdate(
+                                UpdateData(message=self.fulltimeAnnoucement,
+                                           icon=pix.base64,
+                                           msgId=self.id))
                     except UnknownClientException as e:
                         logging.exception(e)
                     if content.game.justEnded:
@@ -477,8 +478,8 @@ class Subscription(metaclass=SubscriptionMeta):
     @property
     def fulltimeAnnoucementPixel(self):
         details = ParserDetails.get(str(self._event.details))
-        return DetailsEventPixel.fullTimeEvent(
-            details=details, league_id=self._event.idLeague)
+        return DetailsEventPixel.fullTimeEvent(details=details,
+                                               league_id=self._event.idLeague)
 
     @property
     def halftimeAnnoucementPixel(self) -> DetailsEventPixel:
@@ -542,8 +543,7 @@ class Subscription(metaclass=SubscriptionMeta):
             )
             pix.resize((8, 8))
             sc.sendUpdate(
-                UpdateData(
-                    message=SubscriptionEvent(
+                UpdateData(message=SubscriptionEvent(
                     start_time=self._event.startTime,
                     action="Subscribed",
                     home_team=self._event.strHomeTeam,
@@ -562,10 +562,8 @@ class Subscription(metaclass=SubscriptionMeta):
                         self._event.strAwayTeam).base64,
                     status=self._event.strStatus,
                 ),
-                msgId=self.id,
-                icon=pix.base64
-                )
-            )
+                           msgId=self.id,
+                           icon=pix.base64))
         if self.inProgress:
             return self.start()
         Scheduler.add_job(
