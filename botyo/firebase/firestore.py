@@ -5,7 +5,7 @@ from google.cloud.firestore_v1.document import (
 )
 from google.cloud.firestore import CollectionReference, Client
 from firebase_admin import firestore
-
+import time
 
 class FirestoreClientMeta(type):
     _instance = None
@@ -36,6 +36,7 @@ class FirestoreClient(object, metaclass=FirestoreClientMeta):
             
     def put(self, path: str, data: Any) -> DocumentReference:
         collection = self.__client.collection(path)
+        data["ts"] = time.time()
         _, ref = collection.add(data)
         return ref
 
