@@ -33,7 +33,7 @@ class TwitterMeta(type):
             "exclude": "retweets,replies",
             "media_fields": "url,height",
             "expansions": ["attachments.media_keys"],
-            "tweet_fields": ["text","attachments","id"],
+            "tweet_fields": ["text", "attachments", "id"],
         }
 
         for t in cls().get_user_timeline(**{**kwds, **args}):
@@ -41,8 +41,7 @@ class TwitterMeta(type):
             try:
                 assert t.tweet.attachments
                 result.append(t)
-            except AssertionError as e:
-                logging.exception(e)
+            except AssertionError:
                 pass
         return result
 
@@ -81,7 +80,7 @@ class Twitter(object, metaclass=TwitterMeta):
         try:
             if since_id := self.timeline_since_id[user.username]:
                 kwds["since_id"] = since_id
-        except:
+        except Exception:
             pass
         logging.debug(f"TWITTER FETCH {kwds}")
         res = self.api.get_timelines(user_id=user.id, **kwds)
@@ -100,6 +99,7 @@ class Twitter(object, metaclass=TwitterMeta):
                     url=f"https://twitter.com/{user.username}/status/{t.id}",
                 )
             except AssertionError as e:
+                logging.exception(e)
                 pass
         if len(ids):
             self.timeline_since_id[user.username] = str(max(ids))

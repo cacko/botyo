@@ -32,14 +32,14 @@ class MethodMeta(EnumMeta):
             papp = Path(".") / "app"
             enumklass = klass.split(".")[-1]
             if enumklass == cls.__name__:
-                return cls.__new__(cls, value) #type: ignore
+                return cls.__new__(cls, value)  #type: ignore
             if klass.startswith("app."):
-                sys.path.insert(0, papp) #type: ignore
+                sys.path.insert(0, papp)  #type: ignore
                 mod = ".".join(klass.split(".")[:-1])
                 imp = __import__(mod, None, None, [enumklass])
                 return getattr(imp, enumklass)(value)
             return eval(f'{enumklass}("{value}")')
-        return cls._create_( #type: ignore
+        return cls._create_(  # type: ignore
             value,
             names,
             module=module,
@@ -146,7 +146,7 @@ class ZSONMatcher(StrEnum):
 
 
 class CommandDef(BaseModel, extra=Extra.ignore):
-    method: ZMethod|CoreMethods
+    method: ZMethod | CoreMethods
     desc: Optional[str] = None
     response: Optional[str] = None
     matcher: Optional[ZSONMatcher] = None
@@ -202,7 +202,7 @@ NOT_FOUND_ICONS = [
 
 
 class RenderResult(BaseModel, extra=Extra.ignore):
-    method: Optional[ZMethod|CoreMethods] = None
+    method: Optional[ZMethod | CoreMethods] = None
     message: Optional[str] = Field(default="")
     attachment: Optional[Attachment] = None
     group: Optional[str] = None
@@ -230,7 +230,7 @@ class ZSONMessage(BaseModel, extra=Extra.ignore):
     id: Optional[str] = None
     client: Optional[str] = None
     group: Optional[str] = None
-    method: Optional[ZMethod|CoreMethods] = None
+    method: Optional[ZMethod | CoreMethods] = None
     source: Optional[str] = None
 
     def __post_init__(self):
@@ -247,8 +247,9 @@ class ZSONResponse(ZSONMessage):
     attachment: Optional[Attachment] = None
     ztype: ZSONType = Field(default=ZSONType.RESPONSE)
     commands: Optional[list[CommandDef]] = None
-    plain: Optional[bool] = False
+    plain: bool = Field(default=False)
     new_id: Optional[str] = None
+    icon: Optional[str] = None
 
     @property
     def attachment_path(self) -> Optional[Path]:

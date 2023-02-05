@@ -18,8 +18,9 @@ from datetime import timezone
 from cachable.models import TimeCache
 from botyo.core.store import TimeCachable
 import logging
-from typing import Optional
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel, Extra
+from botyo.threesixfive.item.league import LeagueImage
+from pixelme import Pixelate
 
 
 class ParserDetailsResponse(BaseModel, extra=Extra.ignore):
@@ -33,21 +34,23 @@ class ParseDetailsCache(TimeCache):
 class ParserDetails(TimeCachable):
 
     __url: Optional[str] = None
-    _struct: Optional[ParseDetailsCache|TimeCache] = None
+    _struct: Optional[ParseDetailsCache | TimeCache] = None
     __id: Optional[str] = None
     cachetime: timedelta = timedelta(seconds=50)
 
-    def __init__(
-        self, url: Optional[str] = None, response: Optional[ResponseGame] = None
-    ):
+    def __init__(self,
+                 url: Optional[str] = None,
+                 response: Optional[ResponseGame] = None):
         self.__url = url
         if response is not None:
-            self._struct = ParseDetailsCache(
-                timestamp=datetime.now(timezone.utc), struct=response
-            )
+            self._struct = ParseDetailsCache(timestamp=datetime.now(
+                timezone.utc),
+                                             struct=response)
 
     @classmethod
-    def get(cls, url: Optional[str] = None, response: Optional[ResponseGame] = None):
+    def get(cls,
+            url: Optional[str] = None,
+            response: Optional[ResponseGame] = None):
         obj = cls(url, response)
         obj.refresh()
         return obj
@@ -58,7 +61,7 @@ class ParserDetails(TimeCachable):
         try:
             req = Request(self.__url)
             json = req.json
-            res = ResponseGame(**json)
+            res = ResponseGame(**json)  # type: ignore
             self._struct = self.tocache(res)
             Player.store(res.game)
         except Exception as e:
@@ -83,17 +86,31 @@ class ParserDetails(TimeCachable):
             assert self._struct.struct.game.homeCompetitor
             assert self._struct.struct.game.awayCompetitor
             competitors = {
-                self._struct.struct.game.homeCompetitor.id: self._struct.struct.game.homeCompetitor,
-                self._struct.struct.game.awayCompetitor.id: self._struct.struct.game.awayCompetitor,
+                self._struct.struct.game.homeCompetitor.id:
+                self._struct.struct.game.homeCompetitor,
+                self._struct.struct.game.awayCompetitor.id:
+                self._struct.struct.game.awayCompetitor,
             }
             assert self._struct.struct.game.members
             members = {m.id: m for m in self._struct.struct.game.members}
             if not self._struct.struct.game.events:
                 return []
+            logo = LeagueImage(self._struct.struct.game.league.id)
+            logo_path = logo.path
+            assert logo_path
+            pix = Pixelate(
+                input=logo_path,
+                padding=200,
+                grid_lines=True,
+                block_size=25,
+            )
+            pix.resize((8, 8))
             for ev in self._struct.struct.game.events:
-                if ev.competitorId == self._struct.struct.game.homeCompetitor.id:
+                homeCompetitor = self._struct.struct.game.homeCompetitor
+                awayCompetitor = self._struct.struct.game.awayCompetitor
+                if ev.competitorId == homeCompetitor.id:
                     position = Position.HOME
-                elif ev.competitorId == self._struct.struct.game.awayCompetitor.id:
+                elif ev.competitorId == awayCompetitor.id:
                     position = Position.AWAY
                 else:
                     position = Position.NONE
@@ -107,16 +124,15 @@ class ParserDetails(TimeCachable):
                 assert ev.eventType
                 assert ev.eventType.name
                 res.append(
-                    DetailsEvent(
-                        time=f"{ev.gameTime:.0f}",
-                        action=ev.eventType.name,
-                        position=position,
-                        team=competitors[ev.competitorId].name,
-                        player=unidecode(members[ev.playerId].displayName),
-                        extraPlayers=extraPlayers,
-                        order=ev.order,
-                    )
-                )
+                    DetailsEvent(time=f"{ev.gameTime:.0f}",
+                                 action=ev.eventType.name,
+                                 position=position,
+                                 team=competitors[ev.competitorId].name,
+                                 player=unidecode(
+                                     members[ev.playerId].displayName),
+                                 extraPlayers=extraPlayers,
+                                 order=ev.order,
+                                 icon=pix.base64))
             return sorted(res, reverse=True, key=lambda x: x.id)
         except Exception as e:
             logging.exception(e)
@@ -129,8 +145,10 @@ class ParserDetails(TimeCachable):
         assert self._struct.struct.game.homeCompetitor
         assert self._struct.struct.game.awayCompetitor
         competitors = {
-            self._struct.struct.game.homeCompetitor.id: self._struct.struct.game.homeCompetitor,
-            self._struct.struct.game.awayCompetitor.id: self._struct.struct.game.awayCompetitor,
+            self._struct.struct.game.homeCompetitor.id:
+            self._struct.struct.game.homeCompetitor,
+            self._struct.struct.game.awayCompetitor.id:
+            self._struct.struct.game.awayCompetitor,
         }
         assert self._struct.struct.game.members
         members = {m.id: m for m in self._struct.struct.game.members}
@@ -165,27 +183,27 @@ class ParserDetails(TimeCachable):
                     order=ev.order,
                     status=self.game_status,
                     home_team_id=self.home.id,
-                    away_team_id=self.away.id
-                )
-            )
+                    away_team_id=self.away.id))
         return sorted(res, reverse=True, key=lambda x: x.order_id)
 
     @property
     def event_id(self):
         if self._struct:
             return self._struct.struct.game.id
-        
+
     @property
     def game_status(self) -> str:
         if self._struct:
             return self._struct.struct.game.shortStatusText
         return ""
-    
+
     @property
     def score(self) -> str:
         try:
             assert self.home
             assert self.away
+            assert self.home.score
+            assert self.away.score
             assert self.home.score > -1
             assert self.away.score > -1
             return f"{self.home.score:.0f}:{self.away.score:.0f}"
@@ -234,9 +252,10 @@ class ParserDetails(TimeCachable):
             assert self.home.lineups
             assert self.away
             assert self.away.lineups
-            return all(
-                [self.home.lineups.hasFieldPositions, self.away.lineups.hasFieldPositions]
-            )
+            return all([
+                self.home.lineups.hasFieldPositions,
+                self.away.lineups.hasFieldPositions
+            ])
         except AssertionError:
             return False
 
@@ -247,8 +266,8 @@ class ParserDetails(TimeCachable):
             assert self.away
             assert self.home.name
             assert self.away.name
-            return unidecode(f"{self.home.name.upper()} vs {self.away.name.upper()}")
+            return unidecode(
+                f"{self.home.name.upper()} vs {self.away.name.upper()}")
         except AssertionError as e:
             logging.exception(e)
             return "Unknown"
-        
