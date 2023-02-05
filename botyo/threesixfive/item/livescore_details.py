@@ -19,8 +19,6 @@ from cachable.models import TimeCache
 from botyo.core.store import TimeCachable
 import logging
 from pydantic import BaseModel, Extra
-from botyo.threesixfive.item.league import LeagueImage
-from pixelme import Pixelate
 
 
 class ParserDetailsResponse(BaseModel, extra=Extra.ignore):
@@ -95,16 +93,6 @@ class ParserDetails(TimeCachable):
             members = {m.id: m for m in self._struct.struct.game.members}
             if not self._struct.struct.game.events:
                 return []
-            logo = LeagueImage(self._struct.struct.game.league.id)
-            logo_path = logo.path
-            assert logo_path
-            pix = Pixelate(
-                input=logo_path,
-                padding=200,
-                grid_lines=True,
-                block_size=25,
-            )
-            pix.resize((8, 8))
             for ev in self._struct.struct.game.events:
                 homeCompetitor = self._struct.struct.game.homeCompetitor
                 awayCompetitor = self._struct.struct.game.awayCompetitor
@@ -131,8 +119,7 @@ class ParserDetails(TimeCachable):
                                  player=unidecode(
                                      members[ev.playerId].displayName),
                                  extraPlayers=extraPlayers,
-                                 order=ev.order,
-                                 icon=pix.base64))
+                                 order=ev.order))
             return sorted(res, reverse=True, key=lambda x: x.id)
         except Exception as e:
             logging.exception(e)

@@ -42,6 +42,8 @@ from pathlib import Path
 from botyo.core.store import QueueDict, QueueList
 from pydantic.dataclasses import dataclass
 from botyo.core.store import RedisCachable
+from functools import reduce
+from botyo.unicode_text.emoji import Emoji
 
 
 class Headers(Enum):
@@ -357,19 +359,20 @@ class Subscription(metaclass=SubscriptionMeta):
     def trigger(self):
         try:
             assert self._event.details
-            logo = LeagueImage(self._event.idLeague)
-            logo_path = logo.path
-            assert logo_path
-            pix = Pixelate(
-                input=logo_path,
-                padding=200,
-                grid_lines=True,
-                block_size=25,
-            )
-            pix.resize((8, 8))
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            chatUpdate = self.updates(updated)
+            chatUpdate, icon = self.updates(updated)
+            if not icon:
+                logo = LeagueImage(self._event.idLeague)
+                logo_path = logo.path
+                assert logo_path
+                pix = Pixelate(
+                    input=logo_path,
+                    padding=200,
+                    grid_lines=True,
+                )
+                pix.resize((64, 64))
+                icon = pix.base64
             for sc in self.subscriptions:
                 if sc.is_rest:
                     try:
@@ -395,7 +398,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         sc.sendUpdate(
                             UpdateData(message=TextOutput.render(),
                                        msgId=self.id,
-                                       icon=pix.base64))
+                                       icon=icon))
                     except UnknownClientException as e:
                         logging.exception(e)
             self.checkGoals(updated)
@@ -420,7 +423,8 @@ class Subscription(metaclass=SubscriptionMeta):
                         else:
                             sc.sendUpdate(
                                 UpdateData(message=self.fulltimeAnnoucement,
-                                           icon=pix.base64,
+                                           icon=Emoji.b64(
+                                               emojize(":chequered_flag:")),
                                            msgId=self.id))
                     except UnknownClientException as e:
                         logging.exception(e)
@@ -435,15 +439,17 @@ class Subscription(metaclass=SubscriptionMeta):
         except Exception as e:
             logging.exception(e)
 
-    def updates(self,
-                updated: Optional[ResponseGame] = None) -> Optional[list[str]]:
+    def updates(
+        self,
+        updated: Optional[ResponseGame] = None
+    ) -> tuple[Optional[list[str]], Optional[str]]:
         try:
             if not updated:
-                return None
+                return None, None
             details = ParserDetails(None, response=updated)
             rows = details.rendered
             if not rows:
-                return None
+                return None, None
             assert details.home
             assert details.away
             res = ScoreRow(
@@ -454,10 +460,12 @@ class Subscription(metaclass=SubscriptionMeta):
                 format=ScoreFormat.STANDALONE,
                 league=self._event.strLeague,
             )
-            return [*rows, str(res)]
+            icon = reduce(lambda r, x: x.icon64
+                          if x.icon64 else r, details.events, "")
+            return [*rows, str(res)], icon
         except AssertionError as e:
             logging.exception(e)
-            return None
+            return None, None
 
     def client(self, client_id: str) -> Optional[Connection]:
         try:
@@ -527,6 +535,7 @@ class Subscription(metaclass=SubscriptionMeta):
                     else:
                         sc.sendUpdate(
                             UpdateData(message=self.startAnnouncement,
+                                       icon=Emoji.b64(emojize(":goal_net:")),
                                        msgId=self.id))
                 except UnknownClientException:
                     pass

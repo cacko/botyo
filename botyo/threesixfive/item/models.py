@@ -18,6 +18,7 @@ from botyo.threesixfive.data import (
 )
 from pydantic import BaseModel, Field, Extra
 from botyo.core.country import Country as Flag
+from botyo.unicode_text.emoji import Emoji
 
 WORLD_CUP_ID = 5930
 
@@ -717,7 +718,6 @@ class DetailsEvent(BaseModel, extra=Extra.ignore):
     extraPlayers: Optional[list[str]] = None
     position: Optional[Position] = None
     score: Optional[str] = None
-    icon: Optional[str] = None
 
     @property
     def id(self) -> int:
@@ -735,6 +735,14 @@ class DetailsEvent(BaseModel, extra=Extra.ignore):
             return emojize(icon.value)
         except ValueError as e:
             logging.exception(e)
+            return ""
+
+    @property
+    def icon64(self) -> str:
+        try:
+            icon = self.icon
+            return Emoji.b64(icon)
+        except AssertionError:
             return ""
 
 

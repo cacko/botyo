@@ -1,8 +1,7 @@
 from botyo.threesixfive.item.models import Position
 from typing import Generator
-from botyo.threesixfive.item.livescore_details import (
-    ParserDetails as ParserDetailsData
-)
+from botyo.threesixfive.item.livescore_details import (ParserDetails as
+                                                       ParserDetailsData)
 import logging
 
 
@@ -14,11 +13,15 @@ class ParserDetails(ParserDetailsData):
             try:
                 if ev.position == Position.HOME:
                     assert ev.player
-                    row = f"{ev.displayTime:<5}{' '.join([ev.icon, ev.player]):<16}"
+                    time = ev.displayTime
+                    txt = ' '.join([ev.icon, ev.player])
+                    row = f"{time:<5} {txt:<16}"
                     yield f"{row:<42}"
                 elif ev.position == Position.AWAY:
                     assert ev.player
-                    row = f"{' '.join([ev.player, ev.icon]):>16}{ev.displayTime:>5}"
+                    time = ev.displayTime
+                    txt = ' '.join([ev.player, ev.icon])
+                    row = f"{txt:>16} {ev.displayTime:>5}"
                     yield f"{row:>42}"
                 else:
                     row = f"{ev.displayTime:^5} {ev.icon}"
