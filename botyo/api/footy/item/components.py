@@ -83,10 +83,10 @@ class ScoreRow:
                 )
             case ScoreFormat.HEADLINE:
                 cols = (
+                    Column(size=5, align=Align.LEFT),
+                    Column(size=16, align=Align.RIGHT),
                     Column(size=5, align=Align.CENTER),
                     Column(size=16, align=Align.LEFT),
-                    Column(size=5, align=Align.CENTER),
-                    Column(size=16, align=Align.RIGHT),
                 )
                 row = (                    
                     self.row.status,
