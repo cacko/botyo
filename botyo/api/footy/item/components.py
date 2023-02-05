@@ -11,6 +11,7 @@ ScoreData = namedtuple(
 class ScoreFormat(Enum):
     STANDALONE = 1
     LIST = 2
+    HEADLINE = 3
 
 
 class LeagueRow:
@@ -53,34 +54,47 @@ class ScoreRow:
                              home=home, away=away, win=win)
 
     def __str__(self) -> str:
-        if self.format == ScoreFormat.STANDALONE:
-            cols = (
-                Column(size=16, align=Align.LEFT),
-                Column(size=5, align=Align.CENTER),
-                Column(size=5, align=Align.CENTER),
-                Column(size=16, align=Align.RIGHT),
-            )
-            row = (
-                f"{self.home.upper()}",
-                self.row.status,
-                self.row.score,
-                f"{self.away.upper()}",
-            )
-        elif self.format == ScoreFormat.LIST:
-            cols = (
-                Column(size=5, align=Align.RIGHT),
-                Column(size=16, align=Align.RIGHT),
-                Column(size=5, align=Align.CENTER),
-                Column(size=16, align=Align.LEFT),
-            )
-            row = (
-                self.row.status,
-                f" {self.home}",
-                self.row.score,
-                f"{self.away}",
-            )
-        else:
-            raise NotImplementedError
+        match self.format:
+            case ScoreFormat.STANDALONE:
+                cols = (
+                    Column(size=16, align=Align.LEFT),
+                    Column(size=5, align=Align.CENTER),
+                    Column(size=5, align=Align.CENTER),
+                    Column(size=16, align=Align.RIGHT),
+                )
+                row = (
+                    f"{self.home.upper()}",
+                    self.row.status,
+                    self.row.score,
+                    f"{self.away.upper()}",
+                )
+            case ScoreFormat.LIST:
+                cols = (
+                    Column(size=5, align=Align.RIGHT),
+                    Column(size=16, align=Align.RIGHT),
+                    Column(size=5, align=Align.CENTER),
+                    Column(size=16, align=Align.LEFT),
+                )
+                row = (
+                    self.row.status,
+                    f" {self.home}",
+                    self.row.score,
+                    f"{self.away}",
+                )
+            case ScoreFormat.HEADLINE:
+                cols = (
+                    Column(size=5, align=Align.CENTER),
+                    Column(size=16, align=Align.LEFT),
+                    Column(size=5, align=Align.CENTER),
+                    Column(size=16, align=Align.RIGHT),
+                )
+                row = (                    
+                    self.row.status,
+                    f"{self.home}",
+                    self.row.score,
+                    f"{self.away}",
+                )
+
         TextOutput.addColumns(list(cols), [list(row)])
         if self.row.win:
             TextOutput.addColumns(

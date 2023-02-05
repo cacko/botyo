@@ -473,7 +473,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 home=details.home.name,
                 away=details.away.name,
                 score=details.score,
-                format=ScoreFormat.STANDALONE,
+                format=ScoreFormat.HEADLINE,
                 league=self._event.strLeague,
             )
             icon = reduce(lambda r, x: x.icon64
