@@ -189,11 +189,7 @@ class ParserDetails(TimeCachable):
         try:
             assert self.home
             assert self.away
-            assert self.home.score
-            assert self.away.score
-            assert self.home.score > -1
-            assert self.away.score > -1
-            return f"{self.home.score:.0f}:{self.away.score:.0f}"
+            return f"{self.home.score_int:.0f}:{self.away.score_int:.0f}"
         except AssertionError as e:
             logging.exception(e)
             return ""
