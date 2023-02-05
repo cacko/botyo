@@ -13,11 +13,14 @@ from datetime import datetime, timedelta
 from botyo.core.store import QueueDict
 from botyo.threesixfive.team import normalize_team
 
-GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n]+)", re.IGNORECASE)
+GOAL_MATCH = re.compile(r"^([\w ]+)\[?(\d+)]?\s-\s\[?(\d+)]?\s*([^\r\n]+)",
+                        re.IGNORECASE)
 VIDEO_MATCH = re.compile(r"^video-(\d+)-(\d+)\.mp4")
 GOAL_CHECK_EXPIRATION = timedelta(minutes=15)
 
-# (base) muzak at /store/cache/znayko/goals ❯ ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4
+# (base) muzak at /store/cache/znayko/goals ❯
+# ffprobe -v error -show_entries stream=width,height
+# -of default=noprint_wrappers=1 GoalsZack\ \[1597676886527995904\].mp4
 # width=1280
 # height=720
 
@@ -130,15 +133,14 @@ class Query:
     @property
     def is_expired(self) -> bool:
         try:
-            return (
-                datetime.now() - datetime.fromtimestamp(self.timestamp)
-                > GOAL_CHECK_EXPIRATION
-            )
+            return (datetime.now() - datetime.fromtimestamp(self.timestamp) >
+                    GOAL_CHECK_EXPIRATION)
         except AssertionError:
             return False
 
 
 class Goal:
+
     def __init__(self) -> None:
         pass
 
@@ -175,8 +177,7 @@ class GoalsMeta(type):
 
     def save_data(cls, data: GoalEvent) -> bool:
         fp = cls.output_dir / DownloadItem.get_metafile(
-            data.event_id, data.game_event_id
-        )
+            data.event_id, data.game_event_id)
         if fp.exists():
             return True
         return fp.write_text(data.json()) > 0  # type: ignore
@@ -202,33 +203,36 @@ class Goals(object, metaclass=GoalsMeta):
             first_line = t_text.split("\n")[0]
             logging.debug(f"TWEET: {first_line}")
             if matched_teams := GOAL_MATCH.search(first_line):
-                team1, score1, score2, team2 = map(
-                    str.strip, matched_teams.groups())
+                team1, score1, score2, team2 = map(str.strip,
+                                                   matched_teams.groups())
                 logging.debug([team1, score1, score2, team2])
                 try:
                     twitter_download(
-                        url=t.url, output_dir=__class__.output_dir.as_posix(), merge=True
-                    )
+                        url=t.url,
+                        output_dir=__class__.output_dir.as_posix(),
+                        merge=True)
                 except Exception as e:
                     logging.error(f"TWITTER DOWNLOAD: {e}")
                 self.video_data[t_id] = TwitterNeedle(
-                    needle=TeamsNeedle(
-                        home=normalize_team(team1).lower(), away=normalize_team(team2).lower(), score=f"{score1}:{score2}"),
+                    needle=TeamsNeedle(home=normalize_team(team1).lower(),
+                                       away=normalize_team(team2).lower(),
+                                       score=f"{score1}:{score2}"),
                     goals=GoalNeedle(home=int(score1), away=int(score2)),
                     id=t_id,
                     text=t_text,
                     url=t.url,
                 )
+                logging.debug(f"needle {self.video_data[t_id]}")
 
-    def do_search(
-        self, query: list[Query], **kwds
-    ) -> Generator[DownloadItem, None, None]:
+    def do_search(self, query: list[Query],
+                  **kwds) -> Generator[DownloadItem, None, None]:
         matcher = TeamsMatch(haystack=query)
         try:
             self.__fetch(**kwds)
         except Exception as e:
             logging.error(f"FETCH ERROR {e}")
         for needle in list(self.video_data.values()):
+            logging.debug(f"needle to match {needle}")
             for dp in __class__.output_dir.glob(f"*[[]{needle.id}[]].mp4"):
                 matched: list[Query] = matcher.fuzzy(needle.needle)
                 for q in matched:
