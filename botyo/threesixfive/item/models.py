@@ -246,6 +246,7 @@ class StandingRow(BaseModel, extra=Extra.ignore):
     position: Optional[int] = None
     unknown: Optional[Any] = None
 
+
 class StandingGroup(BaseModel, extra=Extra.ignore):
     num: int
     name: str
@@ -775,7 +776,8 @@ class DetailsEventPixel(BaseModel, extra=Extra.ignore):
     def order_id(self) -> int:
         return self.order if self.order else 0
 
-    def __post_init__(self) -> None:
+    def __init__(self, **data) -> None:
+        super().__init__(**data)
         self.id = md5(f"{self.event_name}".lower().encode()).hexdigest()
 
     @property
