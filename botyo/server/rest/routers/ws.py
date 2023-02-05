@@ -151,7 +151,7 @@ class WSConnection(Connection):
         )
         match response.method:
             case ZMethod.FOOTY_SUBSCRIPTION_UPDATE:
-                path = f"subscriptions/{response.id}/events"
+                path = f"subscriptions/{response.id.split(':')[0]}/events"
                 FirestoreClient().put(path=path, data=resp.dict())
             case _:
                 await self.__websocket.send_json(resp.dict())
