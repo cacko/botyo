@@ -2,7 +2,7 @@ from uuid import uuid4
 from typing import Optional, TypeVar
 from emoji import emojize
 from random import choice
-from enum import EnumMeta, StrEnum, Enum
+from enum import EnumMeta, StrEnum
 from pathlib import Path
 import sys
 import requests
@@ -32,9 +32,9 @@ class MethodMeta(EnumMeta):
             papp = Path(".") / "app"
             enumklass = klass.split(".")[-1]
             if enumklass == cls.__name__:
-                return cls.__new__(cls, value)  #type: ignore
+                return cls.__new__(cls, value)  # type: ignore
             if klass.startswith("app."):
-                sys.path.insert(0, papp)  #type: ignore
+                sys.path.insert(0, papp)  # type: ignore
                 mod = ".".join(klass.split(".")[:-1])
                 imp = __import__(mod, None, None, [enumklass])
                 return getattr(imp, enumklass)(value)
@@ -209,6 +209,7 @@ class RenderResult(BaseModel, extra=Extra.ignore):
     plain: Optional[bool] = Field(default=False)
     error: Optional[str] = None
     new_id: Optional[str] = None
+    icon: Optional[str] = None
 
 
 class EmptyResult(RenderResult):
@@ -222,7 +223,8 @@ class EmptyResult(RenderResult):
             return choice(NOT_FOUND)
 
     def __post_init__(self):
-        self.message = f"{emojize(choice(NOT_FOUND_ICONS))} {self.error_message}"
+        emo = emojize(choice(NOT_FOUND_ICONS))
+        self.message = f"{emo} {self.error_message}"
 
 
 class ZSONMessage(BaseModel, extra=Extra.ignore):

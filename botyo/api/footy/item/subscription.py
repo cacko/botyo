@@ -161,6 +161,7 @@ class SubscriptionClient:
     def updateBotyo(self, data: UpdateData):
         result = RenderResult(
             method=ZMethod.FOOTY_SUBSCRIPTION_UPDATE,
+            icon=data.icon,
             message=str(data.message),
             group=self.group_id,
         )
