@@ -60,6 +60,8 @@ class Response(BaseModel):
     plain: Optional[bool] = None
     new_id: Optional[str] = None
     commands: Optional[list[CommandDef]] = None
+    icon: Optional[str] = None
+    headline: Optional[str] = None
 
     @classmethod
     def store_root(cls) -> Path:
@@ -148,6 +150,8 @@ class WSConnection(Connection):
             error=response.error,
             new_id=response.new_id,
             commands=response.commands,
+            icon=response.icon,
+            headline=response.headline
         )
         match response.method:
             case ZMethod.FOOTY_SUBSCRIPTION_UPDATE:
