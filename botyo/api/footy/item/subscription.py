@@ -350,6 +350,7 @@ class Subscription(metaclass=SubscriptionMeta):
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
             chatUpdate = self.updates(updated)
+            logging.debug(self.subscriptions)
             for sc in self.subscriptions:
                 if sc.is_rest:
                     try:
