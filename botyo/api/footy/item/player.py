@@ -5,13 +5,13 @@ from botyo.threesixfive.item.player import Player as PlayerData
 
 
 class Player(PlayerData):
-
     @property
     def message(self) -> str:
         try:
             assert self._struct
             assert self._struct.member.name
-            TextOutput.addRows([f"{self._struct.member.name.upper()[:45]:<45}"])
+            txt = self._struct.member.name.upper()[:45]
+            TextOutput.addRows([f"{txt:<45}"])
             lineupMember: LineupMember = self._struct.lineupMember
             if lineupMember.stats:
                 columns = [

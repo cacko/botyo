@@ -32,6 +32,8 @@ class StableDiffusionAvatar(ImageCachable):
         try:
             attachment, _ = Image.txt2img(prompt=self.cmd)
             assert attachment
+            assert attachment.path
+            assert self._path
             ap = Path(attachment.path)
             ap.rename(self._path)
         except Exception:
@@ -50,7 +52,7 @@ class StableDiffusionAvatar(ImageCachable):
         return self.__gender
 
     @property
-    def race(self) -> Gender:
+    def race(self) -> Race:
         if not self.__race:
             self.__race = Demographics.race(self._name)
         return self.__race

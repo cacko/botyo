@@ -1,18 +1,21 @@
 import logging
 from botyo.server.models import Method, ZSONMatcher
 from .server import Server, CommandExec
+from typing import Optional
+
 
 def parametrized(dec):
     def layer(*args, **kwargs):
         def repl(f):
             return dec(f, *args, **kwargs)
+
         return repl
+
     return layer
 
 
 class BlueprintMeta(type):
-
-    _instances: dict[str, 'Blueprint'] = {}
+    _instances: dict[str, "Blueprint"] = {}
 
     def __call__(cls, *args, **kwds):
         name = kwds.get("name") if "name" in kwds else args[0]
@@ -24,15 +27,14 @@ class BlueprintMeta(type):
 
 
 class Blueprint(object, metaclass=BlueprintMeta):
-
-    _name: str = None
-    _app: 'Server' = None
+    _name: Optional[str] = None
+    _app: Optional["Server"] = None
     _commands: dict[str, CommandExec] = {}
 
     def __init__(self, name):
         self._name = name
 
-    def register(self, app: 'Server'):
+    def register(self, app: "Server"):
         logging.debug(f"registaring {self._name}")
         self._app = app
         if not len(self._commands):
@@ -49,29 +51,29 @@ class Blueprint(object, metaclass=BlueprintMeta):
         func,
         self,
         method: Method,
-        desc: str = None,
+        desc: Optional[str] = None,
         subscription: bool = False,
-        icon: str = None,
-        args: str = None,
+        icon: Optional[str] = None,
+        args: Optional[str] = None,
         upload: bool = False,
-        matcher: ZSONMatcher = None,
-        response: str = None
+        matcher: Optional[ZSONMatcher] = None,
+        response: Optional[str] = None,
     ):
         if method.value not in self._commands:
             cmd = CommandExec(
                 method=method,
-                handler=func,
+                handler=func,  # type: ignore
                 desc=desc,
                 matcher=matcher,
                 response=response,
                 subscription=subscription,
                 icon=icon,
                 args=args,
-                upload=upload
+                upload=upload,
             )
             self._commands[method.value] = cmd
 
         def registrar(*args):
-            return func(*args)
+            return func(*args)  # type: ignore
 
         return registrar

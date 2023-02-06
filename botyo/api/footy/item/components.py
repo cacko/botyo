@@ -4,8 +4,7 @@ from enum import Enum
 from botyo.core.country import Country as Flag
 
 
-ScoreData = namedtuple(
-    "ScoreData", "status,home,away,score,win", defaults=["vs", ""])
+ScoreData = namedtuple("ScoreData", "status,home,away,score,win", defaults=["vs", ""])
 
 
 class ScoreFormat(Enum):
@@ -15,7 +14,6 @@ class ScoreFormat(Enum):
 
 
 class LeagueRow:
-
     __title = ""
 
     def __init__(self, league: str) -> None:
@@ -29,7 +27,6 @@ class LeagueRow:
 
 
 class ScoreRow:
-
     row: ScoreData
     format: ScoreFormat = ScoreFormat.LIST
     league: str = ""
@@ -43,15 +40,14 @@ class ScoreRow:
         win: str = "",
         format: ScoreFormat = ScoreFormat.LIST,
         league: str = "",
-        is_international: bool = False
+        is_international: bool = False,
     ):
         self.format = format
         if not score:
             score = "vs"
         self.league = league
         self.is_international = is_international
-        self.row = ScoreData(status=status, score=score,
-                             home=home, away=away, win=win)
+        self.row = ScoreData(status=status, score=score, home=home, away=away, win=win)
 
     def __str__(self) -> str:
         match self.format:
@@ -88,7 +84,7 @@ class ScoreRow:
                     Column(size=5, align=Align.CENTER),
                     Column(size=16, align=Align.LEFT),
                 )
-                row = (                    
+                row = (
                     self.row.status,
                     f"{self.home}",
                     self.row.score,
