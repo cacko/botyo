@@ -3,7 +3,8 @@ from botyo.server.socket.connection import Context
 from botyo.server.models import Attachment, EmptyResult, RenderResult
 from botyo.server.models import ZMethod
 from botyo.server.blueprint import Blueprint
-from argparse import ArgumentParser, ArgumentError
+from argparse import ArgumentParser
+import logging
 
 bp = Blueprint("avatar")
 
@@ -28,9 +29,8 @@ def avatar_command(context: Context) -> RenderResult:
             method=ZMethod.AVATAR_AVATAR,
             attachment=Attachment(path=path.as_posix(), contentType=avatar.contentType),
         )
-    except ArgumentError as e:
-        return EmptyResult(message=e.message)
-    except AssertionError:
+    except Exception as e:
+        logging.exception(e)
         return EmptyResult()
 
 

@@ -29,15 +29,12 @@ class StableDiffusionAvatar(ImageCachable):
     def _init(self):
         if self.isCached:
             return
-        try:
-            attachment, _ = Image.txt2img(prompt=self.cmd)
-            assert attachment
-            assert attachment.path
-            assert self._path
-            ap = Path(attachment.path)
-            ap.rename(self._path)
-        except Exception:
-            pass
+        attachment, _ = Image.txt2img(prompt=self.cmd)
+        assert attachment
+        assert attachment.path
+        assert self._path
+        ap = Path(attachment.path)
+        ap.rename(self._path)
 
     @property
     def isCached(self) -> bool:
