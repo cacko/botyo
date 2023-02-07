@@ -239,8 +239,8 @@ manager = ConnectionManager()
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
     logging.debug([f"{k} -> {v}" for k, v in websocket.headers.items()])
     await manager.connect(websocket, client_id)
-    while True:
-        try:
+    try:
+        while True:
             data = await websocket.receive_json()
             if data.get("ztype") == ZSONType.PING.value:
                 ping = PingMessage(**data)
@@ -250,7 +250,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 logging.debug(f"receive {data}")
                 asyncio.create_task(manager.process_command(data, client_id))
                 logging.debug(">>>>>> AFTER QUEUE")
-        except WebSocketDisconnect:
-            manager.disconnect(client_id)
-        except Exception as e:
-            logging.exception(e)
+    except WebSocketDisconnect:
+        manager.disconnect(client_id)
+    except Exception as e:
+        logging.exception(e)
