@@ -1,4 +1,4 @@
-from botyo.server.models import (RenderResult, Attachment, ZSONResponse)
+from botyo.server.models import RenderResult, Attachment, ZSONResponse
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json, Undefined
 from typing import Optional
@@ -9,10 +9,9 @@ class UnknownClientException(Exception):
 
 
 class ConnectionMeta(type):
-
     connections = {}
 
-    def client(cls, clientId: str) -> 'Connection':
+    def client(cls, clientId: str) -> "Connection":
         if clientId not in cls.connections:
             raise UnknownClientException
         return cls.connections[clientId]
@@ -26,7 +25,6 @@ class ConnectionMeta(type):
 
 
 class Connection(object, metaclass=ConnectionMeta):
-
     def send(self, response: ZSONResponse):
         raise NotImplementedError
 
@@ -37,7 +35,6 @@ class Connection(object, metaclass=ConnectionMeta):
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class Context:
-
     client: Optional[str] = None
     query: Optional[str] = None
     group: Optional[str] = None
@@ -53,29 +50,33 @@ class Context:
         return Connection.client(self.client)
 
     def send(self, result: RenderResult):
-        response = ZSONResponse(message=result.message,
-                                attachment=result.attachment,
-                                client=self.client,
-                                group=self.group,
-                                method=result.method,
-                                plain=bool(result.plain),
-                                id=self.id,
-                                icon=result.icon,
-                                new_id=result.new_id)
+        response = ZSONResponse(
+            message=result.message,
+            attachment=result.attachment,
+            client=self.client,
+            group=self.group,
+            method=result.method,
+            plain=bool(result.plain),
+            id=self.id,
+            icon=result.icon,
+            new_id=result.new_id,
+        )
         self.connection.send(response=response)
 
     async def send_async(self, result: RenderResult):
-        response = ZSONResponse(message=result.message,
-                                attachment=result.attachment,
-                                client=self.client,
-                                group=self.group,
-                                method=result.method,
-                                plain=bool(result.plain),
-                                source=self.source,
-                                error=result.error,
-                                id=self.id,
-                                icon=result.icon,
-                                new_id=result.new_id)
+        response = ZSONResponse(
+            message=result.message,
+            attachment=result.attachment,
+            client=self.client,
+            group=self.group,
+            method=result.method,
+            plain=bool(result.plain),
+            source=self.source,
+            error=result.error,
+            id=self.id,
+            icon=result.icon,
+            new_id=result.new_id,
+        )
         await self.connection.send_async(response=response)
 
 

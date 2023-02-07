@@ -16,7 +16,7 @@ from botyo.server.models import (
     ZSONRequest,
     CommandDef,
     CoreMethods,
-    ZMethod
+    ZMethod,
 )
 from typing import Optional
 from pathlib import Path
@@ -106,7 +106,6 @@ router = APIRouter()
 
 
 class WSConnection(Connection):
-
     __websocket: WebSocket
     __clientId: str
     __user: Optional[AuthUser] = None
@@ -118,6 +117,52 @@ class WSConnection(Connection):
     async def accept(self):
         await self.__websocket.accept()
         __class__.connections[self.__clientId] = self
+
+    async def handle_login(self, request: ZSONRequest):
+        assert request.query
+        self.auth(request.query)
+        cmds = ZSONResponse(
+            method=CoreMethods.LOGIN,
+            commands=CommandExec.definitions,
+            client=self.__clientId,
+            id=request.id,
+        )
+        await self.send_async(cmds)
+
+    async def send_error(self, request: ZSONRequest):
+        empty = EmptyResult()
+        await self.send_async(
+            ZSONResponse(
+                ztype=ZSONType.RESPONSE,
+                id=request.id,
+                client=self.__clientId,
+                group=self.__clientId,
+                error=empty.error_message,
+            )
+        )
+
+    async def handle_command(self, request: ZSONRequest):
+        try:
+            assert request.query
+            command, query = CommandExec.parse(request.query)
+            logging.debug(command)
+            context = Context(
+                client=self.__clientId,
+                query=query,
+                group=self.__clientId,
+                id=request.id,
+                source=request.source,
+            )
+            assert isinstance(command, CommandExec)
+            with perftime(f"Command {command.method.value}"):
+                response = command.handler(context)
+                await context.send_async(response)
+        except AssertionError as e:
+            logging.error(e)
+            await self.send_error(request=request)
+        except Exception as e:
+            logging.exception(e)
+            raise WebSocketDisconnect()
 
     def auth(self, token: str):
         self.__user = Auth().verify_token(token)
@@ -151,7 +196,7 @@ class WSConnection(Connection):
             new_id=response.new_id,
             commands=response.commands,
             icon=response.icon,
-            headline=response.headline
+            headline=response.headline,
         )
         match response.method:
             case ZMethod.FOOTY_SUBSCRIPTION_UPDATE:
@@ -170,43 +215,17 @@ class ConnectionManager:
         WSConnection.remove(client_id)
 
     async def process_command(self, data, client_id) -> Optional[RenderResult]:
-        context = None
-        try:
-            msg = ZSONRequest(**data)
-            assert isinstance(msg, ZSONRequest)
-            logging.debug(f"process command {msg}")
-            assert msg.query
-            match msg.method:
-                case CoreMethods.LOGIN:
-                    connection = Connection.client(clientId=client_id)
-                    assert isinstance(connection, WSConnection)
-                    connection.auth(msg.query)
-                    cmds = ZSONResponse(
-                        method=CoreMethods.LOGIN,
-                        commands=CommandExec.definitions,
-                        client=client_id,
-                        id=msg.id,
-                    )
-                    await connection.send_async(cmds)
-                case _:
-                    command, query = CommandExec.parse(msg.query)
-                    logging.debug(command)
-                    context = Context(
-                        client=client_id,
-                        query=query,
-                        group=client_id,
-                        id=msg.id,
-                        source=msg.source,
-                    )
-                    assert isinstance(command, CommandExec)
-                    with perftime(f"Command {command.method.value}"):
-                        response = command.handler(context)
-                        await context.send_async(response)
-        except Exception as e:
-            logging.exception(e)
-            response = EmptyResult(error=f"{e.__str__}")
-            if context:
-                await context.send_async(response)
+        msg = ZSONRequest(**data)
+        assert isinstance(msg, ZSONRequest)
+        logging.debug(f"process command {msg}")
+        assert msg.query
+        connection = Connection.client(clientId=client_id)
+        assert isinstance(connection, WSConnection)
+        match msg.method:
+            case CoreMethods.LOGIN:
+                await connection.handle_login(request=msg)
+            case _:
+                await connection.handle_command(request=msg)
 
 
 manager = ConnectionManager()
@@ -229,3 +248,5 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 logging.debug(">>>>>> AFTER QUEUE")
     except WebSocketDisconnect:
         manager.disconnect(client_id)
+    except Exception as e:
+        logging.exception(e)

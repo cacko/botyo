@@ -10,23 +10,16 @@ from pydantic import BaseModel, Extra, Field
 
 
 class MethodMeta(EnumMeta):
-
     _enums = {}
 
     def __new__(metacls, cls, bases, classdict, **kwds):
         for x in classdict._member_names:
-            metacls._enums[classdict[x]] = ".".join(
-                [classdict["__module__"], cls])
+            metacls._enums[classdict[x]] = ".".join([classdict["__module__"], cls])
         return super().__new__(metacls, cls, bases, classdict, **kwds)
 
-    def __call__(cls,
-                 value,
-                 names=None,
-                 *,
-                 module=None,
-                 qualname=None,
-                 type=None,
-                 start=1):
+    def __call__(
+        cls, value, names=None, *, module=None, qualname=None, type=None, start=1
+    ):
         if names is None:  # simple value lookup
             klass = cls._enums[value]
             papp = Path(".") / "app"
@@ -177,7 +170,8 @@ class Attachment(BaseModel):
     duration: Optional[int] = Field(default=0)
     filename: Optional[str] = None
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
         if self.filename:
             self.path = self.filename
         elif self.path:
@@ -214,16 +208,15 @@ class RenderResult(BaseModel, extra=Extra.ignore):
 
 
 class EmptyResult(RenderResult):
-
     @property
     def error_message(self):
         try:
-            return requests.get(
-                "https://commit.cacko.net/index.txt").text.strip()
+            return requests.get("https://commit.cacko.net/index.txt").text.strip()
         except Exception:
             return choice(NOT_FOUND)
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
         emo = emojize(choice(NOT_FOUND_ICONS))
         self.message = f"{emo} {self.error_message}"
 
