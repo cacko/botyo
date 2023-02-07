@@ -215,17 +215,21 @@ class ConnectionManager:
         WSConnection.remove(client_id)
 
     async def process_command(self, data, client_id) -> Optional[RenderResult]:
-        msg = ZSONRequest(**data)
-        assert isinstance(msg, ZSONRequest)
-        logging.debug(f"process command {msg}")
-        assert msg.query
-        connection = Connection.client(clientId=client_id)
-        assert isinstance(connection, WSConnection)
-        match msg.method:
-            case CoreMethods.LOGIN:
-                await connection.handle_login(request=msg)
-            case _:
-                await connection.handle_command(request=msg)
+        try:
+            msg = ZSONRequest(**data)
+            assert isinstance(msg, ZSONRequest)
+            logging.debug(f"process command {msg}")
+            assert msg.query
+            connection = Connection.client(clientId=client_id)
+            assert isinstance(connection, WSConnection)
+            match msg.method:
+                case CoreMethods.LOGIN:
+                    await connection.handle_login(request=msg)
+                case _:
+                    await connection.handle_command(request=msg)
+        except Exception as e:
+            logging.exception(e)
+            raise WebSocketDisconnect()
 
 
 manager = ConnectionManager()
@@ -235,8 +239,8 @@ manager = ConnectionManager()
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
     logging.debug([f"{k} -> {v}" for k, v in websocket.headers.items()])
     await manager.connect(websocket, client_id)
-    try:
-        while True:
+    while True:
+        try:
             data = await websocket.receive_json()
             if data.get("ztype") == ZSONType.PING.value:
                 ping = PingMessage(**data)
@@ -246,7 +250,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 logging.debug(f"receive {data}")
                 asyncio.create_task(manager.process_command(data, client_id))
                 logging.debug(">>>>>> AFTER QUEUE")
-    except WebSocketDisconnect:
-        manager.disconnect(client_id)
-    except Exception as e:
-        logging.exception(e)
+        except WebSocketDisconnect:
+            manager.disconnect(client_id)
+        except Exception as e:
+            logging.exception(e)
