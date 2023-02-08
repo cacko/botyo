@@ -167,7 +167,10 @@ class SubscriptionClient:
                               icon=data.icon,
                               message=str(data.message),
                               group=self.group_id,
-                              headline=data.score_message)
+                              headline=data.score_message,
+                              start_time=data.start_time,
+                              status=data.status
+                              )
         try:
             self.connection.send(
                 ZSONResponse(message=result.message,
@@ -178,6 +181,8 @@ class SubscriptionClient:
                              plain=bool(result.plain),
                              id=data.msgId,
                              headline=result.headline,
+                             start_time=data.start_time,
+                             status=data.status,
                              icon=data.icon))
         except UnknownClientException:
             pass

@@ -203,6 +203,8 @@ class RenderResult(BaseModel, extra=Extra.ignore):
     new_id: Optional[str] = None
     icon: Optional[str] = None
     headline: Optional[str] = None
+    status: Optional[str] = None
+    start_time: Optional[datetime] = None
 
 
 class EmptyResult(RenderResult):
