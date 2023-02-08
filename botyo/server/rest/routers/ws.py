@@ -28,6 +28,7 @@ from corestring import string_hash
 import time
 from botyo.core.s3 import S3
 from botyo.firebase.firestore import FirestoreClient
+from datetime import datetime
 
 
 class WSException(Exception):
@@ -62,6 +63,8 @@ class Response(BaseModel):
     commands: Optional[list[CommandDef]] = None
     icon: Optional[str] = None
     headline: Optional[str] = None
+    start_time: Optional[datetime] = None
+    status: Optional[str] = None
 
     @classmethod
     def store_root(cls) -> Path:
@@ -197,6 +200,8 @@ class WSConnection(Connection):
             commands=response.commands,
             icon=response.icon,
             headline=response.headline,
+            start_time=response.start_time,
+            status=response.status
         )
         match response.method:
             case ZMethod.FOOTY_SUBSCRIPTION_UPDATE:
