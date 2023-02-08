@@ -47,7 +47,7 @@ class Livescore(LivescoreData):
             self,
             with_progress=False,
             leagues:
-            list[int] = ...,
+            list[int] = [],
             with_details=False,
             inprogress=False
     ):
@@ -132,9 +132,11 @@ class Livescore(LivescoreData):
                 logging.exception(e)
                 return None
         if group_by_league:
-            filtered = list(chain.from_iterable([
-                [lg.upper(), *g]
-                for lg, g in reduce(to_groups, filtered, [])]))
+            filtered = list(
+                chain.from_iterable([  # type: ignore
+                    [lg.upper(), *g]  # type: ignore
+                    for lg, g in reduce(to_groups, filtered, [])
+                ]))
 
         TextOutput.addRows(filtered)
         return (
