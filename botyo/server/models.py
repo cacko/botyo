@@ -7,10 +7,11 @@ from pathlib import Path
 import sys
 import requests
 from pydantic import BaseModel, Extra, Field
+from datetime import datetime
 
 
 class MethodMeta(EnumMeta):
-    _enums = {}
+    _enums: dict = {}
 
     def __new__(metacls, cls, bases, classdict, **kwds):
         for x in classdict._member_names:
@@ -125,9 +126,6 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
 class CoreMethods(StrEnum, metaclass=MethodMeta):
     LOGIN = "login"
     HELP = "help"
-
-    # def __eq__(self, __o: object) -> bool:
-    #     return self.value == __o.value
 
 
 Method = TypeVar("Method", ZMethod, CoreMethods)
@@ -247,6 +245,8 @@ class ZSONResponse(ZSONMessage):
     new_id: Optional[str] = None
     icon: Optional[str] = None
     headline: Optional[str] = None
+    status: Optional[str] = None
+    start_time: Optional[datetime] = None
 
     @property
     def attachment_path(self) -> Optional[Path]:

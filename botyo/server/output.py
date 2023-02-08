@@ -1,7 +1,7 @@
 import re
 import tempfile
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from hashlib import blake2b
 from math import floor
 from pathlib import Path
@@ -37,7 +37,7 @@ def truncate(value: str, size=200, ellipsis="..."):
     return f"{cut}{ellipsis}"
 
 
-class Align(Enum):
+class Align(StrEnum):
     LEFT = "<"
     RIGHT = ">"
     CENTER = "^"
@@ -84,18 +84,17 @@ NOTCOMPATIBLE = ""
 
 
 class OutputMeta(type):
-    _instances = {}
+    _instances: dict[str, "TextOutput | ImageOutput"] = {}
 
     def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(OutputMeta,
-                                        cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
+        k = cls.__name__
+        if k not in cls._instances:
+            cls._instances[k] = super(OutputMeta, cls).__call__(*args, **kwargs)
+        return cls._instances[k]
 
-    def addColumns(cls,
-                   cols: list[Column],
-                   content: list[list[str]],
-                   with_header=False):
+    def addColumns(
+        cls, cols: list[Column], content: list[list[str]], with_header=False
+    ):
         return cls().add_columns(cols, content, with_header)
 
     def clean(cls):
@@ -133,7 +132,7 @@ class OutputMeta(type):
 
     @property
     def utf8mono(cls):
-        return cls().utf8Mono
+        return cls().utf8mono
 
     @utf8mono.setter
     def utf8mono(cls, val: bool):
@@ -141,7 +140,6 @@ class OutputMeta(type):
 
 
 class Output(object, metaclass=OutputMeta):
-
     utf8mono = False
     items: list[str] = []
 
@@ -155,23 +153,19 @@ class Output(object, metaclass=OutputMeta):
         im = Image.new("RGBA", (1000, 800), (45, 108, 234, 255))
         draw = ImageDraw.Draw(im)
         try:
-            monoFont = ImageFont.truetype(font="./SourceCodePro-Medium.ttf",
-                                          size=35)
+            monoFont = ImageFont.truetype(font="./SourceCodePro-Medium.ttf", size=35)
             draw.text((50, 10), text, fill="white", font=monoFont)
         except Exception:
             draw.text((10, 10), text, fill="white")
         im.save(output_filename)
         return output_filename
 
-    def add_columns(self,
-                    columns: tuple[Column],
-                    content: tuple[str],
-                    with_header=False):
+    def add_columns(
+        self, columns: list[Column], content: list[list[str]], with_header=False
+    ):
         rows = [
-            "".join([
-                self.to_mono(col.cell(cell))
-                for col, cell in zip(columns, cnt)
-            ]) for cnt in content
+            "".join([self.to_mono(col.cell(cell)) for col, cell in zip(columns, cnt)])
+            for cnt in content
         ]
         if with_header:
             cols = "".join([self.to_mono(col.header) for col in columns])
@@ -190,9 +184,10 @@ class Output(object, metaclass=OutputMeta):
         ]
 
     def get_table(self, columns: tuple[Column], content: tuple[str]):
-        rows = [[
-            self.to_mono(col.cell(cell)) for col, cell in zip(columns, cnt)
-        ] for cnt in content]
+        rows = [
+            [self.to_mono(col.cell(cell)) for col, cell in zip(columns, cnt)]
+            for cnt in content
+        ]
         cols = [self.to_mono(col.header) for col in columns]
 
         table = format_pretty_table(rows, cols)
@@ -200,9 +195,10 @@ class Output(object, metaclass=OutputMeta):
         self.items = [*self.items, table]
 
     def get_robust_table(self, columns: tuple[Column], content: tuple[str]):
-        rows = [[
-            self.to_mono(col.cell(cell)) for col, cell in zip(columns, cnt)
-        ] for cnt in content]
+        rows = [
+            [self.to_mono(col.cell(cell)) for col, cell in zip(columns, cnt)]
+            for cnt in content
+        ]
         cols = [self.to_mono(col.leading) for col in columns]
 
         table = format_robust_table(rows, cols)
@@ -211,9 +207,10 @@ class Output(object, metaclass=OutputMeta):
 
     def get_presto_table(self, columns: tuple[Column], content: tuple[str]):
         cols = [self.to_mono(col.leading) for col in columns]
-        rows = [[
-            self.to_mono(col.cell(cell)) for col, cell in zip(columns, cnt)
-        ] for cnt in content]
+        rows = [
+            [self.to_mono(col.cell(cell)) for col, cell in zip(columns, cnt)]
+            for cnt in content
+        ]
         table = tabulate(rows, headers=cols, tablefmt="presto")
         self.items = [*self.items, table]
 
@@ -243,8 +240,10 @@ class Output(object, metaclass=OutputMeta):
 
     def split_with_quotes(self, text: str) -> list[str]:
         return [
-            x for x in filter(lambda x: len(x) > 0,
-                              text.split('"' if '"' in text else " "))
+            x
+            for x in filter(
+                lambda x: len(x) > 0, text.split('"' if '"' in text else " ")
+            )
         ]
 
 

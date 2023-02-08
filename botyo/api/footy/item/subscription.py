@@ -40,7 +40,7 @@ from .goals import Goals
 from botyo.goals import Query as GoalQuery
 from pathlib import Path
 from botyo.core.store import QueueDict, QueueList
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel
 from botyo.core.store import RedisCachable
 from functools import reduce
 from botyo.unicode_text.emoji import Emoji
@@ -57,7 +57,6 @@ class JobPrefix(Enum):
 
 
 class Cache(RedisCachable):
-
     _struct: Optional[ResponseGame] = None
     __url: str
     __jobId: str
@@ -124,22 +123,22 @@ class Cache(RedisCachable):
             return None
 
 
-@dataclass
-class UpdateData:
+class UpdateData(BaseModel):
     message: str | list[DetailsEventPixel] | SubscriptionEvent
     score_message: str
+    start_time: datetime
+    status: str
     msgId: Optional[str] = None
     icon: Optional[str] = None
 
 
-@dataclass
-class SubscriptionClient:
+class SubscriptionClient(BaseModel):
     client_id: str
     group_id: Optional[str] = None
 
     @property
     def id(self) -> str:
-        return __class__.get_id(self.client_id, self.group_id)
+        return self.__class__.get_id(self.client_id, self.group_id)
 
     @property
     def is_rest(self) -> bool:
@@ -261,7 +260,7 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def subscriptions(self) -> list[SubscriptionClient]:
-        return __class__.clients(self._event.id)
+        return self.__class__.clients(self._event.id)
 
     def cancel(self, sc: SubscriptionClient):
         try:
@@ -269,6 +268,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 sc.sendUpdate(
                     UpdateData(message=str(CancelJobEvent(job_id=self.id)),
                                score_message="",
+                               start_time=datetime.now(),
+                               status="",
                                msgId=self.id))
             self.subscriptions.remove(sc)
             if not len(self.subscriptions):
@@ -390,6 +391,8 @@ class Subscription(metaclass=SubscriptionMeta):
                         sc.sendUpdate(
                             UpdateData(message=events,
                                        score_message=scoreUpdate,
+                                       start_time=self._event.startTime,
+                                       status=self._event.strStatus,
                                        msgId=self.id))
                     except Exception:
                         pass
@@ -398,11 +401,15 @@ class Subscription(metaclass=SubscriptionMeta):
                         sc.sendUpdate(
                             UpdateData(message=[self.halftimeAnnoucementPixel],
                                        score_message="",
+                                       start_time=self._event.startTime,
+                                       status=self._event.strStatus,
                                        msgId=self.id))
                     else:
                         sc.sendUpdate(
                             UpdateData(message=self.progressUpdatePixel,
                                        score_message="",
+                                       start_time=self._event.startTime,
+                                       status=self._event.strStatus,
                                        msgId=self.id))
                 elif chatUpdate:
                     TextOutput.clean()
@@ -412,6 +419,8 @@ class Subscription(metaclass=SubscriptionMeta):
                             UpdateData(message=TextOutput.render(),
                                        score_message=scoreUpdate,
                                        msgId=self.id,
+                                       start_time=self._event.startTime,
+                                       status=self._event.strStatus,
                                        icon=icon))
                     except UnknownClientException as e:
                         logging.exception(e)
@@ -434,11 +443,15 @@ class Subscription(metaclass=SubscriptionMeta):
                                 UpdateData(
                                     message=[self.fulltimeAnnoucementPixel],
                                     score_message=scoreUpdate,
+                                    start_time=self._event.startTime,
+                                    status=self._event.strStatus,
                                     msgId=self.id))
                         else:
                             sc.sendUpdate(
                                 UpdateData(message=self.fulltimeAnnoucement,
                                            score_message=scoreUpdate,
+                                           start_time=self._event.startTime,
+                                           status=self._event.strStatus,
                                            icon=Emoji.b64(
                                                emojize(":chequered_flag:")),
                                            msgId=self.id))
@@ -547,12 +560,16 @@ class Subscription(metaclass=SubscriptionMeta):
                         sc.sendUpdate(
                             UpdateData(message=[self.startAnnouncementPixel],
                                        score_message="",
+                                       start_time=self._event.startTime,
+                                       status=self._event.strStatus,
                                        msgId=self.id))
                     else:
                         sc.sendUpdate(
                             UpdateData(message=self.startAnnouncement,
                                        icon=Emoji.b64(emojize(":goal_net:")),
                                        score_message="",
+                                       start_time=self._event.startTime,
+                                       status=self._event.strStatus,
                                        msgId=self.id))
                 except UnknownClientException:
                     pass
@@ -589,9 +606,11 @@ class Subscription(metaclass=SubscriptionMeta):
                         self._event.strAwayTeam).base64,
                     status=self._event.strStatus,
                 ),
-                           score_message="",
-                           msgId=self.id,
-                           icon=pix.base64))
+                    start_time=self._event.startTime,
+                    status=self._event.strStatus,
+                    score_message="",
+                    msgId=self.id,
+                    icon=pix.base64))
         if self.inProgress:
             return self.start()
         Scheduler.add_job(
@@ -622,6 +641,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     sc.sendUpdate(
                         UpdateData(message=text,
                                    score_message="",
+                                   start_time=self._event.startTime,
+                                   status=self._event.strStatus,
                                    msgId=self.id))
                 except UnknownClientException:
                     pass
