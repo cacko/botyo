@@ -132,6 +132,7 @@ class UpdateData(BaseModel):
     msgId: Optional[str] = None
     icon: Optional[str] = None
 
+
 @dataclass
 class SubscriptionClient:
     client_id: str
@@ -185,8 +186,8 @@ class SubscriptionClient:
         payload = []
         if isinstance(data, list):
             payload = [d.dict() for d in data]
-        elif hasattr(data, "dict"):
-            payload = data.dict()
+        elif hasattr(data, "json"):
+            payload = data.json()
         logging.debug(payload)
         try:
             assert self.group_id
