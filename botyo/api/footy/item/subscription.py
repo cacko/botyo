@@ -41,6 +41,7 @@ from botyo.goals import Query as GoalQuery
 from pathlib import Path
 from botyo.core.store import QueueDict, QueueList
 from pydantic import BaseModel
+from pydantic.dataclasses import dataclass
 from botyo.core.store import RedisCachable
 from functools import reduce
 from botyo.unicode_text.emoji import Emoji
@@ -131,14 +132,14 @@ class UpdateData(BaseModel):
     msgId: Optional[str] = None
     icon: Optional[str] = None
 
-
-class SubscriptionClient(BaseModel):
+@dataclass
+class SubscriptionClient:
     client_id: str
     group_id: Optional[str] = None
 
     @property
     def id(self) -> str:
-        return self.__class__.get_id(self.client_id, self.group_id)
+        return SubscriptionClient.get_id(self.client_id, self.group_id)
 
     @property
     def is_rest(self) -> bool:
