@@ -15,7 +15,6 @@ from socketserver import StreamRequestHandler
 import tempfile
 import time
 from botyo.server.connection import (
-    ConnectionMeta, 
     Connection,
     Context,
     UnknownClientException
@@ -114,7 +113,7 @@ class SocketConnection(Connection, StreamRequestHandler):
         try:
             data = self.rfile.read(4)
             assert data
-            return int.from_bytes(data, byteorder=BYTEORDER, signed=False)
+            return int.from_bytes(data, byteorder="little", signed=False)
         except AssertionError:
             return 0
 
@@ -139,14 +138,16 @@ class SocketConnection(Connection, StreamRequestHandler):
         req = ZSONRequest(method=method, source="")
         data = req.encode()
         self.wfile.write(
-            len(data).to_bytes(4, byteorder=BYTEORDER, signed=False))
+            len(data).to_bytes(4, byteorder="little", signed=False))
         self.wfile.write(data)
         self.wfile.flush()
 
     def send(self, response: ZSONResponse):
+        if response.headline:
+            response.message = f"{response.message}\n{response.headline}"
         data = response.encode()
         size = len(data)
-        self.wfile.write(size.to_bytes(4, byteorder=BYTEORDER, signed=False))
+        self.wfile.write(size.to_bytes(4, byteorder="little", signed=False))
         self.wfile.write(data)
         self.wfile.flush()
         try:
@@ -156,7 +157,7 @@ class SocketConnection(Connection, StreamRequestHandler):
             assert p.exists()
             size = p.stat().st_size
             self.wfile.write(
-                size.to_bytes(4, byteorder=BYTEORDER, signed=False), )
+                size.to_bytes(4, byteorder="little", signed=False), )
             sent = 0
             logging.debug(f">> SEND {size} ATTACHMENT")
             with p.open("rb") as f:
