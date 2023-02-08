@@ -378,7 +378,7 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            scoreUpdate, chatUpdate, icon = self.updates(updated)
+            scoreUpdate, game_status, chatUpdate, icon  = self.updates(updated)
             if not icon:
                 logo = LeagueImage(self._event.idLeague)
                 logo_path = logo.path
@@ -399,7 +399,7 @@ class Subscription(metaclass=SubscriptionMeta):
                             UpdateData(message=events,
                                        score_message=scoreUpdate,
                                        start_time=self._event.startTime,
-                                       status=self._event.strStatus,
+                                       status=game_status,
                                        msgId=self.id))
                     except Exception:
                         pass
@@ -409,14 +409,14 @@ class Subscription(metaclass=SubscriptionMeta):
                             UpdateData(message=[self.halftimeAnnoucementPixel],
                                        score_message="",
                                        start_time=self._event.startTime,
-                                       status=self._event.strStatus,
+                                       status=game_status,
                                        msgId=self.id))
                     else:
                         sc.sendUpdate(
                             UpdateData(message=self.progressUpdatePixel,
                                        score_message="",
                                        start_time=self._event.startTime,
-                                       status=self._event.strStatus,
+                                       status=game_status,
                                        msgId=self.id))
                 elif chatUpdate:
                     TextOutput.clean()
@@ -427,7 +427,7 @@ class Subscription(metaclass=SubscriptionMeta):
                                        score_message=scoreUpdate,
                                        msgId=self.id,
                                        start_time=self._event.startTime,
-                                       status=self._event.strStatus,
+                                       status=game_status,
                                        icon=icon))
                     except UnknownClientException as e:
                         logging.exception(e)
@@ -451,14 +451,14 @@ class Subscription(metaclass=SubscriptionMeta):
                                     message=[self.fulltimeAnnoucementPixel],
                                     score_message=scoreUpdate,
                                     start_time=self._event.startTime,
-                                    status=self._event.strStatus,
+                                    status=game_status,
                                     msgId=self.id))
                         else:
                             sc.sendUpdate(
                                 UpdateData(message=self.fulltimeAnnoucement,
                                            score_message=scoreUpdate,
                                            start_time=self._event.startTime,
-                                           status=self._event.strStatus,
+                                           status=game_status,
                                            icon=Emoji.b64(
                                                emojize(":chequered_flag:")),
                                            msgId=self.id))
@@ -478,14 +478,14 @@ class Subscription(metaclass=SubscriptionMeta):
     def updates(
         self,
         updated: Optional[ResponseGame] = None
-    ) -> tuple[str, Optional[list[str]], Optional[str]]:
+    ) -> tuple[str, str, Optional[list[str]], Optional[str]]:
         try:
             if not updated:
-                return "", None, None
+                return "", "", None, None
             details = ParserDetails(None, response=updated)
             rows = details.rendered
             if not rows:
-                return "", None, None
+                return "", "", None, None
             assert details.home
             assert details.away
             res = ScoreRow(
@@ -498,9 +498,9 @@ class Subscription(metaclass=SubscriptionMeta):
             )
             icon = reduce(lambda r, x: x.icon64
                           if x.icon64 else r, details.events, "")
-            return str(res), [*rows], icon
+            return str(res), details.game_status, [*rows], icon
         except AssertionError:
-            return "", None, None
+            return "", "", None, None
 
     def client(self, client_id: str) -> Optional[Connection]:
         try:
