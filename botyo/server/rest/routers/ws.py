@@ -234,7 +234,10 @@ class ConnectionManager:
                 case CoreMethods.LOGIN:
                     await connection.handle_login(request=msg)
                 case _:
-                    await connection.handle_command(request=msg)
+                    task = asyncio.create_task(connection.handle_command(request=msg))
+                    await task
+                    if ex := task.exception():
+                        raise ex
         except Exception as e:
             logging.exception(e)
             raise WebSocketDisconnect()
