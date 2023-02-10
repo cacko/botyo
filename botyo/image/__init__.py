@@ -34,6 +34,12 @@ class ImageGeneratorParams(BaseModel):
     def static_prompt(cls, prompt: list[str]):
         return " ".join(prompt)
 
+    @validator("upscale")
+    def static_upscale(cls, upscale: Optional[bool] = None):
+        if not upscale:
+            return 0
+        return 1
+
 
 class VariationGeneratorParams(BaseModel):
     guidance_scale: float = Field(default=7)
@@ -277,8 +283,8 @@ class Image(object, metaclass=ImageMeta):
             lambda r, x: {
                 **r,
                 **({
-                    x: json.get("x")
-                } if json.get("x", None) else {})
+                    x: json.get(x)
+                } if json.get(x, None) else {})
             }, json.keys(), {})
         logging.debug(params["data"])
 
