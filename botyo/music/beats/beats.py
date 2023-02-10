@@ -76,7 +76,7 @@ class Beats(Cachable):
         return res
 
     def _resolve_path(self, path):
-        res = Path(path)
+        res = Path(app_config.beats.store_root) / path
         return res
 
     @property

@@ -53,6 +53,7 @@ class ApiConfig(BaseModel, extra=Extra.ignore):
 class BeatsConfig(BaseModel, extra=Extra.ignore):
     db_url: Optional[str]
     extractor_url: Optional[str]
+    store_root: str
 
 
 class FavouritesConfig(BaseModel, extra=Extra.ignore):
