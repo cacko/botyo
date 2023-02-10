@@ -157,21 +157,14 @@ class WSConnection(Connection):
             )
             assert isinstance(command, CommandExec)
             with perftime(f"Command {command.method.value}"):
-                task = asyncio.create_task(command.handler(context))
-                result = await task
-                logging.warning(result)
-                if task.exception():
-                    await self.send_error(request=request)
-                else:
-                    response = task.result()
-                    logging.warning(response)
-                    await context.send_async(response)
+                response = command.handler(context)
+                await context.send_async(response)
         except AssertionError as e:
             logging.error(e)
             await self.send_error(request=request)
         except Exception as e:
-            logging.error(e)
-            await self.send_error(request=request)
+            logging.exception(e)
+            raise WebSocketDisconnect()
 
     def auth(self, token: str):
         self.__user = Auth().verify_token(token)
@@ -179,10 +172,7 @@ class WSConnection(Connection):
     def send(self, response: ZSONResponse):
         if not self.__user:
             raise WSException("user is not authenticated")
-        try:
-            asyncio.run(self.send_async(response))
-        except asyncio.CancelledError:
-            logging.error(">>>>>>>>>>> DAMBN ERRROR")
+        asyncio.run(self.send_async(response))
 
     async def send_async(self, response: ZSONResponse):
         if not self.__user:
@@ -263,6 +253,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             else:
                 logging.debug(f"receive {data}")
                 asyncio.create_task(manager.process_command(data, client_id))
+                logging.debug(">>>>>> AFTER QUEUE")
     except WebSocketDisconnect:
         manager.disconnect(client_id)
     except Exception as e:
