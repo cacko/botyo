@@ -140,17 +140,8 @@ class ImageMeta(type):
         parser = cls.image_generator_parser
         if not prompt:
             return ImageGeneratorParams(prompt="")
-        parsed = parser.parse_args(split_with_quotes(prompt))
-        return ImageGeneratorParams(
-            prompt=" ".join(parsed.prompt),
-            height=parsed.height,
-            width=parsed.width,
-            guidance_scale=parsed.guidance_scale,
-            num_inference_steps=parsed.num_inference_steps,
-            negative_prompt=parsed.negative_prompt,
-            model=parsed.model,
-            seed=parsed.seed,
-            upscale=int(parsed.upscale))
+        namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
+        return ImageGeneratorParams(**namespace.__dict__)
 
     def variation(cls,
                   attachment: Attachment,
@@ -218,14 +209,14 @@ class Image(object, metaclass=ImageMeta):
 
     def do_variation(self, prompt: Optional[str] = None):
         assert prompt
-        params = __class__.variation_generator_params(prompt)
+        params = Image.variation_generator_params(prompt)
         return self.getResponse(Action.VARIATION,
                                 uuid4().hex,
                                 json=params.dict())
 
     def do_txt2img(self, prompt: str):
         try:
-            params = __class__.image_generator_params(prompt)
+            params = Image.image_generator_params(prompt)
 
             return self.getResponse(Action.TXT2IMG,
                                     params.prompt,
@@ -235,7 +226,7 @@ class Image(object, metaclass=ImageMeta):
 
     def do_gps2img(self, prompt: str):
         try:
-            params = __class__.image_generator_params(prompt)
+            params = Image.image_generator_params(prompt)
             return self.getResponse(Action.GPS2IMG,
                                     params.prompt,
                                     json=params.dict())
@@ -244,7 +235,7 @@ class Image(object, metaclass=ImageMeta):
 
     def do_portrait(self, prompt: str):
         try:
-            params = __class__.image_generator_params(prompt)
+            params = Image.image_generator_params(prompt)
             return self.getResponse(Action.PORTRAIT,
                                     params.prompt,
                                     json=params.dict())
@@ -253,14 +244,14 @@ class Image(object, metaclass=ImageMeta):
 
     def do_img2img(self, prompt: Optional[str] = None):
 
-        params = __class__.image_generator_params(prompt)
+        params = Image.image_generator_params(prompt)
         return self.getResponse(Action.IMG2IMG,
                                 params.prompt,
                                 json=params.dict())
 
-    def __make_request(self, path: str, json: Optional[dict] = None):
+    def __make_request(self, path: str, json: dict = {}):
         attachment = self.__attachment
-        params = {}
+        params: dict = {}
 
         if attachment:
             assert isinstance(attachment, dict)
@@ -275,15 +266,14 @@ class Image(object, metaclass=ImageMeta):
                 })
             }
 
-        if json:
-            params["data"] = reduce(
-                lambda r, x: {
-                    **r,
-                    **({
-                        x: json[x]
-                    } if json[x] else {})
-                }, json.keys(), {})
-            logging.debug(params["data"])
+        params["data"] = reduce(
+            lambda r, x: {
+                **r,
+                **({
+                    x: json.get("x")
+                } if json.get("x", None) else {})
+            }, json.keys(), {})
+        logging.debug(params["data"])
 
         return Request(f"{Config.image.base_url}/{path}",
                        method=Method.POST,
@@ -292,7 +282,7 @@ class Image(object, metaclass=ImageMeta):
     def getResponse(self,
                     action: Action,
                     action_param=None,
-                    json: Optional[dict] = None):
+                    json: dict = {}):
         path = action.value
         if action_param:
             path = f"{path}/{action_param}"
