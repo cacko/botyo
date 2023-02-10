@@ -6,18 +6,14 @@ from botyo.server.blueprint import Blueprint
 from argparse import ArgumentParser, ArgumentError
 from corestring import split_with_quotes
 import logging
-from typing import Optional
+from pydantic import BaseModel, Field
 
 bp = Blueprint("avatar")
 
 
-# type: ignore
-
-def parse_params(parser: ArgumentParser, query) -> Optional[dict]:
-    try:
-        return parser.parse_args(args=split_with_quotes(query))
-    except ArgumentError:
-        return None
+class AvatarArgs(BaseModel):
+    prompt: list[str]
+    regenerate: bool = Field(default=False)
 
 
 @bp.command(
@@ -29,19 +25,20 @@ def avatar_command(context: Context) -> RenderResult:
         parser = ArgumentParser(description="Avatar arguments",
                                 add_help=False, exit_on_error=False)
         parser.add_argument("prompt", nargs="+")
-        parser.add_argument("-n", "--new", action="store_true")
-        params = parse_params(parser=parser, query=context.query)
-        assert params
-        avatar = StableDiffusionAvatar(
-            name=" ".join(params.get("prompt", [])),
-            is_new=params.get("new", False)
-        )
+        parser.add_argument("-n", "--regenerate", action="store_true")
+        namespace, _ = parser.parse_known_args(split_with_quotes(context.query))
+        params = AvatarArgs(**namespace.__dict__)
+        avatar = StableDiffusionAvatar(" ".join(params.prompt), params.regenerate)
         path = avatar.path
         assert path
         assert path.exists()
         return RenderResult(
             method=ZMethod.AVATAR_AVATAR,
             attachment=Attachment(path=path.as_posix(), contentType=avatar.contentType),
+        )
+    except ArgumentError:
+        return EmptyResult(
+            method=ZMethod.AVATAR_AVATAR
         )
     except Exception as e:
         logging.info(e)
