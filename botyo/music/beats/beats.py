@@ -77,6 +77,7 @@ class Beats(Cachable):
 
     def _resolve_path(self, path):
         res = Path(app_config.beats.store_root) / path
+        logging.warning(res)
         return res
 
     @property
