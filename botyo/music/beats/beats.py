@@ -40,6 +40,7 @@ class Beats(Cachable):
         self.__with_vocals = with_vocals
         self.__force = force
         if not self.__path.exists():
+            logging.warning(self.__path)
             raise FileNotFoundError
 
     def load(self) -> bool:
@@ -77,7 +78,6 @@ class Beats(Cachable):
 
     def _resolve_path(self, path):
         res = Path(app_config.beats.store_root) / path
-        logging.warning(res)
         return res
 
     @property
