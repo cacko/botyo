@@ -5,6 +5,7 @@ from botyo.server.models import RenderResult, EmptyResult
 from botyo.server.models import ZMethod
 from stringcase import titlecase
 import logging
+from corestring import to_int
 
 bp = Blueprint("image")
 
@@ -130,14 +131,7 @@ def image_pixel(context: Context):
 def image_polygon(context: Context):
     attachment = context.attachment
     query = context.query
-    try:
-        assert query
-        query = int(query)
-    except (ValueError, AssertionError):
-        query = 800
-    if not attachment:
-        return EmptyResult(method=ZMethod.IMAGE_POLYGON)
-    attachment, message = Image.polygon(attachment, query)
+    attachment, message = Image.polygon(attachment, int(query))
     if all([attachment is None, message is None]):
         return RenderResult(
             message="No shit",
@@ -236,7 +230,7 @@ def gps2Image(context: Context):
     try:
         query = context.query
         assert query
-        attachment, msg = Image.gps2img(context.query)
+        attachment, msg = Image.gps2img(query)
         return RenderResult(
             attachment=attachment,
             message=msg,
