@@ -4,6 +4,7 @@ from botyo.server.models import Attachment, EmptyResult, RenderResult
 from botyo.server.models import ZMethod
 from botyo.server.blueprint import Blueprint
 from argparse import ArgumentParser, ArgumentError
+from corestring import split_with_quotes
 import logging
 
 bp = Blueprint("avatar")
@@ -18,10 +19,11 @@ bp = Blueprint("avatar")
 def avatar_command(context: Context) -> RenderResult:
     try:
         assert context.query
-        parser = ArgumentParser(description="Avatar arguments", exit_on_error=False)
+        parser = ArgumentParser(description="Avatar arguments",
+                                add_help=False, exit_on_error=False)
         parser.add_argument("prompt", nargs="+")
         parser.add_argument("-n", "--new", action="store_true")
-        params = parser.parse_args(context.query.split(" "))
+        params = parser.parse_args(split_with_quotes(context.query))
         avatar = StableDiffusionAvatar(" ".join(params.prompt), params.new)
         path = avatar.path
         assert path
