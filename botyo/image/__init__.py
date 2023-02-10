@@ -138,8 +138,8 @@ class ImageMeta(type):
             parser.add_argument("-g",
                                 "--guidance_scale",
                                 type=float,
-                                default=7)
-            parser.add_argument("-i", "--num_inference_steps", default=30)
+                                default=7.5)
+            parser.add_argument("-i", "--num_inference_steps", default=50)
             parser.add_argument("-s", "--seed", type=int)
             parser.add_argument("-m", "--model", default="default")
             parser.add_argument("-u", "--upscale", action="store_true")
@@ -152,8 +152,6 @@ class ImageMeta(type):
         if not prompt:
             return ImageGeneratorParams(prompt=[""])
         namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
-        logging.warning(namespace)
-        logging.warning(namespace.__dict__)
         return ImageGeneratorParams(**namespace.__dict__)
 
     def variation(cls,
