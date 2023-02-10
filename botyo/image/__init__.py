@@ -144,7 +144,7 @@ class ImageMeta(type):
                                prompt: Optional[str]) -> ImageGeneratorParams:
         parser = cls.image_generator_parser
         if not prompt:
-            return ImageGeneratorParams(prompt="")
+            return ImageGeneratorParams(prompt=[""])
         namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
         return ImageGeneratorParams(**namespace.__dict__)
 
