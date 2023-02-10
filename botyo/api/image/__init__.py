@@ -106,12 +106,7 @@ def image_pixel(context: Context):
         attachment = context.attachment
         assert attachment
         query = context.query
-        try:
-            assert query
-            query = int(query)
-        except (ValueError, AssertionError):
-            query = 8
-        attachment, _ = Image.pixel(attachment, query)
+        attachment, _ = Image.pixel(attachment, to_int(query, 8))
         assert attachment
         return RenderResult(
             attachment=attachment,
@@ -129,18 +124,18 @@ def image_pixel(context: Context):
     icon="hexagon"
 )  # type: ignore
 def image_polygon(context: Context):
-    attachment = context.attachment
-    query = context.query
-    attachment, message = Image.polygon(attachment, int(query))
-    if all([attachment is None, message is None]):
+    try:
+        attachment = context.attachment
+        assert attachment
+        query = context.query
+        attachment, _ = Image.polygon(attachment, to_int(query, 800))
+        assert attachment
         return RenderResult(
-            message="No shit",
+            attachment=attachment,
             method=ZMethod.IMAGE_POLYGON,
         )
-    return RenderResult(
-        attachment=attachment,
-        method=ZMethod.IMAGE_POLYGON,
-    )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_POLYGON)
 
 
 @bp.command(
@@ -180,25 +175,6 @@ def image_fromtext(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_TXT2IMG)
-
-
-# @bp.command(
-#     method=ZMethod.IMAGE_TXT2PORTRAIT,
-#     desc="text to portrait",
-#     icon="portrait"
-# )  # type: ignore
-# def portrait_fromtext(context: Context):
-#     try:
-#         query = context.query
-#         assert query
-#         attachment, _ = Image.txt2portrait(query)
-#         assert attachment
-#         return RenderResult(
-#             attachment=attachment,
-#             method=ZMethod.IMAGE_TXT2PORTRAIT,
-#         )
-#     except AssertionError:
-#         return EmptyResult(method=ZMethod.IMAGE_TXT2PORTRAIT)
 
 
 @bp.command(
