@@ -146,6 +146,8 @@ class ImageMeta(type):
         if not prompt:
             return ImageGeneratorParams(prompt=[""])
         namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
+        logging.warning(namespace)
+        logging.warning(namespace.__dict__)
         return ImageGeneratorParams(**namespace.__dict__)
 
     def variation(cls,

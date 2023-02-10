@@ -15,7 +15,7 @@ from pydantic import Field
 
 
 class CommandExecMeta(type):
-    registered = []
+    registered: list['CommandDef'] = []
 
     def parse(cls, message: str,
               **kwds) -> tuple[Optional["CommandDef"], Optional[str]]:
