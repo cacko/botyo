@@ -1,24 +1,19 @@
-from dataclasses import dataclass
-
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 from botyo.music.beats.db import BeatsDb
 from cachable import Cachable
 from cachable.request import Request
 from corestring import string_hash
-from dataclasses_json import dataclass_json
-from dataclasses import dataclass
 from .models.beats import Beats as BeatsModel
 from botyo.core.bytes import nearest_bytes
 from botyo.core.config import Config as app_config
 import logging
 from requests.exceptions import JSONDecodeError
+from pydantic import BaseModel, Extra
 
 
-@dataclass_json
-@dataclass
-class BeatsStruct:
-    path: Union[str, Path]
+class BeatsStruct(BaseModel, extra=Extra.ignore):
+    path: Optional[str | Path] = None
     beats: Optional[list[float]] = None
     tempo: Optional[float] = None
 
@@ -29,14 +24,12 @@ class BeatsStruct:
 
 class Beats(Cachable):
 
-    __path: Path = None
-    _id: str = None
-    __hop_length: int = 512
+    _id: Optional[str] = None
     __margin: int = 1
     __with_vocals: bool = True
     __force: bool = False
-    __tmppath: Path = None
-    _struct: BeatsStruct = None
+    __tmppath: Optional[Path] = None
+    _struct: Optional[BeatsStruct] = None
 
     def __init__(
         self, path: str, hop_length=512, margin=0, with_vocals=False, force=False
@@ -68,6 +61,8 @@ class Beats(Cachable):
 
     def tocache(self, res: BeatsStruct):
         with BeatsDb.db.atomic():
+            assert res
+            assert isinstance(res.path, Path)
             BeatsModel.insert(
                 path=res.path.as_posix(),
                 path_id=self.id,
@@ -101,7 +96,8 @@ class Beats(Cachable):
                     "with_vocals": self.__with_vocals,
                 },
             )
-            self._struct = BeatsStruct.from_dict(rs.json)
+            assert rs.json
+            self._struct = BeatsStruct(**rs.json)
             return self.tocache(self._struct)
         except JSONDecodeError as e:
             logging.error(e)
@@ -110,24 +106,31 @@ class Beats(Cachable):
     def model(self) -> BeatsStruct:
         if not self.load():
             self._load()
+        assert self._struct
         return self._struct
 
     @property
     def tempo(self) -> float:
         if not self.load():
             self._load()
+        assert self._struct
+        assert self._struct.tempo
         return self._struct.tempo
 
     @property
     def path(self) -> str:
         if not self.load():
             self._load()
-        return self._struct.path
+        assert self._struct
+        assert isinstance(self._struct.path, Path)
+        return self._struct.path.as_posix()
 
     @property
-    def beats(self) -> float:
+    def beats(self) -> list[float]:
         if not self.load():
             self._load()
         else:
             logging.debug(f"Loading beats for {self.__path} from cache")
+        assert self._struct
+        assert self._struct.beats
         return self._struct.beats

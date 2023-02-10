@@ -132,6 +132,7 @@ def get_livescore():
 def get_beats(request: Request):
     try:
         path = request.query_params.get("path")  # type: ignore
+        assert path
         beats = Beats(path=path)
         return beats.model.to_dict()  # type: ignore
     except (FileNotFoundError):

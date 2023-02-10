@@ -1,7 +1,7 @@
-from peewee import *
-from playhouse.db_url import connect, parse
-from playhouse.postgres_ext import *
+from playhouse.db_url import parse
+from playhouse.postgres_ext import PostgresqlExtDatabase
 from botyo.core.config import Config as app_config
+
 
 class BeatsDbMeta(type):
     _instance = None
@@ -17,7 +17,6 @@ class BeatsDbMeta(type):
 
 
 class BeatsDb(object, metaclass=BeatsDbMeta):
-    __db: PostgresqlExtDatabase = None
 
     def __init__(self):
         config = app_config.beats
