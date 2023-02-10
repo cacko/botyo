@@ -55,7 +55,7 @@ dependencies:
       - confection==0.0.4
       - corefile==0.1.2
       - corelog==0.0.7
-      - corestring==0.1.15
+      - corestring==0.1.17
       - corethread==0.1.3
       - coretime==0.1.4
       - cryptography==39.0.0
