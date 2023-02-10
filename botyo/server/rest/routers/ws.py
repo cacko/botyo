@@ -157,9 +157,15 @@ class WSConnection(Connection):
             )
             assert isinstance(command, CommandExec)
             with perftime(f"Command {command.method.value}"):
-                response = command.handler(context)
-                logging.warning(response)
-                await context.send_async(response)
+                task = asyncio.create_task(command.handler(context))
+                result = await task
+                logging.warning(result)
+                if task.exception():
+                    await self.send_error(request=request)
+                else:
+                    response = task.result()
+                    logging.warning(response)
+                    await context.send_async(response)
         except AssertionError as e:
             logging.error(e)
             await self.send_error(request=request)
@@ -234,10 +240,7 @@ class ConnectionManager:
                 case CoreMethods.LOGIN:
                     await connection.handle_login(request=msg)
                 case _:
-                    task = asyncio.create_task(connection.handle_command(request=msg))
-                    await task
-                    if ex := task.exception():
-                        raise ex
+                    await connection.handle_command(request=msg)
         except Exception as e:
             logging.exception(e)
             raise WebSocketDisconnect()
@@ -260,7 +263,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             else:
                 logging.debug(f"receive {data}")
                 asyncio.create_task(manager.process_command(data, client_id))
-                logging.debug(">>>>>> AFTER QUEUE")
     except WebSocketDisconnect:
         manager.disconnect(client_id)
     except Exception as e:
