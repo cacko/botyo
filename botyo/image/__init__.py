@@ -11,8 +11,8 @@ from botyo.server.output import TextOutput
 from emoji import emojize
 from botyo.image.models import AnalyzeReponse
 from typing import Optional
-from argparse import ArgumentParser, ArgumentError
-from pydantic import BaseModel, Field
+from argparse import ArgumentParser
+from pydantic import BaseModel, Field, validator
 from corestring import split_with_quotes
 from requests.exceptions import JSONDecodeError
 import logging
@@ -20,15 +20,19 @@ from functools import reduce
 
 
 class ImageGeneratorParams(BaseModel):
-    prompt: str
+    prompt: list[str]
     height: int = Field(default=512)
     width: int = Field(default=512)
     guidance_scale: float = Field(default=7)
-    num_inference_steps: int = Field(default=30)
+    num_inference_steps: int = Field(default=50)
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
     upscale: int = Field(default=0)
     model: str = Field(default="default")
+
+    @validator("prompt")
+    def static_prompt(cls, prompt: list[str]):
+        return " ".join(prompt)
 
 
 class VariationGeneratorParams(BaseModel):
@@ -222,8 +226,8 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(Action.TXT2IMG,
                                     params.prompt,
                                     json=params.dict())
-        except ArgumentError as e:
-            raise AssertionError(e.message)
+        except ValidationErr as e:
+            raise ApiError(f"{e}")
 
     def do_gps2img(self, prompt: str):
         try:
