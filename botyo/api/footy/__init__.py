@@ -12,9 +12,6 @@ from .item.competitions import CompetitionItem
 from botyo.server.output import TextOutput
 from botyo.server.models import ZMethod
 import logging
-from pathlib import Path
-from random import choice
-import filetype
 
 bp = Blueprint("footy")
 
@@ -74,13 +71,13 @@ def subscribe_command(context: Context):
     try:
         assert context.query
         result = Footy.subscribe(
-            client=context.client, 
-            groupID=context.group, 
+            client=context.client,
+            groupID=context.group,
             query=context.query
         )
         return RenderResult(
-            method=ZMethod.FOOTY_SUBSCRIBE, 
-            message=result.message, 
+            method=ZMethod.FOOTY_SUBSCRIBE,
+            message=result.message,
             group=context.group,
             new_id=result.sub_id
         )
@@ -103,9 +100,9 @@ def unsubscribe_command(context: Context):
             client=context.client, group=context.group, query=context.query
         )
         return RenderResult(
-            method=ZMethod.FOOTY_UNSUBSCRIBE, 
+            method=ZMethod.FOOTY_UNSUBSCRIBE,
             message=result.message,
-            new_id=result.sub_id, 
+            new_id=result.sub_id,
             group=context.group,
 
         )
@@ -135,7 +132,10 @@ def subscriptions_command(context: Context) -> RenderResult:
     )
 
 
-@bp.command(method=ZMethod.FOOTY_LEAGUES, desc="Enabled leagues", icon="emoji_events")  # type: ignore
+@bp.command(
+    method=ZMethod.FOOTY_LEAGUES,
+    desc="Enabled leagues",
+    icon="emoji_events")  # type: ignore
 def competitions_command(context: Context) -> RenderResult:
     try:
         competitions = Footy.competitions()
@@ -146,7 +146,10 @@ def competitions_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_LINEUP, desc="Game lineup", icon="fact_check")  # type: ignore
+@bp.command(
+    method=ZMethod.FOOTY_LINEUP,
+    desc="Game lineup",
+    icon="fact_check")  # type: ignore
 def lineups_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -161,7 +164,11 @@ def lineups_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_FACTS, desc="Game facts", icon="history_edu")  # type: ignore
+# type: ignore
+@bp.command(
+    method=ZMethod.FOOTY_FACTS,
+    desc="Game facts",
+    icon="history_edu")  # type: ignore
 def facts_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -173,7 +180,11 @@ def facts_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_STATS, desc="Game stats", icon="equalizer")  # type: ignore
+# type: ignore
+@bp.command(
+    method=ZMethod.FOOTY_STATS,
+    desc="Game stats",
+    icon="equalizer")  # type: ignore
 def stats_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -185,7 +196,11 @@ def stats_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_PLAYER, desc="Player stats", icon="snowboarding")  # type: ignore
+# type: ignore
+@bp.command(
+    method=ZMethod.FOOTY_PLAYER,
+    desc="Player stats",
+    icon="snowboarding")  # type: ignore
 def player_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -207,7 +222,11 @@ def player_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_STANDINGS, desc="standings", icon="signal_cellular_alt")  # type: ignore
+# type: ignore
+@bp.command(
+    method=ZMethod.FOOTY_STANDINGS,
+    desc="standings",
+    icon="signal_cellular_alt")  # type: ignore
 def standings_Command(context: Context):
     try:
         query = context.query
@@ -241,7 +260,10 @@ def standings_Command(context: Context):
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_TEAM, desc="Team info", icon="groups")  # type: ignore
+@bp.command(
+    method=ZMethod.FOOTY_TEAM,
+    desc="Team info",
+    icon="groups")  # type: ignore
 def team_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -254,7 +276,11 @@ def team_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-@bp.command(method=ZMethod.FOOTY_FIXTURES, desc="League fixtures", icon="calendar_month")  # type: ignore
+# type: ignore
+@bp.command(
+    method=ZMethod.FOOTY_FIXTURES,
+    desc="League fixtures",
+    icon="calendar_month")   # type: ignore
 def fixtures_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -263,22 +289,3 @@ def fixtures_command(context: Context) -> RenderResult:
         return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
     except Exception:
         return EmptyResult()
-
-
-# @bp.command(method=ZMethod.FOOTY_GOALS, desc="Da Goals", icon="sports_soccer")  # type: ignore
-# def goals_command(context: Context) -> RenderResult:
-#     try:
-#         # assert context.query
-#         gr = Path(Config.cachable.path) / "goals"
-#         mp4 = choice(list(gr.glob("*.mp4")))
-#         mime = filetype.guess_mime(mp4.as_posix())
-#         # competition = CompetitionItem(Footy.competition(context.query))
-#         # message = competition.render()
-#         return RenderResult(
-#             message="goals",
-#             attachment=Attachment(contentType=mime, path=mp4.as_posix()),
-#             method=ZMethod.FOOTY_GOALS,
-#         )
-#     except Exception as e:
-#         logging.exception(e)
-#         return EmptyResult()

@@ -1,5 +1,6 @@
 from pathlib import Path
-from botyo.server.models import Attachment
+from xml.dom import ValidationErr
+from botyo.server.models import Attachment, ApiError
 from cachable.request import Request, Method
 from cachable.storage.file import FileStorage
 from botyo.core.config import Config
@@ -230,8 +231,8 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(Action.GPS2IMG,
                                     params.prompt,
                                     json=params.dict())
-        except ArgumentError as e:
-            raise AssertionError(e.message)
+        except ValidationErr as e:
+            raise ApiError(f"{e}")
 
     def do_portrait(self, prompt: str):
         try:
@@ -239,8 +240,8 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(Action.PORTRAIT,
                                     params.prompt,
                                     json=params.dict())
-        except ArgumentError as e:
-            raise AssertionError(e.message)
+        except ValidationErr as e:
+            raise ApiError(f"{e}")
 
     def do_img2img(self, prompt: Optional[str] = None):
 
@@ -319,5 +320,5 @@ class Image(object, metaclass=ImageMeta):
                 message = req.json
             except JSONDecodeError as e:
                 logging.error(e)
-                raise AssertionError()
+                raise ApiError(f"{e}")
         return attachment, message

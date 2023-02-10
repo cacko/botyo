@@ -1,8 +1,12 @@
 from botyo.image import Image
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
-from botyo.server.models import RenderResult, EmptyResult
-from botyo.server.models import ZMethod
+from botyo.server.models import (
+    RenderResult,
+    EmptyResult,
+    ApiError,
+    ZMethod
+)
 from stringcase import titlecase
 import logging
 from corestring import to_int
@@ -91,6 +95,11 @@ def image_classify(context: Context):
             ),
             method=ZMethod.IMAGE_CLASSIFY,
         )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_CLASSIFY,
+            message=e.message
+        )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_CLASSIFY)
 
@@ -111,6 +120,11 @@ def image_pixel(context: Context):
         return RenderResult(
             attachment=attachment,
             method=ZMethod.IMAGE_PIXEL,
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_PIXEL,
+            message=e.message
         )
     except AssertionError as e:
         logging.exception(e)
@@ -134,6 +148,11 @@ def image_polygon(context: Context):
             attachment=attachment,
             method=ZMethod.IMAGE_POLYGON,
         )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_POLYGON,
+            message=e.message
+        )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_POLYGON)
 
@@ -154,6 +173,11 @@ def image_variation(context: Context):
             attachment=attachment,
             method=ZMethod.IMAGE_VARIATION,
         )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_VARIATION,
+            message=e.message
+        )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_VARIATION)
 
@@ -172,6 +196,11 @@ def image_fromtext(context: Context):
         return RenderResult(
             attachment=attachment,
             method=ZMethod.IMAGE_TXT2IMG,
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2IMG,
+            message=e.message
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_TXT2IMG)
@@ -193,6 +222,11 @@ def image2image(context: Context):
             attachment=attachment,
             method=ZMethod.IMAGE_IMG2IMG,
         )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_IMG2IMG,
+            message=e.message
+        )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_IMG2IMG)
 
@@ -211,6 +245,11 @@ def gps2Image(context: Context):
             attachment=attachment,
             message=msg,
             method=ZMethod.IMAGE_GPS2IMG,
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_GPS2IMG,
+            message=e.message
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_GPS2IMG)

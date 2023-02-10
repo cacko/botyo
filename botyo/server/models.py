@@ -10,6 +10,13 @@ from pydantic import BaseModel, Extra, Field
 from datetime import datetime
 
 
+class ApiError(Exception):
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+        super().__init__(message)
+
+
 class MethodMeta(EnumMeta):
     _enums: dict = {}
 
