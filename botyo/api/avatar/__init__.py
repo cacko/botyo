@@ -32,7 +32,11 @@ def avatar_command(context: Context) -> RenderResult:
             method=ZMethod.AVATAR_AVATAR,
             attachment=Attachment(path=path.as_posix(), contentType=avatar.contentType),
         )
-    except (Exception, ArgumentError) as e:
+    except ArgumentError:
+        return EmptyResult(
+            method=ZMethod.AVATAR_AVATAR
+        )
+    except Exception as e:
         logging.info(e)
         return EmptyResult()
 
