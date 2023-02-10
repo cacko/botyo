@@ -164,8 +164,8 @@ class WSConnection(Connection):
             logging.error(e)
             await self.send_error(request=request)
         except Exception as e:
-            logging.exception(e)
-            raise WebSocketDisconnect()
+            logging.error(e)
+            await self.send_error(request=request)
 
     def auth(self, token: str):
         self.__user = Auth().verify_token(token)
@@ -173,7 +173,10 @@ class WSConnection(Connection):
     def send(self, response: ZSONResponse):
         if not self.__user:
             raise WSException("user is not authenticated")
-        asyncio.run(self.send_async(response))
+        try:
+            asyncio.run(self.send_async(response))
+        except asyncio.CancelledError:
+            logging.error(">>>>>>>>>>> DAMBN ERRROR")
 
     async def send_async(self, response: ZSONResponse):
         if not self.__user:

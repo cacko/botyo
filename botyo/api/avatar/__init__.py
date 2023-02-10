@@ -15,7 +15,7 @@ bp = Blueprint("avatar")
 
 def parse_params(parser: ArgumentParser, query) -> Optional[dict]:
     try:
-        return parser.parse_args(split_with_quotes(query))
+        return parser.parse_args(args=split_with_quotes(query))
     except ArgumentError:
         return None
 
