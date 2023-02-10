@@ -159,6 +159,7 @@ class WSConnection(Connection):
             assert isinstance(command, CommandExec)
             with perftime(f"Command {command.method.value}"):
                 response = command.handler(context)
+                logging.warning(response)
                 await context.send_async(response)
         except AssertionError as e:
             logging.error(e)
@@ -219,7 +220,7 @@ class ConnectionManager:
     def disconnect(self, client_id):
         WSConnection.remove(client_id)
 
-    async def process_command(self, data, client_id) -> Optional[RenderResult]:
+    async def process_command(self, data, client_id):
         try:
             msg = ZSONRequest(**data)
             assert isinstance(msg, ZSONRequest)

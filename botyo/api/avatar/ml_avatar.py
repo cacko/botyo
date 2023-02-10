@@ -1,7 +1,6 @@
 from pathlib import Path
 from cachable.models import BinaryStruct
 from botyo.core.store import ImageCachable
-import logging
 from typing import Optional
 from botyo.image import Image
 from corestring import string_hash
@@ -66,6 +65,7 @@ class StableDiffusionAvatar(ImageCachable):
             "vibrant colors and hard shadows and strong rim light, plain background, "
             "comic cover art, trending on artstation -u"
         )
+
     @property
     def id(self):
         if not self.__id:
