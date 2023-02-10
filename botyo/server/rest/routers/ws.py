@@ -9,7 +9,6 @@ from botyo.server.command import CommandExec
 from botyo.server.connection import Context, Connection
 from botyo.core import perftime
 from botyo.server.models import (
-    RenderResult,
     ZSONType,
     EmptyResult,
     ZSONResponse,

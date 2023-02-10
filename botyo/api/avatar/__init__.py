@@ -3,14 +3,12 @@ from botyo.server.socket.connection import Context
 from botyo.server.models import Attachment, EmptyResult, RenderResult
 from botyo.server.models import ZMethod
 from botyo.server.blueprint import Blueprint
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentError
 import logging
 
 bp = Blueprint("avatar")
 
-parser = ArgumentParser(description="Avatar arguments", exit_on_error=False)
-parser.add_argument("prompt", nargs="+")
-parser.add_argument("-n", "--new", action="store_true")
+
 # type: ignore
 
 
@@ -20,6 +18,9 @@ parser.add_argument("-n", "--new", action="store_true")
 def avatar_command(context: Context) -> RenderResult:
     try:
         assert context.query
+        parser = ArgumentParser(description="Avatar arguments", exit_on_error=False)
+        parser.add_argument("prompt", nargs="+")
+        parser.add_argument("-n", "--new", action="store_true")
         params = parser.parse_args(context.query.split(" "))
         avatar = StableDiffusionAvatar(" ".join(params.prompt), params.new)
         path = avatar.path
@@ -29,8 +30,8 @@ def avatar_command(context: Context) -> RenderResult:
             method=ZMethod.AVATAR_AVATAR,
             attachment=Attachment(path=path.as_posix(), contentType=avatar.contentType),
         )
-    except Exception as e:
-        logging.exception(e)
+    except (Exception, ArgumentError) as e:
+        logging.info(e)
         return EmptyResult()
 
 
