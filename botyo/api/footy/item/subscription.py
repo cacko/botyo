@@ -187,7 +187,8 @@ class SubscriptionClient:
         except UnknownClientException:
             pass
 
-    def updateREST(self, data):
+    def updateREST(self, updateData: UpdateData):
+        data = updateData.message
         payload = []
         if isinstance(data, list):
             payload = [d.dict() for d in data]
