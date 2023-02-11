@@ -1,4 +1,4 @@
-from peewee import *
+from peewee import CharField, FloatField
 from . import BaseModel
 from playhouse.postgres_ext import JSONField
 
