@@ -378,7 +378,7 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            scoreUpdate, game_status, chatUpdate, icon  = self.updates(updated)
+            scoreUpdate, game_status, chatUpdate, icon = self.updates(updated)
             if not icon:
                 logo = LeagueImage(self._event.idLeague)
                 logo_path = logo.path
