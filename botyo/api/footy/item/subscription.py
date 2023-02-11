@@ -498,7 +498,7 @@ class Subscription(metaclass=SubscriptionMeta):
             )
             icon = reduce(lambda r, x: x.icon64
                           if x.icon64 else r, details.events, "")
-            return str(res), details.game_status, [*rows], icon
+            return str(res), f"{details.game_time}\"", [*rows], icon
         except AssertionError:
             return "", "", None, None
 
@@ -568,7 +568,7 @@ class Subscription(metaclass=SubscriptionMeta):
                             UpdateData(message=[self.startAnnouncementPixel],
                                        score_message="",
                                        start_time=self._event.startTime,
-                                       status=self._event.strStatus,
+                                       status=self._event.displayStatus,
                                        msgId=self.id))
                     else:
                         sc.sendUpdate(
@@ -576,7 +576,7 @@ class Subscription(metaclass=SubscriptionMeta):
                                        icon=Emoji.b64(emojize(":goal_net:")),
                                        score_message="",
                                        start_time=self._event.startTime,
-                                       status=self._event.strStatus,
+                                       status=self._event.displayStatus,
                                        msgId=self.id))
                 except UnknownClientException:
                     pass
@@ -611,10 +611,10 @@ class Subscription(metaclass=SubscriptionMeta):
                         self._event.strHomeTeam).base64,
                     away_team_icon=TeamLogoPixel(
                         self._event.strAwayTeam).base64,
-                    status=self._event.strStatus,
+                    status=self._event.displayStatus,
                 ),
                     start_time=self._event.startTime,
-                    status=self._event.strStatus,
+                    status=self._event.displayStatus,
                     score_message="",
                     msgId=self.id,
                     icon=pix.base64))
@@ -649,7 +649,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         UpdateData(message=text,
                                    score_message="",
                                    start_time=self._event.startTime,
-                                   status=self._event.strStatus,
+                                   status=self._event.displayStatus,
                                    msgId=self.id))
                 except UnknownClientException:
                     pass
