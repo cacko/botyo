@@ -125,7 +125,7 @@ def get_livescore():
     if not obj:
         raise HTTPException(404)
     events = obj.items
-    return [g.dict() for g in events] 
+    return [g.dict() for g in events]
 
 
 @router.get("/api/beats", tags=["api"])
@@ -134,7 +134,7 @@ def get_beats(request: Request):
         path = request.query_params.get("path")  # type: ignore
         assert path
         beats = Beats(path=path)
-        return beats.model.to_dict()  # type: ignore
+        return beats.model.dict()  # type: ignore
     except (FileNotFoundError):
         raise HTTPException(404)
 
