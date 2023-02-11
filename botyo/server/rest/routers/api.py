@@ -65,7 +65,8 @@ async def post_subscriptions(request: Request):
     data = await request.json()
     assert isinstance(data, dict)
     sc = SubscriptionClient(
-        client_id=data.get("webhook", ""), group_id=data.get("group")
+        data.get("webhook", ""),
+        data.get("group")
     )
     jobs = Subscription.forGroup(sc)
     return [{"id": job.id, "text": job.name} for job in jobs]
@@ -76,7 +77,8 @@ async def post_unsubscribe(request: Request):
     data = await request.json()
     assert isinstance(data, dict)
     sc = SubscriptionClient(
-        client_id=data.get("webhook", ""), group_id=data.get("group")
+        data.get("webhook", ""),
+        data.get("group")
     )
     jobs = Subscription.forGroup(sc)
     id_parts = data.get("id", "").split(":")
@@ -111,11 +113,15 @@ def get_league_logo(query: str):
 def get_league_schedule(query: str):
     data_league = Footy.competition(query)
     res = []
-    for game in data_league.games:
-        logo = LeagueImagePixel(data_league.id)
-        n64 = logo.base64
-        game.icon = n64
-        res.append(game.dict())
+    try:
+        assert data_league.games
+        for game in data_league.games:
+            logo = LeagueImagePixel(data_league.id)
+            n64 = logo.base64
+            game.icon = n64
+            res.append(game.dict())
+    except AssertionError:
+        pass
     return res
 
 

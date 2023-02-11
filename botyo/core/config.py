@@ -2,7 +2,7 @@ from os import environ
 from pathlib import Path
 from typing import Optional
 from yaml import load, Loader
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
 
 
 class OntvConfig(BaseModel, extra=Extra.ignore):
