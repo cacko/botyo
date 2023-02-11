@@ -1,6 +1,6 @@
 from botyo.api.cve.components import CVEHeader
 from cachable.request import Request
-from datetime import timedelta
+from datetime import datetime, timedelta
 from cachable.cacheable import TimeCacheable
 from cachable.storage.meta import StorageMeta
 from cachable.storage.redis import RedisStorage
@@ -45,6 +45,9 @@ class CVE(CVECachable):
             args["keywordSearch"] = cve_match.group(2)
         elif query:
             args["keywordSearch"] = query
+        else:
+            args["pubStartDate"] = (datetime.now() - timedelta(days=7)).isoformat()
+            args["pubEndDate"] = datetime.now().isoformat()
         req = Request("https://services.nvd.nist.gov/rest/json/cves/2.0", params=args)
         json = req.json
         logging.debug(json)
@@ -66,7 +69,8 @@ class CVE(CVECachable):
         assert self.response
         response: CVEResponse = self.response
         rows = [
-            CVEHeader(cve.cve.id, cve.cve.description, cve.cve.severity, cve.cve.attackVector)
+            CVEHeader(cve.cve.id, cve.cve.description,
+                      cve.cve.severity, cve.cve.attackVector)
             for cve in response.vulnerabilities
         ]
         TextOutput.addRows(rows)
