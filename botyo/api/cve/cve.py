@@ -9,7 +9,6 @@ from botyo.server.output import TextOutput
 from .models import CVEResponse
 from typing import Optional
 import re
-import logging
 
 CVE_ID_MATCH = re.compile(r'^(CVE-\d+-\d+)\s(.+)', re.IGNORECASE)
 
@@ -23,10 +22,11 @@ class CVECachable(TimeCacheable):
 class CVE(CVECachable):
     cachetime: timedelta = timedelta(minutes=30)
 
-    __query: Optional[str] = None
-    __ignoreCache: bool = False
-
-    def __init__(self, query: Optional[str] = None, ignoreCache: bool = False) -> None:
+    def __init__(
+        self,
+        query: Optional[str] = None,
+        ignoreCache: bool = False
+    ):
         self.__query = query
         self.__ignoreCache = ignoreCache
         super().__init__()
@@ -39,18 +39,19 @@ class CVE(CVECachable):
 
     def fetch(self):
         args = {}
-        query = self.__query.strip()
-        if cve_match := CVE_ID_MATCH.search(self.__query):
-            args["cveId"] = cve_match.group(1)
-            args["keywordSearch"] = cve_match.group(2)
-        elif query:
-            args["keywordSearch"] = query
+        if query := self.__query:
+            if cve_match := CVE_ID_MATCH.search(query):
+                args["cveId"] = cve_match.group(1)
+                args["keywordSearch"] = cve_match.group(2)
+            else:
+                args["keywordSearch"] = query
         else:
             args["pubStartDate"] = (datetime.now() - timedelta(days=7)).isoformat()
             args["pubEndDate"] = datetime.now().isoformat()
+        args["resultsPerPage"] = 20
         req = Request("https://services.nvd.nist.gov/rest/json/cves/2.0", params=args)
         json = req.json
-        logging.debug(json)
+        assert json
         return self.tocache(CVEResponse(**json))
 
     @property
@@ -69,8 +70,12 @@ class CVE(CVECachable):
         assert self.response
         response: CVEResponse = self.response
         rows = [
-            CVEHeader(cve.cve.id, cve.cve.description,
-                      cve.cve.severity, cve.cve.attackVector)
+            CVEHeader(
+                cve.cve.id,
+                cve.cve.description,
+                cve.cve.severity,
+                cve.cve.attackVector
+            )
             for cve in response.vulnerabilities
         ]
         TextOutput.addRows(rows)

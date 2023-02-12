@@ -12,7 +12,7 @@ def cli(ctx: Environment):
     sys.path.insert(0, app_folder)
     __import__("botyo")
     mod = __import__(
-        f"botyo", None, None, ["botyo"])
+        "botyo", None, None, ["botyo"])
     server = mod.create_app()
     server.register_scheduler(ctx.redis_url)
     logging.info("Init done")

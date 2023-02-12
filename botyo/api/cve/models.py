@@ -3,6 +3,7 @@ from pydantic import BaseModel, Extra
 from datetime import datetime
 from typing import Optional
 
+
 class AttackVector(StrEnum):
     NETWORK = "NETWORK"
 
@@ -19,6 +20,7 @@ class CVEReference(BaseModel, extra=Extra.ignore):
     url: str
     source: str
 
+
 class CVSSV2Data(BaseModel, extra=Extra.ignore):
     version: str
     vectorString: str
@@ -29,6 +31,7 @@ class CVSSV2Data(BaseModel, extra=Extra.ignore):
     integrityImpact: str
     availabilityImpact: str
     baseScore: float
+
 
 class CVSSV2(BaseModel, extra=Extra.ignore):
     source: str
@@ -42,6 +45,7 @@ class CVSSV2(BaseModel, extra=Extra.ignore):
     obtainUserPrivilege: bool
     obtainOtherPrivilege: bool
     userInteractionRequired: bool
+
 
 class CVSSV31Data(BaseModel, extra=Extra.ignore):
     version: str
@@ -102,7 +106,7 @@ class CVEItem(BaseModel, extra=Extra.ignore):
         if self.metrics.cvssMetricV2 is not None:
             return ",".join(
                 [x.baseSeverity for x in self.metrics.cvssMetricV2]
-            ) 
+            )
         return ""
 
     @property
@@ -114,7 +118,7 @@ class CVEItem(BaseModel, extra=Extra.ignore):
         if self.metrics.cvssMetricV2 is not None:
             return ",".join(
                 [x.cvssData.accessVector for x in self.metrics.cvssMetricV2]
-            )    
+            )
         return ""
 
 

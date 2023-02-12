@@ -1,7 +1,6 @@
 from botyo.api.cve.cve import CVE
 # from botyo.api.cve.subscription import Subscription
 from botyo.server.blueprint import Blueprint
-from botyo.server.output import TextOutput
 from botyo.server.models import RenderResult, EmptyResult
 from botyo.server.socket.connection import Context
 from botyo.server.models import ZMethod
@@ -10,7 +9,10 @@ from botyo.server.models import ZMethod
 bp = Blueprint("cve")
 
 
-@bp.command(method=ZMethod.CVE_CVE, desc="Latest Common Vulnerabilities and Exposures.", icon="bug_report")  # type: ignore
+@bp.command(
+    method=ZMethod.CVE_CVE,
+    desc="Latest Common Vulnerabilities and Exposures.",
+    icon="bug_report")  # type: ignore
 def cve_command(context: Context) -> RenderResult:
     try:
         cve = CVE(context.query)
@@ -20,7 +22,9 @@ def cve_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
-# @bp.command(method=ZMethod.CVE_ALERT, desc="subscribe for CVE updates")  # type: ignore
+# @bp.command(
+    # method=ZMethod.CVE_ALERT, 
+    # desc="subscribe for CVE updates")  # type: ignore
 # def cvesubscribe_command(context: Context) -> RenderResult:
 #     if any([not context.client, not context.group, not context.query]):
 #         return EmptyResult()
@@ -31,7 +35,9 @@ def cve_command(context: Context) -> RenderResult:
 #     )
 
 
-# @bp.command(method=ZMethod.CVE_UNALERT, desc="unsubscribe for CVE updates")  # type: ignore
+# @bp.command(
+    # method=ZMethod.CVE_UNALERT, 
+    # desc="unsubscribe for CVE updates")  # type: ignore
 # def cveunsubscribe_command(context: Context) -> RenderResult:
 #     if any([not context.client, not context.group, not context.query]):
 #         return EmptyResult()
@@ -48,7 +54,8 @@ def cve_command(context: Context) -> RenderResult:
 
 
 # @bp.command(
-#     method=ZMethod.CVE_LISTALERTS, desc="list current subscrionts for CVE updates"
+#     method=ZMethod.CVE_LISTALERTS, 
+# desc="list current subscrionts for CVE updates"
 # )  # type: ignore
 # def cvelistsubscriptions_command(context: Context) -> RenderResult:
 #     if any([not context.client, not context.group]):

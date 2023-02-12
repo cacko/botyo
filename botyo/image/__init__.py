@@ -13,7 +13,7 @@ from botyo.image.models import AnalyzeReponse
 from typing import Optional
 from argparse import ArgumentParser
 from pydantic import BaseModel, Field, validator
-from corestring import split_with_quotes
+from corestring import split_with_quotes, string_hash
 from requests.exceptions import JSONDecodeError
 import logging
 from functools import reduce
@@ -230,7 +230,7 @@ class Image(object, metaclass=ImageMeta):
             params = Image.image_generator_params(prompt)
 
             return self.getResponse(Action.TXT2IMG,
-                                    params.prompt,
+                                    string_hash(params.prompt),
                                     json=params.dict())
         except ValidationErr as e:
             raise ApiError(f"{e}")
