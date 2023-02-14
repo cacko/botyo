@@ -28,7 +28,7 @@ class StableDiffusionAvatar(ImageCachable):
     def _init(self):
         if self.isCached:
             return
-        attachment, _ = Image.txt2img(prompt=self.cmd)
+        attachment, message = Image.txt2img(prompt=self.cmd)
         assert attachment
         assert attachment.path
         assert self._path
