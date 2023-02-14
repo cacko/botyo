@@ -156,18 +156,18 @@ class ImageMeta(type):
 
     def variation(cls,
                   attachment: Attachment,
-                  prompt: Optional[str] = None) -> tuple[Attachment, dict]:
+                  prompt: Optional[str] = None) -> tuple[Attachment, str]:
         return cls(attachment).do_variation(prompt)
 
-    def txt2img(cls, prompt: str) -> tuple[Attachment, dict]:
+    def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt)
 
-    def txt2portrait(cls, prompt: str) -> tuple[Attachment, dict]:
+    def txt2portrait(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_portrait(prompt)
 
     def img2img(cls,
                 attachment: Attachment,
-                prompt: Optional[str] = None) -> tuple[Attachment, dict]:
+                prompt: Optional[str] = None) -> tuple[Attachment, str]:
         return cls(attachment).do_img2img(prompt)
 
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:

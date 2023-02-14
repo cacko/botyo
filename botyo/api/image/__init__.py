@@ -191,11 +191,12 @@ def image_fromtext(context: Context):
     try:
         query = context.query
         assert query
-        attachment, _ = Image.txt2img(query)
+        attachment, message = Image.txt2img(query)
         assert attachment
         return RenderResult(
             attachment=attachment,
             method=ZMethod.IMAGE_TXT2IMG,
+            message=message
         )
     except ApiError as e:
         return EmptyResult(
