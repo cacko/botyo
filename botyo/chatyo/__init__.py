@@ -15,7 +15,6 @@ class Payload(BaseModel, extra=Extra.ignore):
     detect_lang: Optional[bool] = None
 
 
-
 class Response(BaseModel, extra=Extra.ignore):
     response: str
     attachment: Optional[Attachment]
@@ -34,7 +33,8 @@ def getResponse(path: str, payload: Payload) -> Response:
         cp = FileStorage.storage_path
         multipart_data = req.multipart
         for part in multipart_data.parts:
-            content_type = part.headers.get(b"content-type", b"").decode()  # type: ignore
+            content_type = part.headers.get(
+                b"content-type", b"").decode()  # type: ignore
             logging.debug(f"Multipart part content-type: {content_type}")
             match content_type:
                 case "image/png":
@@ -48,6 +48,7 @@ def getResponse(path: str, payload: Payload) -> Response:
                     attachment = Attachment(path=fp.absolute().as_posix(),
                                             contentType="image/jpeg", )
                 case _:
+                    logging.debug(f"multipart text={part.text}")
                     message = part.text
     else:
         msg = req.json
