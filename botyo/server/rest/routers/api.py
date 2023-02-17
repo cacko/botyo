@@ -135,7 +135,7 @@ def get_livescore():
 
 
 @router.get("/api/beats", tags=["api"])
-def get_beats(request: Request):
+async def get_beats(request: Request):
     try:
         path = request.query_params.get("path")  # type: ignore
         assert path
