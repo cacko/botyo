@@ -9,15 +9,16 @@ from botyo.core.bytes import nearest_bytes
 from botyo.core.config import Config as app_config
 import logging
 from requests.exceptions import JSONDecodeError
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 
 
 class BeatsStruct(BaseModel, extra=Extra.ignore):
-    path: Optional[str | Path] = None
-    beats: Optional[list[float]] = None
-    tempo: Optional[float] = None
+    path: Path
+    beats: list[float] = Field(default=[])
+    tempo: float = Field(default=120.0)
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
         if isinstance(self.path, str):
             self.path = Path(self.path)
 
@@ -101,9 +102,11 @@ class Beats(Cachable):
             logging.warning(rs.json)
             assert rs.json
             self._struct = BeatsStruct(**rs.json)
+            logging.info(
+                f"{self._struct.path} {len(self._struct.beats)} {self._struct.tempo}")
             return self.tocache(self._struct)
         except JSONDecodeError as e:
-            logging.error(e)
+            logging.exception(e)
 
     @property
     def model(self) -> BeatsStruct:
