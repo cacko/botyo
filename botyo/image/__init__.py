@@ -28,6 +28,7 @@ class ImageGeneratorParams(BaseModel):
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
     upscale: int = Field(default=0)
+    auto_prompt: int = Field(default=0)
     model: str = Field(default="default")
 
     @validator("prompt")
@@ -37,6 +38,12 @@ class ImageGeneratorParams(BaseModel):
     @validator("upscale")
     def static_upscale(cls, upscale: Optional[bool] = None):
         if not upscale:
+            return 0
+        return 1
+
+    @validator("auto_prompt")
+    def static_auto_prompt(cls, auto_prompt: Optional[bool] = None):
+        if not auto_prompt:
             return 0
         return 1
 
