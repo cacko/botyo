@@ -88,6 +88,7 @@ class Beats(Cachable):
 
     def _load(self):
         try:
+            logging.warning(self.__path.as_posix())
             rs = Request(
                 url=app_config.beats.extractor_url,
                 params={
@@ -97,6 +98,7 @@ class Beats(Cachable):
                     "with_vocals": self.__with_vocals,
                 },
             )
+            logging.warning(rs.json)
             assert rs.json
             self._struct = BeatsStruct(**rs.json)
             return self.tocache(self._struct)
