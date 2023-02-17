@@ -252,7 +252,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 await websocket.send_json(PongMessage(id=ping.id).dict())
             else:
                 logging.debug(f"receive {data}")
-                asyncio.create_task(manager.process_command(data, client_id))
+                await manager.process_command(data, client_id)
     except WebSocketDisconnect:
         manager.disconnect(client_id)
     except Exception as e:
