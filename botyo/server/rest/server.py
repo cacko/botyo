@@ -1,10 +1,12 @@
-import uvicorn
+import asyncio
 from botyo.server.core import AppServer
 from corethread import StoppableThread
 from fastapi import FastAPI
 from .routers import api, ws
 from fastapi.middleware.cors import CORSMiddleware
 from botyo.core.config import Config
+from hypercorn.asyncio import serve
+from hypercorn.config import Config as hyper_config
 
 
 def get_app():
@@ -28,23 +30,25 @@ def get_app():
 
 class _APIServer(StoppableThread):
     def __init__(self, *args, **kwargs):
+        self.config = hyper_config()
         api_config = Config.api
-        server_config = uvicorn.Config(
-            app=get_app,
-            host=api_config.host,
-            port=api_config.port,
-            use_colors=True,
-            factory=True,
-        )
-        self.__server = uvicorn.Server(server_config)
+        hyper_config.bind = [f"{api_config.host}:{api_config.port}"]
+        # server_config = uvicorn.Config(
+        #     app=get_app,
+        #     host=api_config.host,
+        #     port=api_config.port,
+        #     use_colors=True,
+        #     factory=True,
+        # )
+        # self.__server = uvicorn.Server(server_config)
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        self.__server.run()
+        asyncio.run(serve(get_app(), self.config))  # type:ignore
 
     def stop(self):
         super().stop()
-        self.__server.should_exit = True
+        # self.__server.should_exit = True
 
 
 class APIServer(AppServer):
