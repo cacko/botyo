@@ -2,6 +2,7 @@ import logging
 import threading
 from corethread import StoppableThread
 from google.cloud.firestore import Client
+from botyo.server.core import AppServer
 
 
 delete_done = threading.Event()
@@ -27,3 +28,9 @@ class DeleteListener(StoppableThread):
                 case 'REMOVED':
                     logging.info(f"removed {change.document.get().to_dict()}")
                     delete_done.set()
+
+
+class CleaningServer(AppServer):
+    def __init__(self, db: Client) -> None:
+        worker = DeleteListener(client=db)
+        super().__init__(worker)

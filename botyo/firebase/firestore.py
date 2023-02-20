@@ -1,33 +1,36 @@
-from typing import Generator, Any
+from typing import Generator, Any, Optional
 from .service_account import ServiceAccount
 from google.cloud.firestore_v1.document import (
     DocumentReference
 )
 from google.cloud.firestore import CollectionReference, Client
 from firebase_admin import firestore
-from .listener import DeleteListener
 import time
 
 
 class FirestoreClientMeta(type):
-    _instance = None
+    _instance: Optional['FirestoreClient'] = None
 
     def __call__(cls,  *args: Any, **kwds: Any) -> Any:
         if not cls._instance:
             cls._instance = super().__call__(*args, **kwds)
         return cls._instance
 
+    @property
+    def db(cls) -> Client:
+        return cls().get_client()
+
 
 class FirestoreClient(object, metaclass=FirestoreClientMeta):
 
     BATCH_SIZE = 200
-    __batch = None
     __client: Client
 
     def __init__(self):
         self.__client = firestore.client(app=ServiceAccount.app)
-        self.deleteListner = DeleteListener(client=self.__client)
-        self.deleteListner.start()
+
+    def get_client(self) -> Client:
+        return self.__client
 
     def collections(self,
                     path=None) -> Generator[CollectionReference, None, None]:

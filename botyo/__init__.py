@@ -7,6 +7,8 @@ from botyo.api.footy import Footy
 from botyo.server.server import Server
 from botyo.firebase.service_account import ServiceAccount
 from botyo.server.rest.server import APIServer
+from botyo.firebase.firestore import FirestoreClient
+from botyo.firebase.listener import CleaningServer
 from pathlib import Path
 import signal
 import sys
@@ -16,6 +18,7 @@ corelog.register(os.environ.get("BOTYO_LOG_LEVEL", "INFO"))
 
 app = Server(Path(__file__).parent.parent)
 app.servers.append(APIServer())
+app.servers.append(CleaningServer(db=FirestoreClient.db))
 ServiceAccount.register(Path(os.environ.get("BOTYO_SERVICE_ACCOUNT", "")))
 RedisStorage.register(os.environ.get("BOTYO_REDIS_URL", ""))
 FileStorage.register(Path(app_config.cachable.path))
