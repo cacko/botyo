@@ -5,12 +5,14 @@ from google.cloud.firestore_v1.document import (
 )
 from google.cloud.firestore import CollectionReference, Client
 from firebase_admin import firestore
+from .listener import DeleteListener
 import time
+
 
 class FirestoreClientMeta(type):
     _instance = None
 
-    def __call__(cls, *args: Any, **kwds: Any) -> Any:
+    def __call__(cls,  *args: Any, **kwds: Any) -> Any:
         if not cls._instance:
             cls._instance = super().__call__(*args, **kwds)
         return cls._instance
@@ -20,11 +22,12 @@ class FirestoreClient(object, metaclass=FirestoreClientMeta):
 
     BATCH_SIZE = 200
     __batch = None
-    __batchIds = []
     __client: Client
 
     def __init__(self):
         self.__client = firestore.client(app=ServiceAccount.app)
+        self.deleteListner = DeleteListener(client=self.__client)
+        self.deleteListner.start()
 
     def collections(self,
                     path=None) -> Generator[CollectionReference, None, None]:
@@ -33,7 +36,7 @@ class FirestoreClient(object, metaclass=FirestoreClientMeta):
         else:
             ref = self.__client.document(path)
             yield from ref.collections()
-            
+
     def put(self, path: str, data: Any) -> DocumentReference:
         collection = self.__client.collection(path)
         data["ts"] = time.time()

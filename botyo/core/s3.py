@@ -1,3 +1,4 @@
+from distutils.command.build import build
 import boto3
 from pathlib import Path
 from botyo.core.config import Config as app_config
@@ -18,7 +19,6 @@ class S3Meta(type):
 
 
 class S3(object, metaclass=S3Meta):
-    _client: boto3.client = None
 
     def __init__(self) -> None:
         cfg = app_config.s3
@@ -42,3 +42,7 @@ class S3(object, metaclass=S3Meta):
             )
             logging.debug(res)
         return key
+
+    def delete_file(self, file_name: str) -> bool:
+        bucket = app_config.s3.storage_bucket_name
+        return self._client.delete_object(Bucket=bucket, Key=file_name)
