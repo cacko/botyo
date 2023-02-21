@@ -40,8 +40,8 @@ class Beats(Cachable):
         self.__margin = nearest_bytes(margin)
         self.__with_vocals = with_vocals
         self.__force = force
+        logging.warning(self.__path)
         if not self.__path.exists():
-            logging.warning(self.__path)
             raise FileNotFoundError
 
     def load(self) -> bool:

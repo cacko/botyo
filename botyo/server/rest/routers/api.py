@@ -135,10 +135,8 @@ def get_livescore():
 
 
 @router.get("/api/beats", tags=["api"])
-async def get_beats(request: Request):
+async def get_beats(path: str):
     try:
-        path = request.query_params.get("path")  # type: ignore
-        assert path
         beats = Beats(path=path)
         return beats.model.dict()  # type: ignore
     except (FileNotFoundError):
