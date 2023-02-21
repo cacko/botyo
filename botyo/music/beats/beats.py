@@ -40,7 +40,6 @@ class Beats(Cachable):
         self.__margin = nearest_bytes(margin)
         self.__with_vocals = with_vocals
         self.__force = force
-        logging.warning(self.__path)
         if not self.__path.exists():
             raise FileNotFoundError
 
@@ -89,7 +88,6 @@ class Beats(Cachable):
 
     def _load(self):
         try:
-            logging.warning(self.__path.as_posix())
             rs = Request(
                 url=app_config.beats.extractor_url,
                 params={
@@ -99,11 +97,8 @@ class Beats(Cachable):
                     "with_vocals": self.__with_vocals,
                 },
             )
-            logging.warning(rs.json)
             assert rs.json
             self._struct = BeatsStruct(**rs.json)
-            logging.info(
-                f"{self._struct.path} {len(self._struct.beats)} {self._struct.tempo}")
             return self.tocache(self._struct)
         except JSONDecodeError as e:
             logging.exception(e)

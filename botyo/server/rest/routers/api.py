@@ -138,7 +138,7 @@ def get_livescore():
 async def get_beats(path: str):
     try:
         beats = Beats(path=path)
-        return beats.model.dict()  # type: ignore
+        return beats.model.dict()
     except (FileNotFoundError):
         raise HTTPException(404)
 
@@ -153,5 +153,3 @@ async def post_nowplaying(request: Request):
     except AssertionError as e:
         logging.error(e)
     return {}
-
-
