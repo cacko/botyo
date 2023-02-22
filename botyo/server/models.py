@@ -248,9 +248,6 @@ class ZSONMessage(BaseModel, extra=Extra.ignore):
         if not self.id:
             self.id = uuid4().hex
 
-    def encode(self) -> bytes:
-        return self.json().encode()
-
 
 class ZSONResponse(ZSONMessage):
     error: Optional[str] = None

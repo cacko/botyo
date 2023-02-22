@@ -10,7 +10,7 @@ from botyo.server.output import TextOutput
 from botyo.server.scheduler import Scheduler
 from apscheduler.schedulers.base import JobLookupError, Job
 from botyo.server.socket.connection import Connection, UnknownClientException
-from botyo.server.models import RenderResult, Attachment, ZSONResponse
+from botyo.server.models import RenderResult, Attachment, ZSONMessage, ZSONResponse
 from botyo.threesixfive.item.models import (
     CancelJobEvent,
     DetailsEventPixel,
@@ -44,6 +44,7 @@ from pydantic import BaseModel
 from botyo.core.store import RedisCachable
 from functools import reduce
 from botyo.unicode_text.emoji import Emoji
+import json
 
 
 class Headers(Enum):
@@ -192,9 +193,8 @@ class SubscriptionClient:
         payload = []
         if isinstance(data, list):
             payload = [d.dict() for d in data]
-        elif hasattr(data, "json"):
-            payload = data.json()
-        logging.debug(payload)
+        elif isinstance(data, ZSONMessage):
+            payload = json.loads(data.json())
         try:
             assert self.group_id
             resp = post(f"{self.client_id}",

@@ -138,7 +138,7 @@ class SocketConnection(Connection, StreamRequestHandler):
 
     def _request(self, method: Method):
         req = ZSONRequest(method=method, source="")
-        data = req.encode()
+        data = req.json().encode()
         self.wfile.write(
             len(data).to_bytes(4, byteorder="little", signed=False))
         self.wfile.write(data)
@@ -147,7 +147,7 @@ class SocketConnection(Connection, StreamRequestHandler):
     def send(self, response: ZSONResponse):
         if response.headline:
             response.message = f"{response.message}\n{response.headline}"
-        data = response.encode()
+        data = response.json().encode()
         size = len(data)
         self.wfile.write(size.to_bytes(4, byteorder="little", signed=False))
         self.wfile.write(data)
