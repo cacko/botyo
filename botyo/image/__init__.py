@@ -66,6 +66,13 @@ class Action(Enum):
     IMG2IMG = "image/img2img"
     PORTRAIT = "image/txt2portrait"
     GPS2IMG = "image/gps2img"
+    TXT2CLAY = "image/txt2clay"
+    TXT2ZOMBIE = "image/txt2zombie"
+    TXT2DISNEY = "images/txt2disney"
+    TXT2INK = "images/txt2ink"
+    TXT2PAPER = "images/txt2paper"
+    TXT2ALBUMART = "images/txt2albumart"
+    TXT2ICON = "images/txt2icon"
 
 
 class ImageMeta(type):
@@ -170,6 +177,27 @@ class ImageMeta(type):
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt)
 
+    def txt2ink(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2INK)
+
+    def txt2disney(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2DISNEY)
+
+    def txt2clay(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2CLAY)
+
+    def txt2paper(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2PAPER)
+
+    def txt2zombie(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2ZOMBIE)
+
+    def txt2albumart(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2ALBUMART)
+
+    def txt2icon(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2ICON)
+
     def txt2portrait(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_portrait(prompt)
 
@@ -233,13 +261,18 @@ class Image(object, metaclass=ImageMeta):
                                 uuid4().hex,
                                 json=params.dict())
 
-    def do_txt2img(self, prompt: str):
+    def do_txt2img(
+        self,
+        prompt: str,
+        action: Action = Action.TXT2IMG
+    ):
         try:
             params = Image.image_generator_params(prompt)
-
-            return self.getResponse(Action.TXT2IMG,
-                                    string_hash(params.prompt),
-                                    json=params.dict())
+            return self.getResponse(
+                action=action,
+                action_param=string_hash(params.prompt),
+                json=params.dict()
+            )
         except ValidationErr as e:
             raise ApiError(f"{e}")
 

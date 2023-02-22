@@ -254,3 +254,178 @@ def gps2Image(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_GPS2IMG)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2ALBUMART,
+    desc="text to album cover",
+    icon="album"
+)  # type: ignore
+def image_fromtext2albumart(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2albumart(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2ALBUMART,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2ALBUMART,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2IMG)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2CLAY,
+    desc="text to clay illustration",
+    icon="palette"
+)  # type: ignore
+def image_fromtext2clay(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2clay(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2CLAY,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2CLAY,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2CLAY)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2ICON,
+    desc="text to flat icon design",
+    icon="palette"
+)  # type: ignore
+def image_fromtext2icon(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2icon(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2ICON,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2ICON,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2ICON)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2PAPER,
+    desc="text to paper cut",
+    icon="draw"
+)  # type: ignore
+def image_fromtext2paer(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2paper(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2PAPER,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2PAPER,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2PAPER)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2INK,
+    desc="text to ink punk illustation",
+    icon="draw"
+)  # type: ignore
+def image_fromtext2ink(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2ink(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2INK,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2INK,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2INK)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2ZOMBIE,
+    desc="text to zombie image",
+    icon="draw"
+)  # type: ignore
+def image_fromtext2zombie(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2zombie(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2ZOMBIE,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2ZOMBIE,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2ZOMBIE)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2DISNEY,
+    desc="text to modern disnety style image",
+    icon="draw"
+)  # type: ignore
+def image_fromtext2disney(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2disney(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2DISNEY,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2DISNEY,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2DISNEY)
