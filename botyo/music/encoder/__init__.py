@@ -42,7 +42,7 @@ class EncodeMeta(type):
     def content_type(cls) -> str:
         match (cls.codec):
             case CODEC.OPUS:
-                return "audio/ogg;codecs=opus"
+                return "audio/ogg; codecs=opus"
             case CODEC.AAC:
                 return "audio/mp4"
         raise AssertionError("not support content type")
