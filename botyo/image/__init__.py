@@ -68,11 +68,11 @@ class Action(Enum):
     GPS2IMG = "image/gps2img"
     TXT2CLAY = "image/txt2clay"
     TXT2ZOMBIE = "image/txt2zombie"
-    TXT2DISNEY = "images/txt2disney"
-    TXT2INK = "images/txt2ink"
-    TXT2PAPER = "images/txt2paper"
-    TXT2ALBUMART = "images/txt2albumart"
-    TXT2ICON = "images/txt2icon"
+    TXT2DISNEY = "image/txt2disney"
+    TXT2INK = "image/txt2ink"
+    TXT2PAPER = "image/txt2paper"
+    TXT2ALBUMART = "image/txt2albumart"
+    TXT2ICON = "image/txt2icon"
 
 
 class ImageMeta(type):
