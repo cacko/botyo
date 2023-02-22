@@ -22,7 +22,7 @@ from botyo.server.connection import (
 from typing import Optional
 
 BYTEORDER = "little"
-CHUNKSIZE = 2**8
+CHUNKSIZE = 2**13
 
 
 class SocketConnection(Connection, StreamRequestHandler):
