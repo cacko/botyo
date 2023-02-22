@@ -55,8 +55,8 @@ class Song:
                     return self.__found
                 if p.returncode:
                     print(p.returncode)
-                    return
-            return
+                    return None
+            return None
         return self.__found
 
     def __identify(self):
