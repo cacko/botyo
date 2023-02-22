@@ -75,6 +75,7 @@ class ShortGameStatus(Enum):
     AFTER_PENALTIES = "After Pen"
     BEFORE_PENALTIES = "Before Pen."
     INTO_ET = "Into ET"
+    ENDED = "Ended"
 
 
 class OrderWeight(Enum):

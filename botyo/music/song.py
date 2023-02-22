@@ -6,6 +6,7 @@ from cachable.storage.file import FileStorage
 from botyo.music.encoder import Encoder
 from typing import Optional
 
+
 class Song:
 
     __query: Optional[str] = None

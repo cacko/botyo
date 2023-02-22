@@ -441,7 +441,9 @@ class Subscription(metaclass=SubscriptionMeta):
             Player.store(content.game)
             if any([
                     ShortGameStatus(content.game.shortStatusText) in [
-                        ShortGameStatus.FINAL, ShortGameStatus.AFTER_PENALTIES
+                        ShortGameStatus.FINAL,
+                        ShortGameStatus.AFTER_PENALTIES,
+                        ShortGameStatus.ENDED
                     ],
             ]):
                 for sc in self.subscriptions:

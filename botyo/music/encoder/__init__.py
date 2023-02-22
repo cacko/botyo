@@ -5,6 +5,7 @@ import shlex
 import os
 import logging
 from botyo.core.config import Config as app_config
+from typing import Optional
 
 
 class CODEC(IntEnum):
@@ -13,7 +14,7 @@ class CODEC(IntEnum):
 
 
 class EncodeMeta(type):
-    __instance: "Encoder" = None
+    __instance: Optional["Encoder"] = None
 
     def __call__(cls, *args, **kwds):
         if not cls.__instance:
@@ -35,7 +36,7 @@ class EncodeMeta(type):
                 return "opus"
             case CODEC.AAC:
                 return "m4a"
-        return None
+        raise AssertionError("not suported")
 
     @property
     def content_type(cls) -> str:
@@ -44,7 +45,7 @@ class EncodeMeta(type):
                 return "audio/ogg"
             case CODEC.AAC:
                 return "audio/mp4"
-        return None
+        raise AssertionError("not support content type")
 
     def encode(cls, input_path: Path, output_path: Path):
         return cls().do_encode(input_path=input_path, output_path=output_path)
@@ -68,7 +69,7 @@ class Encoder(object, metaclass=EncodeMeta):
         )
 
     def get_cmd(self, input_path: Path, output_path: Path) -> tuple[str]:
-        match (__class__.codec):
+        match (Encoder.codec):
             case CODEC.OPUS:
                 return (
                     "ffmpeg",
