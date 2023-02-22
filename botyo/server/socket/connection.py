@@ -151,7 +151,7 @@ class SocketConnection(Connection, StreamRequestHandler):
         size = len(data)
         self.wfile.write(size.to_bytes(4, byteorder="little", signed=False))
         self.wfile.write(data)
-        # self.wfile.flush()
+        self.wfile.flush()
         try:
             assert response.attachment
             assert response.attachment.path
@@ -165,8 +165,7 @@ class SocketConnection(Connection, StreamRequestHandler):
             with p.open("rb") as f:
                 while data := f.read(CHUNKSIZE):
                     sent += self.wfile.write(hexlify(data))
+                    self.wfile.flush()
             logging.debug(f">>>SEND {sent} BYTES")
         except AssertionError:
             pass
-        self.wfile.flush()
-
