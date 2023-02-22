@@ -9,7 +9,7 @@ class UnknownClientException(Exception):
 
 
 class ConnectionMeta(type):
-    connections = {}
+    connections: dict[str, 'Connection'] = {}
 
     def client(cls, clientId: str) -> "Connection":
         if clientId not in cls.connections:

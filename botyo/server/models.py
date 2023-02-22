@@ -243,12 +243,13 @@ class ZSONMessage(BaseModel, extra=Extra.ignore):
     method: Optional[ZMethod | CoreMethods] = None
     source: Optional[str] = None
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
         if not self.id:
             self.id = uuid4().hex
 
     def encode(self) -> bytes:
-        return self.json().encode()  # type: ignore
+        return self.json().encode()
 
 
 class ZSONResponse(ZSONMessage):

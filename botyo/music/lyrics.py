@@ -3,13 +3,15 @@ from .shell import Shell
 from typing import Optional
 from shlex import quote
 
+
 class LyricsShell(Shell):
     OUTPUT_IGNORED = ["Tekst piosenki:", "Dodaj", "Historia"]
     OUTPUT_REPLACED = ["lyrics: fetched lyrics:",
                        "lyrics: lyrics already present:"]
 
     executable = "mamba"
-    executable_arguments = ["run", "-n", "base", "--live-stream", "beet", "lyrics", "-p"]
+    executable_arguments = ["run", "-n", "base",
+                            "--live-stream", "beet", "lyrics", "-p"]
 
     def __post_init__(self):
         if len(self.args) == 1 and not self.args[0].startswith("title:"):

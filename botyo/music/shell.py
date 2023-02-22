@@ -5,6 +5,8 @@ from typing import Generator
 import shlex
 import logging
 from typing import Optional
+
+
 class ShellMeta(type):
     def __call__(cls, *args, **kwargs):
         return type.__call__(cls, *args, **kwargs)

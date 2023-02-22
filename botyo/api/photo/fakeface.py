@@ -19,7 +19,8 @@ class Query(BaseModel, extra=Extra.ignore):
     maximum_age: Optional[int] = Field(default=70)
     t: Optional[str] = None
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
         self.t = uuid1().hex
 
 

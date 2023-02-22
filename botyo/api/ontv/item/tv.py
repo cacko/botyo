@@ -7,8 +7,9 @@ from marshmallow import fields
 from botyo.server.output import TextOutput, Align, Column, shorten
 from coretime import time_hhmm
 from functools import reduce
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
 import json
+
 
 class Event(BaseModel, extra=Extra.ignore):
     id: str
@@ -26,7 +27,8 @@ class Event(BaseModel, extra=Extra.ignore):
     league_name: str = ""
     has_expired: bool = False
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
         self.has_expired = (
             datetime.now(tz=timezone.utc) - timedelta(hours=3) > self.time
         )

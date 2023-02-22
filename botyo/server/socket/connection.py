@@ -55,16 +55,18 @@ class SocketConnection(Connection, StreamRequestHandler):
                 if message.ztype == ZSONType.REQUEST:
                     request = ZSONRequest.parse_raw(msg_json)  # type: ignore
                     if request.method == CoreMethods.LOGIN:
-                        if request.client in __class__.connections:
+                        if request.client in SocketConnection.connections:
                             logging.debug(
                                 f">> Closing old registration {request.client}"
                             )
                             assert request.client
-                            __class__.client(request.client).request.close()
-                            del __class__.connections[request.client]
+                            connection = SocketConnection.client(request.client)
+                            assert isinstance(connection, StreamRequestHandler)
+                            connection.request.close()
+                            del SocketConnection.connections[request.client]
                         assert request.client
                         self.__clientId = request.client
-                        __class__.connections[self.__clientId] = self
+                        SocketConnection.connections[self.__clientId] = self
                         logging.debug(
                             f">> Client registration {self.__clientId}")
                     elif request.attachment and any(

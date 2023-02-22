@@ -1,8 +1,7 @@
 from enum import Enum
-from dataclasses_json import dataclass_json
-from dataclasses import dataclass
 from datetime import datetime
 from urllib.parse import urlencode
+from pydantic import BaseModel, Field
 
 
 class BASEURL(Enum):
@@ -12,7 +11,8 @@ class BASEURL(Enum):
     COMPETITIONS = "https://webws.365scores.com/web/competitions"
     COMPETITION_IMAGE = (
         "https://imagecache.365scores.com/image/upload/"
-        "f_png,w_24,h_24,c_limit,q_auto:eco,dpr_2,d_Countries:Round:17.png/v2/Competitions/"
+        "f_png,w_24,h_24,c_limit,q_auto:eco,dpr_2,d_Countries:Round:17.png/v2/"
+        "Competitions/"
     )
     TEAM_IMAGE = (
         "https://imagecache.365scores.com/image/upload/"
@@ -26,124 +26,105 @@ class BASEURL(Enum):
     COMPETITION_SCHEDULE = "https://webws.365scores.com/web/games/current"
 
 
-@dataclass_json
-@dataclass
-class CompetitionScheduleArguments:
+class CompetitionScheduleArguments(BaseModel):
     competitions: int
-    appTypeId: int = 5
-    langId: int = 1
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
-    showOdds: bool = True
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
+    showOdds: bool = Field(default=True)
 
 
-@dataclass_json
-@dataclass
-class StandingsArguments:
+class StandingsArguments(BaseModel):
     competitions: int
-    appTypeId: int = 5
-    langId: int = 1
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
-    showOdds: bool = True
-    live: bool = True
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
+    showOdds: bool = Field(default=True)
+    live: bool = Field(default=True)
 
 
-@dataclass_json
-@dataclass
-class BracketsArguments:
+class BracketsArguments(BaseModel):
     competitions: int
-    appTypeId: int = 5
-    langId: int = 1
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
-    showOdds: bool = True
-    live: bool = True
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
+    showOdds: bool = Field(default=True)
+    live: bool = Field(default=True)
 
 
-@dataclass_json
-@dataclass
-class SearchArguments:
+class SearchArguments(BaseModel):
     query: str
-    appTypeId: int = 5
-    langId: int = 1
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
     filter: str = "all"
 
 
-@dataclass_json
-@dataclass
-class TeamStatsArguments:
+class TeamStatsArguments(BaseModel):
     competitor: int
     competition: int
-    appTypeId: int = 5
-    langId: int = 1
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
-    filter: str = "all"
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
+    filter: str = Field(default="all")
 
 
-@dataclass_json
-@dataclass
-class LiveScoresArguments:
-    appTypeId: int = 5
-    langId: int = 1
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
-    showOdds: bool = True
-    competitions: str = ""
+class LiveScoresArguments(BaseModel):
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
+    showOdds: bool = Field(default=True)
+    competitions: str = Field(default="")
 
 
-@dataclass_json
-@dataclass
-class CompetitorScoresArguments:
+class CompetitorScoresArguments(BaseModel):
     competitors: int
-    appTypeId: int = 5
-    langId: int = 1
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
-    showOdds: bool = True
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
+    showOdds: bool = Field(default=True)
 
 
-@dataclass_json
-@dataclass
-class AllScoresArguments:
-    startDate: str = ""
-    endDate: str = ""
-    appTypeId: int = 5
-    langId: int = 1
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
-    sports: int = 1
-    showOdds: bool = True
-    onlyMajorGames: bool = False
-    withTop: bool = True
+class AllScoresArguments(BaseModel):
+    startDate: str = Field(default="")
+    endDate: str = Field(default="")
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
+    sports: int = Field(default=1)
+    showOdds: bool = Field(default=True)
+    onlyMajorGames: bool = Field(default=False)
+    withTop: bool = Field(default=True)
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
         now = datetime.now().strftime("%d/%m/%y")
         self.startDate = now
         self.endDate = now
 
 
-@dataclass_json
-@dataclass
-class GameArguments:
+class GameArguments(BaseModel):
     gameId: int
-    appTypeId: int = 5
-    langId: int = 10
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
 
 
-@dataclass_json
-@dataclass
-class CompetitionsArguments:
-    appTypeId: int = 5
-    langId: int = 10
-    timezoneName: str = "UTC"
-    userCountryId: int = 1
-    sportId: int = 1
+class CompetitionsArguments(BaseModel):
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
+    sportId: int = Field(default=1)
 
 
 class UrlMeta(type):
@@ -156,44 +137,44 @@ class UrlMeta(type):
 
     def search(cls, filter: str):
         query = SearchArguments(query=filter)
-        return f"{BASEURL.SEARCH.value}/?{urlencode(query.to_dict())}"  # type: ignore
+        return f"{BASEURL.SEARCH.value}/?{urlencode(query.dict())}"
 
     def livescores(cls, leagues):
         if not leagues:
             query = AllScoresArguments()
-            return f"{BASEURL.ALLSCORES.value}/?{urlencode(query.to_dict())}"  # type: ignore
+            return f"{BASEURL.ALLSCORES.value}/?{urlencode(query.dict())}"
         query = LiveScoresArguments(competitions=",".join(map(str, leagues)))
-        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.to_dict())}"  # type: ignore
+        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.dict())}"
 
     def badge(cls, team_id):
         return f"{BASEURL.TEAM_IMAGE.value}/{team_id}"
 
     def game(cls, game_id):
         query = GameArguments(gameId=game_id)
-        return f"{BASEURL.GAME.value}/?{urlencode(query.to_dict())}"  # type: ignore
+        return f"{BASEURL.GAME.value}/?{urlencode(query.dict())}"
 
     def competitions(cls):
         query = CompetitionsArguments()
-        return f"{BASEURL.COMPETITIONS.value}/?{urlencode(query.to_dict())}"  # type: ignore
+        return f"{BASEURL.COMPETITIONS.value}/?{urlencode(query.dict())}"
 
     def competition_logo(cls, competition_id):
         return f"{BASEURL.COMPETITION_IMAGE.value}/{competition_id}"
 
     def competition_schedule(cls, competition_id):
         query = CompetitionScheduleArguments(competitions=competition_id)
-        return f"{BASEURL.COMPETITION_SCHEDULE.value}/?{urlencode(query.to_dict())}"  # type: ignore
+        return f"{BASEURL.COMPETITION_SCHEDULE.value}/?{urlencode(query.dict())}"
 
     def standings(cls, competition_id):
         query = StandingsArguments(competitions=competition_id)
-        return f"{BASEURL.STANDINGS.value}/?{urlencode(query.to_dict())}"  # type: ignore
+        return f"{BASEURL.STANDINGS.value}/?{urlencode(query.dict())}"
 
     def brackets(cls, competition_id):
         query = BracketsArguments(competitions=competition_id)
-        return f"{BASEURL.BRACKETS.value}/?{urlencode(query.to_dict())}"  # type: ignore
+        return f"{BASEURL.BRACKETS.value}/?{urlencode(query.dict())}"
 
     def team_games(cls, competitor_id):
         query = CompetitorScoresArguments(competitors=competitor_id)
-        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.to_dict())}"  # type: ignore
+        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.dict())}"
 
 
 class Url(metaclass=UrlMeta):
