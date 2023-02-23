@@ -1,4 +1,5 @@
 from requests import post
+from botyo.api.footy.item.livescore import Livescore
 from botyo.api.logo.team import TeamLogoPixel
 from botyo.music.nowplay import Track
 from botyo.music.beats import Beats
@@ -10,6 +11,7 @@ from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
 from botyo.api.footy.footy import Footy
 from fastapi import APIRouter, Request, HTTPException
 import logging
+from fastapi.concurrency import run_in_threadpool
 
 router = APIRouter()
 
@@ -126,30 +128,37 @@ def get_league_schedule(query: str):
 
 
 @router.get("/api/livescore", tags=["api"])
-def get_livescore():
+async def get_livescore():
+    def scores(obj: Livescore):
+        events = obj.items
+        return [g.dict() for g in events]
+        
     obj = Footy.livescore()
     if not obj:
         raise HTTPException(404)
-    events = obj.items
-    return [g.dict() for g in events]
+    return await run_in_threadpool(scores, obj=obj)
 
 
 @router.get("/api/beats", tags=["api"])
 async def get_beats(path: str):
-    try:
+    def extract(path):
         beats = Beats(path=path)
         return beats.model.dict()
+    try:
+        return await run_in_threadpool(extract, path=path)
     except (FileNotFoundError):
         raise HTTPException(404)
 
 
 @router.post("/api/nowplaying", tags=["api"])
 async def post_nowplaying(request: Request):
+    def persist(data: dict):
+        _ = Track(**data)
+        Track.persist()
     try:
         data = await request.json()
         assert isinstance(data, dict)
-        _ = Track(**data)
-        Track.persist()
+        await run_in_threadpool(persist, data=data)
     except AssertionError as e:
         logging.error(e)
     return {}
