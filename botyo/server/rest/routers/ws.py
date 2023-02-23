@@ -268,7 +268,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         try:
             while True:
                 if queue.empty():
-                    print(f"getting weather data for {data}")
                     await asyncio.sleep(0.2)
                 else:
                     data = queue.get_nowait()
