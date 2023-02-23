@@ -260,7 +260,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
 
     async def read_from_socket(websocket: WebSocket):
         async for data in websocket.iter_json():
-            print(f"putting {data} in the queue")
             queue.put_nowait(data)
 
     async def get_data_and_send():
@@ -284,4 +283,11 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         except Exception as e:
             logging.exception(e)
 
-    await asyncio.gather(read_from_socket(websocket), get_data_and_send())
+    await asyncio.gather(
+        read_from_socket(websocket),
+        get_data_and_send(),
+        get_data_and_send(),
+        get_data_and_send(),
+        get_data_and_send(),
+
+    )
