@@ -7,6 +7,7 @@ from corestring import split_with_quotes
 from cachable.storage.file import FileStorage
 from typing import Optional
 
+
 class AlbumArt:
 
     __query: str
@@ -27,7 +28,8 @@ class AlbumArt:
             query = self.__query.strip()
             filt = split_with_quotes(query)
             with Popen(
-                ["conda", "run", "-n", "base", "--live-stream", "beet", "list", "-p", "-a", *filt],
+                ["mamba", "run", "-n", "base", "--live-stream",
+                    "beet", "list", "-p", "-a", *filt],
                 stdout=PIPE,
                 stderr=STDOUT,
                 env=self.environment,

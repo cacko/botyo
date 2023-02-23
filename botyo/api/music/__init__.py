@@ -33,6 +33,8 @@ def song_command(context: Context) -> RenderResult:
             method=ZMethod.MUSIC_SONG,
         )
         return res
+    except FileNotFoundError:
+        return EmptyResult()
     except Exception as e:
         logging.exception(e)
         return EmptyResult()

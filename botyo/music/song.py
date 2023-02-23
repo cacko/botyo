@@ -6,7 +6,8 @@ from corestring import split_with_quotes, string_hash
 from cachable.storage.file import FileStorage
 from botyo.music.encoder import Encoder
 from typing import Optional
-import audiofile
+from . import beets_library
+from beets.library import Item
 
 
 class Song:
@@ -34,60 +35,22 @@ class Song:
             filt = split_with_quotes(query)
             if ":" not in query and len(filt) == 1:
                 filt = [f"title:{filt[0]}"]
-            with Popen(
-                [
-                    "conda",
-                    "run",
-                    "-n",
-                    "base",
-                    "--live-stream",
-                    "beet",
-                    "list",
-                    "-p",
-                    *filt,
-                ],
-                stdout=PIPE,
-                stderr=STDOUT,
-                env=self.environment,
-            ) as p:
-                assert p.stdout
-                for line in iter(p.stdout.readline, b""):
-                    print(line)
-                    self.__found = Path(f"{line.decode().strip()}")
-                    return self.__found
-                if p.returncode:
-                    print(p.returncode)
-                    return None
-            return None
+            items = beets_library.items(filt)
+            assert len(items) > 0
+            item = items[0]
+            assert item
+            self.__found = Path(item.path)
+            return self.__found
         return self.__found
 
     def __identify(self):
         if not self.__message:
             assert self.__found
-            cmd = (
-                "ffprobe",
-                "-loglevel",
-                "error",
-                "-show_entries",
-                "stream_tags=artist,title",
-                "-of",
-                "compact=item_sep='-':nokey=1:print_section=0",
-                self.__found.as_posix(),
-            )
-
-            with Popen(
-                cmd,
-                stdout=PIPE,
-                stderr=STDOUT,
-                env=self.environment,
-            ) as p:
-                assert p.stdout
-                for line in iter(p.stdout.readline, b""):
-                    self.__message = line.decode().strip()
-                    return self.__message
-                if p.returncode:
-                    return None
-            return None
+            items = beets_library.items(f'path:"{self.__found.as_posix()}"')
+            assert len(items) > 0
+            item = items[0]
+            assert item
+            self.__message = f"{item.artist} - {item.title}"
         return self.__message
 
     def __encode(self):
@@ -133,8 +96,13 @@ class Song:
     def duration(self) -> int:
         try:
             logging.info(self.destination.as_posix())
-            f = audiofile.duration(self.destination.as_posix())
-            logging.info(f"duration={f}")
-            return int(f)
+            items = list(beets_library.items(f'path:"{self.__found}"'))
+            assert len(items) > 0
+            item: Item = items[0]
+            res = item.length
+            assert res
+            logging.info(f"duration={res}")
+            return int(res)
         except Exception as e:
             logging.exception(e)
+            return 0

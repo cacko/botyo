@@ -20,6 +20,7 @@ class MusicConfig(BaseModel, extra=Extra.ignore):
     api_url: str
     storage: str
     codec: str
+    beets_config: str
 
 
 class DemographicsConfig(BaseModel, extra=Extra.ignore):
