@@ -73,6 +73,7 @@ class Action(Enum):
     TXT2PAPER = "image/txt2paper"
     TXT2ALBUMART = "image/txt2albumart"
     TXT2ICON = "image/txt2icon"
+    TXT2SIMPSONS = "image/txt2simpsons"
 
 
 class ImageMeta(type):
@@ -197,6 +198,9 @@ class ImageMeta(type):
 
     def txt2icon(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt, Action.TXT2ICON)
+
+    def txt2simpsons(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2SIMPSONS)
 
     def txt2portrait(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_portrait(prompt)

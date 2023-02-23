@@ -408,7 +408,7 @@ def image_fromtext2zombie(context: Context):
 
 @bp.command(
     method=ZMethod.IMAGE_TXT2DISNEY,
-    desc="text to modern disnety style image",
+    desc="text to modern disney style image",
     icon="cruelty_free"
 )  # type: ignore
 def image_fromtext2disney(context: Context):
@@ -429,3 +429,28 @@ def image_fromtext2disney(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_TXT2DISNEY)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2SIMPSONS,
+    desc="text to simpsons style image",
+    icon="cruelty_free"
+)  # type: ignore
+def image_fromtext2simpsons(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2simpsons(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2SIMPSONS,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2SIMPSONS,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2SIMPSONS)
