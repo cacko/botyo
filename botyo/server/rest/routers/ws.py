@@ -9,7 +9,6 @@ from botyo.server.command import CommandExec
 from botyo.server.connection import Context, Connection
 from botyo.core import perftime
 from botyo.server.models import (
-    Attachment,
     ZSONType,
     EmptyResult,
     ZSONResponse,
@@ -30,7 +29,7 @@ from botyo.core.s3 import S3
 from botyo.firebase.firestore import FirestoreClient
 from datetime import datetime
 from fastapi.concurrency import run_in_threadpool
-from asyncio.queues import Queue
+from asyncio.queues import Queue, QueueEmpty
 
 
 N_WORKERS = 4
@@ -165,9 +164,7 @@ class WSConnection(Connection):
             assert isinstance(command, CommandExec)
             with perftime(f"Command {command.method.value}"):
                 response = await run_in_threadpool(command.handler, context=context)
-                logging.debug(f"handle commmand after handler {response}")
                 await context.send_async(response)
-                logging.debug(f"handle commmand after send_async")
         except AssertionError as e:
             logging.error(e)
             await self.send_error(request=request)
@@ -233,7 +230,6 @@ class ConnectionManager:
 
     async def process_command(self, data, client_id):
         try:
-            logging.debug(f"process commmand start")
             msg = ZSONRequest(**data)
             assert isinstance(msg, ZSONRequest)
             logging.debug(f"process command {msg}")
@@ -266,24 +262,25 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             queue.put_nowait(data)
 
     async def get_data_and_send(n: int):
-        try:
-            while True:
-                if queue.empty():
-                    await asyncio.sleep(0.2)
-                else:
-                    data = queue.get_nowait()
-                    logging.debug(f"WORKER #{n}, {data}")
-                    if data.get("ztype") == ZSONType.PING.value:
+        while True:
+            try:
+                data = queue.get_nowait()
+                logging.debug(f"WORKER #{n}, {data}")
+                match data.get("ztype"):
+                    case ZSONType.PING.value:
                         ping = PingMessage(**data)
                         assert ping.id
                         await websocket.send_json(PongMessage(id=ping.id).dict())
-                    else:
+                    case _:
                         await manager.process_command(data, client_id)
-                    queue.task_done()
-        except WebSocketDisconnect:
-            manager.disconnect(client_id)
-        except Exception as e:
-            logging.exception(e)
+                queue.task_done()
+            except QueueEmpty:
+                await asyncio.sleep(0.2)
+            except WebSocketDisconnect:
+                manager.disconnect(client_id)
+                break
+            except Exception as e:
+                logging.exception(e)
 
     await asyncio.gather(
         read_from_socket(websocket),
