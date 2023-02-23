@@ -1,7 +1,6 @@
 import logging
 from pathlib import Path
 import os
-from subprocess import PIPE, Popen, STDOUT
 from corestring import split_with_quotes, string_hash
 from cachable.storage.file import FileStorage
 from botyo.music.encoder import Encoder
@@ -38,6 +37,7 @@ class Song:
             items = list(beets_library.items(filt))
             assert len(items) > 0
             item = items[0]
+            logging.debug(item)
             assert item
             self.__found = Path(item.path)
             return self.__found
@@ -50,6 +50,7 @@ class Song:
             assert len(items) > 0
             item = items[0]
             assert item
+            logging.debug(item)
             self.__message = f"{item.artist} - {item.title}"
         return self.__message
 
