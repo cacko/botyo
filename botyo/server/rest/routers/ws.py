@@ -264,7 +264,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             queue.put_nowait(data)
 
     async def get_data_and_send():
-        data = await queue.get()
         try:
             while True:
                 if queue.empty():
