@@ -279,6 +279,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                         await websocket.send_json(PongMessage(id=ping.id).dict())
                     else:
                         await manager.process_command(data, client_id)
+                    queue.task_done()
         except WebSocketDisconnect:
             manager.disconnect(client_id)
         except Exception as e:
