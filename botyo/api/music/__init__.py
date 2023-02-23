@@ -34,7 +34,7 @@ def song_command(context: Context) -> RenderResult:
         )
         return res
     except Exception as e:
-        logging.error(e)
+        logging.exception(e)
         return EmptyResult()
 
 
