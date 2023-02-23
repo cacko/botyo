@@ -39,7 +39,7 @@ class Song:
             item = items[0]
             logging.debug(item)
             assert item
-            self.__found = Path(item.path)
+            self.__found = Path(item.path.decode())
             return self.__found
         return self.__found
 
