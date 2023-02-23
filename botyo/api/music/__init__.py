@@ -26,7 +26,7 @@ def song_command(context: Context) -> RenderResult:
         res = RenderResult(
             message=message,
             attachment=Attachment(
-                path=path.as_posix(), 
+                path=path.as_posix(),
                 contentType=song.content_type,
                 duration=song.duration
             ),

@@ -309,7 +309,7 @@ def image_fromtext2clay(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2ICON,
     desc="text to flat icon design",
-    icon="palette"
+    icon="emoji_emotions"
 )  # type: ignore
 def image_fromtext2icon(context: Context):
     try:
@@ -359,7 +359,7 @@ def image_fromtext2paer(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2INK,
     desc="text to ink punk illustation",
-    icon="draw"
+    icon="water_drop"
 )  # type: ignore
 def image_fromtext2ink(context: Context):
     try:
@@ -384,7 +384,7 @@ def image_fromtext2ink(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2ZOMBIE,
     desc="text to zombie image",
-    icon="draw"
+    icon="blind"
 )  # type: ignore
 def image_fromtext2zombie(context: Context):
     try:
@@ -409,7 +409,7 @@ def image_fromtext2zombie(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2DISNEY,
     desc="text to modern disnety style image",
-    icon="draw"
+    icon="cruelty_free"
 )  # type: ignore
 def image_fromtext2disney(context: Context):
     try:

@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 import os
 from subprocess import PIPE, Popen, STDOUT
@@ -127,7 +128,13 @@ class Song:
     @property
     def content_type(self) -> str:
         return Encoder.content_type
-    
+
     @property
     def duration(self) -> int:
-        return int(audiofile.duration(self.destination.as_posix()))
+        try:
+            logging.info(self.destination.as_posix())
+            f = audiofile.duration(self.destination.as_posix())
+            logging.info(f"duration={f}")
+            return int(f)
+        except Exception as e:
+            logging.exception(e)
