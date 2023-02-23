@@ -5,6 +5,7 @@ from corestring import split_with_quotes, string_hash
 from cachable.storage.file import FileStorage
 from botyo.music.encoder import Encoder
 from typing import Optional
+import audiofile
 
 
 class Song:
@@ -67,7 +68,7 @@ class Song:
                 "-loglevel",
                 "error",
                 "-show_entries",
-                "format_tags=artist,title",
+                "stream_tags=artist,title",
                 "-of",
                 "compact=item_sep='-':nokey=1:print_section=0",
                 self.__found.as_posix(),
@@ -126,3 +127,7 @@ class Song:
     @property
     def content_type(self) -> str:
         return Encoder.content_type
+    
+    @property
+    def duration(self) -> int:
+        return int(audiofile.duration(self.destination.as_posix()))

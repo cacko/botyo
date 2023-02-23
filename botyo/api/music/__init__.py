@@ -25,7 +25,11 @@ def song_command(context: Context) -> RenderResult:
         message = song.message
         res = RenderResult(
             message=message,
-            attachment=Attachment(path=path.as_posix(), contentType=song.content_type),
+            attachment=Attachment(
+                path=path.as_posix(), 
+                contentType=song.content_type,
+                duration=song.duration
+            ),
             method=ZMethod.MUSIC_SONG,
         )
         return res
@@ -46,7 +50,8 @@ def albumart_command(context: Context) -> RenderResult:
         path = albumart.destination
         assert path
         res = RenderResult(
-            attachment=Attachment(path=path.as_posix(), contentType="image/png"),
+            attachment=Attachment(
+                path=path.as_posix(), contentType="image/png"),
             method=ZMethod.MUSIC_ALBUMART,
         )
         return res
