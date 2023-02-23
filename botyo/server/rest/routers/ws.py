@@ -110,16 +110,16 @@ router = APIRouter()
 
 
 class WSConnection(Connection):
-    __websocket: WebSocket
+    websocket: WebSocket
     __clientId: str
     __user: Optional[AuthUser] = None
 
     def __init__(self, websocket: WebSocket, client_id: str) -> None:
-        self.__websocket = websocket
+        self.websocket = websocket
         self.__clientId = client_id
 
     async def accept(self):
-        await self.__websocket.accept()
+        await self.websocket.accept()
         __class__.connections[self.__clientId] = self
 
     async def handle_login(self, request: ZSONRequest):
@@ -216,7 +216,7 @@ class WSConnection(Connection):
                     path=path, data=resp.dict()
                 )
             case _:
-                await self.__websocket.send_json(resp.dict())
+                await self.websocket.send_json(resp.dict())
 
 
 class ConnectionManager:
@@ -246,6 +246,13 @@ class ConnectionManager:
         except Exception as e:
             logging.exception(e)
             raise WebSocketDisconnect()
+        
+    async def send_ping(self, data, client_id):
+        connection = Connection.client(clientId=client_id)
+        ping = PingMessage(**data)
+        assert ping.id
+        await asyncio.sleep(30)
+        await connection.websocket.send_json(PongMessage(id=ping.id).dict())     
 
 
 manager = ConnectionManager()
@@ -260,10 +267,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             data = await websocket.receive_json()
             logging.debug(f"ws received {data}")
             if data.get("ztype") == ZSONType.PING.value:
-                ping = PingMessage(**data)
-                assert ping.id
-                await asyncio.sleep(30)
-                await websocket.send_json(PongMessage(id=ping.id).dict())
+                await manager.send_ping(data, client_id)
                 logging.debug("ws sent pong")
             else:
                 await manager.process_command(data, client_id)
