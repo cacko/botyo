@@ -132,7 +132,7 @@ async def get_livescore():
     def scores(obj: Livescore):
         events = obj.items
         return [g.dict() for g in events]
-        
+
     obj = Footy.livescore()
     if not obj:
         raise HTTPException(404)

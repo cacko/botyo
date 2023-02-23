@@ -4,11 +4,12 @@ from fastapi import (
     WebSocketDisconnect,
 )
 import logging
-from pydantic import BaseModel, Extra, validator, Field
+from pydantic import BaseModel, Extra, Field
 from botyo.server.command import CommandExec
 from botyo.server.connection import Context, Connection
 from botyo.core import perftime
 from botyo.server.models import (
+    Attachment,
     ZSONType,
     EmptyResult,
     ZSONResponse,
@@ -28,6 +29,7 @@ import time
 from botyo.core.s3 import S3
 from botyo.firebase.firestore import FirestoreClient
 from datetime import datetime
+from fastapi.concurrency import run_in_threadpool
 
 
 class WSException(Exception):
@@ -37,6 +39,44 @@ class WSException(Exception):
 class WSAttachment(BaseModel):
     contentType: str
     url: str
+
+    @classmethod
+    def store_root(cls) -> Path:
+        root = Path(app_config.cachable.path) / "ws"
+        if not root.exists():
+            root.mkdir(parents=True)
+        return root
+
+    @classmethod
+    def upload(cls, contentType: str, url: str):
+        try:
+            a_path = Path(url)
+            hsh = string_hash(a_path.name, str(time.time()))
+            a_store_path = WSAttachment.store_root() / f"{hsh}{a_path.suffix}"
+            assert a_path.exists()
+            with a_path:
+                contentType = contentType
+                match contentType.split("/")[0]:
+                    case "image":
+                        img = Image.open(a_path.as_posix())
+                        hsh = string_hash(a_path.stem, str(time.time()))
+                        a_store_path = WSAttachment.store_root() / f"{hsh}.webp"
+                        img.save(a_store_path.as_posix(), format="webp")
+                        S3.upload(a_store_path, a_store_path.name)
+                        a_store_path.unlink(missing_ok=True)
+                    case "audio":
+                        S3.upload(a_path, a_store_path.name)
+                    case "video":
+                        S3.upload(a_path, a_store_path.name)
+                    case _:
+                        raise AssertionError("invalid attachment type")
+                return WSAttachment(
+                    contentType=contentType,
+                    url=f"botyo/{a_store_path.name}"
+                )
+        except AssertionError as e:
+            logging.error(e)
+            return
 
 
 class PingMessage(BaseModel, extra=Extra.ignore):
@@ -65,44 +105,6 @@ class Response(BaseModel):
     start_time: Optional[datetime] = None
     status: Optional[str] = None
 
-    @classmethod
-    def store_root(cls) -> Path:
-        root = Path(app_config.cachable.path) / "ws"
-        if not root.exists():
-            root.mkdir(parents=True)
-        return root
-
-    @validator("attachment")
-    def static_attachment(cls, attachment: Optional[WSAttachment]):
-        try:
-            assert attachment
-            a_path = Path(attachment.url)
-            hsh = string_hash(a_path.name, str(time.time()))
-            a_store_path = cls.store_root() / f"{hsh}{a_path.suffix}"
-            assert a_path.exists()
-            with a_path:
-                contentType = attachment.contentType
-                match contentType.split("/")[0]:
-                    case "image":
-                        img = Image.open(a_path.as_posix())
-                        hsh = string_hash(a_path.stem, str(time.time()))
-                        a_store_path = cls.store_root() / f"{hsh}.webp"
-                        img.save(a_store_path.as_posix(), format="webp")
-                        S3.upload(a_store_path, a_store_path.name)
-                        a_store_path.unlink(missing_ok=True)
-                    case "audio":
-                        S3.upload(a_path, a_store_path.name)
-                    case "video":
-                        S3.upload(a_path, a_store_path.name)
-                    case _:
-                        raise AssertionError("invalid attachment type")
-                return WSAttachment(
-                    contentType=contentType, url=f"botyo/{a_store_path.name}"
-                ).dict()
-        except AssertionError as e:
-            logging.error(e)
-            return None
-
 
 router = APIRouter()
 
@@ -122,7 +124,7 @@ class WSConnection(Connection):
 
     async def handle_login(self, request: ZSONRequest):
         assert request.query
-        self.auth(request.query)
+        await run_in_threadpool(self.auth, token=request.query)
         cmds = ZSONResponse(
             method=CoreMethods.LOGIN,
             commands=CommandExec.definitions,
@@ -157,7 +159,7 @@ class WSConnection(Connection):
             )
             assert isinstance(command, CommandExec)
             with perftime(f"Command {command.method.value}"):
-                response = command.handler(context)
+                response = await run_in_threadpool(command.handler, context=context)
                 await context.send_async(response)
         except AssertionError as e:
             logging.error(e)
@@ -181,7 +183,8 @@ class WSConnection(Connection):
         if response.attachment:
             assert response.attachment.contentType
             assert response.attachment.path
-            attachment = WSAttachment(
+            attachment = await run_in_threadpool(
+                WSAttachment.upload,
                 contentType=response.attachment.contentType,
                 url=response.attachment.path,
             )
@@ -205,7 +208,10 @@ class WSConnection(Connection):
         match response.method:
             case ZMethod.FOOTY_SUBSCRIPTION_UPDATE:
                 path = f"subscriptions/{response.id.split(':')[0]}/events"
-                FirestoreClient().put(path=path, data=resp.dict())
+                await run_in_threadpool(
+                    FirestoreClient().put,
+                    path=path, data=resp.dict()
+                )
             case _:
                 await self.__websocket.send_json(resp.dict())
 
