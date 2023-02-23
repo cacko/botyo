@@ -262,6 +262,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             if data.get("ztype") == ZSONType.PING.value:
                 ping = PingMessage(**data)
                 assert ping.id
+                await asyncio.sleep(30)
                 await websocket.send_json(PongMessage(id=ping.id).dict())
                 logging.debug("ws sent pong")
             else:
