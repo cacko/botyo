@@ -35,7 +35,7 @@ class Song:
             filt = split_with_quotes(query)
             if ":" not in query and len(filt) == 1:
                 filt = [f"title:{filt[0]}"]
-            items = beets_library.items(filt)
+            items = list(beets_library.items(filt))
             assert len(items) > 0
             item = items[0]
             assert item
@@ -46,7 +46,7 @@ class Song:
     def __identify(self):
         if not self.__message:
             assert self.__found
-            items = beets_library.items(f'path:"{self.__found.as_posix()}"')
+            items = list(beets_library.items(f'path:"{self.__found.as_posix()}"'))
             assert len(items) > 0
             item = items[0]
             assert item
