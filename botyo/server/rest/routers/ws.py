@@ -147,6 +147,7 @@ class WSConnection(Connection):
 
     async def handle_command(self, request: ZSONRequest):
         try:
+            logging.debug(f"handle command start {request}")
             assert request.query
             command, query = CommandExec.parse(request.query)
             logging.debug(command)
@@ -160,7 +161,9 @@ class WSConnection(Connection):
             assert isinstance(command, CommandExec)
             with perftime(f"Command {command.method.value}"):
                 response = await run_in_threadpool(command.handler, context=context)
+                logging.debug(f"handle commmand after handler {response}")
                 await context.send_async(response)
+                logging.debug(f"handle commmand after send_async")
         except AssertionError as e:
             logging.error(e)
             await self.send_error(request=request)
@@ -226,6 +229,7 @@ class ConnectionManager:
 
     async def process_command(self, data, client_id):
         try:
+            logging.debug(f"process commmand start")
             msg = ZSONRequest(**data)
             assert isinstance(msg, ZSONRequest)
             logging.debug(f"process command {msg}")
@@ -235,8 +239,10 @@ class ConnectionManager:
             match msg.method:
                 case CoreMethods.LOGIN:
                     await connection.handle_login(request=msg)
+                    logging.debug("process commmand after login")
                 case _:
                     await connection.handle_command(request=msg)
+                    logging.debug("process commmand after handle")
         except Exception as e:
             logging.exception(e)
             raise WebSocketDisconnect()
@@ -252,13 +258,15 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     try:
         while True:
             data = await websocket.receive_json()
+            logging.debug(f"ws received {data}")
             if data.get("ztype") == ZSONType.PING.value:
                 ping = PingMessage(**data)
                 assert ping.id
                 await websocket.send_json(PongMessage(id=ping.id).dict())
+                logging.debug("ws sent pong")
             else:
-                logging.debug(f"receive {data}")
                 await manager.process_command(data, client_id)
+                logging.debug(f"after process {data}")
     except WebSocketDisconnect:
         manager.disconnect(client_id)
     except Exception as e:
