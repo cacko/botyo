@@ -33,6 +33,9 @@ from fastapi.concurrency import run_in_threadpool
 from asyncio.queues import Queue
 
 
+N_WORKERS = 4
+
+
 class WSException(Exception):
     pass
 
@@ -262,22 +265,20 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         async for data in websocket.iter_json():
             queue.put_nowait(data)
 
-    async def get_data_and_send():
+    async def get_data_and_send(n: int):
         try:
             while True:
                 if queue.empty():
                     await asyncio.sleep(0.2)
                 else:
                     data = queue.get_nowait()
-                    logging.debug(f"ws received {data}")
+                    logging.debug(f"WORKER #{n}, {data}")
                     if data.get("ztype") == ZSONType.PING.value:
                         ping = PingMessage(**data)
                         assert ping.id
                         await websocket.send_json(PongMessage(id=ping.id).dict())
-                        logging.debug("ws sent pong")
                     else:
                         await manager.process_command(data, client_id)
-                        logging.debug(f"after process {data}")
         except WebSocketDisconnect:
             manager.disconnect(client_id)
         except Exception as e:
@@ -285,9 +286,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
 
     await asyncio.gather(
         read_from_socket(websocket),
-        get_data_and_send(),
-        get_data_and_send(),
-        get_data_and_send(),
-        get_data_and_send(),
-
+        *[
+            asyncio.create_task(get_data_and_send(n)) for n in range(1, N_WORKERS + 1)
+        ]
     )
