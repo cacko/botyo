@@ -467,10 +467,9 @@ class Subscription(metaclass=SubscriptionMeta):
                                            msgId=self.id))
                     except UnknownClientException as e:
                         logging.exception(e)
-                    if content.game.justEnded:
-                        self.cancel(sc)
-                        logging.debug(
-                            f"subscription {self.event_name} in done")
+                    self.cancel(sc)
+                    logging.debug(
+                        f"subscription {self.event_name} in done")
         except AssertionError as e:
             logging.exception(e)
         except ValueError as e:
