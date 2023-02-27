@@ -185,7 +185,8 @@ def image_variation(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2IMG,
     desc="text to image",
-    icon="brush"
+    icon="brush",
+    uses_prompt=True
 )  # type: ignore
 def image_fromtext(context: Context):
     try:
@@ -211,7 +212,8 @@ def image_fromtext(context: Context):
     method=ZMethod.IMAGE_IMG2IMG,
     desc="image of image",
     upload=True,
-    icon="collections"
+    icon="collections",
+    uses_prompt=True
 )  # type: ignore
 def image2image(context: Context):
     try:
@@ -235,7 +237,8 @@ def image2image(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_GPS2IMG,
     desc="generates image for given gps coordinates",
-    icon="satellite"
+    icon="satellite",
+    uses_prompt=True
 )  # type: ignore
 def gps2Image(context: Context):
     try:
@@ -259,7 +262,8 @@ def gps2Image(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2ALBUMART,
     desc="text to album cover",
-    icon="album"
+    icon="album",
+    uses_prompt=True
 )  # type: ignore
 def image_fromtext2albumart(context: Context):
     try:
@@ -284,7 +288,8 @@ def image_fromtext2albumart(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2CLAY,
     desc="text to clay illustration",
-    icon="palette"
+    icon="palette",
+    uses_prompt=True
 )  # type: ignore
 def image_fromtext2clay(context: Context):
     try:
@@ -309,7 +314,8 @@ def image_fromtext2clay(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2ICON,
     desc="text to flat icon design",
-    icon="emoji_emotions"
+    icon="emoji_emotions",
+    uses_prompt=True
 )  # type: ignore
 def image_fromtext2icon(context: Context):
     try:
@@ -334,7 +340,8 @@ def image_fromtext2icon(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2PAPER,
     desc="text to paper cut",
-    icon="draw"
+    icon="draw",
+    uses_prompt=True
 )  # type: ignore
 def image_fromtext2paer(context: Context):
     try:
@@ -359,7 +366,8 @@ def image_fromtext2paer(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2INK,
     desc="text to ink punk illustation",
-    icon="water_drop"
+    icon="water_drop",
+    uses_prompt=True
 )  # type: ignore
 def image_fromtext2ink(context: Context):
     try:
@@ -384,7 +392,8 @@ def image_fromtext2ink(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2ZOMBIE,
     desc="text to zombie image",
-    icon="blind"
+    icon="blind",
+    uses_prompt=True
 )  # type: ignore
 def image_fromtext2zombie(context: Context):
     try:
@@ -409,7 +418,8 @@ def image_fromtext2zombie(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2DISNEY,
     desc="text to modern disney style image",
-    icon="cruelty_free"
+    icon="cruelty_free",
+    uses_prompt=True
 )  # type: ignore
 def image_fromtext2disney(context: Context):
     try:
@@ -434,7 +444,8 @@ def image_fromtext2disney(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_TXT2SIMPSONS,
     desc="text to simpsons style image",
-    icon="cruelty_free"
+    icon="cruelty_free",
+    uses_prompt=True
 )  # type: ignore
 def image_fromtext2simpsons(context: Context):
     try:

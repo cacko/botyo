@@ -80,10 +80,11 @@ class CommandExec(metaclass=CommandExecMeta):
     desc: Optional[str] = None
     matcher: Optional[ZSONMatcher] = None
     response: Optional[str] = None
-    subscription: Optional[bool] = Field(default=False)
+    subscription: bool = Field(default=False)
     icon: Optional[str] = None
     args: Optional[str] = None
-    upload: Optional[bool] = False
+    upload: bool = Field(default=False)
+    uses_prompt: bool = Field(default=False)
 
     @property
     def trigger(self) -> str:

@@ -55,6 +55,7 @@ class Blueprint(object, metaclass=BlueprintMeta):
         subscription: bool = False,
         icon: Optional[str] = None,
         args: Optional[str] = None,
+        uses_prompt: bool = False,
         upload: bool = False,
         matcher: Optional[ZSONMatcher] = None,
         response: Optional[str] = None,
@@ -70,6 +71,7 @@ class Blueprint(object, metaclass=BlueprintMeta):
                 icon=icon,
                 args=args,
                 upload=upload,
+                uses_prompt=uses_prompt
             )
             self._commands[method.value] = cmd
 

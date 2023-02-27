@@ -109,9 +109,11 @@ class ImageMeta(type):
     @property
     def variation_generator_parser(cls) -> ArgumentParser:
         if not cls.__variation_generator_parser:
-            parser = ArgumentParser(description="Variation Generator",
-                                    add_help=False,
-                                    exit_on_error=False)
+            parser = ArgumentParser(
+                description="Variation Generator",
+                add_help=False,
+                exit_on_error=False
+            )
             parser.add_argument("-n",
                                 "--num_images_per_prompt",
                                 type=int,
