@@ -69,7 +69,7 @@ class Action(Enum):
     TXT2CLAY = "image/txt2clay"
     TXT2ZOMBIE = "image/txt2zombie"
     TXT2DISNEY = "image/txt2disney"
-    TXT2INK = "image/txt2ink"
+    TXT2FOOD = "image/txt2food"
     TXT2PAPER = "image/txt2paper"
     TXT2ALBUMART = "image/txt2albumart"
     TXT2ICON = "image/txt2icon"
@@ -180,8 +180,8 @@ class ImageMeta(type):
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt)
 
-    def txt2ink(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2INK)
+    def txt2food(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2FOOD)
 
     def txt2disney(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt, Action.TXT2DISNEY)

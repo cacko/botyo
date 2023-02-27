@@ -364,29 +364,29 @@ def image_fromtext2paer(context: Context):
 
 
 @bp.command(
-    method=ZMethod.IMAGE_TXT2INK,
-    desc="text to ink punk illustation",
-    icon="water_drop",
+    method=ZMethod.IMAGE_TXT2FOOD,
+    desc="text to food illustation",
+    icon="fastfood",
     uses_prompt=True
 )  # type: ignore
-def image_fromtext2ink(context: Context):
+def image_fromtext2food(context: Context):
     try:
         query = context.query
         assert query
-        attachment, message = Image.txt2ink(query)
+        attachment, message = Image.txt2food(query)
         assert attachment
         return RenderResult(
             attachment=attachment,
-            method=ZMethod.IMAGE_TXT2INK,
+            method=ZMethod.IMAGE_TXT2FOOD,
             message=message
         )
     except ApiError as e:
         return EmptyResult(
-            method=ZMethod.IMAGE_TXT2INK,
+            method=ZMethod.IMAGE_TXT2FOOD,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2INK)
+        return EmptyResult(method=ZMethod.IMAGE_TXT2FOOD)
 
 
 @bp.command(
