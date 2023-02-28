@@ -46,16 +46,7 @@ class CommandExecMeta(type):
             return x.method.value
 
         for cmd in sorted(cls.registered, key=keyfunc):
-
-            definitions.append(
-                CommandDef(method=cmd.method,
-                           desc=cmd.desc,
-                           matcher=cmd.matcher,
-                           response=cmd.response,
-                           icon=cmd.icon,
-                           subscription=cmd.subscription,
-                           args=cmd.args,
-                           upload=cmd.upload))
+            definitions.append(cmd)
 
         cols = [
             Column(size=42, align=Align.LEFT),
