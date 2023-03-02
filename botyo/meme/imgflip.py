@@ -29,7 +29,7 @@ def get_top_templates() -> list[int]:
 
 class CaptionParams(BaseModel, extra=Extra.ignore):
     top_text: list[str]
-    bottom_text: str = Field(default="")
+    bottom_text: list[str]
     template_id: Optional[int] = None
 
     def __init__(self, **data):
@@ -83,7 +83,7 @@ class ImgFlipMeta(type):
                                 type=str, default=0)
             parser.add_argument("-b",
                                 "--bottom_text",
-                                type=str, default="", nargs="*")
+                                type=str, default=[""], nargs="*")
             cls.__caption_parser = parser
         return cls.__caption_parser
 
@@ -105,7 +105,7 @@ class ImgFlip(object, metaclass=ImgFlipMeta):
         if not template_id:
             template_id = choice(get_top_templates())
         top = " ".join(params.top_text)
-        bottom = params.bottom_text
+        bottom = " ".join(params.bottom_text)
         payload = {
             'username': self.__config.username,
             'password': self.__config.password,
