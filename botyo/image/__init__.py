@@ -240,7 +240,7 @@ class Image(object, metaclass=ImageMeta):
                     "Race: ", analyses.dominant_race,
                     emojize(analyses.race_icon)
                 ],
-                ["Gender: ", analyses.gender,
+                ["Gender: ", analyses.dominant_gender,
                  emojize(analyses.gender_icon)],
             ]
             TextOutput.addRows(["".join(map(str, row)) for row in rows])

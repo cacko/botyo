@@ -80,9 +80,7 @@ class AnalyzeReponse(BaseModel, extra=Extra.ignore):
     age: int
     dominant_emotion: str
     dominant_race: str
-    emotion: EmotionScores
     dominant_gender: str
-    race: RaceScores
     region: FaceRegion
 
     @property
