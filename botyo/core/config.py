@@ -79,6 +79,11 @@ class S3Config(BaseModel):
     directory: str
 
 
+class ImgFlipConfig(BaseModel):
+    username: str
+    password: str
+
+
 class ConfigStruct(BaseModel, extra=Extra.ignore):
     geo: GeoConfig
     ontv: OntvConfig
@@ -93,6 +98,7 @@ class ConfigStruct(BaseModel, extra=Extra.ignore):
     chatyo: Optional[ChatyoConfig] = None
     image: Optional[ImageConfig] = None
     s3: Optional[S3Config] = None
+    imgflip: Optional[ImgFlipConfig] = None
 
 
 class ConfigMeta(type):
@@ -154,6 +160,10 @@ class ConfigMeta(type):
     @property
     def s3(cls) -> S3Config:
         return cls().struct.s3
+
+    @property
+    def imgflip(cls) -> ImgFlipConfig:
+        return cls().struct.imgflip
 
 
 class Config(object, metaclass=ConfigMeta):
