@@ -38,8 +38,10 @@ class CaptionParams(BaseModel, extra=Extra.ignore):
             assert isinstance(tpl_id, str)
             tpl = Templates[tpl_id.upper()]
             data["template_id"] = tpl.value
-        except Exception:
+        except AssertionError:
             pass
+        except KeyError:
+            data["template_id"] = 0
         super().__init__(**data)
 
 
@@ -78,10 +80,10 @@ class ImgFlipMeta(type):
             parser.add_argument("top_text", type=str, nargs='+')
             parser.add_argument("-t",
                                 "--template_id",
-                                type=str, default="")
+                                type=str, default=0)
             parser.add_argument("-b",
                                 "--bottom_text",
-                                type=str, default="")
+                                type=str, default="", nargs="*")
             cls.__caption_parser = parser
         return cls.__caption_parser
 
