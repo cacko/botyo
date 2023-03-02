@@ -17,6 +17,7 @@ from corestring import split_with_quotes, string_hash
 from requests.exceptions import JSONDecodeError
 import logging
 from functools import reduce
+import json
 
 
 class ImageGeneratorParams(BaseModel):
@@ -226,7 +227,8 @@ class Image(object, metaclass=ImageMeta):
     def do_analyze(self):
         attachment, message = self.getResponse(Action.ANALYZE)
         if message:
-            analyses = AnalyzeReponse(**message)
+            data = json.loads(message) if isinstance(message, str) else message
+            analyses = AnalyzeReponse(**data)
             rows = [
                 ["Age: ", analyses.age],
                 [
