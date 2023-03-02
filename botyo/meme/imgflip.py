@@ -4,7 +4,7 @@ from botyo.core.config import Config as app_config
 from typing import Optional
 from enum import StrEnum, IntEnum
 import requests
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel, Extra
 from random import choice
 import pandas as pd
 from shlex import split
