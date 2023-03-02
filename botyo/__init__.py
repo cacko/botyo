@@ -42,6 +42,7 @@ def create_app():
     from botyo.api.text import bp as text_bp
     from botyo.api.translate import bp as translate_bp
     from botyo.api.image import bp as image_bp
+    from botyo.api.meme import bp as meme_bp
 
     avatar_bp.register(app)
     console_Bp.register(app)
@@ -57,6 +58,7 @@ def create_app():
     text_bp.register(app)
     translate_bp.register(app)
     image_bp.register(app)
+    meme_bp.register(app)
     return app
 
 

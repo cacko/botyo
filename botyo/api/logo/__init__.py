@@ -9,10 +9,10 @@ bp = Blueprint("logo")
 
 
 @bp.command(
-    method=ZMethod.LOGO_TEAM, 
+    method=ZMethod.LOGO_TEAM,
     desc="logo for the requested football team",
     icon="badge"
-    )  # type: ignore
+)  # type: ignore
 def logo_command(context: Context):
     logo = Team(context.query)
     path = logo.path
