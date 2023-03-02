@@ -5,7 +5,7 @@ from enum import StrEnum
 import requests
 from pydantic import BaseModel, Field, Extra
 from random import choice
-
+import pandas as pd
 from botyo.server.output import split_with_quotes
 
 TOP_TEMPLATES = [
@@ -109,6 +109,19 @@ TOP_TEMPLATES = [
     1367068,
     6531067
 ]
+
+
+def top_templates() -> list[int]:
+    url = 'https://imgflip.com/popular-meme-ids'
+    res = requests.get(url)
+    html = res.content
+    df = pd.read_html(
+        str(html),
+        match="Alternate Names",
+        skiprows=[0]
+    )[0]
+    df.columns = ['ID', 'Name', 'Junk']
+    return [int(r['ID'])for _, r in df.iterrows()]
 
 
 class CaptionParams(BaseModel, extra=Extra.ignore):

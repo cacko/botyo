@@ -1,6 +1,5 @@
 from cachable.storage.redis import RedisStorage
 from cachable.storage.file import FileStorage
-from botyo.api import meme
 from botyo.firebase.service_account import ServiceAccount
 from botyo.core.config import Config as app_config
 from botyo.api.footy import Footy
