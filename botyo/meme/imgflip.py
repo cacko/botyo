@@ -6,7 +6,7 @@ import requests
 from pydantic import BaseModel, Field, Extra
 from random import choice
 import pandas as pd
-from botyo.server.output import split_with_quotes
+from shlex import split
 
 TOP_TEMPLATES = [
     112126428,
@@ -174,7 +174,7 @@ class ImgFlipMeta(type):
         return cls.__caption_parser
 
     def caption(cls, query: str) -> CaptionResponse:
-        namespace, _ = cls.caption_parser.parse_known_args(split_with_quotes(query))
+        namespace, _ = cls.caption_parser.parse_known_args(split(query))
         params = CaptionParams(**namespace.__dict__)
         return cls().caption_image(params)
 
