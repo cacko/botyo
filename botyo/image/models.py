@@ -81,7 +81,7 @@ class AnalyzeReponse(BaseModel, extra=Extra.ignore):
     dominant_emotion: str
     dominant_race: str
     emotion: EmotionScores
-    gender: str
+    dominant_gender: str
     race: RaceScores
     region: FaceRegion
 
@@ -91,9 +91,9 @@ class AnalyzeReponse(BaseModel, extra=Extra.ignore):
 
     @property
     def race_icon(self) -> str:
-        parts = map(constcase, [self.dominant_race, self.gender])
+        parts = map(constcase, [self.dominant_race, self.dominant_gender])
         return RaceIcon["_".join(parts)].value
 
     @property
     def gender_icon(self) -> str:
-        return GenderIcon[constcase(self.gender)].value
+        return GenderIcon[constcase(self.dominant_gender)].value
