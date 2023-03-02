@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+import logging
 from botyo.core.config import Config as app_config
 from typing import Optional
 from enum import StrEnum
@@ -173,6 +174,7 @@ class ImgFlipMeta(type):
         return cls.__caption_parser
 
     def caption(cls, query: str) -> CaptionResponse:
+        logging.warning(split(query))
         namespace, _ = cls.caption_parser.parse_known_args(split(query))
         params = CaptionParams(**namespace.__dict__)
         return cls().caption_image(params)
