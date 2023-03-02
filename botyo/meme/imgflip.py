@@ -168,8 +168,7 @@ class ImgFlipMeta(type):
                                 type=int)
             parser.add_argument("-b",
                                 "--bottom_text",
-                                type=str,
-                                default="")
+                                type=str)
             cls.__caption_parser = parser
         return cls.__caption_parser
 
