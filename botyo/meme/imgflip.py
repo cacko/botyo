@@ -159,6 +159,7 @@ class ImgFlipMeta(type):
     def caption_parser(cls) -> ArgumentParser:
         if not cls.__caption_parser:
             parser = ArgumentParser(
+                prog="caption",
                 description="Caption Generator",
                 add_help=False,
                 exit_on_error=False
@@ -174,8 +175,9 @@ class ImgFlipMeta(type):
         return cls.__caption_parser
 
     def caption(cls, query: str) -> CaptionResponse:
-        logging.warning(split(query))
-        namespace, _ = cls.caption_parser.parse_known_args(split(query))
+        arg_line = f"caption {query}"
+        logging.warning(split(arg_line))
+        namespace, _ = cls.caption_parser.parse_known_args(split(arg_line))
         params = CaptionParams(**namespace.__dict__)
         return cls().caption_image(params)
 
