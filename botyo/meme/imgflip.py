@@ -2,117 +2,19 @@ from argparse import ArgumentParser
 import logging
 from botyo.core.config import Config as app_config
 from typing import Optional
-from enum import StrEnum
+from enum import StrEnum, IntEnum
 import requests
 from pydantic import BaseModel, Field, Extra
 from random import choice
 import pandas as pd
 from shlex import split
 
-TOP_TEMPLATES = [
-    112126428,
-    87743020,
-    438680,
-    129242436,
-    124822590,
-    217743513,
-    131087935,
-    61579,
-    93895088,
-    102156234,
-    4087833,
-    1035805,
-    101470,
-    91538330,
-    188390779,
-    247375501,
-    89370399,
-    97984,
-    61520,
-    119139145,
-    131940431,
-    222403160,
-    114585149,
-    155067746,
-    5496396,
-    178591752,
-    61532,
-    123999232,
-    21735,
-    8072285,
-    100777631,
-    27813981,
-    61585,
-    226297822,
-    124055727,
-    28251713,
-    135256802,
-    61539,
-    148909805,
-    134797956,
-    101288,
-    80707627,
-    252600902,
-    6235864,
-    61527,
-    61556,
-    175540452,
-    161865971,
-    91545132,
-    563423,
-    180190441,
-    61546,
-    84341851,
-    61582,
-    405658,
-    61533,
-    14371066,
-    16464531,
-    135678846,
-    101511,
-    110163934,
-    61544,
-    3218037,
-    1509839,
-    196652226,
-    101287,
-    235589,
-    55311130,
-    100947,
-    79132341,
-    61516,
-    132769734,
-    195515965,
-    14230520,
-    245898,
-    101440,
-    922147,
-    99683372,
-    61580,
-    101910402,
-    259237855,
-    101716,
-    40945639,
-    259680,
-    109765,
-    9440985,
-    61581,
-    56225174,
-    12403754,
-    163573,
-    21604248,
-    460541,
-    195389,
-    100955,
-    29617627,
-    444501,
-    766986,
-    1367068,
-    6531067
-]
+
+class Templates(IntEnum):
+    OLIVER = 445221743
 
 
-def top_templates() -> list[int]:
+def get_top_templates() -> list[int]:
     url = 'https://imgflip.com/popular-meme-ids'
     res = requests.get(url)
     html = res.content
@@ -129,6 +31,16 @@ class CaptionParams(BaseModel, extra=Extra.ignore):
     top_text: list[str]
     bottom_text: str = Field(default="")
     template_id: Optional[int] = None
+
+    def __init__(self, **data):
+        try:
+            tpl_id = data.get("template_id")
+            assert isinstance(tpl_id, str)
+            tpl = Templates[tpl_id.upper()]
+            data["template_id"] = tpl.value
+        except Exception:
+            pass
+        super().__init__(**data)
 
 
 class CaptionResponseData(BaseModel, extra=Extra.ignore):
@@ -190,7 +102,7 @@ class ImgFlip(object, metaclass=ImgFlipMeta):
     def caption_image(self, params: CaptionParams):
         template_id = params.template_id
         if not template_id:
-            template_id = choice(TOP_TEMPLATES)
+            template_id = choice(get_top_templates())
         top = " ".join(params.top_text)
         bottom = params.bottom_text
         payload = {
