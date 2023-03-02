@@ -164,7 +164,7 @@ class ImgFlipMeta(type):
             )
             parser.add_argument("top_text", type=str, nargs='+')
             parser.add_argument("-t",
-                                "--top_text",
+                                "--template_id",
                                 type=int)
             parser.add_argument("-b",
                                 "--bottom_text",
