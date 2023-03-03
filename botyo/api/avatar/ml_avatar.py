@@ -28,7 +28,7 @@ class StableDiffusionAvatar(ImageCachable):
     def _init(self):
         if self.isCached:
             return
-        attachment, message = Image.txt2img(prompt=self.cmd)
+        attachment, _ = Image.txt2img(prompt=self.cmd)
         assert attachment
         assert attachment.path
         assert self._path
@@ -64,7 +64,7 @@ class StableDiffusionAvatar(ImageCachable):
             "fantasy artwork by krenz cushart!! trending on artstation. "
             "award winning digital painting volumetric "
             "studio lighting chiaroscuro dramatic "
-            "comic cover art, vibrat colors, cinematic scene from the film ergo"
+            "comic cover art, vibrat colors, cinematic scene from the film ergo -u"
         )
 
     @property
