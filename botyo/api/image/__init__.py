@@ -132,32 +132,6 @@ def image_pixel(context: Context):
 
 
 @bp.command(
-    method=ZMethod.IMAGE_POLYGON,
-    desc="polygon image",
-    upload=True,
-    icon="hexagon"
-)  # type: ignore
-def image_polygon(context: Context):
-    try:
-        attachment = context.attachment
-        assert attachment
-        query = context.query
-        attachment, _ = Image.polygon(attachment, to_int(query, 800))
-        assert attachment
-        return RenderResult(
-            attachment=attachment,
-            method=ZMethod.IMAGE_POLYGON,
-        )
-    except ApiError as e:
-        return EmptyResult(
-            method=ZMethod.IMAGE_POLYGON,
-            message=e.message
-        )
-    except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_POLYGON)
-
-
-@bp.command(
     method=ZMethod.IMAGE_VARIATION,
     desc="variation of image",
     upload=True,

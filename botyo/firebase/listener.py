@@ -53,6 +53,8 @@ class DeleteListener(StoppableThread):
                     logging.info(f"removed {doc.to_dict()}")
                     self.handle_removed(HistoryItem(**doc.to_dict()))
                     delete_done.set()
+                case 'MODIFIED':
+                    pass
 
     def handle_removed(self, item: HistoryItem):
         if not item.parts:

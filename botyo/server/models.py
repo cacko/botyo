@@ -115,7 +115,6 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     IMAGE_HOWCUTE = "image:howcute"
     IMAGE_CLASSIFY = "image:classify"
     IMAGE_PIXEL = "image:pixel"
-    IMAGE_POLYGON = "image:polygon"
     IMAGE_WALLPAPER = "image:wallpaper"
     IMAGE_VARIATION = "image:var"
     IMAGE_TXT2IMG = "image:txt2img"

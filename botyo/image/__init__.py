@@ -61,7 +61,6 @@ class Action(Enum):
     HOWCUTE = "face/howcute"
     CLASSIFY = "image/classify"
     PIXEL = "image/pixel"
-    POLYGON = "image/polygon"
     VARIATION = "image/variation"
     TXT2IMG = "image/txt2img"
     IMG2IMG = "image/img2img"
@@ -101,11 +100,6 @@ class ImageMeta(type):
               attachment: Attachment,
               block_size: int = 8) -> tuple[Attachment, dict]:
         return cls(attachment).do_pixel(block_size)
-
-    def polygon(cls,
-                attachment: Attachment,
-                frequency: int = 800) -> tuple[Attachment, dict]:
-        return cls(attachment).do_polygon(frequency)
 
     @property
     def variation_generator_parser(cls) -> ArgumentParser:
@@ -252,9 +246,6 @@ class Image(object, metaclass=ImageMeta):
 
     def do_pixel(self, block_size):
         return self.getResponse(Action.PIXEL, block_size)
-
-    def do_polygon(self, frequency):
-        return self.getResponse(Action.POLYGON, frequency)
 
     def do_variation(self, prompt: Optional[str] = None):
         assert prompt
