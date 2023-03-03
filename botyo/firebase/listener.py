@@ -60,7 +60,7 @@ class DeleteListener(StoppableThread):
         for part in item.parts:
             if part.type == "image":
                 pth = Path(part.content)
-                S3.delete(pth.name)
+                S3.delete(pth.name.strip("/"))
 
 
 class CleaningServer(AppServer):
