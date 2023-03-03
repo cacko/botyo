@@ -1,13 +1,31 @@
 import logging
+from pathlib import Path
 import threading
+from typing import Optional
 from corethread import StoppableThread
-from google.cloud.firestore import Client, DocumentReference, DocumentSnapshot
+from google.cloud.firestore import Client, DocumentReference
 from botyo.server.core import AppServer
+from pydantic import BaseModel, Extra
+from botyo.core.s3 import S3
 
 
 delete_done = threading.Event()
 
-# Create a callback on_snapshot function to capture changes
+
+class ItemPart(BaseModel, extra=Extra.ignore):
+    content: str
+    type: str
+    caption: Optional[str] = None
+    contentType: Optional[str] = None
+
+
+class HistoryItem(BaseModel, extra=Extra.ignore):
+    # title: Optional[str] = None
+    # query: Optional[str] = None
+    # method: Optional[str] = None
+    # id: Optional[str] = None
+    # timestamp: Optional[str] = None
+    parts: Optional[list[ItemPart]] = None
 
 
 class DeleteListener(StoppableThread):
@@ -33,7 +51,16 @@ class DeleteListener(StoppableThread):
                 case 'REMOVED':
                     doc = change.document
                     logging.info(f"removed {doc.to_dict()}")
+                    self.handle_removed(HistoryItem(**doc.to_dict()))
                     delete_done.set()
+
+    def handle_removed(self, item: HistoryItem):
+        if not item.parts:
+            return
+        for part in item.parts:
+            if part.type == "image":
+                pth = Path(part.content)
+                S3.delete(pth.name)
 
 
 class CleaningServer(AppServer):

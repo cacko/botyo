@@ -1,4 +1,3 @@
-from distutils.command.build import build
 import boto3
 from pathlib import Path
 from botyo.core.config import Config as app_config
@@ -13,6 +12,9 @@ class S3Meta(type):
     def upload(cls, src: Path, dst: str, skip_upload: bool = False) -> str:
         logging.debug(f"upload {src} to {dst}")
         return cls().upload_file(src, dst, skip_upload)
+
+    def delete(cls, key: str):
+        return cls().delete_file(key)
 
     def src_key(cls, dst):
         return f"{app_config.s3.directory}/{dst}"
