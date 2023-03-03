@@ -37,8 +37,9 @@ class CaptionParams(BaseModel, extra=Extra.ignore):
         try:
             tpl_id = data.get("template_id")
             assert isinstance(tpl_id, str)
-            tpl = Templates[tpl_id.upper()]
-            data["template_id"] = tpl.value
+            if not tpl_id.isnumeric():
+                tpl = Templates[tpl_id.upper()]
+                data["template_id"] = tpl.value
         except AssertionError:
             pass
         except KeyError:
