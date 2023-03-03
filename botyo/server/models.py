@@ -132,9 +132,6 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     EVENT_CANCEL = "event:cancel"
     MEME_CAPTION = "meme:caption"
 
-    # def __eq__(self, __o: object) -> bool:
-    #     return self.value == __o.value
-
 
 class CoreMethods(StrEnum, metaclass=MethodMeta):
     LOGIN = "login"
