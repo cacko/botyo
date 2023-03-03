@@ -295,7 +295,7 @@ def image_fromtext2wool(context: Context):
     try:
         query = context.query
         assert query
-        attachment, message = Image.txt2clay(query)
+        attachment, message = Image.txt2wool(query)
         assert attachment
         return RenderResult(
             attachment=attachment,
