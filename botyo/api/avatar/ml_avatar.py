@@ -61,9 +61,10 @@ class StableDiffusionAvatar(ImageCachable):
             object.append(self.race.value)
         return (
             f"profile picture of  {' '.join(object)}, "
-            "in the style of artgerm, gerald brom, atey ghailan and mike mignola, "
-            "vibrant colors and hard shadows and strong rim light, plain background, "
-            "comic cover art, trending on artstation -u"
+            "fantasy artwork by krenz cushart!! trending on artstation. "
+            "award winning digital painting volumetric "
+            "studio lighting chiaroscuro dramatic "
+            "comic cover art, vibrat colors, cinematic scene from the film ergo"
         )
 
     @property
