@@ -65,13 +65,13 @@ class Action(Enum):
     VARIATION = "image/variation"
     TXT2IMG = "image/txt2img"
     IMG2IMG = "image/img2img"
-    PORTRAIT = "image/txt2portrait"
     GPS2IMG = "image/gps2img"
     TXT2CLAY = "image/txt2clay"
     TXT2ZOMBIE = "image/txt2zombie"
     TXT2DISNEY = "image/txt2disney"
     TXT2FOOD = "image/txt2food"
     TXT2PAPER = "image/txt2paper"
+    TXT2WOOL = "image/txt2wool"
     TXT2ALBUMART = "image/txt2albumart"
     TXT2ICON = "image/txt2icon"
     TXT2SIMPSONS = "image/txt2simpsons"
@@ -184,8 +184,8 @@ class ImageMeta(type):
     def txt2food(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt, Action.TXT2FOOD)
 
-    def txt2disney(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2DISNEY)
+    def txt2wool(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2WOOL)
 
     def txt2clay(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt, Action.TXT2CLAY)
@@ -201,12 +201,6 @@ class ImageMeta(type):
 
     def txt2icon(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt, Action.TXT2ICON)
-
-    def txt2simpsons(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2SIMPSONS)
-
-    def txt2portrait(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_portrait(prompt)
 
     def img2img(cls,
                 attachment: Attachment,
@@ -288,15 +282,6 @@ class Image(object, metaclass=ImageMeta):
         try:
             params = Image.image_generator_params(prompt)
             return self.getResponse(Action.GPS2IMG,
-                                    params.prompt,
-                                    json=params.dict())
-        except ValidationErr as e:
-            raise ApiError(f"{e}")
-
-    def do_portrait(self, prompt: str):
-        try:
-            params = Image.image_generator_params(prompt)
-            return self.getResponse(Action.PORTRAIT,
                                     params.prompt,
                                     json=params.dict())
         except ValidationErr as e:

@@ -312,6 +312,32 @@ def image_fromtext2clay(context: Context):
 
 
 @bp.command(
+    method=ZMethod.IMAGE_TXT2WOOL,
+    desc="text to wool illustration",
+    icon="checkroom",
+    uses_prompt=True
+)  # type: ignore
+def image_fromtext2wool(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2clay(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2WOOL,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2WOOL,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2WOOL)
+
+
+@bp.command(
     method=ZMethod.IMAGE_TXT2ICON,
     desc="text to flat icon design",
     icon="emoji_emotions",
