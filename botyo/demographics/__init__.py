@@ -2,8 +2,7 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from enum import Enum
 from fuzzelinho import Match, MatchMethod
-from botyo.core.config import Config
-from botyo.server.output import split_with_quotes
+from botyo.core.config import Config as app_config
 from botyo.chatyo import getResponse, Payload
 
 
@@ -71,14 +70,14 @@ class DemographicsMeta(type):
     def isMale(cls, name: str) -> bool:
         matcher = NameMatch([
             NameNeedle(name=male)
-            for male in Config.demographics.males
+            for male in app_config.demographics.males
         ])
         return len(matcher.fuzzy(NameNeedle(name=name))) > 0
 
     def isFaggot(cls, name: str) -> bool:
         matcher = NameMatch([
             NameNeedle(name=fag)
-            for fag in Config.demographics.faggots
+            for fag in app_config.demographics.faggots
         ])
         return len(matcher.fuzzy(NameNeedle(name=name))) > 0
 

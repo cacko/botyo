@@ -24,8 +24,8 @@ class MusicConfig(BaseModel, extra=Extra.ignore):
 
 
 class DemographicsConfig(BaseModel, extra=Extra.ignore):
-    faggots: Optional[list[str]] = None
-    males: Optional[list[str]] = None
+    faggots: list[str]
+    males: list[str]
 
 
 class CachableConfig(BaseModel, extra=Extra.ignore):
