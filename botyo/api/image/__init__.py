@@ -413,3 +413,55 @@ def image_fromtext2zombie(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_TXT2ZOMBIE)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2DREAM,
+    desc="text to dream like art image",
+    icon="settings_system_daydream",
+    uses_prompt=True
+)  # type: ignore
+def image_fromtext2dream(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2dream(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2DREAM,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2DREAM,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2DREAM)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2PHOTO,
+    desc="text to photo like image",
+    icon="satellite",
+    uses_prompt=True
+)  # type: ignore
+def image_fromtext2photo(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2photo(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2PHOTO,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2PHOTO,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2PHOTO)
