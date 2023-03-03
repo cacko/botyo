@@ -11,8 +11,8 @@ from shlex import split
 
 
 class Templates(IntEnum):
-    OLIVER = 445221743
-    DAVID = 445271039
+    BART = 445427161
+    XAVIER = 445429370
 
 
 def get_top_templates() -> list[int]:
