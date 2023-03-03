@@ -158,6 +158,7 @@ class ImageMeta(type):
             parser.add_argument("-m", "--model", default="default")
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-a", "--auto_prompt", action="store_true")
+            parser.add_argument("--ar", default="1:1")
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
