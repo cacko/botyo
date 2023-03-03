@@ -4,12 +4,15 @@ from botyo.server.models import RenderResult
 from botyo.server.socket.connection import Context
 from botyo.server.blueprint import Blueprint
 from botyo.chatyo import getResponse, Payload
-import logging
 
 bp = Blueprint("text")
 
 
-@bp.command(method=ZMethod.TEXT_GENERATE, desc="continue the sentence", icon="create")  # type: ignore
+@bp.command(
+    method=ZMethod.TEXT_GENERATE,
+    desc="continue the sentence",
+    icon="create"
+)  # type: ignore
 def dialog_commang(context: Context):
     msg = context.query
     if not msg:
@@ -19,7 +22,11 @@ def dialog_commang(context: Context):
     return res
 
 
-@bp.command(method=ZMethod.TEXT_DETECT, desc="find the tongue", icon="translate")  # type: ignore
+@bp.command(
+    method=ZMethod.TEXT_DETECT,
+    desc="find the tongue",
+    icon="translate"
+)  # type: ignore
 def detect_commmand(context: Context):
     msg = context.query
     if not msg:

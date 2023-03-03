@@ -77,7 +77,6 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     MUSIC_NOWPLAYING_SONG = "music:nowsong"
     MUSIC_NOWPLAYING_ART = "music:nowart"
     ONTV_TV = "ontv:tv"
-    PHOTO_FAKE = "photo:fake"
     HELP = "help"
     FOOTY_STANDINGS = "ft:standings"
     FOOTY_LEAGUES = "ft:leagues"

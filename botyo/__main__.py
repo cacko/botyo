@@ -29,7 +29,6 @@ def create_app():
     from botyo.api.name import bp as name_bp
     from botyo.api.music import bp as music_bp
     from botyo.api.ontv import bp as ontv_bp
-    from botyo.api.photo import bp as photo_bp
     from botyo.api.logo import bp as logo_bp
     from botyo.api.footy import bp as footy_bp
     from botyo.api.chat import bp as chat_bp
@@ -45,7 +44,6 @@ def create_app():
     music_bp.register(app)
     logo_bp.register(app)
     ontv_bp.register(app)
-    photo_bp.register(app)
     wiki_bp.register(app)
     footy_bp.register(app)
     chat_bp.register(app)
