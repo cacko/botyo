@@ -47,4 +47,5 @@ class S3(object, metaclass=S3Meta):
 
     def delete_file(self, file_name: str) -> bool:
         bucket = app_config.s3.storage_bucket_name
-        return self._client.delete_object(Bucket=bucket, Key=file_name)
+        directory = app_config.s3.directory
+        return self._client.delete_object(Bucket=bucket, Key=f"{directory}/{file_name}")
