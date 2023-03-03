@@ -1,7 +1,7 @@
 import logging
 import threading
 from corethread import StoppableThread
-from google.cloud.firestore import Client
+from google.cloud.firestore import Client, DocumentReference
 from botyo.server.core import AppServer
 
 
@@ -17,9 +17,14 @@ class DeleteListener(StoppableThread):
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        col_query = self.client.collection("users")
-        query_watch = col_query.on_snapshot(self.on_snapshot)
-        logging.info(query_watch)
+        for user_ref in self.client.collection("users").list_documents():
+            try:
+                assert isinstance(user_ref, DocumentReference)
+                col_query = self.client.collection(f"users/{user_ref.id}/history")
+                query_watch = col_query.on_snapshot(self.on_snapshot)
+                logging.info(query_watch)
+            except AssertionError:
+                pass
 
     def on_snapshot(self, col_snapshot, changes, read_time):
         logging.debug(col_snapshot)
