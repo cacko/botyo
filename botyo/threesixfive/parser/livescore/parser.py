@@ -4,8 +4,6 @@ from datetime import datetime, timezone
 from botyo.threesixfive.item.models import Country, ResponseScores, Sport
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from botyo.server.scheduler import Scheduler
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 from botyo.core.store import ImageCachable
 from botyo.threesixfive.url import Url
 from botyo.threesixfive.team import (
@@ -15,10 +13,10 @@ from botyo.threesixfive.team import (
     AssetKey
 )
 import logging
+from pydantic import BaseModel, Field
 
 
-@dataclass
-class ParserResponse:
+class ParserResponse(BaseModel):
     team1: str
     team2: str
     team1Score: int
@@ -31,7 +29,7 @@ class ParserResponse:
     team1Id: int
     team2Id: int
     sportId: int
-    winDescription: str = ""
+    winDescription: str = Field(default="")
     id: Optional[int] = None
 
 
@@ -57,16 +55,13 @@ def badges(badge):
         return badge.process()
 
 
-@dataclass_json
-@dataclass
-class BadgeQueueItem:
+class BadgeQueueItem(BaseModel):
     url: str
     name: str
 
 
 class BadgeFetcher:
 
-    queue: list[BadgeQueueItem]
     isRunning = False
     POOL_SIZE = 10
 
@@ -106,6 +101,8 @@ class Parser:
         req = Request(self.__endpoint)
         json = req.json
         today = datetime.now(tz=timezone.utc).date()
+        logging.debug(json)
+        assert json
         self.__struct = ResponseScores(**json)
 
         self.__struct.games = [

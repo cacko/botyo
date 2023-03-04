@@ -6,11 +6,6 @@ from typing import Any
 
 
 class Livescores:
-
-    with_progress = False
-    with_details = False
-    leagues = []
-
     def __init__(
         self, with_progress=False, leagues: list[int] = [], with_details=False
     ):
