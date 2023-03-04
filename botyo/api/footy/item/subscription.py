@@ -443,7 +443,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     ShortGameStatus(content.game.shortStatusText) in [
                         ShortGameStatus.FINAL,
                         ShortGameStatus.AFTER_PENALTIES,
-                        ShortGameStatus.ENDED
+                        ShortGameStatus.ENDED,
+                        ShortGameStatus.JUSTENDED
                     ],
             ]):
                 for sc in self.subscriptions:
