@@ -39,8 +39,7 @@ class DeleteListener(StoppableThread):
             try:
                 assert isinstance(user_ref, DocumentReference)
                 col_query = self.client.collection(f"users/{user_ref.id}/history")
-                query_watch = col_query.on_snapshot(self.on_snapshot)
-                logging.info(query_watch)
+                col_query.on_snapshot(self.on_snapshot)
             except AssertionError:
                 pass
 
