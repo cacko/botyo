@@ -26,25 +26,10 @@ def dialog_command(context: Context):
 @bp.command(
     method=ZMethod.CHAT_PHRASE,
     matcher=ZSONMatcher.PHRASE,
-    response="you coming today",
+    response="you coming today|mind blowing innit",
     subscription=True
 )  # type: ignore
-def phrase_you_coming_today(context: Context):
-    msg = context.query
-    if not msg:
-        return None
-    resp = Chat.phrase(msg)
-    res = RenderResult(message=resp.response, method=ZMethod.CHAT_PHRASE, plain=True)
-    return res
-
-
-@bp.command(
-    method=ZMethod.CHAT_PHRASE,
-    matcher=ZSONMatcher.PHRASE,
-    response="mind blowing innit",
-    subscription=True
-)  # type: ignore
-def phrase_mind_blowing(context: Context):
+def phrase_command(context: Context):
     msg = context.query
     if not msg:
         return None
