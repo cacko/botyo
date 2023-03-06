@@ -312,29 +312,29 @@ def image_fromtext2wool(context: Context):
 
 
 @bp.command(
-    method=ZMethod.IMAGE_TXT2ICON,
-    desc="text to flat icon design",
-    icon="emoji_emotions",
+    method=ZMethod.IMAGE_TXT2SHATTER,
+    desc="text to shattered design",
+    icon="extension",
     uses_prompt=True
 )  # type: ignore
 def image_fromtext2icon(context: Context):
     try:
         query = context.query
         assert query
-        attachment, message = Image.txt2icon(query)
+        attachment, message = Image.txt2shatter(query)
         assert attachment
         return RenderResult(
             attachment=attachment,
-            method=ZMethod.IMAGE_TXT2ICON,
+            method=ZMethod.IMAGE_TXT2SHATTER,
             message=message
         )
     except ApiError as e:
         return EmptyResult(
-            method=ZMethod.IMAGE_TXT2ICON,
+            method=ZMethod.IMAGE_TXT2SHATTER,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2ICON)
+        return EmptyResult(method=ZMethod.IMAGE_TXT2SHATTER)
 
 
 @bp.command(
