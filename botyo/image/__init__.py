@@ -148,8 +148,8 @@ class ImageMeta(type):
                                 "--negative_prompt",
                                 type=str,
                                 default="")
-            parser.add_argument("-h", "--height", type=int, default=512)
-            parser.add_argument("-w", "--width", type=int, default=512)
+            parser.add_argument("-h", "--height", type=int)
+            parser.add_argument("-w", "--width", type=int)
             parser.add_argument("-g",
                                 "--guidance_scale",
                                 type=float,
@@ -159,7 +159,7 @@ class ImageMeta(type):
             parser.add_argument("-m", "--model", default="default")
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-a", "--auto_prompt", action="store_true")
-            parser.add_argument("--ar", type=str, default="1:1")
+            parser.add_argument("--ar", type=str)
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
