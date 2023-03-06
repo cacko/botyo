@@ -68,15 +68,12 @@ class Action(Enum):
     GPS2IMG = "image/gps2img"
     TXT2CLAY = "image/txt2clay"
     TXT2ZOMBIE = "image/txt2zombie"
-    TXT2DISNEY = "image/txt2disney"
     TXT2FOOD = "image/txt2food"
     TXT2PAPER = "image/txt2paper"
     TXT2WOOL = "image/txt2wool"
-    TXT2DREAM = "image/txt2dream"
-    TXT2PHOTO = "image/txt2photo"
     TXT2ALBUMART = "image/txt2albumart"
     TXT2ICON = "image/txt2icon"
-    TXT2SIMPSONS = "image/txt2simpsons"
+    TXT2COLOR = "image/txt2color"
 
 
 class ImageMeta(type):
@@ -200,11 +197,8 @@ class ImageMeta(type):
     def txt2icon(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt, Action.TXT2ICON)
 
-    def txt2dream(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2DREAM)
-
-    def txt2photo(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2PHOTO)
+    def txt2color(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2COLOR)
 
     def img2img(cls,
                 attachment: Attachment,

@@ -121,6 +121,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     IMAGE_TXT2CLAY = "image:txt2clay"
     IMAGE_TXT2PAPER = "image:txt2paper"
     IMAGE_TXT2ICON = "image:txt2icon"
+    IMAGE_TXT2COLOR = "image:txt2color"
     IMAGE_TXT2ZOMBIE = "image:txt2zombie"
     IMAGE_TXT2ALBUMART = "image:txt2albumart"
     IMAGE_TXT2WOOL = "image:txt2wool"

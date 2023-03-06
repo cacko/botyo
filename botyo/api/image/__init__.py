@@ -413,3 +413,29 @@ def image_fromtext2zombie(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_TXT2ZOMBIE)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2COLOR,
+    desc="text to color jizz design",
+    icon="palette",
+    uses_prompt=True
+)  # type: ignore
+def image_fromtext2color(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2color(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2COLOR,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2COLOR,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2COLOR)
