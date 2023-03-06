@@ -24,14 +24,14 @@ class ImageGeneratorParams(BaseModel):
     prompt: list[str]
     height: int = Field(default=512)
     width: int = Field(default=512)
-    guidance_scale: float = Field(default=7)
+    guidance_scale: float = Field(default=7.5)
     num_inference_steps: int = Field(default=50)
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
     upscale: int = Field(default=0)
     auto_prompt: int = Field(default=0)
     model: str = Field(default="default")
-    ar: str = Field(default="1:1")
+    ar: Optional[str] = None
 
     @validator("prompt")
     def static_prompt(cls, prompt: list[str]):

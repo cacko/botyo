@@ -86,7 +86,7 @@ class Server(object, metaclass=ServerMeta):
                 except Empty:
                     pass
                 finally:
-                    time.sleep(0.05)
+                    time.sleep(0.2)
 
     def terminate(self):
         try:
