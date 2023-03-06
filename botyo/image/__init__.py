@@ -22,10 +22,10 @@ import json
 
 class ImageGeneratorParams(BaseModel):
     prompt: list[str]
-    height: int = Field(default=512)
-    width: int = Field(default=512)
-    guidance_scale: float = Field(default=7.5)
-    num_inference_steps: int = Field(default=50)
+    height: Optional[int] = None
+    width: Optional[int] = None
+    guidance_scale: Optional[float] = None
+    num_inference_steps: Optional[int] = None
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
     upscale: int = Field(default=0)
