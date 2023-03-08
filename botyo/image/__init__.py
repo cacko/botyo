@@ -74,6 +74,7 @@ class Action(Enum):
     TXT2ALBUMART = "image/txt2albumart"
     TXT2SHATTER = "image/txt2shatter"
     TXT2COLOR = "image/txt2color"
+    TXT2ICON = "image/txt2icon"
 
 
 class ImageMeta(type):
@@ -196,6 +197,9 @@ class ImageMeta(type):
 
     def txt2color(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt, Action.TXT2COLOR)
+    
+    def txt2icon(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2img(prompt, Action.TXT2ICON)
 
     def img2img(cls,
                 attachment: Attachment,

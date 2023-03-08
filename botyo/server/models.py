@@ -127,6 +127,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     IMAGE_TXT2ALBUMART = "image:txt2albumart"
     IMAGE_TXT2WOOL = "image:txt2wool"
     IMAGE_TXT2FOOD = "image:txt2food"
+    IMAGE_TXT2ICON = "image:txt2icon"
     IMAGE_IMG2IMG = "image:img2img"
     EVENT_COUNTDOWN = "event:countdown"
     EVENT_CALENDAR = "event:calendar"

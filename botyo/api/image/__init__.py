@@ -317,7 +317,7 @@ def image_fromtext2wool(context: Context):
     icon="extension",
     uses_prompt=True
 )  # type: ignore
-def image_fromtext2icon(context: Context):
+def image_fromtext2shatter(context: Context):
     try:
         query = context.query
         assert query
@@ -439,3 +439,29 @@ def image_fromtext2color(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_TXT2COLOR)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2ICON,
+    desc="text to app icon design",
+    icon="palette",
+    uses_prompt=True
+)  # type: ignore
+def image_fromtext2icon(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2icon(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2ICON,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2ICON,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2ICON)
