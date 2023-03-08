@@ -465,3 +465,29 @@ def image_fromtext2icon(context: Context):
         )
     except AssertionError:
         return EmptyResult(method=ZMethod.IMAGE_TXT2ICON)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_TXT2MUPPET,
+    desc="text to muppet",
+    icon="toys",
+    uses_prompt=True
+)  # type: ignore
+def image_fromtext2muppet(context: Context):
+    try:
+        query = context.query
+        assert query
+        attachment, message = Image.txt2muppet(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2MUPPET,
+            message=message
+        )
+    except ApiError as e:
+        return EmptyResult(
+            method=ZMethod.IMAGE_TXT2MUPPET,
+            message=e.message
+        )
+    except AssertionError:
+        return EmptyResult(method=ZMethod.IMAGE_TXT2MUPPET)
