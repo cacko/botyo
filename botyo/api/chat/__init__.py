@@ -53,17 +53,3 @@ def phrase_mind_blowing(context: Context):
     res = RenderResult(message=resp.response,
                        method=ZMethod.CHAT_MINDBLOWINGINNIT, plain=True)
     return res
-
-
-@bp.command(
-    method=ZMethod.CHAT_REPLY,
-    desc="genereate reply",
-    icon="chat_bubble_outline"
-)  # type: ignore
-def reply_command(context: Context):
-    msg = context.query
-    if not msg:
-        return None
-    resp = Chat.phrase(msg)
-    res = RenderResult(message=resp.response, method=ZMethod.CHAT_REPLY, plain=True)
-    return res

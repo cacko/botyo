@@ -171,6 +171,7 @@ def lineups_command(context: Context) -> RenderResult:
     icon="history_edu")  # type: ignore
 def facts_command(context: Context) -> RenderResult:
     try:
+        logging.debug(context.query)
         assert context.query
         facts = Footy.facts(context.query)
         message = facts.message

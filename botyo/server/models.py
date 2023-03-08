@@ -96,7 +96,6 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     CHAT_DIALOG = "chat:dialog"
     CHAT_YOUCOMINGTODAY = "chat:youcomingtoday"
     CHAT_MINDBLOWINGINNIT = "chat:mingblowinginnit"
-    CHAT_REPLY = "chat:reply"
     TEXT_GENERATE = "text:generate"
     TEXT_DETECT = "text:detect"
     TRANSLATE_EN_ES = "translate:en_es"
