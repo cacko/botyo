@@ -199,12 +199,6 @@ class ImageMeta(type):
     def txt2color(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt, Action.TXT2COLOR)
 
-    def txt2icon(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2ICON)
-
-    def txt2muppet(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2MUPPET)
-
     def img2img(cls,
                 attachment: Attachment,
                 prompt: Optional[str] = None) -> tuple[Attachment, str]:
