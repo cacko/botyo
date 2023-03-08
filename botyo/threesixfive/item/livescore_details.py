@@ -8,7 +8,6 @@ from .models import (
     Position,
     GameMember,
     GameCompetitor,
-    GameFact,
 )
 from botyo.threesixfive.exception import GameNotFound
 from cachable.request import Request
@@ -43,7 +42,7 @@ class ParserDetails(TimeCachable):
         if response is not None:
             self._struct = ParseDetailsCache(timestamp=datetime.now(
                 timezone.utc),
-                                             struct=response)
+                struct=response)
 
     @classmethod
     def get(cls,
@@ -198,6 +197,7 @@ class ParserDetails(TimeCachable):
     def members(self) -> Optional[list[GameMember]]:
         if self._struct:
             return self._struct.struct.game.members
+        return None
 
     @property
     def home(self) -> Optional[GameCompetitor]:
@@ -215,12 +215,6 @@ class ParserDetails(TimeCachable):
         except AssertionError as e:
             logging.exception(e)
             return None
-
-    @property
-    def facts(self) -> Optional[list[GameFact]]:
-        if not self._struct or not self._struct.struct.game:
-            return None
-        return self._struct.struct.game.matchFacts
 
     @property
     def away(self) -> Optional[GameCompetitor]:

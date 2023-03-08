@@ -11,7 +11,6 @@ from botyo.threesixfive.item.competition import CompetitionData
 from .item.player import Player
 from .item.stats import Stats
 from .item.livescore import Livescore
-from .item.facts import Facts
 from .item.lineups import Lineups
 from .item.competitions import Competitions
 from .item.team import Team
@@ -47,9 +46,6 @@ class FootyMeta(type):
 
     def lineups(cls, query: str) -> Lineups:
         return cls().getLineups(query)
-
-    def facts(cls, query: str) -> Facts:
-        return cls().getFacts(query)
 
     def team(cls, query: str) -> Team:
         return cls().getTeam(query)
@@ -189,10 +185,6 @@ class Footy(object, metaclass=FootyMeta):
         item = self.__queryGame(query)
         return Lineups(item)
 
-    def getFacts(self, query: str) -> Facts:
-        item = self.__queryGame(query)
-        return Facts(item)
-
     def getStats(self, query: str) -> Stats:
         item = self.__queryGame(query)
         return Stats(item)
@@ -205,7 +197,7 @@ class Footy(object, metaclass=FootyMeta):
         item = self.__queryGame(query)
         sc = SubscriptionClient(client_id=client, group_id=group)
         sub = Subscription.get(event=item, sc=sc)
-        sub_id = sub.id;
+        sub_id = sub.id
         sub.cancel(sc)
         icon = emojize(":dango:")
         return SubscriptionResult(
