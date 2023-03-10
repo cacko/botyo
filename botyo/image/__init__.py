@@ -351,6 +351,13 @@ class Image(object, metaclass=ImageMeta):
                         path=fp.absolute().as_posix(),
                         contentType="image/jpeg",
                     )
+                elif "image/webp" in content_type:
+                    fp = cp / f"{uuid4().hex}.webp"
+                    fp.write_bytes(part.content)
+                    attachment = Attachment(
+                        path=fp.absolute().as_posix(),
+                        contentType="image/webp",
+                    )	
                 else:
                     message = part.text
         else:
