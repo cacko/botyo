@@ -127,12 +127,8 @@ class ImageMeta(type):
     def variation_generator_params(cls,
                                    prompt: str) -> VariationGeneratorParams:
         parser = cls.variation_generator_parser
-        parsed = parser.parse_args(split_with_quotes(prompt))
-        return VariationGeneratorParams(
-            guidance_scale=parsed.guidance_scale,
-            num_images_per_prompt=parsed.num_images_per_prompt,
-            num_inference_steps=parsed.num_inference_steps,
-        )
+        namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
+        return VariationGeneratorParams(**namespace.__dict__)
 
     @property
     def image_generator_parser(cls) -> ArgumentParser:
