@@ -61,10 +61,6 @@ class WSAttachment(BaseModel):
                 contentType = contentType
                 match contentType.split("/")[0]:
                     case "image":
-                        img = Image.open(a_path.as_posix())
-                        hsh = string_hash(a_path.stem, str(time.time()))
-                        a_store_path = WSAttachment.store_root() / f"{hsh}.webp"
-                        img.save(a_store_path.as_posix(), format="webp")
                         S3.upload(a_store_path, a_store_path.name)
                         a_store_path.unlink(missing_ok=True)
                     case "audio":
