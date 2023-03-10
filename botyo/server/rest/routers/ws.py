@@ -61,8 +61,7 @@ class WSAttachment(BaseModel):
                 contentType = contentType
                 match contentType.split("/")[0]:
                     case "image":
-                        S3.upload(a_store_path, a_store_path.name)
-                        a_store_path.unlink(missing_ok=True)
+                        S3.upload(a_path, a_store_path.name)
                     case "audio":
                         S3.upload(a_path, a_store_path.name)
                     case "video":
