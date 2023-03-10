@@ -51,9 +51,9 @@ class ImageGeneratorParams(BaseModel):
 
 
 class VariationGeneratorParams(BaseModel):
-    guidance_scale: float = Field(default=7)
-    num_inference_steps: int = Field(default=50)
-    num_images_per_prompt: int = Field(default=1)
+    guidance_scale: Optional[float] = Field(default=7)
+    num_inference_steps: Optional[int] = Field(default=50)
+    num_images_per_prompt: Optional[int] = Field(default=1)
 
 
 class Action(Enum):
@@ -113,8 +113,7 @@ class ImageMeta(type):
             )
             parser.add_argument("-n",
                                 "--num_images_per_prompt",
-                                type=int,
-                                default=1)
+                                type=int)
             parser.add_argument("-g",
                                 "--guidance_scale",
                                 type=float)
@@ -247,11 +246,20 @@ class Image(object, metaclass=ImageMeta):
         return self.getResponse(Action.PIXEL, block_size)
 
     def do_variation(self, prompt: Optional[str] = None):
-        assert prompt
-        params = Image.variation_generator_params(prompt)
-        return self.getResponse(Action.VARIATION,
-                                uuid4().hex,
-                                json=params.dict())
+        try:
+            assert prompt
+            params = Image.variation_generator_params(prompt)
+            return self.getResponse(
+                Action.VARIATION,
+                uuid4().hex,
+                json=params.dict()
+            )
+        except AssertionError:
+            return self.getResponse(
+                Action.VARIATION,
+                uuid4().hex,
+                json=VariationGeneratorParams().dict()
+            )
 
     def do_txt2img(
         self,
@@ -353,7 +361,7 @@ class Image(object, metaclass=ImageMeta):
                     attachment = Attachment(
                         path=fp.absolute().as_posix(),
                         contentType="image/webp",
-                    )	
+                    )
                 else:
                     message = part.text
         else:
