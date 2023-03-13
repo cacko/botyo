@@ -1,6 +1,6 @@
 from botyo.api.avatar.ml_avatar import StableDiffusionAvatar
 from botyo.server.socket.connection import Context
-from botyo.server.models import Attachment, EmptyResult, RenderResult
+from botyo.server.models import Attachment, ErrorResult, RenderResult
 from botyo.server.models import ZMethod
 from botyo.server.blueprint import Blueprint
 from argparse import ArgumentParser, ArgumentError
@@ -37,12 +37,12 @@ def avatar_command(context: Context) -> RenderResult:
             attachment=Attachment(path=path.as_posix(), contentType=avatar.contentType),
         )
     except ArgumentError:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.AVATAR_AVATAR
         )
     except Exception as e:
         logging.info(e)
-        return EmptyResult()
+        return ErrorResult()
 
 
 # # type: ignore

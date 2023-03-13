@@ -233,6 +233,20 @@ class EmptyResult(RenderResult):
         self.message = f"{emo} {self.error_message}"
 
 
+class ErrorResult(EmptyResult):
+    @property
+    def error_message(self):
+        try:
+            return requests.get("https://commit.cacko.net/index.txt").text.strip()
+        except Exception:
+            return choice(NOT_FOUND)
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        emo = emojize(choice(NOT_FOUND_ICONS))
+        self.error = f"{emo} {self.error_message}"
+
+
 class ZSONMessage(BaseModel, extra=Extra.ignore):
     ztype: Optional[ZSONType] = None
     id: Optional[str] = None

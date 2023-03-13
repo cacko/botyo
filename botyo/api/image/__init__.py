@@ -3,7 +3,7 @@ from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import (
     RenderResult,
-    EmptyResult,
+    ErrorResult,
     ApiError,
     ZMethod
 )
@@ -32,7 +32,7 @@ def image_analyze(context: Context):
             method=ZMethod.IMAGE_ANALYZE,
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_ANALYZE)
+        return ErrorResult(method=ZMethod.IMAGE_ANALYZE)
 
 
 @bp.command(
@@ -53,7 +53,7 @@ def image_Tag(context: Context):
             method=ZMethod.IMAGE_TAG,
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TAG)
+        return ErrorResult(method=ZMethod.IMAGE_TAG)
 
 
 @bp.command(
@@ -74,7 +74,7 @@ def image_howcute(context: Context):
             method=ZMethod.IMAGE_HOWCUTE,
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_HOWCUTE)
+        return ErrorResult(method=ZMethod.IMAGE_HOWCUTE)
 
 
 @bp.command(
@@ -96,12 +96,12 @@ def image_classify(context: Context):
             method=ZMethod.IMAGE_CLASSIFY,
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_CLASSIFY,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_CLASSIFY)
+        return ErrorResult(method=ZMethod.IMAGE_CLASSIFY)
 
 
 @bp.command(
@@ -122,13 +122,13 @@ def image_pixel(context: Context):
             method=ZMethod.IMAGE_PIXEL,
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_PIXEL,
             message=e.message
         )
     except AssertionError as e:
         logging.exception(e)
-        return EmptyResult(method=ZMethod.IMAGE_PIXEL)
+        return ErrorResult(method=ZMethod.IMAGE_PIXEL)
 
 
 @bp.command(
@@ -148,12 +148,12 @@ def image_variation(context: Context):
             method=ZMethod.IMAGE_VARIATION,
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_VARIATION,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_VARIATION)
+        return ErrorResult(method=ZMethod.IMAGE_VARIATION)
 
 
 @bp.command(
@@ -174,12 +174,12 @@ def image_fromtext(context: Context):
             message=message
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_TXT2IMG,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2IMG)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2IMG)
 
 
 @bp.command(
@@ -200,12 +200,12 @@ def image2image(context: Context):
             method=ZMethod.IMAGE_IMG2IMG,
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_IMG2IMG,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_IMG2IMG)
+        return ErrorResult(method=ZMethod.IMAGE_IMG2IMG)
 
 
 @bp.command(
@@ -225,12 +225,12 @@ def gps2Image(context: Context):
             method=ZMethod.IMAGE_GPS2IMG,
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_GPS2IMG,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_GPS2IMG)
+        return ErrorResult(method=ZMethod.IMAGE_GPS2IMG)
 
 
 @bp.command(
@@ -251,12 +251,12 @@ def image_fromtext2albumart(context: Context):
             message=message
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_TXT2ALBUMART,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2IMG)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2IMG)
 
 
 @bp.command(
@@ -277,12 +277,12 @@ def image_fromtext2clay(context: Context):
             message=message
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_TXT2CLAY,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2CLAY)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2CLAY)
 
 
 @bp.command(
@@ -303,12 +303,12 @@ def image_fromtext2wool(context: Context):
             message=message
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_TXT2WOOL,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2WOOL)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2WOOL)
 
 
 @bp.command(
@@ -329,12 +329,12 @@ def image_fromtext2shatter(context: Context):
             message=message
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_TXT2SHATTER,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2SHATTER)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2SHATTER)
 
 
 @bp.command(
@@ -355,12 +355,12 @@ def image_fromtext2paer(context: Context):
             message=message
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_TXT2PAPER,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2PAPER)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2PAPER)
 
 
 @bp.command(
@@ -381,12 +381,12 @@ def image_fromtext2food(context: Context):
             message=message
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_TXT2FOOD,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2FOOD)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2FOOD)
 
 
 @bp.command(
@@ -407,12 +407,12 @@ def image_fromtext2zombie(context: Context):
             message=message
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_TXT2ZOMBIE,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2ZOMBIE)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2ZOMBIE)
 
 
 @bp.command(
@@ -433,9 +433,9 @@ def image_fromtext2color(context: Context):
             message=message
         )
     except ApiError as e:
-        return EmptyResult(
+        return ErrorResult(
             method=ZMethod.IMAGE_TXT2COLOR,
             message=e.message
         )
     except AssertionError:
-        return EmptyResult(method=ZMethod.IMAGE_TXT2COLOR)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2COLOR)

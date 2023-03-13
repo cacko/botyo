@@ -19,7 +19,6 @@ from botyo.server.models import (
 )
 from typing import Optional
 from pathlib import Path
-from PIL import Image
 from botyo.core.config import Config as app_config
 import asyncio
 from botyo.firebase.auth import Auth, AuthUser
