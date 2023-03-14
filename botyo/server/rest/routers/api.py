@@ -85,15 +85,18 @@ async def post_unsubscribe(request: Request):
     jobs = Subscription.forGroup(sc)
     id_parts = data.get("id", "").split(":")
     for job in jobs:
-        if job.id.startswith(id_parts[0]):
-            Subscription.clients(id_parts[0]).remove(sc)
-            post(
-                data.get("webhook", ""),
-                headers=OTP(data.get("group", "")).headers,
-                json=CancelJobEvent(
-                    job_id=id_parts[0]).dict(),
-            )
-            return {"message": f"unsubscribed from {job.name}"}
+        try:
+            if job.id.startswith(id_parts[0]):
+                Subscription.clients(id_parts[0]).remove(sc)
+                post(
+                    data.get("webhook", ""),
+                    headers=OTP(data.get("group", "")).headers,
+                    json=CancelJobEvent(
+                        job_id=id_parts[0]).dict(),
+                )
+                return {"message": f"unsubscribed from {job.name}"}
+        except ValueError:
+            pass
     return {"message": "nothing unsubscribed"}
 
 
