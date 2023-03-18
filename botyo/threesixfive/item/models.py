@@ -1,7 +1,8 @@
+from ctypes.wintypes import HACCEL
 import logging
 from typing import Optional, Any
 from datetime import datetime, timezone
-from enum import IntEnum, Enum
+from enum import IntEnum, Enum, StrEnum
 from string import punctuation
 import re
 from zoneinfo import ZoneInfo
@@ -45,7 +46,7 @@ STATUS_MAP = {
 }
 
 
-class GameStatus(Enum):
+class GameStatus(StrEnum):
     FT = "Ended"
     JE = "Just Ended"
     SUS = "Susp"
@@ -64,7 +65,7 @@ class GameStatus(Enum):
     SCHEDULED = "Scheduled"
 
 
-class ShortGameStatus(Enum):
+class ShortGameStatus(StrEnum):
     FIRST_HALF = "1st"
     SECOND_HALF = "2nd"
     FINAL = "Final"
@@ -533,9 +534,13 @@ class Game(BaseModel, extra=Extra.ignore):
         status = GameStatus(self.shortStatusText)
         if self.ended:
             return self.displayScore
-        if status == GameStatus.HT:
-            return "HT"
-        return self.gameTimeDisplay
+        match status:
+            case GameStatus.HT:
+                return "HT"
+            case GameStatus.SCHEDULED:
+                return self.gameTimeDisplay
+            case _:
+                return str(status)
 
     @property
     def displayScore(self) -> str:
