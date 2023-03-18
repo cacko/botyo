@@ -29,23 +29,17 @@ class ImageGeneratorParams(BaseModel):
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
     upscale: int = Field(default=0)
-    auto_prompt: int = Field(default=0)
+    auto_prompt: Optional[str] = None
     model: str = Field(default="default")
     ar: Optional[str] = None
 
-    @validator("prompt")
+    @ validator("prompt")
     def static_prompt(cls, prompt: list[str]):
         return " ".join(prompt)
 
-    @validator("upscale")
+    @ validator("upscale")
     def static_upscale(cls, upscale: Optional[bool] = None):
         if not upscale:
-            return 0
-        return 1
-
-    @validator("auto_prompt")
-    def static_auto_prompt(cls, auto_prompt: Optional[bool] = None):
-        if not auto_prompt:
             return 0
         return 1
 
@@ -98,12 +92,14 @@ class ImageMeta(type):
     def classify(cls, attachment: Attachment) -> tuple[Attachment, dict]:
         return cls(attachment).do_classify()
 
-    def pixel(cls,
-              attachment: Attachment,
-              block_size: int = 8) -> tuple[Attachment, dict]:
+    def pixel(
+            cls,
+            attachment: Attachment,
+            block_size: int = 8
+    ) -> tuple[Attachment, dict]:
         return cls(attachment).do_pixel(block_size)
 
-    @property
+    @ property
     def variation_generator_parser(cls) -> ArgumentParser:
         if not cls.__variation_generator_parser:
             parser = ArgumentParser(
@@ -129,7 +125,7 @@ class ImageMeta(type):
         namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
         return VariationGeneratorParams(**namespace.__dict__)
 
-    @property
+    @ property
     def image_generator_parser(cls) -> ArgumentParser:
         if not cls.__image_generator_parser:
             parser = ArgumentParser(description="Image Processing",
@@ -149,22 +145,26 @@ class ImageMeta(type):
             parser.add_argument("-s", "--seed", type=int)
             parser.add_argument("-m", "--model", default="default")
             parser.add_argument("-u", "--upscale", action="store_true")
-            parser.add_argument("-a", "--auto_prompt", action="store_true")
+            parser.add_argument("-a", "--auto_prompt", type=str)
             parser.add_argument("--ar", type=str)
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
-    def image_generator_params(cls,
-                               prompt: Optional[str]) -> ImageGeneratorParams:
+    def image_generator_params(
+        cls,
+        prompt: Optional[str]
+    ) -> ImageGeneratorParams:
         parser = cls.image_generator_parser
         if not prompt:
             return ImageGeneratorParams(prompt=[""])
         namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
         return ImageGeneratorParams(**namespace.__dict__)
 
-    def variation(cls,
-                  attachment: Attachment,
-                  prompt: Optional[str] = None) -> tuple[Attachment, str]:
+    def variation(
+        cls,
+        attachment: Attachment,
+        prompt: Optional[str] = None
+    ) -> tuple[Attachment, str]:
         return cls(attachment).do_variation(prompt)
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
@@ -194,9 +194,11 @@ class ImageMeta(type):
     def txt2color(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt, Action.TXT2COLOR)
 
-    def img2img(cls,
-                attachment: Attachment,
-                prompt: Optional[str] = None) -> tuple[Attachment, str]:
+    def img2img(
+        cls,
+        attachment: Attachment,
+        prompt: Optional[str] = None
+    ) -> tuple[Attachment, str]:
         return cls(attachment).do_img2img(prompt)
 
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:

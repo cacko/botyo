@@ -9,7 +9,11 @@ from botyo.threesixfive.item.models import CancelJobEvent
 from botyo.core.otp import OTP
 from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
 from botyo.api.footy.footy import Footy
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import (
+    APIRouter,
+    Request,
+    HTTPException
+)
 import logging
 from fastapi.concurrency import run_in_threadpool
 
