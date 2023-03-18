@@ -530,6 +530,8 @@ class Game(BaseModel, extra=Extra.ignore):
     @property
     def displayStatus(self) -> str:
         zone = ZoneInfo("Europe/London")
+        if self.not_started:
+            return f"{time_hhmm(self.startTime,zone)}"
         status = GameStatus(self.shortStatusText)
         if self.ended:
             return self.displayScore
@@ -537,8 +539,8 @@ class Game(BaseModel, extra=Extra.ignore):
             case GameStatus.HT:
                 return "HT"
             case GameStatus.SCHEDULED:
-                return f"{time_hhmm(self.startTime,zone)}"
-            case _:            
+                return self.gameTimeDisplay
+            case _:
                 return str(status)
 
     @property
