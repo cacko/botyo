@@ -376,6 +376,8 @@ class Subscription(metaclass=SubscriptionMeta):
 
     def trigger(self):
         try:
+            if not self.isValid:
+                return self.cancel_all()
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
