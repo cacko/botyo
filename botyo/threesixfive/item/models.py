@@ -517,10 +517,11 @@ class Game(BaseModel, extra=Extra.ignore):
         status = self.shortStatusText
         try:
             _status = GameStatus(status)
-            if _status in (GameStatus.FT, GameStatus.AET, GameStatus.PPD):
+            if _status in (GameStatus.FT, GameStatus.AET):
                 return True
             return any([
                 _status == GameStatus.HT,
+                _status == GameStatus.PPD,
                 re.match(r"^\d+$", status) is not None
             ])
         except ValueError:
