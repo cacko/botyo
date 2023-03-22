@@ -1,3 +1,4 @@
+from ctypes import ArgumentError
 from pathlib import Path
 from xml.dom import ValidationErr
 from botyo.server.models import Attachment, ApiError
@@ -155,7 +156,7 @@ class ImageMeta(type):
                 default="default"
             )
             parser.add_argument("-u", "--upscale", action="store_true")
-            parser.add_argument("-a", "--auto_prompt", type=str)
+            parser.add_argument("-a", "--auto_prompt", type=int)
             parser.add_argument("--ar", type=str)
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
@@ -261,7 +262,7 @@ class Image(object, metaclass=ImageMeta):
                 action_param=string_hash(params.prompt),
                 json=params.dict()
             )
-        except ValidationErr as e:
+        except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
     def do_gps2img(self, prompt: str):
@@ -270,7 +271,7 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(Action.GPS2IMG,
                                     params.prompt,
                                     json=params.dict())
-        except ValidationErr as e:
+        except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
     def do_img2img(self, prompt: Optional[str] = None):
