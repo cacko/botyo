@@ -17,8 +17,11 @@ from pydantic import Field
 class CommandExecMeta(type):
     registered: list['CommandDef'] = []
 
-    def parse(cls, message: str,
-              **kwds) -> tuple[Optional["CommandDef"], Optional[str]]:
+    def parse(
+        cls,
+        message: str,
+        **kwds
+    ) -> tuple[Optional["CommandDef"], Optional[str]]:
         message = message.lower()
         trigger, args = [*message.split(" ", 1), ""][:2]
         triggers = filter(lambda x: not x.matcher, cls.registered)

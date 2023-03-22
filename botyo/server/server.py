@@ -10,7 +10,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from .command import CommandExec, CommandMatch
 from .config import Config
 from .core import AppServer, StoppableThread
-from .models import JunkMessage, NoCommand
+from .models import CommandDef, JunkMessage, NoCommand
 from .scheduler import Scheduler
 from .connection import Context
 from .socket.tcp import TCPReceiver
@@ -32,7 +32,7 @@ class ServerMeta(type):
     def cmdMatch(cls) -> CommandMatch:
         if not cls._cmdMatch:
             cls._cmdMatch = CommandMatch(
-                [*filter(lambda x: len(x.desc) > 0, cls._instance.commands)]
+                [*filter(lambda x: len(x.desc) > 0, cls().commands)]
             )
         return cls._cmdMatch
 
@@ -57,7 +57,7 @@ class Server(object, metaclass=ServerMeta):
         if cmd not in self.commands:
             self.commands.append(cmd)
             logging.debug(f"registering command {cmd.method.value}")
-            CommandExec.registered.append(cmd)
+            CommandExec.registered.append(CommandDef.parse_obj(cmd))
 
     def register_scheduler(self, redis_url):
         scheduler = BackgroundScheduler()

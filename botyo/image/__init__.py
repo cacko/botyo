@@ -1,4 +1,3 @@
-from ctypes import ArgumentError
 from pathlib import Path
 from xml.dom import ValidationErr
 from botyo.server.models import Attachment, ApiError
@@ -12,7 +11,7 @@ from botyo.server.output import TextOutput
 from emoji import emojize
 from botyo.image.models import AnalyzeReponse
 from typing import Optional
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentError
 from pydantic import BaseModel, Field, validator
 from corestring import split_with_quotes, string_hash
 from requests.exceptions import JSONDecodeError
