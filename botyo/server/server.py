@@ -46,7 +46,6 @@ class Server(object, metaclass=ServerMeta):
     config: Config
     groups: list[str] = []
     servers: list[AppServer] = []
-    producers = []
     tcpserver: TCPReceiver
 
     def __init__(self, root_path: Path):
@@ -104,7 +103,14 @@ class Worker(StoppableThread):
     __context: Context
     __perf_counter: float
 
-    def __init__(self, command: CommandExec, context: Context, t: float, *args, **kwargs):
+    def __init__(
+        self,
+        command: CommandExec,
+        context: Context,
+        t: float,
+        *args,
+        **kwargs
+    ):
         self.__command = command
         self.__context = context
         self.__perf_counter = t
@@ -114,7 +120,7 @@ class Worker(StoppableThread):
         command = self.__command
         context = self.__context
         t = self.__perf_counter
-        logging.debug(f"Consumer got new job")
+        logging.debug("Consumer got new job")
         try:
             start = time.perf_counter()
             response = command.handler(context)

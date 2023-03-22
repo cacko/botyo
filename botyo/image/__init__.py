@@ -60,16 +60,6 @@ class Action(Enum):
     TXT2IMG = "image/txt2img"
     IMG2IMG = "image/img2img"
     GPS2IMG = "image/gps2img"
-    TXT2CLAY = "image/txt2clay"
-    TXT2ZOMBIE = "image/txt2zombie"
-    TXT2FOOD = "image/txt2food"
-    TXT2PAPER = "image/txt2paper"
-    TXT2WOOL = "image/txt2wool"
-    TXT2ALBUMART = "image/txt2albumart"
-    TXT2SHATTER = "image/txt2shatter"
-    TXT2COLOR = "image/txt2color"
-    TXT2ICON = "image/txt2icon"
-    TXT2MUPPET = "image/txt2muppet"
 
 
 class ImageMeta(type):
@@ -143,7 +133,27 @@ class ImageMeta(type):
                                 type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-s", "--seed", type=int)
-            parser.add_argument("-m", "--model", default="default")
+            parser.add_argument(
+                "-m",
+                "--model",
+                choices=[
+                    'default',
+                    'sd1',
+                    'sd2',
+                    'dreamlike',
+                    'dreamlike2',
+                    'albumcover',
+                    'zombies',
+                    'mj4',
+                    'clay',
+                    'wool',
+                    'papercut',
+                    'colorjizz',
+                    'shatter',
+                    'darkstorm'
+                ],
+                default="default"
+            )
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-a", "--auto_prompt", type=str)
             parser.add_argument("--ar", type=str)
@@ -169,30 +179,6 @@ class ImageMeta(type):
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt)
-
-    def txt2food(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2FOOD)
-
-    def txt2wool(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2WOOL)
-
-    def txt2clay(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2CLAY)
-
-    def txt2paper(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2PAPER)
-
-    def txt2zombie(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2ZOMBIE)
-
-    def txt2albumart(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2ALBUMART)
-
-    def txt2shatter(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2SHATTER)
-
-    def txt2color(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt, Action.TXT2COLOR)
 
     def img2img(
         cls,
