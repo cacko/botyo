@@ -1,3 +1,4 @@
+import json
 from dataclasses_json import dataclass_json, Undefined
 from botyo.server.output import Align, Column, TextOutput
 from botyo.server.models import (
@@ -12,6 +13,7 @@ from typing import Callable, Optional
 from itertools import groupby
 from pydantic.dataclasses import dataclass
 from pydantic import Field
+from pydantic.json import pydantic_encoder
 
 
 class CommandExecMeta(type):
@@ -105,6 +107,9 @@ class CommandExec(metaclass=CommandExecMeta):
             ),
             None,
         )
+
+    def json(self):
+        return json.dumps(self, default=pydantic_encoder)
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)

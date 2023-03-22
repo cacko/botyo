@@ -4,7 +4,6 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from queue import Empty, Queue
 from typing import Optional
-
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from .command import CommandExec, CommandMatch
@@ -57,7 +56,7 @@ class Server(object, metaclass=ServerMeta):
         if cmd not in self.commands:
             self.commands.append(cmd)
             logging.debug(f"registering command {cmd.method.value}")
-            CommandExec.registered.append(CommandDef.parse_obj(cmd))
+            CommandExec.registered.append(CommandDef.parse_raw(cmd.json()))
 
     def register_scheduler(self, redis_url):
         scheduler = BackgroundScheduler()
