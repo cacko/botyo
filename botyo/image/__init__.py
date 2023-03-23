@@ -32,6 +32,7 @@ class ImageGeneratorParams(BaseModel):
     auto_prompt: Optional[str] = None
     model: str = Field(default="default")
     ar: Optional[str] = None
+    editing_prompt: Optional[list[str]] = None
 
     @ validator("prompt")
     def static_prompt(cls, prompt: list[str]):
@@ -159,7 +160,7 @@ class ImageMeta(type):
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-a", "--auto_prompt", type=int)
             parser.add_argument("--ar", type=str)
-            parser.add_argument("-e", "--editing_prompt", action="append", type=str)
+            parser.add_argument("-e", "--editing_prompt", action="append")
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
