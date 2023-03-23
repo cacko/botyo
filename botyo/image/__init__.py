@@ -34,11 +34,11 @@ class ImageGeneratorParams(BaseModel):
     ar: Optional[str] = None
     editing_prompt: Optional[list[str]] = None
 
-    @ validator("prompt")
+    @validator("prompt")
     def static_prompt(cls, prompt: list[str]):
         return " ".join(prompt)
 
-    @ validator("upscale")
+    @validator("upscale")
     def static_upscale(cls, upscale: Optional[bool] = None):
         if not upscale:
             return 0
@@ -260,6 +260,7 @@ class Image(object, metaclass=ImageMeta):
     ):
         try:
             params = Image.image_generator_params(prompt)
+            logging.info(params)
             return self.getResponse(
                 action=action,
                 action_param=string_hash(params.prompt),
