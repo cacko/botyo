@@ -302,14 +302,14 @@ class Image(object, metaclass=ImageMeta):
                 })
             }
 
-        params["data"] = reduce(
+        params["json"] = reduce(
             lambda r, x: {
                 **r,
                 **({
                     x: json.get(x)
                 } if json.get(x, None) else {})
             }, json.keys(), {})
-        logging.debug(params["data"])
+        logging.debug(params["json"])
 
         return Request(f"{Config.image.base_url}/{path}",
                        method=Method.POST,
