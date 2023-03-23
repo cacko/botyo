@@ -122,11 +122,10 @@ class ImageMeta(type):
             parser = ArgumentParser(description="Image Processing",
                                     add_help=False,
                                     exit_on_error=False)
-            parser.add_argument("prompt", nargs="+")
+            parser.add_argument("prompt", nargs="*")
             parser.add_argument("-n",
                                 "--negative_prompt",
-                                type=str,
-                                default="")
+                                type=str)
             parser.add_argument("-h", "--height", type=int)
             parser.add_argument("-w", "--width", type=int)
             parser.add_argument("-g",
