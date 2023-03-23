@@ -147,6 +147,7 @@ class ImageMeta(type):
                     'mj4',
                     'clay',
                     'wool',
+                    'food',
                     'papercut',
                     'colorjizz',
                     'shatter',
