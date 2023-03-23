@@ -7,101 +7,101 @@ from botyo.server.models import (
     ApiError,
     ZMethod
 )
-from stringcase import titlecase
+# from stringcase import titlecase
 import logging
 from corestring import to_int
 
 bp = Blueprint("image")
 
 
-@bp.command(
-    method=ZMethod.IMAGE_ANALYZE,
-    desc="Returns Emotion, Race, Gender, Age for image",
-    upload=True,
-    icon="settings_accessibility"
-)  # type: ignore
-def image_analyze(context: Context):
-    try:
-        attachment = context.attachment
-        assert attachment
-        attachment, message = Image.analyze(attachment)
-        assert attachment and message
-        return RenderResult(
-            message=message,
-            attachment=attachment,
-            method=ZMethod.IMAGE_ANALYZE,
-        )
-    except AssertionError:
-        return ErrorResult(method=ZMethod.IMAGE_ANALYZE)
+# @bp.command(
+#     method=ZMethod.IMAGE_ANALYZE,
+#     desc="Returns Emotion, Race, Gender, Age for image",
+#     upload=True,
+#     icon="settings_accessibility"
+# )  # type: ignore
+# def image_analyze(context: Context):
+#     try:
+#         attachment = context.attachment
+#         assert attachment
+#         attachment, message = Image.analyze(attachment)
+#         assert attachment and message
+#         return RenderResult(
+#             message=message,
+#             attachment=attachment,
+#             method=ZMethod.IMAGE_ANALYZE,
+#         )
+#     except AssertionError:
+#         return ErrorResult(method=ZMethod.IMAGE_ANALYZE)
 
 
-@bp.command(
-    method=ZMethod.IMAGE_TAG,
-    desc="tag faces in image",
-    upload=True,
-    icon="fingerprint"
-)  # type: ignore
-def image_Tag(context: Context):
-    try:
-        attachment = context.attachment
-        assert attachment
-        attachment, message = Image.tag(attachment)
-        assert attachment and message
-        return RenderResult(
-            message=message,
-            attachment=attachment,
-            method=ZMethod.IMAGE_TAG,
-        )
-    except AssertionError:
-        return ErrorResult(method=ZMethod.IMAGE_TAG)
+# @bp.command(
+#     method=ZMethod.IMAGE_TAG,
+#     desc="tag faces in image",
+#     upload=True,
+#     icon="fingerprint"
+# )  # type: ignore
+# def image_Tag(context: Context):
+#     try:
+#         attachment = context.attachment
+#         assert attachment
+#         attachment, message = Image.tag(attachment)
+#         assert attachment and message
+#         return RenderResult(
+#             message=message,
+#             attachment=attachment,
+#             method=ZMethod.IMAGE_TAG,
+#         )
+#     except AssertionError:
+#         return ErrorResult(method=ZMethod.IMAGE_TAG)
 
 
-@bp.command(
-    method=ZMethod.IMAGE_HOWCUTE,
-    desc="howcute faces in image",
-    upload=True,
-    icon="thumb_up"
-)  # type: ignore
-def image_howcute(context: Context):
-    try:
-        attachment = context.attachment
-        assert attachment
-        attachment, message = Image.howcute(attachment)
-        assert attachment and message
-        return RenderResult(
-            message=message,
-            attachment=attachment,
-            method=ZMethod.IMAGE_HOWCUTE,
-        )
-    except AssertionError:
-        return ErrorResult(method=ZMethod.IMAGE_HOWCUTE)
+# @bp.command(
+#     method=ZMethod.IMAGE_HOWCUTE,
+#     desc="howcute faces in image",
+#     upload=True,
+#     icon="thumb_up"
+# )  # type: ignore
+# def image_howcute(context: Context):
+#     try:
+#         attachment = context.attachment
+#         assert attachment
+#         attachment, message = Image.howcute(attachment)
+#         assert attachment and message
+#         return RenderResult(
+#             message=message,
+#             attachment=attachment,
+#             method=ZMethod.IMAGE_HOWCUTE,
+#         )
+#     except AssertionError:
+#         return ErrorResult(method=ZMethod.IMAGE_HOWCUTE)
 
 
-@bp.command(
-    method=ZMethod.IMAGE_CLASSIFY,
-    desc="Classify objects in images",
-    upload=True,
-    icon="data_object"
-)  # type: ignore
-def image_classify(context: Context):
-    try:
-        attachment = context.attachment
-        assert attachment
-        attachment, message = Image.classify(attachment)
-        assert message
-        return RenderResult(
-            message="\n".join(
-                [titlecase(x.get("label")) for x in message.get("response", [])]
-            ),
-            method=ZMethod.IMAGE_CLASSIFY,
-        )
-    except ApiError as e:
-        return ErrorResult(
-            method=ZMethod.IMAGE_CLASSIFY,
-            message=e.message
-        )
-    except AssertionError:
-        return ErrorResult(method=ZMethod.IMAGE_CLASSIFY)
+# @bp.command(
+#     method=ZMethod.IMAGE_CLASSIFY,
+#     desc="Classify objects in images",
+#     upload=True,
+#     icon="data_object"
+# )  # type: ignore
+# def image_classify(context: Context):
+#     try:
+#         attachment = context.attachment
+#         assert attachment
+#         attachment, message = Image.classify(attachment)
+#         assert message
+#         return RenderResult(
+#             message="\n".join(
+#                 [titlecase(x.get("label")) for x in message.get("response", [])]
+#             ),
+#             method=ZMethod.IMAGE_CLASSIFY,
+#         )
+#     except ApiError as e:
+#         return ErrorResult(
+#             method=ZMethod.IMAGE_CLASSIFY,
+#             message=e.message
+#         )
+#     except AssertionError:
+#         return ErrorResult(method=ZMethod.IMAGE_CLASSIFY)
 
 
 @bp.command(

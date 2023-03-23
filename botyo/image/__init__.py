@@ -151,7 +151,8 @@ class ImageMeta(type):
                     'papercut',
                     'colorjizz',
                     'shatter',
-                    'darkstorm'
+                    'darkstorm',
+                    'naturalize'
                 ],
                 default="default"
             )
