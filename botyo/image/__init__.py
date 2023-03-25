@@ -158,7 +158,7 @@ class ImageMeta(type):
             )
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-a", "--auto_prompt", type=int)
-            parser.add_argument("--ar", type=str)
+            parser.add_argument("--ar", type=str, allow_abbrev=False)
             # parser.add_argument("-e", "--editing_prompt", action="append", type=str)
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
