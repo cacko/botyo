@@ -152,7 +152,9 @@ class ImageMeta(type):
                     'colorjizz',
                     'shatter',
                     'darkstorm',
-                    'naturalize'
+                    'naturalize',
+                    "vaggo",
+                    "penny"
                 ],
                 default="default"
             )
