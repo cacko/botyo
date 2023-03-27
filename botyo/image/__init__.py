@@ -33,7 +33,7 @@ class ImageGeneratorParams(BaseModel):
     model: str = Field(default="default")
     ar: Optional[str] = None
     xxx: Optional[bool] = None
-    # editing_prompt: Optional[list[str]] = None
+    editing_prompt: Optional[list[str]] = None
 
     @validator("prompt")
     def static_prompt(cls, prompt: list[str]):
@@ -155,7 +155,6 @@ class ImageMeta(type):
                     'darkstorm',
                     'naturalize',
                     "vaggo",
-                    "penny",
                     "openjourney"
                 ],
                 default="default"
