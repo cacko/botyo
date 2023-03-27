@@ -154,11 +154,13 @@ class ImageMeta(type):
                     'darkstorm',
                     'naturalize',
                     "vaggo",
-                    "penny"
+                    "penny",
+                    "openjourney"
                 ],
                 default="default"
             )
             parser.add_argument("-u", "--upscale", action="store_true")
+            parser.add_argument("--xxx", action="store_true")
             parser.add_argument("-a", "--auto_prompt", type=int)
             parser.add_argument("-ar", "--ar", type=str)
             parser.add_argument("-e", "--editing_prompt", action="append", type=str)
