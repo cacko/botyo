@@ -32,6 +32,7 @@ class ImageGeneratorParams(BaseModel):
     auto_prompt: Optional[str] = None
     model: str = Field(default="default")
     ar: Optional[str] = None
+    xxx: Optional[bool] = None
     # editing_prompt: Optional[list[str]] = None
 
     @validator("prompt")
