@@ -11,9 +11,7 @@ from pathlib import Path
 from stringcase import alphanumcase
 from base64 import b64decode
 from botyo.music.encoder import Encoder
-
-from botyo.music.encoder import Encoder
-
+from botyo.core.config import Config as app_config
 
 class TrackMeta(type):
 
@@ -86,7 +84,7 @@ class Track(metaclass=TrackMeta):
     @property
     def audio_destination(self) -> Path:
         assert self.path
-        song_path = Path(self.path)
+        song_path = Path(app_config.beats.store_root) / self.path
         name = "/".join([song_path.parent.name, song_path.stem])
         res = FileStorage.storage_path / f"{alphanumcase(name)}.{Encoder.extension}"
         if not res.exists():

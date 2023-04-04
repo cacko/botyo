@@ -7,7 +7,6 @@ from botyo.music.encoder import Encoder
 from typing import Optional
 from . import beets_library
 from beets.library import Item
-from botyo.core.config import Config as app_config
 
 
 class Song:
@@ -40,7 +39,7 @@ class Song:
             item = items[0]
             logging.debug(item)
             assert item
-            self.__found = Path(app_config.beats.store_root) / item.path.decode()
+            self.__found = Path(item.path.decode())
             return self.__found
         return self.__found
 
