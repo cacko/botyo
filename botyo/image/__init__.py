@@ -153,8 +153,8 @@ class ImageMeta(type):
                     'darkstorm',
                     'naturalize',
                     "vaggo",
-                    "openjourney",
-                    "vectorart"
+                    "vectorart",
+                    
                 ],
                 default="default"
             )

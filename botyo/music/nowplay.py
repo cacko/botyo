@@ -13,6 +13,7 @@ from base64 import b64decode
 from botyo.music.encoder import Encoder
 from botyo.core.config import Config as app_config
 
+
 class TrackMeta(type):
 
     __TRACK_STORAGE_KEY = "now_playing_track"
