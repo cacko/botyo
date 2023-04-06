@@ -153,7 +153,7 @@ class ImageMeta(type):
                     'naturalize',
                     "vaggo",
                     "vectorart",
-                    
+
                 ],
                 default="default"
             )
@@ -172,7 +172,9 @@ class ImageMeta(type):
         parser = cls.image_generator_parser
         if not prompt:
             return ImageGeneratorParams(prompt=[""])
-        namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
+        namespace, _ = parser.parse_known_args(
+            split_with_quotes(prompt.replace("\u8192", '--'))
+        )
         return ImageGeneratorParams(**namespace.__dict__)
 
     def variation(
