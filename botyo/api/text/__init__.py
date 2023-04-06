@@ -42,7 +42,7 @@ def detect_commmand(context: Context):
 @bp.command(
     method=ZMethod.TEXT_BARD,
     desc="ask the Bard",
-    icon="create"
+    icon="quiz"
 )  # type: ignore
 def bard_command(context: Context):
     msg = context.query
