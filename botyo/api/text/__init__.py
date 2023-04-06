@@ -37,3 +37,17 @@ def detect_commmand(context: Context):
         method=ZMethod.TEXT_DETECT,
     )
     return res
+
+
+@bp.command(
+    method=ZMethod.TEXT_BARD,
+    desc="ask the Bard",
+    icon="create"
+)  # type: ignore
+def bard_command(context: Context):
+    msg = context.query
+    if not msg:
+        return None
+    json = getResponse("text/bard", Payload(message=msg, source=context.source))
+    res = RenderResult(message=json.response, method=ZMethod.TEXT_BARD)
+    return res
