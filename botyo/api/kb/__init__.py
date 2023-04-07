@@ -41,8 +41,8 @@ def article_command(context: Context):
 
 @bp.command(
     method=ZMethod.KNOWLEDGE_ASK,
-    desc="ask to learn",
-    icon="question_answer"
+    desc="ask to Bard",
+    icon="contact_support"
 )  # type: ignore
 def bard_command(context: Context):
     msg = context.query
