@@ -153,7 +153,10 @@ class ImageMeta(type):
                     'naturalize',
                     "vaggo",
                     "vectorart",
-                    "golden"
+                    "golden",
+                    "zombies",
+                    "papercut",
+                    "vangogh"
                 ],
                 default="default"
             )
