@@ -6,13 +6,12 @@ from typing import Optional
 from cachable.request import Request
 from botyo.chatyo import Response, getResponse, Payload
 from botyo.core.store import RedisCachable
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
 
 
 class KbStruct(BaseModel, extra=Extra.ignore):
     summary: str
     content: str
-
 
 
 class WikiSearchArguments(BaseModel, extra=Extra.ignore):
@@ -36,7 +35,6 @@ class QueryItem(BaseModel, extra=Extra.ignore):
     pages: Optional[dict[str, PageItem]] = None
 
 
-
 class QueryResponse(BaseModel, extra=Extra.ignore):
     query: Optional[QueryItem] = None
 
@@ -49,7 +47,7 @@ class KnowledgeBase(RedisCachable):
 
     __query = None
     __id = None
-    _struct: KbStruct = None
+    _struct: Optional[KbStruct] = None
 
     def __init__(self, name: str):
         if not name:
@@ -57,18 +55,22 @@ class KnowledgeBase(RedisCachable):
         self.__query = name
 
     def search(self) -> list[PageItem]:
-        args = WikiSearchArguments(gsrsearch=self.__query)
-        req = Request(WikiApi.BASE, params=args.dict())
-        json = req.json
-        response: QueryResponse = QueryResponse(**json)
-        if response.query:
+        try:
+            args = WikiSearchArguments(gsrsearch=self.__query)
+            req = Request(WikiApi.BASE, params=args.dict())
+            json = req.json
+            response: QueryResponse = QueryResponse(**json)
+            assert response.query
+            assert response.query.pages
             return list(response.query.pages.values())
-        raise FileNotFoundError
+        except AssertionError:
+            raise FileNotFoundError
 
     def generate(self) -> str:
         try:
             pages = self.search()
             first = next(filter(lambda x: x.index == 1, pages), None)
+            assert first
             page = wikipedia.page(pageid=first.pageid)
             self._struct = KbStruct(
                 summary=page.summary,
@@ -80,7 +82,7 @@ class KnowledgeBase(RedisCachable):
             return f"Maybe you mean: {options}"
         except Exception as e:
             logging.exception(e)
-            return None
+            return ""
 
     @property
     def id(self):
@@ -101,9 +103,10 @@ class KnowledgeBase(RedisCachable):
             return None
 
     @property
-    def content(self) -> str:
+    def content(self) -> Optional[str]:
         if not self.load():
             self.generate()
+        assert self._struct
         return self._struct.content
 
     @classmethod

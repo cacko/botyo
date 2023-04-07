@@ -6,6 +6,7 @@ from botyo.server.output import TextOutput
 from emoji import emojize
 from enum import Enum
 import logging
+from botyo.chatyo import getResponse, Payload
 
 from botyo.server.models import ZMethod
 
@@ -26,6 +27,7 @@ class ICONS(Enum):
 )  # type: ignore
 def article_command(context: Context):
     try:
+        assert context.query
         wiki = KnowledgeBase(context.query)
         article = wiki.summary
         article = f"{ICONS.OPENBOOK.value} {article}"
@@ -33,7 +35,7 @@ def article_command(context: Context):
         return RenderResult(
             message=TextOutput.render(), method=ZMethod.KNOWLEDGE_ARTICLE
         )
-    except FileNotFoundError:
+    except (FileNotFoundError, AssertionError):
         return EmptyResult(method=ZMethod.KNOWLEDGE_ARTICLE)
 
 
@@ -42,24 +44,13 @@ def article_command(context: Context):
     desc="ask to learn",
     icon="question_answer"
 )  # type: ignore
-def ask_command(context: Context):
-    try:
-        msg = context.query
-        if not msg:
-            return None
-        answer = KnowledgeBase.answer(msg)
-        res = RenderResult(
-            message=f"{ICONS.LIGHTBULD.value} {answer.response}"
-            if answer.response
-            else None,
-            attachment=answer.attachment,
-            method=ZMethod.KNOWLEDGE_ASK,
-        )
-        return res
-    except FileNotFoundError:
-        return EmptyResult(method=ZMethod.KNOWLEDGE_ASK)
-    except Exception as e:
-        logging.error(e)
+def bard_command(context: Context):
+    msg = context.query
+    if not msg:
+        return None
+    json = getResponse("text/bard", Payload(message=msg, source=context.source))
+    res = RenderResult(message=json.response, method=ZMethod.KNOWLEDGE_ASK)
+    return res
 
 
 @bp.command(
