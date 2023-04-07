@@ -153,7 +153,7 @@ class ImageMeta(type):
                     'naturalize',
                     "vaggo",
                     "vectorart",
-
+                    "golden"
                 ],
                 default="default"
             )
