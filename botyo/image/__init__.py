@@ -156,7 +156,8 @@ class ImageMeta(type):
                     "golden",
                     "zombies",
                     "papercut",
-                    "vangogh"
+                    "vangogh",
+                    "elrisitas"
                 ],
                 default="default"
             )
