@@ -9,7 +9,7 @@ import filetype
 from enum import Enum
 from botyo.server.output import TextOutput
 from emoji import emojize
-from botyo.image.models import AnalyzeReponse
+from botyo.image.models import AnalyzeReponse, Text2ImageModel
 from typing import Optional
 from argparse import ArgumentParser, ArgumentError
 from pydantic import BaseModel, Field, validator
@@ -137,28 +137,7 @@ class ImageMeta(type):
             parser.add_argument(
                 "-m",
                 "--model",
-                choices=[
-                    'default',
-                    'sd1',
-                    'sd2',
-                    'dreamlike',
-                    'dreamlike2',
-                    'albumcover',
-                    'mj4',
-                    'clay',
-                    'wool',
-                    'food',
-                    'colorjizz',
-                    'shatter',
-                    'naturalize',
-                    "vaggo",
-                    "vectorart",
-                    "golden",
-                    "zombies",
-                    "papercut",
-                    "vangogh",
-                    "elrisitas"
-                ],
+                choices=[*map(lambda m: m.value, Text2ImageModel.__members__.values())],
                 default="default"
             )
             parser.add_argument("-u", "--upscale", action="store_true")

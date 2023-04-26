@@ -1,5 +1,5 @@
 import logging
-from botyo.server.models import Method, ZSONMatcher
+from botyo.server.models import Method, ZSONMatcher, ZSONOption
 from .server import Server, CommandExec
 from typing import Optional
 
@@ -59,6 +59,7 @@ class Blueprint(object, metaclass=BlueprintMeta):
         upload: bool = False,
         matcher: Optional[ZSONMatcher] = None,
         response: Optional[str] = None,
+        options: Optional[list[ZSONOption]] = None
     ):
         if method.value not in self._commands:
             cmd = CommandExec(
@@ -71,7 +72,8 @@ class Blueprint(object, metaclass=BlueprintMeta):
                 icon=icon,
                 args=args,
                 upload=upload,
-                uses_prompt=uses_prompt
+                uses_prompt=uses_prompt,
+                options=options
             )
             self._commands[method.value] = cmd
 

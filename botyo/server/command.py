@@ -3,6 +3,7 @@ from botyo.server.output import Align, Column, TextOutput
 from botyo.server.models import (
     CoreMethods,
     ZSONMatcher,
+    ZSONOption,
     ZSONRequest,
     CommandDef,
     ZMethod,
@@ -59,7 +60,9 @@ class CommandExecMeta(type):
                     subscription=cmd.subscription,
                     args=cmd.args,
                     upload=cmd.upload,
-                    uses_prompt=cmd.uses_prompt
+                    uses_prompt=cmd.uses_prompt,
+                    options=cmd.options
+
                 )
             )
 
@@ -91,6 +94,7 @@ class CommandExec(metaclass=CommandExecMeta):
     args: Optional[str] = None
     upload: bool = Field(default=False)
     uses_prompt: bool = Field(default=False)
+    options: Optional[list[ZSONOption]] = None
 
     @property
     def trigger(self) -> str:
@@ -105,6 +109,7 @@ class CommandExec(metaclass=CommandExecMeta):
             ),
             None,
         )
+
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass

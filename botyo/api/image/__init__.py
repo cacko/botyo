@@ -1,11 +1,13 @@
 from botyo.image import Image
+from botyo.image.models import Text2ImageModel
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import (
     RenderResult,
     ErrorResult,
     ApiError,
-    ZMethod
+    ZMethod,
+    ZSONOption
 )
 # from stringcase import titlecase
 import logging
@@ -160,7 +162,8 @@ def image_variation(context: Context):
     method=ZMethod.IMAGE_TXT2IMG,
     desc="text to image",
     icon="brush",
-    uses_prompt=True
+    uses_prompt=True,
+    options=[ZSONOption(option="-m", choices=Text2ImageModel.choices())]
 )  # type: ignore
 def image_fromtext(context: Context):
     try:

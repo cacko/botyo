@@ -95,3 +95,29 @@ class AnalyzeReponse(BaseModel, extra=Extra.ignore):
     @property
     def gender_icon(self) -> str:
         return GenderIcon[constcase(self.dominant_gender)].value
+
+
+class Text2ImageModel(StrEnum):
+    DEFAULT = 'default'
+    SD1 = 'sd1'
+    SD2 = 'sd2'
+    DREAMLIKE = 'dreamlike'
+    DREAMLIKE2 = 'dreamlike2'
+    ALBUMCOVER = 'albumcover'
+    MJ4 = 'mj4'
+    CLAYU = 'clay'
+    WOOL = 'wool'
+    FOOD = 'food'
+    COLORJIZZ = 'colorjizz'
+    SHATTER = 'shatter'
+    NATURALIZE = 'naturalize'
+    VECTORART = "vectorart"
+    GOLDEN = "golden"
+    ZOMBIES = "zombies"
+    PAPERCUT = "papercut"
+    VANGOGH = "vangogh"
+    ELRISITAS = "elrisitas"
+
+    @classmethod
+    def choices(cls):
+        return [member.value for member in cls.__members__.values()]

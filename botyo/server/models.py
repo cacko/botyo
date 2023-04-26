@@ -138,6 +138,11 @@ class ZSONMatcher(StrEnum):
     SOURCE = "source"
 
 
+class ZSONOption(BaseModel):
+    option: str
+    choices: list[str]
+
+
 class CommandDef(BaseModel, extra=Extra.ignore):
     method: ZMethod | CoreMethods
     desc: Optional[str] = None
@@ -148,6 +153,7 @@ class CommandDef(BaseModel, extra=Extra.ignore):
     args: Optional[str] = None
     upload: bool = Field(default=False)
     uses_prompt: bool = Field(default=False)
+    options: Optional[list[ZSONOption]] = None
 
     @property
     def namespace(self) -> str:
