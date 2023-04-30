@@ -243,7 +243,7 @@ class ErrorResult(EmptyResult):
         emo = emojize(choice(NOT_FOUND_ICONS))
         if not self.message:
             self.message = f"{self.error_message}"
-        return f"{emo} {self.message}"
+        self.message = f"{emo} {self.message}"
 
 
 class ZSONMessage(BaseModel, extra=Extra.ignore):
