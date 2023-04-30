@@ -177,12 +177,12 @@ def image_fromtext(context: Context):
             message=message
         )
     except ApiError:
-        return ErrorResult(
+        return RenderResult(
             method=ZMethod.IMAGE_TXT2IMG,
             message=Image.image_generator_parser.format_help()
         )
     except AssertionError:
-        return ErrorResult(
+        return RenderResult(
             method=ZMethod.IMAGE_TXT2IMG,
             message=Image.image_generator_parser.format_help()
         )
