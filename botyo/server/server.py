@@ -64,6 +64,7 @@ class Server(object, metaclass=ServerMeta):
 
     def start(self, host, port):
         Scheduler.start()
+        Scheduler.remove_all_jobs()
         for srv in self.servers:
             srv.start()
         with TCPReceiver(
