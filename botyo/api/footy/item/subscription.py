@@ -195,6 +195,8 @@ class SubscriptionClient:
             payload = [d.dict() for d in data]
         elif isinstance(data, ZSONMessage):
             payload = json.loads(data.json())
+        elif isinstance(data, SubscriptionEvent):
+            payload = json.loads(data.json())
         try:
             assert self.group_id
             resp = post(f"{self.client_id}",
