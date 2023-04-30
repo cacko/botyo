@@ -241,7 +241,9 @@ class ErrorResult(EmptyResult):
     def __init__(self, **data):
         super().__init__(**data)
         emo = emojize(choice(NOT_FOUND_ICONS))
-        self.error = f"{emo} {self.error_message}"
+        if not self.message:
+            self.message = f"{self.error_message}"
+        return f"{emo} {self.message}"
 
 
 class ZSONMessage(BaseModel, extra=Extra.ignore):
