@@ -118,6 +118,7 @@ class Text2ImageModel(StrEnum):
     VANGOGH = "vangogh"
     ELRISITAS = "elrisitas"
     LANDSCAPE = "landscape"
+    CARTOON = "cartoon"
 
     @classmethod
     def choices(cls):
