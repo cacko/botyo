@@ -202,10 +202,10 @@ def image2image(context: Context):
             attachment=attachment,
             method=ZMethod.IMAGE_IMG2IMG,
         )
-    except ApiError as e:
+    except ApiError:
         return ErrorResult(
             method=ZMethod.IMAGE_IMG2IMG,
-            message=e.message
+            message=Image.image_generator_parser.format_help()
         )
     except AssertionError:
         return ErrorResult(method=ZMethod.IMAGE_IMG2IMG)

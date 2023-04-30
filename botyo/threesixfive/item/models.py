@@ -1,4 +1,3 @@
-from ctypes.wintypes import HACCEL
 import logging
 from typing import Optional, Any
 from datetime import datetime, timezone
@@ -484,7 +483,7 @@ class Game(BaseModel, extra=Extra.ignore):
     def round(self) -> Optional[str]:
         if self.roundNum is None:
             return ""
-        " ".join(
+        return " ".join(
             list(
                 filter(lambda x: x,
                        [f"{self.roundName}", f"{self.roundNum:,0f}"])))
@@ -663,8 +662,6 @@ class GameEvent(BaseModel, extra=Extra.ignore):
 class GameDetails(Game):
     events: Optional[list[GameEvent]] = None
     members: Optional[list[GameMember]] = None
-    homeCompetitor: Optional[GameCompetitor] = None
-    awayCompetitor: Optional[GameCompetitor] = None
 
     @property
     def score(self) -> str:
