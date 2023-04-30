@@ -203,12 +203,12 @@ def image2image(context: Context):
             method=ZMethod.IMAGE_IMG2IMG,
         )
     except ApiError:
-        return ErrorResult(
+        return RenderResult(
             method=ZMethod.IMAGE_IMG2IMG,
             message=Image.image_generator_parser.format_help()
         )
     except AssertionError:
-        return ErrorResult(method=ZMethod.IMAGE_IMG2IMG)
+        return RenderResult(method=ZMethod.IMAGE_IMG2IMG, message=Image.image_generator_parser.format_help())
 
 
 @bp.command(
