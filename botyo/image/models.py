@@ -116,10 +116,12 @@ class Text2ImageModel(StrEnum):
     ZOMBIES = "zombies"
     PAPERCUT = "papercut"
     VANGOGH = "vangogh"
+    FIREWATCH = "firewatch"
     ELRISITAS = "elrisitas"
     LANDSCAPE = "landscape"
     CARTOON = "cartoon"
     POPUPBOOK = "popupbook"
+    DOUBLE = "double"
 
     @classmethod
     def choices(cls):
