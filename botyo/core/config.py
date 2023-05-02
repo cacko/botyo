@@ -84,6 +84,10 @@ class ImgFlipConfig(BaseModel):
     password: str
 
 
+class UsersConfig(BaseModel):
+    admin: list[str]
+
+
 class ConfigStruct(BaseModel, extra=Extra.ignore):
     geo: GeoConfig
     ontv: OntvConfig
@@ -99,6 +103,7 @@ class ConfigStruct(BaseModel, extra=Extra.ignore):
     image: Optional[ImageConfig] = None
     s3: Optional[S3Config] = None
     imgflip: Optional[ImgFlipConfig] = None
+    users: UsersConfig
 
 
 class ConfigMeta(type):
@@ -164,6 +169,10 @@ class ConfigMeta(type):
     @property
     def imgflip(cls) -> ImgFlipConfig:
         return cls().struct.imgflip
+
+    @property
+    def users(cls) -> UsersConfig:
+        return cls().struct.users
 
 
 class Config(object, metaclass=ConfigMeta):

@@ -101,6 +101,7 @@ class Response(BaseModel):
     headline: Optional[str] = None
     start_time: Optional[datetime] = None
     status: Optional[str] = None
+    is_admin: bool = Field(default=False)
 
 
 router = APIRouter()
@@ -201,7 +202,8 @@ class WSConnection(Connection):
             icon=response.icon,
             headline=response.headline,
             start_time=response.start_time,
-            status=response.status
+            status=response.status,
+            is_admin=self.__user.uid in app_config.users.admin
         )
         match response.method:
             case ZMethod.FOOTY_SUBSCRIPTION_UPDATE:

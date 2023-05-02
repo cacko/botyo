@@ -273,6 +273,7 @@ class ZSONResponse(ZSONMessage):
     headline: Optional[str] = None
     status: Optional[str] = None
     start_time: Optional[datetime] = None
+    is_admin: bool = Field(default=False)
 
     @property
     def attachment_path(self) -> Optional[Path]:
