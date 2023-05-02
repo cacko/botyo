@@ -181,7 +181,7 @@ class ImageMeta(type):
     def upload2wallies(
         cls,
         params: Upload2Wallies
-    ):
+    ) -> str:
         return cls().do_upload2wallies(params)
 
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
@@ -285,11 +285,12 @@ class Image(object, metaclass=ImageMeta):
         try:
             logging.info(params)
             ip = Path(params.image_url)
-            return self.getResponse(
+            _, message = self.getResponse(
                 action=Action.UPLOAD2WALLIES,
                 action_param=ip.name,
                 json=params.dict()
             )
+            return message
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
