@@ -122,7 +122,7 @@ class Text2ImageModel(StrEnum):
     CARTOON = "cartoon"
     POPUPBOOK = "popupbook"
     DOUBLE = "double"
-    ILLUSTATION = "illustation"
+    ILLUSTRATION = "illustration"
 
     @classmethod
     def choices(cls):
