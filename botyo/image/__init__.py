@@ -182,7 +182,7 @@ class ImageMeta(type):
         cls,
         params: Upload2Wallies
     ):
-        pass
+        return cls().do_upload2wallies(params)
 
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_gps2img(prompt)
