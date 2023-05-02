@@ -1,5 +1,5 @@
 from botyo.image import Image
-from botyo.image.models import Text2ImageModel
+from botyo.image.models import Text2ImageModel, Upload2Wallies
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import (
@@ -212,6 +212,24 @@ def image2image(context: Context):
         )
     except AssertionError:
         return RenderResult(method=ZMethod.IMAGE_IMG2IMG)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_UPLOAD2WALLIES,
+)  # type: ignore
+def upload2wallies(context: Context):
+    try:
+        query = context.query
+        assert query
+        params = Upload2Wallies.parse_raw(query)
+        message = Image.upload2wallies(params=params)
+        assert message
+        return RenderResult(
+            message=message,
+            method=ZMethod.IMAGE_UPLOAD2WALLIES,
+        )
+    except AssertionError:
+        return RenderResult(method=ZMethod.IMAGE_UPLOAD2WALLIES)
 
 
 @bp.command(

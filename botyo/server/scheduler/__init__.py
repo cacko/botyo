@@ -59,7 +59,7 @@ class Scheduler(object, metaclass=SchedulerMeta):
             jobstores = {
                 "default": RedisJobStore(
                     unix_socket_path=redis_url.path,
-                    db=int(redis_url_options.get("db")[0]),
+                    db=int(redis_url_options.get("db")[0]),  # type: ignore
                 )
             }
         else:

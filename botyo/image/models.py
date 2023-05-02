@@ -124,3 +124,25 @@ class Text2ImageModel(StrEnum):
     @classmethod
     def choices(cls):
         return [member.value for member in cls.__members__.values()]
+
+
+class Category(StrEnum):
+    MINIMAL = "minimal"
+    ABSTRACT = "abstract"
+    MOVIES = "movies"
+    SPORT = "sport"
+    GAMES = "games"
+    CARTOON = "cartoon"
+    FANTASY = "fantasy"
+    NATURE = "nature"
+    WHATEVER = "whatever"
+
+    @classmethod
+    def values(cls):
+        return [member.value for member in cls.__members__.values()]
+
+
+class Upload2Wallies(BaseModel):
+    image_url: str
+    category: Category
+    upscale: bool = Field(default=True)

@@ -2,7 +2,7 @@ import threading
 import socketserver
 from botyo.server.socket.connection import SocketConnection
 from .base import BaseSocket
-from queue import Queue
+
 
 class ThreadingTCPServer(
     socketserver.ThreadingMixIn, socketserver.TCPServer
@@ -17,9 +17,7 @@ class ThreadingTCPServer(
         socketserver.TCPServer.__init__(self, server_address, handler_class)
 
 
-
 class TCPServer(threading.Thread, BaseSocket, ThreadingTCPServer):
-    queue: Queue = None
 
     def __init__(
         self,
@@ -61,15 +59,12 @@ class TCPServer(threading.Thread, BaseSocket, ThreadingTCPServer):
         for conn in self.connections.values():
             try:
                 conn.close()
-            except:
+            except Exception:
                 pass
         self.server_close()
 
 
-
 class TCPReceiver(TCPServer):
-
-    connections = {}
 
     def __init__(
         self,
@@ -94,4 +89,3 @@ class TCPReceiver(TCPServer):
             buffersize,
         )
         self.connections = {}
-

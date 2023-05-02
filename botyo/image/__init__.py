@@ -9,7 +9,7 @@ import filetype
 from enum import Enum
 from botyo.server.output import TextOutput
 from emoji import emojize
-from botyo.image.models import AnalyzeReponse, Text2ImageModel
+from botyo.image.models import AnalyzeReponse, Text2ImageModel, Upload2Wallies
 from typing import Optional
 from argparse import ArgumentParser, ArgumentError
 from pydantic import BaseModel, Field, validator
@@ -62,6 +62,7 @@ class Action(Enum):
     TXT2IMG = "image/txt2img"
     IMG2IMG = "image/img2img"
     GPS2IMG = "image/gps2img"
+    UPLOAD2WALLIES = "image/upload2wallies"
 
 
 class ImageMeta(type):
@@ -177,6 +178,12 @@ class ImageMeta(type):
     ) -> tuple[Attachment, str]:
         return cls(attachment).do_img2img(prompt)
 
+    def upload2wallies(
+        cls,
+        params: Upload2Wallies
+    ):
+        pass
+
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_gps2img(prompt)
 
@@ -270,6 +277,21 @@ class Image(object, metaclass=ImageMeta):
         return self.getResponse(Action.IMG2IMG,
                                 params.prompt,
                                 json=params.dict())
+
+    def do_upload2wallies(
+        self,
+        params: Upload2Wallies,
+    ):
+        try:
+            logging.info(params)
+            ip = Path(params.image_url)
+            return self.getResponse(
+                action=Action.UPLOAD2WALLIES,
+                action_param=ip.name,
+                json=params.dict()
+            )
+        except (ValidationErr, ArgumentError) as e:
+            raise ApiError(f"{e}")
 
     def __make_request(self, path: str, json: dict = {}):
         attachment = self.__attachment
