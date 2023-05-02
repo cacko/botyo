@@ -217,6 +217,7 @@ def image2image(context: Context):
 
 @bp.command(
     method=ZMethod.IMAGE_UPLOAD2WALLIES,
+    admin=True
 )  # type: ignore
 def upload2wallies(context: Context):
     try:

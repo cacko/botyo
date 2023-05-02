@@ -95,6 +95,7 @@ class CommandExec(metaclass=CommandExecMeta):
     upload: bool = Field(default=False)
     uses_prompt: bool = Field(default=False)
     options: Optional[list[ZSONOption]] = None
+    admin: bool = Field(default=False)
 
     @property
     def trigger(self) -> str:

@@ -157,6 +157,8 @@ class WSConnection(Connection):
                 source=request.source,
             )
             assert isinstance(command, CommandExec)
+            if command.admin and self.__user.uid not in app_config.users.admin:
+                raise AssertionError
             with perftime(f"Command {command.method.value}"):
                 response = await run_in_threadpool(command.handler, context=context)
                 await context.send_async(response)
