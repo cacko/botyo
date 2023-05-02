@@ -1,3 +1,4 @@
+import json
 from botyo.image import Image
 from botyo.image.models import Text2ImageModel, Upload2Wallies
 from botyo.server.blueprint import Blueprint
@@ -226,7 +227,7 @@ def upload2wallies(context: Context):
         message = Image.upload2wallies(params=params)
         assert message
         return RenderResult(
-            message=message,
+            message=json.dumps(message),
             method=ZMethod.IMAGE_UPLOAD2WALLIES,
         )
     except AssertionError:
