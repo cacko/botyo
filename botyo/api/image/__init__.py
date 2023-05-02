@@ -219,6 +219,7 @@ def image2image(context: Context):
 )  # type: ignore
 def upload2wallies(context: Context):
     try:
+        logging.warning(context)
         query = context.query
         assert query
         params = Upload2Wallies.parse_raw(query)
