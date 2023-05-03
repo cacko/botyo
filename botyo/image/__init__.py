@@ -260,6 +260,7 @@ class Image(object, metaclass=ImageMeta):
                 json=params.dict()
             )
         except (ValidationErr, ArgumentError) as e:
+            logging.error(e)
             raise ApiError(f"{e}")
 
     def do_gps2img(self, prompt: str):
