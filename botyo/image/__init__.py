@@ -332,6 +332,8 @@ class Image(object, metaclass=ImageMeta):
         if action_param:
             path = f"{path}/{action_param}"
         req = self.__make_request(path=path, json=json)
+        if req.status > 400:
+            raise ApiError("Error")
         message = ""
         attachment = None
         is_multipart = req.is_multipart

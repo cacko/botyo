@@ -233,6 +233,8 @@ def upload2wallies(context: Context):
         )
     except AssertionError:
         return RenderResult(method=ZMethod.IMAGE_UPLOAD2WALLIES)
+    except ApiError:
+        return ErrorResult(error="Already uploaded", method=ZMethod.IMAGE_UPLOAD2WALLIES)
 
 
 @bp.command(
