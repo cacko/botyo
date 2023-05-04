@@ -124,7 +124,6 @@ class Text2ImageModel(StrEnum):
     DOUBLE = "double"
     ILLUSTRATION = "illustration"
     VOXEL = "voxel"
-    BALLOON = "balloon"
 
     @classmethod
     def choices(cls):
