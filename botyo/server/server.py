@@ -9,7 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from .command import CommandExec, CommandMatch
 from .config import Config
 from .core import AppServer, StoppableThread
-from .models import JunkMessage, NoCommand
+from .models import JunkMessage, NoCommand, ErrorResult, EmptyResult
 from .scheduler import Scheduler
 from .connection import Context
 from .socket.tcp import TCPReceiver
@@ -130,9 +130,9 @@ class Worker(StoppableThread):
                 context.send(response)
         except (JunkMessage, NoCommand) as e:
             logging.error(e, exc_info=True)
-            pass
+            context.send(EmptyResult())
         except Exception as e:
             logging.error(f"[{command.__class__.__name__}] Error: {e}")
             logging.error(e, exc_info=True)
-            pass
+            context.send(ErrorResult())
         logging.debug(f"CONSUME: {command} done")
