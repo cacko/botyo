@@ -3,6 +3,7 @@ from botyo.threesixfive.item.lineups import Lineups as LineupsData
 import logging
 from typing import Optional
 
+
 class Lineups(LineupsData):
 
     @property

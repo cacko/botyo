@@ -119,11 +119,9 @@ class Text2ImageModel(StrEnum):
     FIREWATCH = "firewatch"
     ELRISITAS = "elrisitas"
     LANDSCAPE = "landscape"
-    CARTOON = "cartoon"
     POPUPBOOK = "popupbook"
-    DOUBLE = "double"
     ILLUSTRATION = "illustration"
-    VOXEL = "voxel"
+    WOOD = "wood"
 
     @classmethod
     def choices(cls):
