@@ -140,7 +140,7 @@ class ImageMeta(type):
             parser.add_argument(
                 "-m",
                 "--model",
-                choices=[*map(lambda m: m.value, Text2ImageModel.__members__.values())],
+                choices=Text2ImageModel.values(),
                 default="default"
             )
             parser.add_argument("-u", "--upscale", action="store_true")
