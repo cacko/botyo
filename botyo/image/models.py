@@ -3,6 +3,24 @@ from stringcase import constcase
 from pydantic import BaseModel, Extra, Field
 
 
+class Choices(object):
+
+    @classmethod
+    def values(cls):
+        return [m.value for m in cls.__members__.values()]
+
+    @classmethod
+    def keys(cls):
+        return [m.key for m in cls.__members__.keys()]
+
+
+class Resolutions(Choices, StrEnum):
+
+    hd = "16:9"
+    uhd = "21:9"
+    sd = "4:3"
+
+
 class EmotionIcon(StrEnum):
     ANGRY = ":angry_face:"
     DISGUST = ":face_vomiting:"
@@ -97,7 +115,7 @@ class AnalyzeReponse(BaseModel, extra=Extra.ignore):
         return GenderIcon[constcase(self.dominant_gender)].value
 
 
-class Text2ImageModel(StrEnum):
+class Text2ImageModel(Choices, StrEnum):
     DEFAULT = 'default'
     SD1 = 'sd1'
     SD2 = 'sd2'
@@ -105,7 +123,7 @@ class Text2ImageModel(StrEnum):
     DREAMLIKE2 = 'dreamlike2'
     ALBUMCOVER = 'albumcover'
     MJ4 = 'mj4'
-    CLAYU = 'clay'
+    CLAY = 'clay'
     WOOL = 'wool'
     FOOD = 'food'
     COLORJIZZ = 'colorjizz'
@@ -123,10 +141,6 @@ class Text2ImageModel(StrEnum):
     ILLUSTRATION = "illustration"
     WOOD = "wood"
 
-    @classmethod
-    def choices(cls):
-        return [member.value for member in cls.__members__.values()]
-
 
 class Category(StrEnum):
     MINIMAL = "minimal"
@@ -138,10 +152,6 @@ class Category(StrEnum):
     FANTASY = "fantasy"
     NATURE = "nature"
     WHATEVER = "whatever"
-
-    @classmethod
-    def values(cls):
-        return [member.value for member in cls.__members__.values()]
 
 
 class Upload2Wallies(BaseModel):

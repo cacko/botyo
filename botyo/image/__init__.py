@@ -9,7 +9,12 @@ import filetype
 from enum import Enum
 from botyo.server.output import TextOutput
 from emoji import emojize
-from botyo.image.models import AnalyzeReponse, Text2ImageModel, Upload2Wallies
+from botyo.image.models import (
+    AnalyzeReponse,
+    Resolutions,
+    Text2ImageModel,
+    Upload2Wallies
+)
 from typing import Optional
 from argparse import ArgumentParser, ArgumentError
 from pydantic import BaseModel, Field, validator
@@ -122,14 +127,11 @@ class ImageMeta(type):
     def image_generator_parser(cls) -> ArgumentParser:
         if not cls.__image_generator_parser:
             parser = ArgumentParser(description="Image Processing",
-                                    add_help=False,
                                     exit_on_error=False)
             parser.add_argument("prompt", nargs="*")
             parser.add_argument("-n",
                                 "--negative_prompt",
                                 type=str)
-            parser.add_argument("-h", "--height", type=int)
-            parser.add_argument("-w", "--width", type=int)
             parser.add_argument("-g",
                                 "--guidance_scale",
                                 type=float)
@@ -144,7 +146,11 @@ class ImageMeta(type):
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("--xxx", action="store_true")
             parser.add_argument("-a", "--auto_prompt", type=int)
-            parser.add_argument("-r", "--ar", type=str)
+            parser.add_argument(
+                "-r",
+                "--aspect-ratio",
+                choices=Resolutions.values()
+            )
             parser.add_argument("-e", "--editing_prompt", action="append", type=str)
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
