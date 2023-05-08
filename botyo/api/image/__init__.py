@@ -1,6 +1,6 @@
 import json
 from botyo.image import Image
-from botyo.image.models import Text2ImageModel, Upload2Wallies
+from botyo.image.models import Resolutions, Text2ImageModel, Upload2Wallies
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import (
@@ -164,7 +164,10 @@ def image_variation(context: Context):
     desc="text to image",
     icon="brush",
     uses_prompt=True,
-    options=[ZSONOption(option="-m", choices=Text2ImageModel.values())]
+    options=[
+        ZSONOption(option="-m", choices=Text2ImageModel.values()),
+        ZSONOption(option="-r", choices=Resolutions.values())
+    ]
 )  # type: ignore
 def image_fromtext(context: Context):
     try:
