@@ -164,7 +164,7 @@ def image_variation(context: Context):
     desc="text to image",
     icon="brush",
     uses_prompt=True,
-    options=[ZSONOption(option="-m", choices=Text2ImageModel.choices())]
+    options=[ZSONOption(option="-m", choices=Text2ImageModel.values())]
 )  # type: ignore
 def image_fromtext(context: Context):
     try:
