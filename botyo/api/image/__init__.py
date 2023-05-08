@@ -166,7 +166,7 @@ def image_variation(context: Context):
     uses_prompt=True,
     options=[
         ZSONOption(option="-m", choices=Text2ImageModel.values()),
-        ZSONOption(option="-r", choices=Resolutions.values())
+        ZSONOption(option="-r", choices=Resolutions.keys())
     ]
 )  # type: ignore
 def image_fromtext(context: Context):

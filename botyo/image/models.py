@@ -15,7 +15,6 @@ class Choices(object):
 
 
 class Resolutions(Choices, StrEnum):
-
     hd = "16:9"
     uhd = "21:9"
     sd = "4:3"
