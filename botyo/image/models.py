@@ -11,7 +11,7 @@ class Choices(object):
 
     @classmethod
     def keys(cls):
-        return [m.key for m in cls.__members__.keys()]
+        return [m for m in cls.__members__.keys()]
 
 
 class Resolutions(Choices, StrEnum):
