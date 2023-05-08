@@ -36,7 +36,7 @@ class ImageGeneratorParams(BaseModel):
     upscale: int = Field(default=0)
     auto_prompt: Optional[str] = None
     model: str = Field(default="default")
-    ar: Optional[str] = None
+    aspect_ratio: Optional[str] = None
     xxx: Optional[bool] = None
     editing_prompt: Optional[list[str]] = None
 
