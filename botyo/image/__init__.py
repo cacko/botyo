@@ -149,7 +149,7 @@ class ImageMeta(type):
             parser.add_argument(
                 "-r",
                 "--aspect-ratio",
-                choices=Resolutions.values()
+                choices=Resolutions.keys()
             )
             parser.add_argument("-e", "--editing_prompt", action="append", type=str)
             cls.__image_generator_parser = parser

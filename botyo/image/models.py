@@ -11,13 +11,13 @@ class Choices(object):
 
     @classmethod
     def keys(cls):
-        return [m for m in cls.__members__.keys()]
+        return [m.lower() for m in cls.__members__.keys()]
 
 
 class Resolutions(Choices, StrEnum):
-    hd = "16:9"
-    uhd = "21:9"
-    sd = "4:3"
+    HD = "16:9"
+    UDH = "21:9"
+    SD = "4:3"
 
 
 class EmotionIcon(StrEnum):
