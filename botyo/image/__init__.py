@@ -294,8 +294,9 @@ class Image(object, metaclass=ImageMeta):
                                 json=params.dict())
 
     def do_pix2pix(self, prompt: Optional[str] = None):
-
+        logging.info(prompt)
         params = Image.image_generator_params(prompt)
+        logging.info(params)
         return self.getResponse(Action.PIX2PIX,
                                 params.prompt,
                                 json=params.dict())
