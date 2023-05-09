@@ -333,15 +333,23 @@ class Image(object, metaclass=ImageMeta):
                     "Expires": "0"
                 })
             }
-
-        params["json"] = reduce(
-            lambda r, x: {
-                **r,
-                **({
-                    x: json.get(x)
-                } if json.get(x, None) else {})
-            }, json.keys(), {})
-        logging.debug(params["json"])
+            params["data"] = reduce(
+                lambda r, x: {
+                    **r,
+                    **({
+                        x: json.get(x)
+                    } if json.get(x, None) else {})
+                }, json.keys(), {})
+            logging.debug(params["data"])
+        else:
+            params["json"] = reduce(
+                lambda r, x: {
+                    **r,
+                    **({
+                        x: json.get(x)
+                    } if json.get(x, None) else {})
+                }, json.keys(), {})
+            logging.debug(params["json"])
 
         return Request(f"{Config.image.base_url}/{path}",
                        method=Method.POST,
