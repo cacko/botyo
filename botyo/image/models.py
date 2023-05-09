@@ -139,6 +139,7 @@ class Text2ImageModel(Choices, StrEnum):
     POPUPBOOK = "popupbook"
     ILLUSTRATION = "illustration"
     WOOD = "wood"
+    NITRO = "nitro"
 
 
 class Category(StrEnum):
