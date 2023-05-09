@@ -222,6 +222,32 @@ def image2image(context: Context):
 
 
 @bp.command(
+    method=ZMethod.IMAGE_PIX2PIX,
+    desc="image to image",
+    upload=True,
+    icon="trending_flat",
+    uses_prompt=True
+)  # type: ignore
+def pix2pix(context: Context):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, _ = Image.pix2pix(attachment, context.query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_PIX2PIX,
+        )
+    except ApiError:
+        return RenderResult(
+            method=ZMethod.IMAGE_PIX2PIX,
+            message=Image.image_generator_parser.format_help()
+        )
+    except AssertionError:
+        return RenderResult(method=ZMethod.IMAGE_PIX2PIX)
+
+
+@bp.command(
     method=ZMethod.IMAGE_UPLOAD2WALLIES,
     admin=True
 )  # type: ignore
