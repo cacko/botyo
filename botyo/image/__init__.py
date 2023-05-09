@@ -30,6 +30,7 @@ class ImageGeneratorParams(BaseModel):
     height: Optional[int] = None
     width: Optional[int] = None
     guidance_scale: Optional[float] = None
+    image_guidance_scale: Optional[float] = None
     num_inference_steps: Optional[int] = None
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
@@ -135,6 +136,9 @@ class ImageMeta(type):
                                 type=str)
             parser.add_argument("-g",
                                 "--guidance_scale",
+                                type=float)
+            parser.add_argument("-k",
+                                "--image_guidance_scale",
                                 type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-s", "--seed", type=int)
