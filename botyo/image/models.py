@@ -137,7 +137,7 @@ class Text2ImageModel(Choices, StrEnum):
     ELRISITAS = "elrisitas"
     LANDSCAPE = "landscape"
     POPUPBOOK = "popupbook"
-    ILLUSTRATION = "illustration"
+    TOON = "toon"
     WOOD = "wood"
     NITRO = "nitro"
 
