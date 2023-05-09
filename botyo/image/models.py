@@ -139,7 +139,7 @@ class Text2ImageModel(Choices, StrEnum):
     POPUPBOOK = "popupbook"
     TOON = "toon"
     WOOD = "wood"
-    NITRO = "nitro"
+    MINI = "mini"
 
 
 class Category(StrEnum):
