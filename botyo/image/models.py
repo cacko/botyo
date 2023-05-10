@@ -18,6 +18,9 @@ class Resolutions(Choices, StrEnum):
     HD = "16:9"
     UHD = "21:9"
     SD = "4:3"
+    SDI = "3:4"
+    HDI = "9:16"
+    UHDI = "21:9"
 
 
 class EmotionIcon(StrEnum):
@@ -139,7 +142,7 @@ class Text2ImageModel(Choices, StrEnum):
     POPUPBOOK = "popupbook"
     TOON = "toon"
     WOOD = "wood"
-    MINI = "mini"
+    APPICON = "appicon"
 
 
 class Category(StrEnum):
