@@ -109,7 +109,7 @@ class ImageMeta(type):
     @property
     def options(cls) -> ImageOptions:
         if not cls.__options:
-            rs = Request(f"{Config.image.base_url}/{Action.OPTIONS}")
+            rs = Request(f"{Config.image.base_url}/{Action.OPTIONS.value}")
             json_data = rs.json
             assert json_data
             cls.__options = ImageOptions(**json_data)
