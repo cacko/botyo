@@ -155,6 +155,7 @@ class Category(StrEnum):
     FANTASY = "fantasy"
     NATURE = "nature"
     WHATEVER = "whatever"
+    MISSION = "mission"
 
 
 class Upload2Wallies(BaseModel):
