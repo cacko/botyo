@@ -143,6 +143,7 @@ class Text2ImageModel(Choices, StrEnum):
     TOON = "toon"
     WOOD = "wood"
     APPICON = "appicon"
+    MISSION = "mission"
 
 
 class Category(StrEnum):
@@ -155,7 +156,6 @@ class Category(StrEnum):
     FANTASY = "fantasy"
     NATURE = "nature"
     WHATEVER = "whatever"
-    MISSION = "mission"
 
 
 class Upload2Wallies(BaseModel):
