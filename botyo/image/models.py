@@ -14,15 +14,6 @@ class Choices(object):
         return [m.lower() for m in cls.__members__.keys()]
 
 
-class Resolutions(Choices, StrEnum):
-    HD = "16:9"
-    UHD = "21:9"
-    SD = "4:3"
-    SDI = "3:4"
-    HDI = "9:16"
-    UHDI = "21:9"
-
-
 class EmotionIcon(StrEnum):
     ANGRY = ":angry_face:"
     DISGUST = ":face_vomiting:"
@@ -117,48 +108,7 @@ class AnalyzeReponse(BaseModel, extra=Extra.ignore):
         return GenderIcon[constcase(self.dominant_gender)].value
 
 
-class Text2ImageModel(Choices, StrEnum):
-    DEFAULT = 'default'
-    SD1 = 'sd1'
-    SD2 = 'sd2'
-    DREAMLIKE = 'dreamlike'
-    DREAMLIKE2 = 'dreamlike2'
-    ALBUMCOVER = 'albumcover'
-    MJ4 = 'mj4'
-    CLAY = 'clay'
-    WOOL = 'wool'
-    FOOD = 'food'
-    COLORJIZZ = 'colorjizz'
-    SHATTER = 'shatter'
-    NATURALIZE = 'naturalize'
-    VECTORART = "vectorart"
-    GOLDEN = "golden"
-    ZOMBIES = "zombies"
-    PAPERCUT = "papercut"
-    VANGOGH = "vangogh"
-    FIREWATCH = "firewatch"
-    ELRISITAS = "elrisitas"
-    LANDSCAPE = "landscape"
-    POPUPBOOK = "popupbook"
-    TOON = "toon"
-    WOOD = "wood"
-    APPICON = "appicon"
-    MISSION = "mission"
-
-
-class Category(StrEnum):
-    MINIMAL = "minimal"
-    ABSTRACT = "abstract"
-    LANDSCAPE = "landscape"
-    SPORT = "sport"
-    GAMES = "games"
-    CARTOON = "cartoon"
-    FANTASY = "fantasy"
-    NATURE = "nature"
-    WHATEVER = "whatever"
-
-
 class Upload2Wallies(BaseModel):
     image_url: str
-    category: Category
+    category: str
     upscale: bool = Field(default=True)

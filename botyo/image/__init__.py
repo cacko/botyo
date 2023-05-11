@@ -1,5 +1,6 @@
 from pathlib import Path
 from xml.dom import ValidationErr
+
 from botyo.server.models import Attachment, ApiError
 from cachable.request import Request, Method
 from cachable.storage.file import FileStorage
@@ -11,8 +12,6 @@ from botyo.server.output import TextOutput
 from emoji import emojize
 from botyo.image.models import (
     AnalyzeReponse,
-    Resolutions,
-    Text2ImageModel,
     Upload2Wallies
 )
 from typing import Optional
@@ -70,12 +69,20 @@ class Action(Enum):
     PIX2PIX = "image/pix2pix"
     GPS2IMG = "image/gps2img"
     UPLOAD2WALLIES = "image/upload2wallies"
+    OPTIONS = "image/options"
+
+
+class ImageOptions(BaseModel):
+    model: list[str]
+    resolution: list[str]
+    category: list[str]
 
 
 class ImageMeta(type):
 
     __image_generator_parser: Optional[ArgumentParser] = None
     __variation_generator_parser: Optional[ArgumentParser] = None
+    __options: Optional[ImageOptions] = None
 
     def __call__(cls, attachment: Optional[Attachment] = None, *args, **kwds):
         return type.__call__(cls, attachment=attachment, *args, **kwds)
@@ -99,7 +106,16 @@ class ImageMeta(type):
     ) -> tuple[Attachment, dict]:
         return cls(attachment).do_pixel(block_size)
 
-    @ property
+    @property
+    def options(cls) -> ImageOptions:
+        if not cls.__options:
+            rs = Request(f"{Config.image.base_url}/{Action.OPTIONS}")
+            json_data = rs.json
+            assert json_data
+            cls.__options = ImageOptions(**json_data)
+        return cls.__options
+
+    @property
     def variation_generator_parser(cls) -> ArgumentParser:
         if not cls.__variation_generator_parser:
             parser = ArgumentParser(
@@ -145,7 +161,7 @@ class ImageMeta(type):
             parser.add_argument(
                 "-m",
                 "--model",
-                choices=Text2ImageModel.keys(),
+                choices=cls.options.model,
                 default="default"
             )
             parser.add_argument("-u", "--upscale", action="store_true")
@@ -154,7 +170,7 @@ class ImageMeta(type):
             parser.add_argument(
                 "-r",
                 "--aspect-ratio",
-                choices=Resolutions.keys()
+                choices=cls.options.resolution
             )
             parser.add_argument("-e", "--editing_prompt", action="append", type=str)
             cls.__image_generator_parser = parser
