@@ -70,7 +70,7 @@ def subscribe_command(context: Context):
         return EmptyResult()
     try:
         assert context.query
-        result = Footy.subsc ribe(
+        result = Footy.subscribe(
             client=context.client,
             groupID=context.group,
             query=context.query
