@@ -6,7 +6,7 @@ from typing import Optional
 
 
 def parametrized(dec):
-        def layer(*args, **kwargs):
+    def layer(*args, **kwargs):
         def repl(f):
             return dec(f, *args, **kwargs)
 
