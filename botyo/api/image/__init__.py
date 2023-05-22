@@ -1,6 +1,6 @@
 import json
 from botyo.image import Image
-from botyo.image.models import  Upload2Wallies
+from botyo.image.models import Upload2Wallies
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import (

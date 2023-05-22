@@ -23,17 +23,16 @@ class CommandExecMeta(type):
         message: str,
         **kwds
     ) -> tuple[Optional["CommandDef"], Optional[str]]:
-        message = message.lower()
         trigger, args = [*message.split(" ", 1), ""][:2]
         triggers = filter(lambda x: not x.matcher, cls.registered)
         return (
             next(
                 filter(
                     lambda x: any([
-                        x.method.value.split(":")[-1] == trigger,
+                        x.method.value.split(":")[-1] == trigger.lower(),
                         len(trigger) > 2 and
                         (x.method.value if ":" in trigger else x.method.value.
-                         split(":")[-1]).startswith(trigger),
+                         split(":")[-1]).startswith(trigger.lower()),
                     ]),
                     triggers,
                 ),
