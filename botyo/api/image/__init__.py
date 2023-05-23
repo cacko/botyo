@@ -171,6 +171,7 @@ def image_variation(context: Context):
 )  # type: ignore
 def image_fromtext(context: Context):
     try:
+        logging.warn(context)
         query = context.query
         assert query
         attachment, message = Image.txt2img(query)
