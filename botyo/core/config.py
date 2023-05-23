@@ -1,6 +1,6 @@
 from os import environ
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 from yaml import load, Loader
 from pydantic import BaseModel, Extra
 
@@ -84,8 +84,15 @@ class ImgFlipConfig(BaseModel):
     password: str
 
 
+class SuperUser(BaseModel):
+    signal: list[dict[str, Any]]
+    whatsapp: list[dict[str, Any]]
+    boptyo: list[dict[str, Any]]
+
+
 class UsersConfig(BaseModel):
     admin: list[str]
+    superuser: SuperUser
 
 
 class ConfigStruct(BaseModel, extra=Extra.ignore):

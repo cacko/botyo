@@ -1,7 +1,9 @@
+import logging
 from botyo.server.models import RenderResult, Attachment, ZSONResponse
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json, Undefined
 from typing import Optional
+from botyo.core.config import Config as app_config
 
 
 class UnknownClientException(Exception):
@@ -43,6 +45,16 @@ class Context:
     timezone: Optional[str] = "Europe/London"
     attachment: Optional[Attachment] = None
     id: Optional[str] = None
+
+    @property
+    def is_admin(self):
+        for app, rules in app_config.users.superuser.items():
+            if all([
+                getattr(self.source, method)(needle)
+                for method, needle in rules.items()
+            ]):
+                logging.warning(f"{app} super_user")
+                return True
 
     @property
     def connection(self):

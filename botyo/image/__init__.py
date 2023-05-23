@@ -83,6 +83,7 @@ class ImageMeta(type):
     __image_generator_parser: Optional[ArgumentParser] = None
     __variation_generator_parser: Optional[ArgumentParser] = None
     __options: Optional[ImageOptions] = None
+    __is_admin: bool = False
 
     def __call__(cls, attachment: Optional[Attachment] = None, *args, **kwds):
         return type.__call__(cls, attachment=attachment, *args, **kwds)
@@ -105,6 +106,14 @@ class ImageMeta(type):
             block_size: int = 8
     ) -> tuple[Attachment, dict]:
         return cls(attachment).do_pixel(block_size)
+
+    @property
+    def is_admin(cls) -> bool:
+        return cls.__is_admin
+
+    @is_admin.setter
+    def is_admin(cls, val: bool):
+        cls.__is_admin = val
 
     @property
     def options(cls) -> ImageOptions:
@@ -370,6 +379,11 @@ class Image(object, metaclass=ImageMeta):
                     } if json.get(x, None) else {})
                 }, json.keys(), {})
             logging.debug(params["json"])
+
+        if self.__class__.is_admin:
+            params["headers"] = {
+                "is-super_user": "true"
+            }
 
         return Request(f"{Config.image.base_url}/{path}",
                        method=Method.POST,

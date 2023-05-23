@@ -1,4 +1,5 @@
 import json
+
 from botyo.image import Image
 from botyo.image.models import Upload2Wallies
 from botyo.server.blueprint import Blueprint
@@ -173,6 +174,7 @@ def image_fromtext(context: Context):
     try:
         logging.warn(context)
         query = context.query
+        Image.is_admin = context.is_admin
         assert query
         attachment, message = Image.txt2img(query)
         assert attachment
@@ -207,6 +209,7 @@ def image2image(context: Context):
     try:
         attachment = context.attachment
         assert attachment
+        Image.is_admin = context.is_admin
         attachment, _ = Image.img2img(attachment, context.query)
         assert attachment
         return RenderResult(
@@ -233,6 +236,7 @@ def pix2pix(context: Context):
     try:
         attachment = context.attachment
         assert attachment
+        Image.is_admin = context.is_admin
         attachment, _ = Image.pix2pix(attachment, context.query)
         assert attachment
         return RenderResult(
@@ -283,6 +287,7 @@ def gps2Image(context: Context):
     try:
         query = context.query
         assert query
+        Image.is_admin = context.is_admin
         attachment, msg = Image.gps2img(query)
         return RenderResult(
             attachment=attachment,
