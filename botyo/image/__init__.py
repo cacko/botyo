@@ -381,7 +381,7 @@ class Image(object, metaclass=ImageMeta):
             logging.debug(params["json"])
 
         if self.__class__.is_admin:
-            params["headers"] = {
+            params["extra_headers"] = {
                 "is-super_user": "true"
             }
 
