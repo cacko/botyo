@@ -378,13 +378,13 @@ class Image(object, metaclass=ImageMeta):
                 }, json.keys(), {})
             logging.debug(params["json"])
 
+        extra_headers = {}
         if self.__class__.is_admin:
-            params["extra_headers"] = {
-                "is-super_user": "true"
-            }
+            extra_headers["X-SuperUser"] = "1"
 
         return Request(f"{Config.image.base_url}/{path}",
                        method=Method.POST,
+                       extra_headers=extra_headers,
                        **params)
 
     def getResponse(self,

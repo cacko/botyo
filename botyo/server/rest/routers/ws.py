@@ -154,7 +154,7 @@ class WSConnection(Connection):
                 query=query,
                 group=self.__clientId,
                 id=request.id,
-                source=self.__user.uid,
+                source=self.__user.uid if self.__user else self.__clientId,
             )
             assert isinstance(command, CommandExec)
             if command.admin and self.__user.uid not in app_config.users.admin:
