@@ -48,13 +48,13 @@ class Context:
 
     @property
     def is_admin(self):
-        for app, rules in app_config.users.superuser.items():
-            if all([
-                getattr(self.source, method)(needle)
-                for method, needle in rules.items()
-            ]):
-                logging.warning(f"{app} super_user")
-                return True
+        try:
+            superuser = app_config.users.superuser
+            is_admin = superuser.evaluate(self.source)
+            logging.warn(f"{is_admin} granted super-user")
+            return True
+        except AssertionError:
+            return False
 
     @property
     def connection(self):

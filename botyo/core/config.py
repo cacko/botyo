@@ -1,6 +1,6 @@
 from os import environ
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 from yaml import load, Loader
 from pydantic import BaseModel, Extra
 
@@ -84,10 +84,30 @@ class ImgFlipConfig(BaseModel):
     password: str
 
 
+class SuperUserRule(BaseModel):
+    startswith: str
+    endswith: Optional[str] = None
+
+    def evaluate(self, source: str) -> bool:
+        return all([
+            source.startswith(self.startswith),
+            source.endswith(self.endswith) if self.endswith else True
+        ])
+
+
 class SuperUser(BaseModel):
-    signal: list[dict[str, Any]]
-    whatsapp: list[dict[str, Any]]
-    boptyo: list[dict[str, Any]]
+    signal: SuperUserRule
+    whatsapp: SuperUserRule
+    botyo: SuperUserRule
+
+    def evaluate(self, source) -> Optional[str]:
+        if self.signal.evaluate(source):
+            return "signal"
+        if self.whatsapp.evaluate(source):
+            return "whatsapp"
+        if self.botyo.evaluate(source):
+            return "botyo"
+        return None
 
 
 class UsersConfig(BaseModel):
