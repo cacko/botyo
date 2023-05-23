@@ -37,7 +37,6 @@ class ImageGeneratorParams(BaseModel):
     auto_prompt: Optional[str] = None
     model: str = Field(default="default")
     aspect_ratio: Optional[str] = None
-    xxx: Optional[bool] = None
     editing_prompt: Optional[list[str]] = None
 
     @validator("prompt")
@@ -174,7 +173,6 @@ class ImageMeta(type):
                 default="default"
             )
             parser.add_argument("-u", "--upscale", action="store_true")
-            parser.add_argument("--xxx", action="store_true")
             parser.add_argument("-a", "--auto_prompt", type=int)
             parser.add_argument(
                 "-r",
