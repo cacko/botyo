@@ -1,4 +1,3 @@
-from dataclasses_json import dataclass_json, Undefined
 from botyo.server.output import Align, Column, TextOutput
 from botyo.server.models import (
     CoreMethods,
@@ -8,7 +7,7 @@ from botyo.server.models import (
     CommandDef,
     ZMethod,
 )
-from fuzzelinho import Match, MatchMethod
+from fuzzelinho import Match, MatchMethod, Needle
 from typing import Callable, Optional
 from itertools import groupby
 from pydantic.dataclasses import dataclass
@@ -28,7 +27,7 @@ class CommandExecMeta(type):
         return (
             next(
                 filter(
-                    lambda x: any([
+                    lambda x: x and any([  # type: ignore
                         x.method.value.split(":")[-1] == trigger.lower(),
                         len(trigger) > 2 and
                         (x.method.value if ":" in trigger else x.method.value.
@@ -111,15 +110,11 @@ class CommandExec(metaclass=CommandExecMeta):
         )
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
 class CommandMatch(Match):
     minRatio = 85
     extensionMatching = False
     method = MatchMethod.WRATIO
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CommandMatchNeedle:
+class CommandMatchNeedle(Needle):
     trigger: str

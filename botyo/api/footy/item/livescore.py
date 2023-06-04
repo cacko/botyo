@@ -6,9 +6,7 @@ from botyo.threesixfive.item.livescore import Livescore as LivescoreData
 from datetime import datetime, timezone, timedelta
 from .subscription import Cache
 from .player import Player
-from fuzzelinho import Match, MatchMethod
-from dataclasses_json import dataclass_json
-from dataclasses import dataclass
+from fuzzelinho import Match, MatchMethod, Needle
 from typing import Optional
 from itertools import chain
 from functools import reduce
@@ -20,9 +18,7 @@ class GameMatch(Match):
     method = MatchMethod.WRATIO
 
 
-@dataclass_json
-@dataclass
-class GameNeedle:
+class GameNeedle(Needle):
     strHomeTeam: str
     strAwayTeam: Optional[str] = ""
     strLeague: Optional[str] = ""

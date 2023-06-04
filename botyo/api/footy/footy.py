@@ -1,9 +1,7 @@
 from typing import Optional
-from dataclasses_json import dataclass_json
-from dataclasses import dataclass
 from pydantic import BaseModel
 from .item.subscription import Subscription, SubscriptionClient
-from fuzzelinho import Match, MatchMethod
+from fuzzelinho import Match, MatchMethod, Needle
 from botyo.threesixfive.data import LeagueItem
 from botyo.threesixfive.item.models import Event
 from botyo.threesixfive.item.team import TeamSearch
@@ -88,16 +86,12 @@ class GameMatch(Match):
     method = MatchMethod.WRATIO
 
 
-@dataclass_json
-@dataclass
-class GameNeedle:
+class GameNeedle(Needle):
     strHomeTeam: str
     strAwayTeam: Optional[str] = ""
 
 
-@dataclass_json
-@dataclass
-class CompetitionNeedle:
+class CompetitionNeedle(Needle):
     league_name: str
 
 

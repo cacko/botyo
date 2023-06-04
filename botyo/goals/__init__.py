@@ -1,11 +1,11 @@
+from pydantic import BaseModel
 from you_get.extractors.twitter import twitter_download
 from botyo.core.config import Config as app_config
 from typing import Optional, Any, Generator
 from .twitter import Twitter
 from pathlib import Path
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
-from fuzzelinho import MatchMethod, Match
+from fuzzelinho import MatchMethod, Match, Needle
 import logging
 import re
 from botyo.threesixfive.item.models import GoalEvent
@@ -31,24 +31,18 @@ class TeamsMatch(Match):
     exact_fields = ["score"]
 
 
-@dataclass_json
-@dataclass
-class TeamsNeedle:
+class TeamsNeedle(Needle):
     home: str
     away: str
     score: str
 
 
-@dataclass_json
-@dataclass
-class GoalNeedle:
+class GoalNeedle(Needle):
     home: int
     away: int
 
 
-@dataclass_json
-@dataclass
-class TwitterNeedle:
+class TwitterNeedle(Needle):
     needle: TeamsNeedle
     goals: GoalNeedle
     id: str
@@ -67,14 +61,14 @@ class DownloadItem:
 
     @property
     def filename(self) -> str:
-        return __class__.get_filename(self.event_id, self.game_event_id)
+        return self.__class__.get_filename(self.event_id, self.game_event_id)
 
     def rename(self, storage_dir: Path) -> "DownloadItem":
         dp = storage_dir / self.filename
         if not dp.exists():
             dp = self.path.rename(dp)
             logging.debug(f"GOALS rename {self.path} to {dp}")
-        return __class__(
+        return self.__class__(
             text=self.text,
             url=self.url,
             id=self.id,
@@ -91,17 +85,15 @@ class DownloadItem:
     def get_metafile(cls, event_id: int, game_event_id: int) -> str:
         return f"video-{event_id}-{game_event_id}.json"
 
-    @classmethod
-    def from_path(cls, video_path: Path) -> Optional["DownloadItem"]:
-        match = VIDEO_MATCH.match(video_path.name)
-        if not match:
-            return None
-        event_id, game_event_id = map(int, match.groups())
+    # @classmethod
+    # def from_path(cls, video_path: Path) -> Optional["DownloadItem"]:
+    #     match = VIDEO_MATCH.match(video_path.name)
+    #     if not match:
+    #         return None
+    #     event_id, game_event_id = map(int, match.groups())
 
 
-@dataclass_json
-@dataclass
-class Query:
+class Query(BaseModel):
     event_name: str
     event_id: int
     game_event_id: int
@@ -233,7 +225,7 @@ class Goals(object, metaclass=GoalsMeta):
             logging.error(f"FETCH ERROR {e}")
         for needle in list(self.video_data.values()):
             logging.debug(f"needle to match {needle}")
-            for dp in __class__.output_dir.glob(f"{needle.id}*.mp4"):
+            for dp in self.__class__.output_dir.glob(f"{needle.id}*.mp4"):
                 matched: list[Query] = matcher.fuzzy(needle.needle)
                 for q in matched:
                     yield DownloadItem(

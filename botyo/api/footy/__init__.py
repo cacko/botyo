@@ -1,10 +1,8 @@
 from botyo.api.footy.item.standings import Standings
-from fuzzelinho import Match, MatchMethod
+from fuzzelinho import Match, MatchMethod, Needle
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import Attachment, RenderResult, EmptyResult
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 from botyo.threesixfive.data import Data365
 from botyo.core.config import Config
 from .footy import Footy
@@ -21,9 +19,7 @@ class LeagueMatch(Match):
     method = MatchMethod.WRATIO
 
 
-@dataclass_json
-@dataclass
-class LeagueNeedle:
+class LeagueNeedle(Needle):
     league_name: str
 
 

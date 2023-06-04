@@ -1,16 +1,13 @@
 import json
 from pathlib import Path
 from botyo.core.config import Config
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json, Undefined
+from pydantic import BaseModel, Extra
 from typing import Optional
 
 COUNTRY_ID_INTERNATIONAL = 54
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class CountryItem:
+class CountryItem(BaseModel, extra=Extra.ignore):
     id: int
     name: str
     totalGames: Optional[int] = None
@@ -23,9 +20,7 @@ class CountryItem:
         return self.id == COUNTRY_ID_INTERNATIONAL
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class LeagueItem:
+class LeagueItem(BaseModel, extra=Extra.ignore):
     id: int
     league_id: int
     league_name: str
@@ -41,8 +36,8 @@ class LeagueItem:
 
 class Data365Meta(type):
     _instance = None
-    _leagues = []
-    _countries = []
+    _leagues: list[LeagueItem] = []
+    _countries: list[CountryItem] = []
 
     def __call__(cls, *args, **kwds):
         if not cls._instance:
@@ -98,13 +93,10 @@ class Data365(object, metaclass=Data365Meta):
     def getCountries(self) -> list[CountryItem]:
         countries_path = self.getCountriesPath()
         data = json.loads(countries_path.read_text())
-        countries_json = json.dumps(data.get("countries"))
-        return CountryItem.schema().loads(  # type: ignore
-            countries_json, many=True
-        )
+        countries = data.get("countries")
+        return [CountryItem(**v) for v in countries]
 
     def getLeagues(self) -> list[LeagueItem]:
         leagues_path = self.getLeaguesPath()
-        return LeagueItem.schema().loads(  # type: ignore
-            leagues_path.read_text(), many=True
-        )
+        json_data = json.loads(leagues_path.read_text())
+        return [LeagueItem(**v) for v in json_data]

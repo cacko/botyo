@@ -1,7 +1,5 @@
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 from enum import Enum
-from fuzzelinho import Match, MatchMethod
+from fuzzelinho import Match, MatchMethod, Needle
 from botyo.core.config import Config as app_config
 from botyo.chatyo import getResponse, Payload
 
@@ -35,9 +33,7 @@ class NameMatch(Match):
     method = MatchMethod.PARTIALSET
 
 
-@dataclass_json
-@dataclass
-class NameNeedle:
+class NameNeedle(Needle):
     name: str
 
 

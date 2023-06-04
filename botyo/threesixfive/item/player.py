@@ -1,4 +1,5 @@
 from typing import Optional
+from pydantic import BaseModel
 from botyo.threesixfive.data import Data365
 from botyo.threesixfive.exception import PlayerNotFound
 from .models import (
@@ -7,14 +8,11 @@ from .models import (
     GameDetails,
     LineupMember,
 )
-from dataclasses import dataclass, field
-from dataclasses_json import dataclass_json, Undefined, config
-from fuzzelinho import Match, MatchMethod
+from fuzzelinho import Match, MatchMethod, Needle
 from enum import Enum
 import pickle
 from unidecode import unidecode
 from datetime import datetime
-from marshmallow import fields
 from hashlib import blake2b
 import logging
 from botyo.core.store import ImageCachable, RedisStorage
@@ -32,9 +30,7 @@ class PlayerMatch(Match):
     method = MatchMethod.WRATIO
 
 
-@dataclass_json
-@dataclass
-class PlayerNeedle:
+class PlayerNeedle(Needle):
     name: str
 
 
@@ -73,20 +69,12 @@ class PlayerImage(ImageCachable):
         return f"{self.id}.png"
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class PlayerGame:
+class PlayerGame(BaseModel):
     id: int
     sportId: int
     competitionId: int
     competitionDisplayName: str
-    startTime: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )
+    startTime: datetime
     shortStatusText: str
     gameTimeAndStatusDisplayType: int
     gameTime: int
@@ -95,9 +83,7 @@ class PlayerGame:
     teamName: Optional[str] = None
 
 
-@dataclass_json
-@dataclass
-class PlayerStruct:
+class PlayerStruct(BaseModel):
     game: PlayerGame
     member: GameMember
     lineupMember: LineupMember
@@ -108,7 +94,10 @@ class Player(Cachable):
     _struct: Optional[PlayerStruct] = None
 
     def __init__(
-        self, game: PlayerGame, member: GameMember, lineupMember: LineupMember
+        self,
+        game: PlayerGame,
+        member: GameMember,
+        lineupMember: LineupMember
     ):
         self._struct = PlayerStruct(
             game=game,
