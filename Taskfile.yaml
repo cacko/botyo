@@ -31,7 +31,6 @@ tasks:
     desc: restart the service
     cmds:
       - task: stop
-      - ssh $REMOTE_HOST 'source ~/.zshrc;sleep 1'
       - task: start
 
   push:
