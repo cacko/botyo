@@ -9,9 +9,9 @@ dependencies:
   - brotli-bin=1.0.9
   - brotlipy=0.7.0
   - bzip2=1.0.8
-  - ca-certificates=2022.12.7
+  - ca-certificates=2023.5.7
   - cairo=1.16.0
-  - certifi=2022.12.7
+  - certifi=2023.5.7
   - cffi=1.15.1
   - click=8.1.3
   - colorama=0.4.6
@@ -42,8 +42,10 @@ dependencies:
   - libbrotlicommon=1.0.9
   - libbrotlidec=1.0.9
   - libbrotlienc=1.0.9
+  - libcxx=14.0.6
   - libdeflate=1.17
   - libedit=3.1.20191231
+  - libexpat=2.5.0
   - libffi=3.4.2
   - libglib=2.74.1
   - libiconv=1.17
@@ -61,10 +63,11 @@ dependencies:
   - libzlib=1.2.13
   - mccabe=0.7.0
   - munkres=1.1.4
+  - mypy=1.3.0
   - mypy_extensions=0.4.3
   - ncurses=6.3
   - nettle=3.8.1
-  - openssl=3.0.7
+  - openssl=3.1.1
   - p11-kit=0.24.1
   - packaging=23.0
   - pathspec=0.10.3
@@ -75,6 +78,7 @@ dependencies:
   - pixman=0.40.0
   - platformdirs=2.6.2
   - pooch=1.6.0
+  - psutil=5.9.5
   - psycopg2=2.9.3
   - pthread-stubs=0.4
   - pycparser=2.21
@@ -112,6 +116,7 @@ dependencies:
       - arrow==1.2.3
       - async-timeout==4.0.2
       - authlib==0.15.6
+      - autopep8==2.0.2
       - beautifulsoup4==4.11.1
       - better-exceptions==0.3.3
       - blis==0.7.9
@@ -142,7 +147,7 @@ dependencies:
       - filetype==1.2.0
       - firebase-admin==6.1.0
       - fs==2.4.16
-      - fuzzelinho==0.2.1
+      - fuzzelinho==0.2.2
       - google-api-core==2.11.0
       - google-api-python-client==2.76.0
       - google-auth==2.16.0
@@ -163,6 +168,7 @@ dependencies:
       - jinja2==3.1.2
       - jmespath==1.0.1
       - langcodes==3.3.0
+      - levenshtein==0.21.0
       - markdown==3.4.1
       - markdown-it-py==2.1.0
       - markupsafe==2.1.2
@@ -184,6 +190,7 @@ dependencies:
       - protobuf==4.21.12
       - pyasn1==0.4.8
       - pyasn1-modules==0.2.8
+      - pycodestyle==2.10.0
       - pycountry==22.3.5
       - pydantic==1.10.4
       - pydantic-computed==0.1.1
@@ -198,6 +205,7 @@ dependencies:
       - pytz-deprecation-shim==0.1.0.post0
       - pyyaml==6.0
       - random-user-agent==1.0.1
+      - rapidfuzz==3.1.0
       - redis==4.4.2
       - requests-toolbelt==0.10.1
       - rich==12.6.0
@@ -242,4 +250,4 @@ dependencies:
       - you-get==0.4.1650
 variables:
   allow_conda_downgrades: 'true'
-prefix: /Volumes/Devo/miniforge3/envs/botyo
+prefix: /Volumes/Devo/Users/jago/miniforge3/envs/botyo
