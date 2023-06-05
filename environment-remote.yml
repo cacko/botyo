@@ -142,7 +142,7 @@ dependencies:
       - blis==0.7.9
       - boto3==1.26.60
       - botocore==1.29.60
-      - cachable==0.3.41
+      - cachable==0.3.43
       - cachecontrol==0.12.11
       - cachetools==5.2.1
       - cairocffi==1.4.0
