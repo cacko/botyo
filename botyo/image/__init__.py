@@ -382,10 +382,12 @@ class Image(object, metaclass=ImageMeta):
         if self.__class__.is_admin:
             extra_headers["X-SuperUser"] = "1"
 
-        return Request(f"{Config.image.base_url}/{path}",
-                       method=Method.POST,
-                       extra_headers=extra_headers,
-                       **params)
+        return Request(
+            f"{Config.image.base_url}/{path}",
+            method=Method.POST,
+            extra_headers=extra_headers,
+            **params
+        )
 
     def getResponse(self,
                     action: Action,
