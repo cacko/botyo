@@ -170,7 +170,7 @@ dependencies:
       - filetype==1.2.0
       - firebase-admin==6.1.0
       - fs==2.4.16
-      - fuzzelinho==0.2.2
+      - fuzzelinho==0.2.3
       - google-api-core==2.11.0
       - google-api-python-client==2.76.0
       - google-auth==2.16.0
