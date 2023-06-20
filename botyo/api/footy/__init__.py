@@ -77,7 +77,8 @@ def subscribe_command(context: Context):
             group=context.group,
             new_id=result.sub_id
         )
-    except Exception:
+    except Exception as e:
+        logging.exception(e)
         return EmptyResult()
 
 
