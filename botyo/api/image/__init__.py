@@ -181,7 +181,7 @@ def image_fromtext(context: Context):
         return RenderResult(
             attachment=attachment,
             method=ZMethod.IMAGE_TXT2IMG,
-            message=message
+            # message=message
         )
     except ApiError as e:
 
