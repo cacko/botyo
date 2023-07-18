@@ -136,6 +136,7 @@ dependencies:
       - corethread==0.1.3
       - coretime==0.1.4
       - cssselect2==0.7.0
+      - cssselect2==0.7.0
       - cymem==2.0.7
       - cytoolz==0.12.1
       - dataclasses-json==0.5.7
