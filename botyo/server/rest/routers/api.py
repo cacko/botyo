@@ -113,9 +113,9 @@ def get_team_logo(query: str):
     return {"logo": b64}
 
 
-@router.get("/api/cuteness/{query}", tags=["api"])
-def get_random_cuteness(query: str):
-    _, message = Image.random_cuteness(query)
+@router.get("/api/cuteness", tags=["api"])
+def get_random_cuteness():
+    _, message = Image.random_cuteness()
     return RedirectResponse(url=message)
 
 

@@ -3,6 +3,7 @@ from contextlib import contextmanager
 import logging
 import time
 
+
 def to_float(s: str) -> Optional[float]:
     try:
         return float(s)
@@ -15,6 +16,7 @@ def to_int(s: str) -> Optional[int]:
         return int(s)
     except ValueError:
         return None
+
 
 @contextmanager
 def perftime(name, silent=False):

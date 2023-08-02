@@ -1,6 +1,8 @@
 from pathlib import Path
 from xml.dom import ValidationErr
 
+from requests import JSONDecodeError
+
 from botyo.server.models import Attachment, ApiError
 from cachable.request import Request, Method
 from cachable.storage.file import FileStorage
@@ -18,7 +20,6 @@ from typing import Optional
 from argparse import ArgumentParser, ArgumentError
 from pydantic import BaseModel, Field, validator
 from corestring import split_with_quotes, string_hash
-from requests.exceptions import JSONDecodeError
 import logging
 from functools import reduce
 import json
@@ -229,8 +230,8 @@ class ImageMeta(type):
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_gps2img(prompt)
 
-    def random_cuteness(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_random_cuteness(prompt)
+    def random_cuteness(cls) -> tuple[Attachment, str]:
+        return cls().do_random_cuteness()
 
 
 class Image(object, metaclass=ImageMeta):
@@ -332,10 +333,9 @@ class Image(object, metaclass=ImageMeta):
                                 params.prompt,
                                 json=params.dict())
 
-    def do_random_cuteness(self, prompt: str):
+    def do_random_cuteness(self):
         return self.getResponse(
             Action.RANDOMCUTENESS,
-            action_param=prompt,
         )
 
     def do_upload2wallies(
