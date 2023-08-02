@@ -68,6 +68,7 @@ class Action(Enum):
     PIX2PIX = "image/pix2pix"
     GPS2IMG = "image/gps2img"
     UPLOAD2WALLIES = "image/upload2wallies"
+    RANDOMCUTENESS = "images/rndcnt"
     OPTIONS = "image/options"
 
 
@@ -228,6 +229,9 @@ class ImageMeta(type):
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_gps2img(prompt)
 
+    def random_cuteness(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_random_cuteness(prompt)
+
 
 class Image(object, metaclass=ImageMeta):
 
@@ -327,6 +331,12 @@ class Image(object, metaclass=ImageMeta):
         return self.getResponse(Action.PIX2PIX,
                                 params.prompt,
                                 json=params.dict())
+
+    def do_random_cuteness(self, prompt: str):
+        return self.getResponse(
+            Action.RANDOMCUTENESS,
+            action_param=prompt,
+        )
 
     def do_upload2wallies(
         self,
