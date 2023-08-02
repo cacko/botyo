@@ -68,7 +68,7 @@ class Action(Enum):
     PIX2PIX = "image/pix2pix"
     GPS2IMG = "image/gps2img"
     UPLOAD2WALLIES = "image/upload2wallies"
-    RANDOMCUTENESS = "images/rndcnt"
+    RANDOMCUTENESS = "imagetask /rndcnt"
     OPTIONS = "image/options"
 
 
