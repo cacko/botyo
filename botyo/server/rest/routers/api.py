@@ -13,8 +13,9 @@ from botyo.api.footy.footy import Footy
 from fastapi import (
     APIRouter,
     Request,
-    HTTPException
+    HTTPException,
 )
+from starlette.responses import RedirectResponse
 import logging
 from fastapi.concurrency import run_in_threadpool
 
@@ -114,8 +115,8 @@ def get_team_logo(query: str):
 
 @router.get("/api/cuteness/{query}", tags=["api"])
 def get_random_cuteness(query: str):
-    res = Image.random_cuteness(query)
-    return res
+    _, message = Image.random_cuteness(query)
+    return RedirectResponse(url=message)
 
 
 @router.get("/api/league_logo/{query}", tags=["api"])
