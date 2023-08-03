@@ -110,6 +110,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     TRANSLATE_EN_SQ = "translate:en_sq"
     TRANSLATE_UR_EN = "translate:ur_en"
     TRANSLATE_EN_UR = "translate:en_ur"
+    TRANSLATE_PA_EN = "translate:pa_en"
     IMAGE_GPS2IMG = "image:gps2img"
     IMAGE_PIXEL = "image:pixel"
     IMAGE_WALLPAPER = "image:wallpaper"
