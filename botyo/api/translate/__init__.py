@@ -69,3 +69,14 @@ def sqen_command(context: Context):
 @bp.command(method=ZMethod.TRANSLATE_EN_SQ, desc="en -> sq")  # type: ignore
 def ensq_command(context: Context):
     return translate_cmd(ZMethod.TRANSLATE_EN_SQ, context, "AL")
+
+
+
+@bp.command(method=ZMethod.TRANSLATE_UR_EN, desc="ur -> en")  # type: ignore
+def sqen_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_UR_EN, context, ":gb-eng:")
+
+
+@bp.command(method=ZMethod.TRANSLATE_EN_UR, desc="en -> ur")  # type: ignore
+def ensq_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_EN_UR, context, "PK")
