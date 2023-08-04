@@ -48,8 +48,12 @@ def bard_command(context: Context):
     msg = context.query
     if not msg:
         return None
-    json = getResponse("text/bard", Payload(message=msg, source=context.source))
-    res = RenderResult(message=json.response, method=ZMethod.KNOWLEDGE_ASK)
+    response = getResponse("text/bard", Payload(message=msg, source=context.source))
+    res = RenderResult(
+        attachment=response.attachment,
+        message=response.response, 
+        method=ZMethod.KNOWLEDGE_ASK
+        )
     return res
 
 
