@@ -206,6 +206,7 @@ dependencies:
       - mediafile==0.11.0
       - mediainfo==0.0.9
       - msgpack==1.0.4
+      - multiavatar==1.0.3
       - munkres==1.1.4
       - murmurhash==1.0.9
       - musicbrainzngs==0.7.1
