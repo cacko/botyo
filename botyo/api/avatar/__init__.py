@@ -8,20 +8,20 @@ bp = Blueprint("avatar")
 
 
 # type: ignore
-@bp.command(method=ZMethod.AVATAR_RUSSIA, desc="generates avatar for the input")
-def avaru_command(context: Context) -> RenderResult:
-    avatar = Avataaar(context.query, "ru")
-    path = avatar.path
-    res = (
-        RenderResult(
-            method=ZMethod.AVATAR_RUSSIA,
-            attachment=Attachment(path=path.as_posix(),
-                                  contentType=avatar.contentType),
-        )
-        if path
-        else EmptyResult()
-    )
-    return res
+# @bp.command(method=ZMethod.AVATAR_RUSSIA, desc="generates avatar for the input")
+# def avaru_command(context: Context) -> RenderResult:
+#     avatar = Avataaar(context.query, "ru")
+#     path = avatar.path
+#     res = (
+#         RenderResult(
+#             method=ZMethod.AVATAR_RUSSIA,
+#             attachment=Attachment(path=path.as_posix(),
+#                                   contentType=avatar.contentType),
+#         )
+#         if path
+#         else EmptyResult()
+#     )
+#     return res
 
 
 # type: ignore
