@@ -25,17 +25,17 @@ def avaru_command(context: Context) -> RenderResult:
 
 
 # type: ignore
-@bp.command(method=ZMethod.AVATAR_UKRAINE, desc="generates avatar for the input")
-def avauk_command(context: Context) -> RenderResult:
-    avatar = Avataaar(context.query, "uk")
-    path = avatar.path
-    res = (
-        RenderResult(
-            method=ZMethod.AVATAR_UKRAINE,
-            attachment=Attachment(path=path.as_posix(),
-                                  contentType=avatar.contentType),
-        )
-        if path
-        else EmptyResult()
-    )
-    return res
+# @bp.command(method=ZMethod.AVATAR_UKRAINE, desc="generates avatar for the input")
+# def avauk_command(context: Context) -> RenderResult:
+#     avatar = Avataaar(context.query, "uk")
+#     path = avatar.path
+#     res = (
+#         RenderResult(
+#             method=ZMethod.AVATAR_UKRAINE,
+#             attachment=Attachment(path=path.as_posix(),
+#                                   contentType=avatar.contentType),
+#         )
+#         if path
+#         else EmptyResult()
+#     )
+#     return res
