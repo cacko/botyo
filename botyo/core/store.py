@@ -1,3 +1,4 @@
+from os import EX_CANTCREAT
 from cachable.storage.redis import RedisStorage
 from cachable.storage.file import FileStorage
 from cachable.storage.filestorage.image import CachableFileImage
@@ -29,12 +30,16 @@ class QueueDict(dict, metaclass=QueueDictMeta):
         super().__init__(items, *args, **kwds)
 
     def load(self) -> dict[str, Any]:
-        data = RedisStorage.hgetall(self.__storage_key)
-        if not data:
-            logging.debug("no data")
-            return {}
-        items = {k.decode(): self.loads(v) for k, v in data.items()}
-        return items
+        try:
+            data = RedisStorage.hgetall(self.__storage_key)
+            if not data:
+                logging.debug("no data")
+                return {}
+            items = {k.decode(): self.loads(v) for k, v in data.items()}
+            return items
+        except Exception as e:
+            logging.exception(e)
+        return {}
 
     def __setitem__(self, __k, __v) -> None:
         RedisStorage.pipeline().hset(
