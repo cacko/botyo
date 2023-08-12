@@ -10,6 +10,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 @coro
 def cli(ctx: Environment):
     worker = BackgroundScheduler()
-    scheduler = Scheduler(worker, ctx.redis_url)
+    _ = Scheduler(worker, ctx.redis_url)
     Scheduler.start()
     print(Scheduler.get_jobs())
