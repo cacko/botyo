@@ -1,8 +1,6 @@
 from pathlib import Path
 from xml.dom import ValidationErr
-
 from requests import JSONDecodeError
-
 from botyo.server.models import Attachment, ApiError
 from cachable.request import Request, Method
 from cachable.storage.file import FileStorage
@@ -39,6 +37,7 @@ class ImageGeneratorParams(BaseModel):
     model: str = Field(default="default")
     aspect_ratio: Optional[str] = None
     editing_prompt: Optional[list[str]] = None
+    template: Optional[str] = None
 
     @validator("prompt")
     def static_prompt(cls, prompt: list[str]):
@@ -182,6 +181,7 @@ class ImageMeta(type):
                 choices=cls.options.resolution
             )
             parser.add_argument("-e", "--editing_prompt", action="append", type=str)
+            parser.add_argument("-t", "--template",  type=str)
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
