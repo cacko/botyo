@@ -13,3 +13,4 @@ def cli(ctx: Environment):
     _ = Scheduler(worker, ctx.redis_url)
     Scheduler.start()
     print(Scheduler.get_jobs())
+    Scheduler.remove_all_jobs()
