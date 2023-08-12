@@ -1,7 +1,6 @@
 from requests import post
 from botyo.api.footy.item.livescore import Livescore
 from botyo.api.logo.team import TeamLogoPixel
-from botyo.image import Image
 from botyo.music.nowplay import Track
 from botyo.music.beats import Beats
 from botyo.threesixfive.item.league import LeagueImagePixel
@@ -15,7 +14,6 @@ from fastapi import (
     Request,
     HTTPException,
 )
-from starlette.responses import RedirectResponse
 import logging
 from fastapi.concurrency import run_in_threadpool
 
@@ -111,12 +109,6 @@ def get_team_logo(query: str):
     logo = TeamLogoPixel(query)
     b64 = logo.base64
     return {"logo": b64}
-
-
-@router.get("/api/cuteness", tags=["api"])
-def get_random_cuteness():
-    _, message = Image.random_cuteness()
-    return RedirectResponse(url=message)
 
 
 @router.get("/api/league_logo/{query}", tags=["api"])
