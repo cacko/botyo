@@ -437,7 +437,7 @@ class Subscription(metaclass=SubscriptionMeta):
                                        icon=icon))
                     except UnknownClientException as e:
                         logging.exception(e)
-            self.checkGoals(updated)
+            # self.checkGoals(updated)
             content = cache.content
             assert content
             # if not content:

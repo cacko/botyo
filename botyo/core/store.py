@@ -38,7 +38,7 @@ class QueueDict(dict, metaclass=QueueDictMeta):
             items = {k.decode(): self.loads(v) for k, v in data.items()}
             return items
         except Exception as e:
-            logging.exception(e)
+            logging.error(e)
         return {}
 
     def __setitem__(self, __k, __v) -> None:
@@ -66,7 +66,7 @@ class QueueDict(dict, metaclass=QueueDictMeta):
 
 class QueueListMeta(type):
 
-    __instances = {}
+    __instances: dict[str, 'QueueList'] = {}
 
     def __call__(cls, storage_key, *args, **kwds):
         if storage_key not in cls.__instances:
