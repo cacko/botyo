@@ -64,8 +64,6 @@ class Action(Enum):
     PIXEL = "image/pixel"
     VARIATION = "image/variation"
     TXT2IMG = "image/txt2img"
-    IMG2IMG = "image/img2img"
-    PIX2PIX = "image/pix2pix"
     GPS2IMG = "image/gps2img"
     UPLOAD2WALLIES = "image/upload2wallies"
     RANDOMCUTENESS = "image/cuteness"
@@ -207,20 +205,6 @@ class ImageMeta(type):
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt)
 
-    def img2img(
-        cls,
-        attachment: Attachment,
-        prompt: Optional[str] = None
-    ) -> tuple[Attachment, str]:
-        return cls(attachment).do_img2img(prompt)
-
-    def pix2pix(
-        cls,
-        attachment: Attachment,
-        prompt: Optional[str] = None
-    ) -> tuple[Attachment, str]:
-        return cls(attachment).do_pix2pix(prompt)
-
     def upload2wallies(
         cls,
         params: Upload2Wallies
@@ -317,21 +301,6 @@ class Image(object, metaclass=ImageMeta):
                                     json=params.dict())
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
-
-    def do_img2img(self, prompt: Optional[str] = None):
-
-        params = Image.image_generator_params(prompt)
-        return self.getResponse(Action.IMG2IMG,
-                                params.prompt,
-                                json=params.dict())
-
-    def do_pix2pix(self, prompt: Optional[str] = None):
-        logging.info(prompt)
-        params = Image.image_generator_params(prompt)
-        logging.info(params)
-        return self.getResponse(Action.PIX2PIX,
-                                params.prompt,
-                                json=params.dict())
 
     def do_random_cuteness(self):
         return self.getResponse(
