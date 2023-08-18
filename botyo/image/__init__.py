@@ -66,7 +66,6 @@ class Action(Enum):
     TXT2IMG = "image/txt2img"
     GPS2IMG = "image/gps2img"
     UPLOAD2WALLIES = "image/upload2wallies"
-    RANDOMCUTENESS = "image/cuteness"
     OPTIONS = "image/options"
 
 
@@ -214,9 +213,6 @@ class ImageMeta(type):
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_gps2img(prompt)
 
-    def random_cuteness(cls) -> tuple[Attachment, str]:
-        return cls().do_random_cuteness()
-
 
 class Image(object, metaclass=ImageMeta):
 
@@ -301,11 +297,6 @@ class Image(object, metaclass=ImageMeta):
                                     json=params.dict())
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
-
-    def do_random_cuteness(self):
-        return self.getResponse(
-            Action.RANDOMCUTENESS,
-        )
 
     def do_upload2wallies(
         self,
