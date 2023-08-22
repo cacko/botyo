@@ -337,7 +337,7 @@ class Image(object, metaclass=ImageMeta):
                         x: json.get(x)
                     } if json.get(x, None) else {})
                 }, json.keys(), {})
-            logging.debug(params["data"])
+            logging.debug(params)
         else:
             params["json"] = reduce(
                 lambda r, x: {
