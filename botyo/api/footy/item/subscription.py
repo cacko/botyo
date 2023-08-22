@@ -452,8 +452,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         ShortGameStatus.JUSTENDED
                     ],
             ]):
-                logging.warn(content.game.shortStatusText)
-                logging.warn(self.subscriptions)
+                
                 for sc in self.subscriptions:
                     try:
                         if sc.is_rest:
@@ -473,11 +472,12 @@ class Subscription(metaclass=SubscriptionMeta):
                                            icon=Emoji.b64(
                                                emojize(":chequered_flag:")),
                                            msgId=self.id))
-                    except UnknownClientException as e:
+                    except Exception as e:
                         logging.exception(e)
                     self.cancel(sc)
                     logging.debug(
                         f"subscription {self.event_name} in done")
+                Scheduler.cancel_jobs(self.id)
         except AssertionError as e:
             logging.exception(e)
         except ValueError as e:
