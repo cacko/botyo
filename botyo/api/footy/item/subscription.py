@@ -444,7 +444,7 @@ class Subscription(metaclass=SubscriptionMeta):
             #     raise ValueError
             #     # return self.cancel_all()
             Player.store(content.game)
-            logging.warn(content.game)
+            logging.warn(content.game.shortStatusText)
             if any([
                     ShortGameStatus(content.game.shortStatusText) in [
                         ShortGameStatus.FINAL,
