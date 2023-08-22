@@ -444,7 +444,6 @@ class Subscription(metaclass=SubscriptionMeta):
             #     raise ValueError
             #     # return self.cancel_all()
             Player.store(content.game)
-            logging.warn(content.game.shortStatusText)
             if any([
                     ShortGameStatus(content.game.shortStatusText) in [
                         ShortGameStatus.FINAL,
@@ -453,6 +452,8 @@ class Subscription(metaclass=SubscriptionMeta):
                         ShortGameStatus.JUSTENDED
                     ],
             ]):
+                logging.warn(content.game.shortStatusText)
+                logging.warn(self.subscriptions)
                 for sc in self.subscriptions:
                     try:
                         if sc.is_rest:
