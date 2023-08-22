@@ -117,6 +117,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     IMAGE_VARIATION = "image:var"
     IMAGE_TXT2IMG = "image:txt2img"
     IMAGE_UPLOAD2WALLIES = "image:upload2wallies"
+    IMAGE_CLASSIFY = "image:classify"
     EVENT_COUNTDOWN = "event:countdown"
     EVENT_CALENDAR = "event:calendar"
     EVENT_SCHEDULE = "event:schedule"

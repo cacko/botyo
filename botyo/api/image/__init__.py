@@ -13,7 +13,7 @@ from botyo.server.models import (
 )
 # from stringcase import titlecase
 import logging
-from corestring import to_int
+from corestring import to_int, titlecase
 
 bp = Blueprint("image")
 
@@ -81,31 +81,31 @@ bp = Blueprint("image")
 #         return ErrorResult(method=ZMethod.IMAGE_HOWCUTE)
 
 
-# @bp.command(
-#     method=ZMethod.IMAGE_CLASSIFY,
-#     desc="Classify objects in images",
-#     upload=True,
-#     icon="data_object"
-# )  # type: ignore
-# def image_classify(context: Context):
-#     try:
-#         attachment = context.attachment
-#         assert attachment
-#         attachment, message = Image.classify(attachment)
-#         assert message
-#         return RenderResult(
-#             message="\n".join(
-#                 [titlecase(x.get("label")) for x in message.get("response", [])]
-#             ),
-#             method=ZMethod.IMAGE_CLASSIFY,
-#         )
-#     except ApiError as e:
-#         return ErrorResult(
-#             method=ZMethod.IMAGE_CLASSIFY,
-#             message=e.message
-#         )
-#     except AssertionError:
-#         return ErrorResult(method=ZMethod.IMAGE_CLASSIFY)
+@bp.command(
+    method=ZMethod.IMAGE_CLASSIFY,
+    desc="Classify objects in images",
+    upload=True,
+    icon="data_object"
+)  # type: ignore
+def image_classify(context: Context):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, message = Image.classify(attachment)
+        assert message
+        return RenderResult(
+            message="\n".join(
+                [titlecase(x.get("label")) for x in message.get("response", [])]
+            ),
+            method=ZMethod.IMAGE_CLASSIFY,
+        )
+    except ApiError as e:
+        return ErrorResult(
+            method=ZMethod.IMAGE_CLASSIFY,
+            message=e.message
+        )
+    except AssertionError:
+        return ErrorResult(method=ZMethod.IMAGE_CLASSIFY)
 
 
 @bp.command(

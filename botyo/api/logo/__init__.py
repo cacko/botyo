@@ -14,6 +14,7 @@ bp = Blueprint("logo")
     icon="badge"
 )  # type: ignore
 def logo_command(context: Context):
+    assert context.query
     logo = Team(context.query)
     path = logo.path
     if not path:
