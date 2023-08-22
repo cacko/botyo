@@ -299,3 +299,8 @@ class NoCommand(Exception):
 
 class JunkMessage(Exception):
     pass
+
+
+class ClassifyResult(BaseModel, extra=Extra.ignore):
+    label: str
+    score: float

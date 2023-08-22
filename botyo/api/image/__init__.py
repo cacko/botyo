@@ -9,11 +9,12 @@ from botyo.server.models import (
     ErrorResult,
     ApiError,
     ZMethod,
-    ZSONOption
+    ZSONOption,
+    ClassifyResult
 )
-# from stringcase import titlecase
+from stringcase import titlecase
 import logging
-from corestring import to_int, titlecase
+from corestring import to_int
 
 bp = Blueprint("image")
 
@@ -94,9 +95,10 @@ def image_classify(context: Context):
         logging.debug(attachment)
         attachment, message = Image.classify(attachment)
         assert message
+        results = [ClassifyResult(**x) for x in message.get("response", [])]
         return RenderResult(
             message="\n".join(
-                [titlecase(x.get("label")) for x in message.get("response", [])]
+                [f"{titlecase(x.label)} - {x.score}" for x in results if x.score < 1]
             ),
             method=ZMethod.IMAGE_CLASSIFY,
         )
@@ -176,7 +178,7 @@ def image_fromtext(context: Context):
         query = context.query
         Image.is_admin = context.is_admin
         assert query
-        attachment, message = Image.txt2img(query)
+        attachment, _ = Image.txt2img(query)
         assert attachment
         return RenderResult(
             attachment=attachment,
