@@ -452,7 +452,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         ShortGameStatus.JUSTENDED
                     ],
             ]):
-                
+
                 for sc in self.subscriptions:
                     try:
                         if sc.is_rest:
