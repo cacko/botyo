@@ -91,6 +91,7 @@ def image_classify(context: Context):
     try:
         attachment = context.attachment
         assert attachment
+        logging.info(attachment)
         attachment, message = Image.classify(attachment)
         assert message
         return RenderResult(
