@@ -15,7 +15,7 @@ import logging
 
 class GameMatch(Match):
     minRatio = 80
-    method = MatchMethod.WRATIO
+    method = MatchMethod.PARTIAL
 
 
 class GameNeedle(Needle):
