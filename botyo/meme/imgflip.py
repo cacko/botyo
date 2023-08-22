@@ -91,7 +91,6 @@ class ImgFlipMeta(type):
 
     def caption(cls, query: str) -> CaptionResponse:
         arg_line = f"{query}".replace("'", "\\'")
-        logging.warning(split(arg_line))
         namespace, _ = cls.caption_parser.parse_known_args(split(arg_line))
         params = CaptionParams(**namespace.__dict__)
         return cls().caption_image(params)

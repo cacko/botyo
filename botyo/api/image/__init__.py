@@ -91,7 +91,7 @@ def image_classify(context: Context):
     try:
         attachment = context.attachment
         assert attachment
-        logging.info(attachment)
+        logging.debug(attachment)
         attachment, message = Image.classify(attachment)
         assert message
         return RenderResult(
@@ -173,7 +173,6 @@ def image_variation(context: Context):
 )  # type: ignore
 def image_fromtext(context: Context):
     try:
-        logging.warn(context)
         query = context.query
         Image.is_admin = context.is_admin
         assert query
@@ -205,7 +204,6 @@ def image_fromtext(context: Context):
 )  # type: ignore
 def upload2wallies(context: Context):
     try:
-        logging.warning(context)
         query = context.query
         assert query
         params = Upload2Wallies.parse_raw(query)

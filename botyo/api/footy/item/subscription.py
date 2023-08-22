@@ -202,7 +202,7 @@ class SubscriptionClient:
             resp = post(f"{self.client_id}",
                         headers=OTP(self.group_id).headers,
                         json=payload)
-            logging.warning(payload)
+            logging.info(payload)
             return resp.status_code
         except ConnectionError:
             logging.error(f"Cannot send update to f{self.client_id}")
