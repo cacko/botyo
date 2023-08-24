@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from pydantic import BaseModel
 from .item.subscription import Subscription, SubscriptionClient
@@ -113,6 +114,7 @@ class Footy(object, metaclass=FootyMeta):
             return res
         except ValueError:
             pass
+        logging.warn(items)
         matcher = GameMatch(haystack=items)
         game = matcher.fuzzy(GameNeedle(strHomeTeam=query, strAwayTeam=query))
         if not len(game):
