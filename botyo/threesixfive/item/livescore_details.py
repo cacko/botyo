@@ -61,6 +61,8 @@ class ParserDetails(TimeCachable):
             res = ResponseGame(**json)  # type: ignore
             self._struct = self.tocache(res)
             Player.store(res.game)
+        except AssertionError:
+            pass
         except Exception as e:
             logging.exception(e)
             self._struct = None
