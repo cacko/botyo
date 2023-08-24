@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 from uuid import uuid4
 from botyo.core.config import Config as app_config
 from pathlib import Path
@@ -7,15 +7,15 @@ from shutil import copy
 
 class KonkatMeta(type):
 
-    __instance: 'Konkat'
+    _instance: Optional['Konkat'] = None
 
     def __call__(cls, *args: Any, **kwds: Any) -> Any:
-        if not cls.__instance:
-            cls.__instance = type.__call__(
+        if not cls._instance:
+            cls._instance = type.__call__(
                 cls,
                 Path(app_config.cachable.path)
             )
-        return cls.__instance
+        return cls._instance
 
     def upload(cls, tmp_path: Path, collage_id: str) -> str:
         return cls().do_upload(tmp_path)
