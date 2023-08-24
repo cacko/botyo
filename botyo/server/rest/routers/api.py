@@ -184,4 +184,4 @@ async def upload_koncat(
 ):
     uploaded_path = TempPath(uuid4().hex)
     uploaded_path.write_bytes(file)
-    return dict(file_id=Konkat.upload(uploaded_path))
+    return dict(file_id=Konkat.upload(uploaded_path, collage_id))
