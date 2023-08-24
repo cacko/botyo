@@ -23,6 +23,9 @@ class KonkatMeta(type):
     def collage(cls, collage_id: str) -> Path:
         return cls().get_collage(collage_id)
 
+    def delete(cls, filename: str):
+        return cls().do_delete(filename)
+
 
 class Konkat(object, metaclass=KonkatMeta):
 
@@ -37,3 +40,6 @@ class Konkat(object, metaclass=KonkatMeta):
 
     def get_collage(self, collage_id: str) -> Path:
         return Path(".")
+
+    def do_delete(self, filename: str):
+        pass
