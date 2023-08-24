@@ -83,7 +83,7 @@ class FootyMeta(type):
 
 class GameMatch(Match):
     minRatio = 60
-    method = MatchMethod.PARTIAL
+    method = MatchMethod.WRATIO
 
 
 class GameNeedle(Needle):
