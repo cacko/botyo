@@ -134,7 +134,7 @@ class Player(Cachable):
                 obj = cls(game, member, lineupMember)
                 obj.tocache(obj._struct)
         except AttributeError as e:
-            logging.exception(e)
+            logging.error(e)
 
     @classmethod
     def find(cls, query):
