@@ -1,6 +1,8 @@
+from uuid import uuid4
 from requests import post
 from botyo.api.footy.item.livescore import Livescore
 from botyo.api.logo.team import TeamLogoPixel
+from botyo.image.koncat import Konkat
 from botyo.music.nowplay import Track
 from botyo.music.beats import Beats
 from botyo.threesixfive.item.league import LeagueImagePixel
@@ -11,11 +13,14 @@ from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
 from botyo.api.footy.footy import Footy
 from fastapi import (
     APIRouter,
+    File,
     Request,
     HTTPException,
+    Form
 )
 import logging
 from fastapi.concurrency import run_in_threadpool
+from corefile import TempPath
 
 router = APIRouter()
 
@@ -169,3 +174,14 @@ async def post_nowplaying(request: Request):
     except AssertionError as e:
         logging.error(e)
     return {}
+
+
+@router.post("/api/koncat", tags=["api"])
+async def upload_koncat(
+    request: Request,
+    file: bytes = File(),
+    collage_id: str = Form(),
+):
+    uploaded_path = TempPath(uuid4().hex)
+    uploaded_path.write_bytes(file)
+    return dict(file_id=Konkat.upload(uploaded_path))
