@@ -18,7 +18,7 @@ class KonkatMeta(type):
         return cls._instance
 
     def upload(cls, tmp_path: Path, collage_id: str) -> str:
-        return cls().do_upload(tmp_path)
+        return cls().do_upload(tmp_path, collage_id)
 
     def collage(cls, collage_id: str) -> Path:
         return cls().get_collage(collage_id)
