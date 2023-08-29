@@ -6,6 +6,7 @@ from shutil import copy
 from botyo.core.s3 import S3
 from corefile import filepath
 from filetype import guess_extension
+from coreimage.organise.concat import Concat
 
 from botyo.image.models import KonkatFile
 
@@ -25,7 +26,7 @@ class KonkatMeta(type):
     def upload(cls, tmp_path: Path, collage_id: str) -> KonkatFile:
         return cls().do_upload(tmp_path, collage_id)
 
-    def collage(cls, collage_id: str) -> Path:
+    def collage(cls, collage_id: str) -> KonkatFile:
         return cls().get_collage(collage_id)
 
     def files(cls, collage_id: str) -> list[KonkatFile]:
@@ -52,8 +53,18 @@ class Konkat(object, metaclass=KonkatMeta):
             url=f"https://cdn.cacko.net/{s3key}"
         )
 
-    def get_collage(self, collage_id: str) -> Path:
-        return Path(".")
+    def get_collage(self, collage_id: str) -> KonkatFile:
+        filename = f"collage_{collage_id}.webp"
+        file_dst = self.__storage / filename
+        input_path = f"{self.__storage.as_posix()}/{collage_id}*"
+        Concat(file_dst).concat_from_paths([Path(input_path)])
+        s3key = S3.upload(file_dst.as_posix(), filename)
+        return KonkatFile(
+            collage_id=collage_id,
+            filename=filename,
+            url=f"https://cdn.cacko.net/{s3key}"
+        )
+
 
     def get_files(self, collage_id: str) -> Generator[KonkatFile, None, None]:
         for f in filepath(root=self.__storage, prefix=f"{collage_id}_"):

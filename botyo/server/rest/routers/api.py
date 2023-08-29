@@ -199,4 +199,4 @@ async def get_konkat_files(collage_id: str):
 
 @router.get("/api/koncat/{collage_id}", tags=["api"])
 async def get_colage(collage_id: str):
-    return [k.dict() for k in Konkat.files(collage_id)]
+    return Konkat.collage(collage_id).dict()
