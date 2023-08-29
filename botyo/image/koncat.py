@@ -2,12 +2,11 @@ from typing import Any, Generator, Optional
 from uuid import uuid4
 from botyo.core.config import Config as app_config
 from pathlib import Path
-from shutil import copy
+from shutil import copy, move
 from botyo.core.s3 import S3
 from corefile import filepath
 from filetype import guess_extension
 from coreimage.organise.concat import Concat
-from hashlib import sha1
 
 from botyo.image.models import KonkatFile
 
@@ -58,7 +57,12 @@ class Konkat(object, metaclass=KonkatMeta):
         filename = f"collage_{collage_id}.webp"
         file_dst = self.__storage / filename
         input_path = f"{self.__storage.as_posix()}/{collage_id}*"
-        Concat(file_dst).concat_from_paths([Path(input_path)])
+        collage_path, collage_hash = Concat(file_dst).concat_from_paths([
+            Path(input_path)
+        ])
+        filename = f"collage_{collage_id}_{collage_hash}.web"
+        file_dst = self.__storage / filename
+        move(collage_path.as_posix(), file_dst.as_posix())
         s3key = S3.upload(file_dst, filename)
         return KonkatFile(
             collage_id=collage_id,
