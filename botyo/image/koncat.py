@@ -7,6 +7,7 @@ from botyo.core.s3 import S3
 from corefile import filepath
 from filetype import guess_extension
 from coreimage.organise.concat import Concat
+from hashlib import sha1
 
 from botyo.image.models import KonkatFile
 
