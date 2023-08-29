@@ -5,6 +5,7 @@ from pathlib import Path
 from shutil import copy
 from botyo.core.s3 import S3
 from corefile import filepath
+from filetype import guess_extension
 
 from botyo.image.models import KonkatFile
 
@@ -40,14 +41,15 @@ class Konkat(object, metaclass=KonkatMeta):
         self.__storage = storage
 
     def do_upload(self, tmp_path: Path, collage_id: str) -> KonkatFile:
-        file_name = f"{collage_id}__{uuid4().hex}{tmp_path.suffix}"
+        extension = guess_extension(tmp_path.as_posix())
+        file_name = f"{collage_id}__{uuid4().hex}.{extension}"
         file_dst = self.__storage / file_name
         copy(tmp_path.as_posix(), file_dst.as_posix())
         s3key = S3.upload(file_dst, file_name)
         return KonkatFile(
             collage_id=collage_id,
             filename=file_name,
-            url=f"https://cdn.alex.net/{s3key}"
+            url=f"https://cdn.cacko.net/{s3key}"
         )
 
     def get_collage(self, collage_id: str) -> Path:
@@ -58,7 +60,7 @@ class Konkat(object, metaclass=KonkatMeta):
             yield KonkatFile(
                 collage_id=collage_id,
                 filename=f.name,
-                url=f"https://cdn.alex.net/{S3.src_key(f.name)}"
+                url=f"https://cdn.cacko.net/{S3.src_key(f.name)}"
             )
 
     def do_delete(self, filename: str):
