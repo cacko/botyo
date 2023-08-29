@@ -1,4 +1,3 @@
-from os import EX_CANTCREAT
 from cachable.storage.redis import RedisStorage
 from cachable.storage.file import FileStorage
 from cachable.storage.filestorage.image import CachableFileImage

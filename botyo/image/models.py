@@ -112,3 +112,9 @@ class Upload2Wallies(BaseModel):
     image_url: str
     category: str
     upscale: bool = Field(default=True)
+
+
+class KonkatFile(BaseModel):
+    collage_id: str
+    filename: str
+    url: str

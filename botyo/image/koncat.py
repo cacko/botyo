@@ -3,6 +3,9 @@ from uuid import uuid4
 from botyo.core.config import Config as app_config
 from pathlib import Path
 from shutil import copy
+from botyo.core.s3 import S3
+
+from botyo.image.models import KonkatFile
 
 
 class KonkatMeta(type):
@@ -17,11 +20,14 @@ class KonkatMeta(type):
             )
         return cls._instance
 
-    def upload(cls, tmp_path: Path, collage_id: str) -> str:
+    def upload(cls, tmp_path: Path, collage_id: str) -> KonkatFile:
         return cls().do_upload(tmp_path, collage_id)
 
     def collage(cls, collage_id: str) -> Path:
         return cls().get_collage(collage_id)
+
+    def files(cls, collage_id: str) -> list[KonkatFile]:
+        return cls().get_files(collage_id)
 
     def delete(cls, filename: str):
         return cls().do_delete(filename)
@@ -32,14 +38,22 @@ class Konkat(object, metaclass=KonkatMeta):
     def __init__(self, storage: Path) -> None:
         self.__storage = storage
 
-    def do_upload(self, tmp_path: Path, collage_id: str) -> str:
-        file_id = f"{collage_id}__{uuid4().hex}"
-        file_dst = self.__storage / f"{file_id}{tmp_path.suffix}"
+    def do_upload(self, tmp_path: Path, collage_id: str) -> KonkatFile:
+        file_name = f"{collage_id}__{uuid4().hex}{tmp_path.suffix}"
+        file_dst = self.__storage / file_name
         copy(tmp_path.as_posix(), file_dst.as_posix())
-        return file_id
+        s3key = S3.upload(file_dst, file_name)
+        return KonkatFile(
+            collage_id=collage_id,
+            filename=file_name,
+            url=f"https://cdn.alex.net/{s3key}"
+        )
 
     def get_collage(self, collage_id: str) -> Path:
         return Path(".")
+
+    def get_files(self, collage_id: str) -> list[KonkatFile]:
+        return []
 
     def do_delete(self, filename: str):
         pass

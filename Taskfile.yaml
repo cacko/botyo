@@ -69,7 +69,7 @@ tasks:
   export-remote:
     desc: export env
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/botyo;mamba env export --no-builds -n {{.PROJECT}} > environment-remote.yml'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/botyo;conda env export --no-builds -n {{.PROJECT}} > environment-remote.yml'
       - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/botyo;task push'
       - git pull
 

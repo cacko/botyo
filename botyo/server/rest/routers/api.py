@@ -184,9 +184,13 @@ async def upload_koncat(
 ):
     uploaded_path = TempPath(uuid4().hex)
     uploaded_path.write_bytes(file)
-    return dict(file_id=Konkat.upload(uploaded_path, collage_id))
+    return Konkat.upload(uploaded_path, collage_id).dict()
 
 
 @router.delete("/api/koncat/{filename}", tags=["api"])
 async def delete_koncat(filename: str):
+    return dict(file_id=Konkat.delete(filename))
+
+@router.get("/api/koncat/{collage_id}", tags=["api"])
+async def get_konkat_files(collage_id: str):
     return dict(file_id=Konkat.delete(filename))
