@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Generator, Optional
 from uuid import uuid4
 from botyo.core.config import Config as app_config
 from pathlib import Path
@@ -28,7 +28,7 @@ class KonkatMeta(type):
         return cls().get_collage(collage_id)
 
     def files(cls, collage_id: str) -> list[KonkatFile]:
-        return cls().get_files(collage_id)
+        return [kf for kf in cls().get_files(collage_id)]
 
     def delete(cls, filename: str):
         return cls().do_delete(filename)
@@ -53,8 +53,13 @@ class Konkat(object, metaclass=KonkatMeta):
     def get_collage(self, collage_id: str) -> Path:
         return Path(".")
 
-    def get_files(self, collage_id: str) -> list[KonkatFile]:
-        return []
+    def get_files(self, collage_id: str) -> Generator[KonkatFile, None, None]:
+        for f in filepath(root=self.__storage, prefix=f"{collage_id}_"):
+            yield KonkatFile(
+                collage_id=collage_id,
+                filename=f.name,
+                url=f"https://cdn.alex.net/{S3.src_key(f.name)}"
+            )
 
     def do_delete(self, filename: str):
         pass
