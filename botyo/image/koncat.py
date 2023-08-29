@@ -58,13 +58,12 @@ class Konkat(object, metaclass=KonkatMeta):
         file_dst = self.__storage / filename
         input_path = f"{self.__storage.as_posix()}/{collage_id}*"
         Concat(file_dst).concat_from_paths([Path(input_path)])
-        s3key = S3.upload(file_dst.as_posix(), filename)
+        s3key = S3.upload(file_dst, filename)
         return KonkatFile(
             collage_id=collage_id,
             filename=filename,
             url=f"https://cdn.cacko.net/{s3key}"
         )
-
 
     def get_files(self, collage_id: str) -> Generator[KonkatFile, None, None]:
         for f in filepath(root=self.__storage, prefix=f"{collage_id}_"):
@@ -79,4 +78,3 @@ class Konkat(object, metaclass=KonkatMeta):
         if file_dst.exists():
             file_dst.unlink()
         return S3.delete(filename)
-
