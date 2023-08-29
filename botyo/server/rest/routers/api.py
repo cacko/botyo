@@ -192,6 +192,11 @@ async def delete_koncat(filename: str):
     return dict(file_id=Konkat.delete(filename))
 
 
-@router.get("/api/koncat/{collage_id}", tags=["api"])
+@router.get("/api/koncat/files/{collage_id}", tags=["api"])
 async def get_konkat_files(collage_id: str):
+    return [k.dict() for k in Konkat.files(collage_id)]
+
+
+@router.get("/api/koncat/{collage_id}", tags=["api"])
+async def get_colage(collage_id: str):
     return [k.dict() for k in Konkat.files(collage_id)]
