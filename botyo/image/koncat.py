@@ -60,7 +60,7 @@ class Konkat(object, metaclass=KonkatMeta):
         collage_path, collage_hash = Concat(file_dst).concat_from_paths([
             Path(input_path)
         ])
-        filename = f"collage_{collage_id}_{collage_hash}.web"
+        filename = f"koncat_{collage_id}_{collage_hash}.webp"
         file_dst = self.__storage / filename
         move(collage_path.as_posix(), file_dst.as_posix())
         s3key = S3.upload(file_dst, filename)
