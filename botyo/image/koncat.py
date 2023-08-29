@@ -63,5 +63,9 @@ class Konkat(object, metaclass=KonkatMeta):
                 url=f"https://cdn.cacko.net/{S3.src_key(f.name)}"
             )
 
-    def do_delete(self, filename: str):
-        pass
+    def do_delete(self, filename: str) -> bool:
+        file_dst = self.__storage / filename
+        if file_dst.exists():
+            file_dst.unlink()
+        return S3.delete(filename)
+
