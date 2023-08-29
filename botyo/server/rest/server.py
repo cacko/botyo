@@ -11,7 +11,11 @@ def get_app():
 
     app = FastAPI()
 
-    origins = ["http://localhost:4200", "https://botyo.cacko.net", "https://koncat.cacko.net"]
+    origins = [
+        "http://localhost:4200",
+        "https://botyo.cacko.net",
+        "https://koncat.cacko.net"
+    ]
 
     app.add_middleware(
         CORSMiddleware,
