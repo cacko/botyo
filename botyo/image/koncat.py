@@ -4,6 +4,7 @@ from botyo.core.config import Config as app_config
 from pathlib import Path
 from shutil import copy
 from botyo.core.s3 import S3
+from corefile import filepath
 
 from botyo.image.models import KonkatFile
 
