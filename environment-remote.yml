@@ -156,7 +156,7 @@ dependencies:
       - confection==0.0.4
       - confuse==2.0.0
       - corefile==0.1.5
-      - coreimage==0.0.39
+      - coreimage==0.0.40
       - corelog==0.0.12
       - corestring==0.1.19
       - corethread==0.1.3
