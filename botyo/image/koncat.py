@@ -54,7 +54,7 @@ class Konkat(object, metaclass=KonkatMeta):
         )
 
     def get_collage(self, collage_id: str) -> KonkatFile:
-        filename = f"collage_{collage_id}.webp"
+        filename = f"collage_{collage_id}.jpg"
         file_dst = self.__storage / filename
         input_path = f"{self.__storage.as_posix()}/{collage_id}*"
         collage_path, collage_hash = Concat(file_dst).concat_from_paths([
