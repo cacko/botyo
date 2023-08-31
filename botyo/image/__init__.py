@@ -34,7 +34,7 @@ class ImageGeneratorParams(BaseModel):
     seed: Optional[int] = None
     upscale: int = Field(default=0)
     auto_prompt: Optional[str] = None
-    model: str = Field(default="default")
+    model: Optional[str] = None
     aspect_ratio: Optional[str] = None
     editing_prompt: Optional[list[str]] = None
     template: Optional[str] = None
@@ -167,8 +167,7 @@ class ImageMeta(type):
             parser.add_argument(
                 "-m",
                 "--model",
-                choices=cls.options.model,
-                default="default"
+                choices=cls.options.model
             )
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-a", "--auto_prompt", type=int)
