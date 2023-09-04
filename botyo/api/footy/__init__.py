@@ -16,7 +16,7 @@ bp = Blueprint("footy")
 
 class LeagueMatch(Match):
     minRatio = 80
-    method = MatchMethod.WRATIO
+    method = MatchMethod.PARTIAL
 
 
 class LeagueNeedle(Needle):
