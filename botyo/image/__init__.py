@@ -73,6 +73,7 @@ class ImageOptions(BaseModel):
     model: list[str]
     resolution: list[str]
     category: list[str]
+    template: list[str]
 
 
 class ImageMeta(type):
@@ -177,7 +178,11 @@ class ImageMeta(type):
                 choices=cls.options.resolution
             )
             parser.add_argument("-e", "--editing_prompt", action="append", type=str)
-            parser.add_argument("-t", "--template",  type=str)
+            parser.add_argument(
+                "-t",
+                "--template",
+                choices=cls.options.template
+            )
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 

@@ -170,7 +170,8 @@ def image_variation(context: Context):
     uses_prompt=True,
     options=[
         ZSONOption(option="-m", choices=Image.options.model),
-        ZSONOption(option="-r", choices=Image.options.resolution)
+        ZSONOption(option="-r", choices=Image.options.resolution),
+        ZSONOption(option="-t", choices=Image.options.template)
     ]
 )  # type: ignore
 def image_fromtext(context: Context):
