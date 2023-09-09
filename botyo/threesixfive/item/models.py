@@ -77,6 +77,7 @@ class ShortGameStatus(StrEnum):
     INTO_ET = "Into ET"
     ENDED = "Ended"
     JUSTENDED = "Just Ended"
+    SCORE = "Score"
 
 
 class OrderWeight(Enum):
