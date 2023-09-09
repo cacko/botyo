@@ -14,7 +14,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 @coro
 def cli(ctx: Environment, webhook, filt):
     worker = BackgroundScheduler()
-    scheduler = Scheduler(worker, ctx.redis_url)
+    Scheduler(worker, ctx.redis_url)
 
     parsed = urlparse(webhook)
 
@@ -23,5 +23,5 @@ def cli(ctx: Environment, webhook, filt):
         groupID=f"{parsed.path}",
         query=filt
     )
-    scheduler.start()
+    Scheduler.start()
     print(res)
