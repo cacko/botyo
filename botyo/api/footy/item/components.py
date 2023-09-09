@@ -68,7 +68,7 @@ class ScoreRow:
                 cols = (
                     Column(size=5, align=Align.RIGHT),
                     Column(size=16, align=Align.RIGHT),
-                    Column(size=5, align=Align.CENTER),
+                    Column(size=10, align=Align.CENTER),
                     Column(size=16, align=Align.LEFT),
                 )
                 row = (
