@@ -13,8 +13,8 @@ from hashlib import md5
 from botyo.threesixfive.data import (
     Data365,
     LeagueItem,
-    COUNTRY_ID_INTERNATIONAL,
     CountryItem,
+    International
 )
 from pydantic import BaseModel, Field, Extra
 from botyo.core.country import Country as Flag
@@ -209,7 +209,7 @@ class Country(BaseModel, extra=Extra.ignore):
 
     @property
     def is_international(self) -> bool:
-        return self.id == COUNTRY_ID_INTERNATIONAL
+        return International.is_international(self.id)
 
 
 class Competitor(BaseModel, extra=Extra.ignore):
@@ -301,7 +301,7 @@ class Competition(BaseModel, extra=Extra.ignore):
 
     @property
     def flag(self) -> str:
-        if self.id != COUNTRY_ID_INTERNATIONAL:
+        if not International.is_international(self.id):
             return ""
         country = next(
             filter(lambda x: x.id == self.countryId, Data365.countries), None)

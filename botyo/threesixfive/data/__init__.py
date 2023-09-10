@@ -3,8 +3,18 @@ from pathlib import Path
 from botyo.core.config import Config
 from pydantic import BaseModel, Extra
 from typing import Optional
+from enum import IntEnum
 
-COUNTRY_ID_INTERNATIONAL = 54
+
+class International(IntEnum):
+    INTERNATIONAL = 54
+    EUROPE = 19
+    ASIA = 17
+    AFRICA = 44
+
+    @classmethod
+    def is_international(cls, id):
+        return id in cls.__members__.values()
 
 
 class CountryItem(BaseModel, extra=Extra.ignore):
@@ -17,7 +27,7 @@ class CountryItem(BaseModel, extra=Extra.ignore):
 
     @property
     def is_international(self) -> bool:
-        return self.id == COUNTRY_ID_INTERNATIONAL
+        return International.is_international(self.id)
 
 
 class LeagueItem(BaseModel, extra=Extra.ignore):
@@ -31,7 +41,7 @@ class LeagueItem(BaseModel, extra=Extra.ignore):
 
     @property
     def is_international(self) -> bool:
-        return self.country_id == COUNTRY_ID_INTERNATIONAL
+        return International.is_international(self.id)
 
 
 class Data365Meta(type):
