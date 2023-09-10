@@ -209,7 +209,7 @@ class Country(BaseModel, extra=Extra.ignore):
 
     @property
     def is_international(self) -> bool:
-        return International.is_international(self.id)
+        return International(self.id) != International.NOT_INTERNATIONAL
 
 
 class Competitor(BaseModel, extra=Extra.ignore):
@@ -301,7 +301,7 @@ class Competition(BaseModel, extra=Extra.ignore):
 
     @property
     def flag(self) -> str:
-        if not International.is_international(self.id):
+        if International(self.id) == International.NOT_INTERNATIONAL:
             return ""
         country = next(
             filter(lambda x: x.id == self.countryId, Data365.countries), None)

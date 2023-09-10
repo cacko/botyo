@@ -11,10 +11,11 @@ class International(IntEnum):
     EUROPE = 19
     ASIA = 17
     AFRICA = 44
+    NOT_INTERNATIONAL = 0
 
     @classmethod
-    def is_international(cls, id):
-        return id in list(cls.__members__.values())
+    def _missing_(cls, id):
+        return cls.NOT_INTERNATIONAL
 
 
 class CountryItem(BaseModel, extra=Extra.ignore):
@@ -27,7 +28,7 @@ class CountryItem(BaseModel, extra=Extra.ignore):
 
     @property
     def is_international(self) -> bool:
-        return International.is_international(self.id)
+        return International(self.id) != International.NOT_INTERNATIONAL
 
 
 class LeagueItem(BaseModel, extra=Extra.ignore):
@@ -41,7 +42,7 @@ class LeagueItem(BaseModel, extra=Extra.ignore):
 
     @property
     def is_international(self) -> bool:
-        return International.is_international(self.id)
+        return International(self.id) != International.NOT_INTERNATIONAL
 
 
 class Data365Meta(type):
