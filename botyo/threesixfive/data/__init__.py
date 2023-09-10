@@ -3,10 +3,10 @@ from pathlib import Path
 from botyo.core.config import Config
 from pydantic import BaseModel, Extra
 from typing import Optional
-from enum import IntEnum, verify
+from enum import Enum
 
 
-class International(IntEnum):
+class International(Enum):
     INTERNATIONAL = 54
     EUROPE = 19
     ASIA = 17
