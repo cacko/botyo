@@ -28,7 +28,7 @@ class CountryItem(BaseModel, extra=Extra.ignore):
 
     @property
     def is_international(self) -> bool:
-        return International(self.id) != International.NOT_INTERNATIONAL
+        return International(self.id) is not International.NOT_INTERNATIONAL
 
 
 class LeagueItem(BaseModel, extra=Extra.ignore):
@@ -42,7 +42,7 @@ class LeagueItem(BaseModel, extra=Extra.ignore):
 
     @property
     def is_international(self) -> bool:
-        return International(self.id) != International.NOT_INTERNATIONAL
+        return International(self.country_id) is not International.NOT_INTERNATIONAL
 
 
 class Data365Meta(type):
