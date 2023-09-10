@@ -3,7 +3,7 @@ from pathlib import Path
 from botyo.core.config import Config
 from pydantic import BaseModel, Extra
 from typing import Optional
-from enum import IntEnum
+from enum import IntEnum, verify
 
 
 class International(IntEnum):
@@ -14,7 +14,7 @@ class International(IntEnum):
 
     @classmethod
     def is_international(cls, id):
-        return id in cls.__members__.values()
+        return id in list(cls.__members__.values())
 
 
 class CountryItem(BaseModel, extra=Extra.ignore):
