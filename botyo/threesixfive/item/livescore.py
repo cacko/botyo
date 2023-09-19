@@ -6,10 +6,6 @@ from botyo.core.store import TimeCachable
 
 class Livescore(TimeCachable):
 
-    with_progress = False
-    with_details = False
-    inprogress = False
-    leagues = []
     cachetime: timedelta = timedelta(seconds=10)
 
     def __init__(

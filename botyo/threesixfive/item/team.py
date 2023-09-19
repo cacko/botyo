@@ -10,7 +10,7 @@ from botyo.threesixfive.url import Url
 from datetime import timedelta
 from typing import Optional
 from botyo.core.store import RedisCachable, TimeCachable
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel, Extra
 
 
 class TeamStruct(BaseModel, extra=Extra.ignore):
