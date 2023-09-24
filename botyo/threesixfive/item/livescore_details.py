@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from hashlib import blake2b
-from turtle import st
 from .player import Player
 from .models import (
     DetailsEvent,
