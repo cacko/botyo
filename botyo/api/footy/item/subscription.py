@@ -473,17 +473,17 @@ class Subscription(metaclass=SubscriptionMeta):
                                                emojize(":chequered_flag:")),
                                            msgId=self.id))
                     except Exception as e:
-                        logging.exception(e)
+                        logging.error(e)
                     self.cancel(sc)
                     logging.debug(
                         f"subscription {self.event_name} in done")
                 Scheduler.cancel_jobs(self.id)
         except AssertionError as e:
-            logging.exception(e)
+            logging.error(e)
         except ValueError as e:
-            logging.exception(e)
+            logging.error(e)
         except Exception as e:
-            logging.exception(e)
+            logging.error(e)
 
     def updates(
         self,
