@@ -215,6 +215,7 @@ class ParserDetails(TimeCachable):
             assert self._struct.struct.game.gameTime > 0
             return self._struct.struct.game.gameTime
         except AssertionError as e:
+            logging.warning(self._struct)
             logging.exception(e)
             return None
 

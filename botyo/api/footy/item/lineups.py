@@ -23,10 +23,10 @@ class Lineups(LineupsData):
             )
             rows = [
                 [
-                    members[h.id].jerseyNumber,
+                    f"{members[h.id].jerseyNumber}",
                     f" {members[h.id].name}",
                     f"{members[a.id].name} ",
-                    members[a.id].jerseyNumber,
+                    f"{members[a.id].jerseyNumber}",
                 ]
                 for h, a in zip(home.lineup, away.lineup)
             ]
