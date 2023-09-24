@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from hashlib import blake2b
+from turtle import st
 from .player import Player
 from .models import (
     DetailsEvent,
@@ -215,7 +216,7 @@ class ParserDetails(TimeCachable):
             assert self._struct.struct.game.gameTime > 0
             return self._struct.struct.game.gameTime
         except AssertionError as e:
-            logging.warning(self._struct)
+            logging.warning(self._struct.struct.game)
             logging.exception(e)
             return None
 
