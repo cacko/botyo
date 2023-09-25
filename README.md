@@ -1,4 +1,4 @@
-# Znayko
+# botyo
 
 Socket server, responding to various questions, for use with sulyo (signal adapter) and pulyo (whatsapp adapter), find me on the messaging service of choice and type the command prefixed by forward slash `/`
 ## Avaiable commands
