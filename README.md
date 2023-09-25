@@ -98,3 +98,11 @@ all commands require query
 all commands require query
 
 * `article` - fetches article for given query
+* `wtf` - wolfram alpha query
+* `ask` - Google Bard query
+* `tell` - summarized wikipedia/wolfram article
+
+### Image
+* `txt2img` - text to image Stable diffusion inference
+* `var` - image variations SD
+* ....
