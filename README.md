@@ -4,105 +4,73 @@ Socket server, responding to various questions, for use with botyo and wotsyo ma
 
 ## Avaiable commands
 
-all commands are triggered with */* followed by either full command made up by section:command or part of whole or just the command part. you need at least 3 characters unless the command is only 2, for example `/tv`
+### CONSOLE                                   
+dig - DNS lookup utility                  
+geo - Geo info for given ip               
+tcptraceroute - tcptraceroute a host/ip   
+traceroute - traceroute a host/ip         
+whois - Internet domain name and network..
 
-Examples:
+### CVE                                       
+cve - Latest Common Vulnerabilities and ..
 
-* `/avat pencho` - will trigger `/avatar:avatar pencho`
-* `/wiki shit` - will trigger `/wiki:article shit`, since article is the only avail command
-* 
+### FT                                        
+fixtures - League fixtures                
+games - Livescores or live events for game
+leagues - Enabled leagues                 
+lineup - Game lineup                      
+listsubscriptions - show all subscriptio..
+live - Livescores or live events for game 
+player - Player stats                     
+standings - standings                     
+stats - Game stats                        
+subscribe - subscribes the channels for ..
+team - Team info                          
+unsubscribe - cancels a subscribtion   
 
-### Avatar
+### IMAGE                                     
+classify - Classify objects in images     
+gps2img - generates image for given gps ..
+pixel - pixel image                       
+txt2img - text to image                   
+var - variation of image       
 
-* `avatar` - generates avatar for name using multiavatar lib
+### KB                                        
+article - search and displayed the first..
+ask - ask to Bard                         
+tell - ask to be told                     
+wtf - wtf is that     
 
-### Console
+### LOGO                                      
+team - logo for the requested football t..
 
-all commands require host/ip, some support additional arguments
+### MEME                                      
+caption - Meme captioning  
 
-* `traceroute` - print result of traceroute command for given host/ip
-* `tcptraceroute` - print result of tcptraceroute command fo given host/ip
-* `dig` - print result of dig command fo given host/ip and query args
-* `whois` - print result of whos command fo given host/ip
+### MUSIC                                     
+albumart - album art                      
+lyrics - dump lyrics of a song            
+nowart - current album art playing        
+nowsong - current song playing            
+song - searches for song and attaches it  
 
-### CVE
+### NAME                                      
+gender - gender from name                 
+race - Batko's Life Matters          
 
-all commands support query arguments
+### ONTV                                      
+tv - TV Schedule        
 
-* `cve` - display last CVE items
-* `subscribe` - receive updates for CVE items
-* `unsubscribe` - remove CVE sub
-* `listsubscriptions` - prints out the active subs for the group
+### TEXT                                      
+detect - find the tongue                  
+generate - continue the sentence      
 
-
-### Name
-
-all commands require query
-
-* `gender` - guess the gender for provided name
-* `race` = giess the ethnic for provided name
-
-### Ipify
-
-all commands require query
-
-
-* `geo` - display geographic information for given host/ip
-
-
-### Footy
-
-all commands require query
-
-
-* `standing` - display current live standing for a give league
-
-### Logo
-
-all commands require query
-
-
-* `team` - tries to find and display logo for a given team name
-
-
-### Music
-
-all commands require query
-
-
-* `song` - finds a song by given query and sends it to the group
-* `albumart` - find the album art for given album and display it
-* `lyrics` - find the lyrics for given song title and display it
-
-### OnTV
-
-* `leagues` - display monitored leagues and competitions
-* `facts` - display facts for the provided game query
-* `lines` - display lineups for the provided game query
-* `livescore` - display livescores of current games or for the provided game query
-* `player` - display statistic for the provided player in the current game
-* `stats` - display stats for the provided game query
-* `tv` - show games available on TV, for channels provide game query
-* `subscribe` - receive updates for game query
-* `unsubscribe` - remove game query sub
-* `listsubscriptions` - prints out the active subs for the group
-### Photo
-
-all commands require query
-
-
-* `fake` - display generated photo for given name
-
-### Wiki
-
-all commands require query
-
-* `article` - fetches article for given query
-* `wtf` - wolfram alpha query
-* `ask` - Google Bard query
-* `tell` - summarized wikipedia/wolfram article
-
-### Image
-* `txt2img` - text to image Stable diffusion inference
-* `var` - image variations SD
-* ....
+### TRANSLATE                                 
+bg_en - bg -> en                          
+cs_en - bg -> en                          
+en_bg - en -> bg                          
+en_cs - bg -> en                          
+en_es - en -> es                          
+en_pl - bg -> en                          
+es_en - es -> be                          
+pl_en - bg -> en  
