@@ -61,6 +61,10 @@ class QRGeneratorParams(BaseModel):
     auto_prompt: Optional[str] = None
     model: Optional[str] = None
 
+    @validator("code")
+    def static_code(cls, code: list[str]):
+        return " ".join(code)
+
 
 class VariationGeneratorParams(BaseModel):
     guidance_scale: Optional[float] = Field(default=7)
