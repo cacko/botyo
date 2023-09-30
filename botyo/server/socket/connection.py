@@ -1,6 +1,5 @@
 from pathlib import Path
 from socket import socket
-from botyo.core import clean_quotes
 from botyo.server.command import CommandExec
 from botyo.server.models import (
     ZSONMessage,
@@ -101,7 +100,6 @@ class SocketConnection(Connection, StreamRequestHandler):
                                  commands=CommandExec.definitions,
                                  client=self.__clientId))
             assert method
-            message.query = clean_quotes(message.query)
             command = CommandExec.triggered(method, message)
             assert command
             context = Context(**message.dict())  # type: ignore
