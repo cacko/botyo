@@ -223,7 +223,7 @@ class ImageMeta(type):
         if not cls.__qr_generator_parser:
             parser = ArgumentParser(description="QR Processing",
                                     exit_on_error=False)
-            parser.add_argument("code", nargs="*")
+            parser.add_argument("code", nargs="+")
             parser.add_argument("-p",
                                 "--prompt",
                                 type=str)
