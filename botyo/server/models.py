@@ -116,6 +116,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     IMAGE_WALLPAPER = "image:wallpaper"
     IMAGE_VARIATION = "image:var"
     IMAGE_TXT2IMG = "image:txt2img"
+    IMAGE_QR2IMG = "image:qr2img"
     IMAGE_UPLOAD2WALLIES = "image:upload2wallies"
     IMAGE_CLASSIFY = "image:classify"
     EVENT_COUNTDOWN = "event:countdown"
