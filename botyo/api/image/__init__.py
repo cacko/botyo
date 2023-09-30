@@ -254,7 +254,7 @@ def gps2Image(context: Context):
 @bp.command(
     method=ZMethod.IMAGE_QR2IMG,
     desc="qrcode to image",
-    icon="brush",
+    icon="qr_code_2",
     uses_prompt=True,
     options=[
         ZSONOption(option="-m", choices=Image.options.qrcode),
