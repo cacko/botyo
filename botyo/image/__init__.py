@@ -228,7 +228,7 @@ class ImageMeta(type):
             parser.add_argument("-g",
                                 "--guidance_scale",
                                 type=float)
-            parser.add_argument("-s",
+            parser.add_argument("-c",
                                 "--condition_scale",
                                 type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
