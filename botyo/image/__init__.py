@@ -255,9 +255,7 @@ class ImageMeta(type):
         parser = cls.qrgenerator_parser
         if not prompt:
             return QRGeneratorParams(code=[""])
-        namespace, _ = parser.parse_known_args(
-            split_with_quotes(normalize_prompt(prompt))
-        )
+        namespace, _ = parser.parse_known_args(normalize_prompt(prompt))
         return QRGeneratorParams(**namespace.__dict__)
 
     def variation(
