@@ -240,7 +240,8 @@ class ImageMeta(type):
             parser.add_argument(
                 "-m",
                 "--model",
-                choices=cls.options.qrcode
+                choices=cls.options.qrcode,
+                default='default'
             )
             parser.add_argument("-a", "--auto_prompt", type=int)
             cls.__qr_generator_parser = parser
@@ -248,13 +249,13 @@ class ImageMeta(type):
 
     def qr_generator_params(
         cls,
-        code: Optional[str]
+        prompt: Optional[str]
     ) -> QRGeneratorParams:
         parser = cls.qrgenerator_parser
-        if not code:
+        if not prompt:
             return QRGeneratorParams(code=[""])
         namespace, _ = parser.parse_known_args(
-            split_with_quotes(code.replace("\u8192", '--'))
+            split_with_quotes(prompt.replace("\u8192", '--'))
         )
         return QRGeneratorParams(**namespace.__dict__)
 
