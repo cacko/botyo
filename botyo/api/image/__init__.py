@@ -249,3 +249,39 @@ def gps2Image(context: Context):
         )
     except AssertionError:
         return ErrorResult(method=ZMethod.IMAGE_GPS2IMG)
+
+
+@bp.command(
+    method=ZMethod.IMAGE_QR2IMG,
+    desc="qrcode to image",
+    icon="brush",
+    uses_prompt=True,
+    options=[
+        ZSONOption(option="-m", choices=Image.options.qrcode),
+    ]
+)  # type: ignore
+def image_fromqr(context: Context):
+    try:
+        query = context.query
+        Image.is_admin = context.is_admin
+        assert query
+        attachment, _ = Image.txt2img(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_QR2IMG,
+            # message=message
+        )
+    except ApiError as e:
+
+        logging.error(e)
+        return RenderResult(
+            method=ZMethod.IMAGE_QR2IMG,
+            message=Image.image_generator_parser.format_help()
+        )
+    except AssertionError as e:
+        logging.error(e)
+        return RenderResult(
+            method=ZMethod.IMAGE_QR2IMG,
+            message=Image.image_generator_parser.format_help()
+        )
