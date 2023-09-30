@@ -50,6 +50,18 @@ class ImageGeneratorParams(BaseModel):
         return 1
 
 
+class QRGeneratorParams(BaseModel):
+    code: list[str]
+    prompt: Optional[str] = None
+    guidance_scale: Optional[float] = None
+    condition_scale: Optional[float] = None
+    num_inference_steps: Optional[int] = None
+    negative_prompt: Optional[str] = None
+    seed: Optional[int] = None
+    auto_prompt: Optional[str] = None
+    model: Optional[str] = None
+
+
 class VariationGeneratorParams(BaseModel):
     guidance_scale: Optional[float] = Field(default=7)
     num_inference_steps: Optional[int] = Field(default=50)
@@ -64,6 +76,7 @@ class Action(Enum):
     PIXEL = "image/pixel"
     VARIATION = "image/variation"
     TXT2IMG = "image/txt2img"
+    QR2IMG = "image/qr2img"
     GPS2IMG = "image/gps2img"
     UPLOAD2WALLIES = "image/upload2wallies"
     OPTIONS = "image/options"
@@ -74,12 +87,14 @@ class ImageOptions(BaseModel):
     resolution: list[str]
     category: list[str]
     template: list[str]
+    qrcode: list[str]
 
 
 class ImageMeta(type):
 
     __image_generator_parser: Optional[ArgumentParser] = None
     __variation_generator_parser: Optional[ArgumentParser] = None
+    __qr_generator_parser: Optional[ArgumentParser] = None
     __options: Optional[ImageOptions] = None
     __is_admin: bool = False
 
@@ -198,6 +213,47 @@ class ImageMeta(type):
         )
         return ImageGeneratorParams(**namespace.__dict__)
 
+    @property
+    def qrgenerator_parser(cls) -> ArgumentParser:
+        if not cls.__qr_generator_parser:
+            parser = ArgumentParser(description="QR Processing",
+                                    exit_on_error=False)
+            parser.add_argument("code", nargs="*")
+            parser.add_argument("-p",
+                                "--prompt",
+                                type=str)
+            parser.add_argument("-n",
+                                "--negative_prompt",
+                                type=str)
+            parser.add_argument("-g",
+                                "--guidance_scale",
+                                type=float)
+            parser.add_argument("-s",
+                                "--condition_scale",
+                                type=float)
+            parser.add_argument("-i", "--num_inference_steps", type=int)
+            parser.add_argument("-s", "--seed", type=int)
+            parser.add_argument(
+                "-m",
+                "--model",
+                choices=cls.options.qrcode
+            )
+            parser.add_argument("-a", "--auto_prompt", type=int)
+            cls.__qr_generator_parser = parser
+        return cls.__qr_generator_parser
+
+    def qr_generator_params(
+        cls,
+        code: Optional[str]
+    ) -> QRGeneratorParams:
+        parser = cls.qrgenerator_parser
+        if not code:
+            return QRGeneratorParams(code=[""])
+        namespace, _ = parser.parse_known_args(
+            split_with_quotes(code.replace("\u8192", '--'))
+        )
+        return QRGeneratorParams(**namespace.__dict__)
+
     def variation(
         cls,
         attachment: Attachment,
@@ -206,7 +262,10 @@ class ImageMeta(type):
         return cls(attachment).do_variation(prompt)
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_txt2img(prompt)
+        return cls().do_qr2img(prompt)
+
+    def qr2img(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_qr2img(prompt)
 
     def upload2wallies(
         cls,
@@ -287,6 +346,23 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(
                 action=action,
                 action_param=string_hash(params.prompt),
+                json=params.dict()
+            )
+        except (ValidationErr, ArgumentError) as e:
+            logging.error(e)
+            raise ApiError(f"{e}")
+
+    def do_qr2img(
+        self,
+        prompt: str,
+        action: Action = Action.QR2IMG
+    ):
+        try:
+            params = Image.qr_generator_params(prompt)
+            logging.info(params)
+            return self.getResponse(
+                action=action,
+                action_param=string_hash(params.code),
                 json=params.dict()
             )
         except (ValidationErr, ArgumentError) as e:
