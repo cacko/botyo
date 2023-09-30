@@ -19,17 +19,18 @@ def to_int(s: str) -> Optional[int]:
         return None
 
 
-def clean_quotes(s: Optional[str]) -> Optional[str]:
+def normalize_prompt(input: str) -> str:
     try:
-        assert s
+        assert input
         clean_pipeline = pipeline.make_pipeline(
             normalize.quotation_marks,
             normalize.whitespace,
-            normalize.bullet_points
+            normalize.bullet_points,
+            lambda st: st.replace("\u8192", '--')
         )
-        return clean_pipeline(s)
+        return clean_pipeline(input)
     except AssertionError:
-        return s
+        return ""
 
 
 @contextmanager

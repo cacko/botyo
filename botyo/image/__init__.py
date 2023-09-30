@@ -1,6 +1,7 @@
 from pathlib import Path
 from xml.dom import ValidationErr
 from requests import JSONDecodeError
+from botyo.core import normalize_prompt
 from botyo.server.models import Attachment, ApiError
 from cachable.request import Request, Method
 from cachable.storage.file import FileStorage
@@ -213,7 +214,7 @@ class ImageMeta(type):
         if not prompt:
             return ImageGeneratorParams(prompt=[""])
         namespace, _ = parser.parse_known_args(
-            split_with_quotes(prompt.replace("\u8192", '--'))
+            split_with_quotes(normalize_prompt(prompt))
         )
         return ImageGeneratorParams(**namespace.__dict__)
 
@@ -255,7 +256,7 @@ class ImageMeta(type):
         if not prompt:
             return QRGeneratorParams(code=[""])
         namespace, _ = parser.parse_known_args(
-            split_with_quotes(prompt.replace("\u8192", '--'))
+            split_with_quotes(normalize_prompt(prompt))
         )
         return QRGeneratorParams(**namespace.__dict__)
 
