@@ -24,6 +24,8 @@ def normalize_prompt(input: str) -> str:
         assert input
         clean_pipeline = pipeline.make_pipeline(
             normalize.quotation_marks,
+            normalize.whitespace,
+            normalize.bullet_points,
             lambda st: st.replace("\u8192", '--')
         )
         return clean_pipeline(input)
