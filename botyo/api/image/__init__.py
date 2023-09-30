@@ -265,7 +265,7 @@ def image_fromqr(context: Context):
         query = context.query
         Image.is_admin = context.is_admin
         assert query
-        attachment, _ = Image.txt2img(query)
+        attachment, _ = Image.qr2img(query)
         assert attachment
         return RenderResult(
             attachment=attachment,
@@ -277,11 +277,11 @@ def image_fromqr(context: Context):
         logging.error(e)
         return RenderResult(
             method=ZMethod.IMAGE_QR2IMG,
-            message=Image.image_generator_parser.format_help()
+            message=Image.qrgenerator_parser.format_help()
         )
     except AssertionError as e:
         logging.error(e)
         return RenderResult(
             method=ZMethod.IMAGE_QR2IMG,
-            message=Image.image_generator_parser.format_help()
+            message=Image.qrgenerator_parser.format_help()
         )
