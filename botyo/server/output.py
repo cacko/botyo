@@ -6,7 +6,6 @@ from hashlib import blake2b
 from math import floor
 from pathlib import Path
 from typing import Any
-from dataclasses_json import Undefined, dataclass_json
 from emoji import demojize, emojize
 from humanfriendly.tables import format_pretty_table, format_robust_table
 from markdown import markdown
@@ -15,6 +14,7 @@ from tabulate import tabulate
 from texttable import Texttable
 from textacy.preprocessing import pipeline, remove, replace
 from .unicode_text import convert, STYLE_MONO
+from pydantic import BaseModel
 
 
 def clean_markdown(s: str):
@@ -52,9 +52,7 @@ def shorten(text: str, size: int, placeholder: str = "..", extraSize=0):
     return f"{text[:size-len(placeholder)]}{placeholder}"
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Column:
+class Column(BaseModel):
     size: int = 27
     align: Align = Align.LEFT
     title: str = " "

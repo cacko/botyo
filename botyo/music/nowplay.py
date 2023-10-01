@@ -1,9 +1,5 @@
-from datetime import datetime, timezone
-from dataclasses import dataclass, field
-from marshmallow import fields
-from dataclasses_json import dataclass_json, Undefined, config
+from datetime import datetime
 from typing import Optional
-from coretime import isodate_decoder, isodate_encoder
 from botyo.core.store import RedisStorage
 import pickle
 from cachable.storage.file import FileStorage
@@ -12,6 +8,7 @@ from stringcase import alphanumcase
 from base64 import b64decode
 from botyo.music.encoder import Encoder
 from botyo.core.config import Config as app_config
+from pydantic import dataclasses
 
 
 class TrackMeta(type):
@@ -50,9 +47,7 @@ class TrackMeta(type):
     def storage_key(cls):
         return cls.__TRACK_STORAGE_KEY
 
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
+@dataclasses.dataclass()
 class Track(metaclass=TrackMeta):
     id: str
     parent: str
@@ -62,13 +57,7 @@ class Track(metaclass=TrackMeta):
     artist: str
     duration: int
     size: int
-    created: datetime = field(
-        metadata=config(
-            encoder=isodate_encoder,
-            decoder=isodate_decoder,
-            mm_field=fields.DateTime(format="iso", tzinfo=timezone.utc),
-        )
-    )
+    created: datetime
     albumId: Optional[str] = None
     artistId: Optional[str] = None
     track: Optional[int] = None

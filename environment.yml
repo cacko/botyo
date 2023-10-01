@@ -132,15 +132,14 @@ dependencies:
       - commonmark==0.9.1
       - confection==0.0.4
       - corefile==0.1.5
-      - coreimage==0.0.40
+      - coreimage==0.0.42
       - corelog==0.0.12
-      - corestring==0.1.13
+      - corestring==0.1.22
       - corethread==0.1.3
       - coretime==0.1.4
       - cssselect2==0.7.0
       - cymem==2.0.7
       - cytoolz==0.12.1
-      - dataclasses-json==0.5.7
       - defusedxml==0.7.1
       - emoji==2.8.0
       - emoji-country-flag==1.3.1

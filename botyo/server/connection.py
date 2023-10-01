@@ -1,10 +1,8 @@
 import logging
 from botyo.server.models import RenderResult, Attachment, ZSONResponse
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json, Undefined
 from typing import Optional
 from botyo.core.config import Config as app_config
-
+from pydantic import BaseModel
 
 class UnknownClientException(Exception):
     pass
@@ -34,9 +32,7 @@ class Connection(object, metaclass=ConnectionMeta):
         raise NotImplementedError
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Context:
+class Context(BaseModel):
     client: Optional[str] = None
     query: Optional[str] = None
     group: Optional[str] = None
