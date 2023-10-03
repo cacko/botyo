@@ -268,7 +268,7 @@ class ImageMeta(type):
         return cls(attachment).do_variation(prompt)
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_qr2img(prompt)
+        return cls().do_txt2img(prompt)
 
     def qr2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_qr2img(prompt)
