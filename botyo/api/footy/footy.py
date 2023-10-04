@@ -192,7 +192,9 @@ class Footy(object, metaclass=FootyMeta):
     def removeSubscription(self, client: str, query: str, group) -> SubscriptionResult:
         item = self.__queryGame(query)
         sc = SubscriptionClient(client_id=client, group_id=group)
+        logging.warning(sc)
         sub = Subscription.get(event=item, sc=sc)
+        logging.warning(sub)
         sub_id = sub.id
         sub.cancel(sc)
         icon = emojize(":dango:")
