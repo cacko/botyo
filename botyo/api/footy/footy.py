@@ -1,6 +1,8 @@
 import logging
 from typing import Optional
 from pydantic import BaseModel
+
+from botyo.server.scheduler import Scheduler
 from .item.subscription import Subscription, SubscriptionClient
 from fuzzelinho import Match, MatchMethod, Needle
 from botyo.threesixfive.data import LeagueItem
@@ -197,6 +199,8 @@ class Footy(object, metaclass=FootyMeta):
         logging.warning(sub)
         sub_id = sub.id
         sub.cancel(sc)
+        logging.warning(sub.id)
+        logging.warning(Scheduler.get_jobs())
         icon = emojize(":dango:")
         return SubscriptionResult(
             message=f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}",
