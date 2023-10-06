@@ -9,6 +9,7 @@ from base64 import b64decode
 from botyo.music.encoder import Encoder
 from botyo.core.config import Config as app_config
 from pydantic import dataclasses
+from dataclasses import asdict
 
 
 class TrackMeta(type):
@@ -25,7 +26,9 @@ class TrackMeta(type):
             return
         dc = cls.__instance
         st_key = cls.storage_key
-        RedisStorage.pipeline().set(st_key, pickle.dumps(dc.to_dict())).persist(  # type: ignore
+        RedisStorage.pipeline().set(
+            st_key, pickle.dumps(asdict(dc))
+        ).persist(
             st_key
         ).execute()
 
@@ -46,6 +49,7 @@ class TrackMeta(type):
     @property
     def storage_key(cls):
         return cls.__TRACK_STORAGE_KEY
+
 
 @dataclasses.dataclass()
 class Track(metaclass=TrackMeta):
