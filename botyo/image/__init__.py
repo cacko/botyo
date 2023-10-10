@@ -234,7 +234,7 @@ class ImageMeta(type):
                                 "--guidance_scale",
                                 type=float)
             parser.add_argument("-c",
-                                "--condition_scale",
+                                "--controlnet_conditioning_scale",
                                 type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-s", "--seed", type=int)
