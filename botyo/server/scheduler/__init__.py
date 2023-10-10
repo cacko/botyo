@@ -64,4 +64,11 @@ class Scheduler(object, metaclass=SchedulerMeta):
             }
         else:
             raise RedisNotConfiguredException("not valid REDIS_URL")
-        self._scheduler.configure(jobstores=jobstores)
+        self._scheduler.configure(
+            jobstores=jobstores,
+            job_defaults={
+                **dict(
+                    coalesce=False,
+                    max_instances=1
+                )
+            },)
