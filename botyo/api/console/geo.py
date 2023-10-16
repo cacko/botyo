@@ -7,7 +7,12 @@ from validators import ip_address, domain
 import socket
 from botyo.server.output import TextOutput, Column
 from botyo.core.country import Country
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
+import re
+
+
+RE_GPS = re.compile(r"^(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)")
+
 
 class GeoISP(BaseModel, extra=Extra.ignore):
     id: int
@@ -43,8 +48,31 @@ class GeoLookup(BaseModel, extra=Extra.ignore):
             return Country(name=self.country).with_flag()
 
 
+class GeoLocation(BaseModel):
+    country: str
+    country_iso: str
+    city: str
+    name: str
+    subdivions: Optional[list[str]] = None
+    addressLine: Optional[str] = None
+    postCode: Optional[str] = None
+    location: Optional[list[float]] = None
+
+    @property
+    def gps(self):
+        if not self.location:
+            return None
+        loc = self.location
+        return f"https://maps.google.com/?q={loc[0]:.3f},{loc[1]:.3f}"
+
+    @property
+    def country_with_flag(self):
+        if self.country:
+            return Country(name=self.country).with_flag()
+
+
 class GeoMeta(type):
-    _instances: dict[str, "Geo"] = {}
+    _instances: dict[str, "GeoIP"] = {}
     _app = None
     _api = None
 
@@ -57,16 +85,14 @@ class GeoMeta(type):
     def api_url(cls):
         return Config.geo.base_url
 
-    def find(cls, query):
-        return cls(query).lookup()
 
-
-class Geo(object, metaclass=GeoMeta):
+class GeoIP(object, metaclass=GeoMeta):
 
     __ip: str
     __lookup_result: Optional[GeoLookup] = None
 
     def __init__(self, query) -> None:
+
         if ip_address.ipv4(query):
             self.__ip = query
         elif domain(query):
@@ -96,6 +122,52 @@ class Geo(object, metaclass=GeoMeta):
                 (result.timezone, "Timezone"),
                 (result.gps, "Location"),
                 (result.isp, "ISP"),
+            ],
+        )
+        cols, row = reduce(
+            lambda r, cr: (
+                [*r[0], Column(title=cr[1], fullsize=True, size=40)],
+                [*r[1], cr[0]],
+            ),
+            data,
+            ([], []),
+        )
+        TextOutput.addRobustTable(cols, [row])
+        return TextOutput.render()
+
+
+class GeoCoder(object, metaclass=GeoMeta):
+
+    __path: str
+    __lookup_result: Optional[GeoLocation] = None
+
+    def __init__(self, query) -> None:
+        self.__path = f"address/{query.strip()}"
+        if m := RE_GPS.match(query.strip()):
+            self.__path = f"gps/{m.group(1)}/{m.group(3)}"
+
+    @property
+    def lookup_result(self):
+        if not self.__lookup_result:
+            req = Request(f"{__class__.api_url}/api/{self.__path}")
+            json = req.json
+            self.__lookup_result = GeoLocation(**json)  # type: ignore
+
+        return self.__lookup_result
+
+    def lookup(self) -> str:
+        result = self.lookup_result
+        if not result:
+            return ""
+        data = filter(
+            lambda x: x[0],
+            [
+                (result.country_with_flag, "Country"),
+                (result.city, "City"),
+                (result.subdivions, "Area"),
+                (result.postCode, "Post Code"),
+                (result.gps, "Location"),
+                (result.addressLine, "Address"),
             ],
         )
         cols, row = reduce(

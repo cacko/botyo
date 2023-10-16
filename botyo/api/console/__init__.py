@@ -8,7 +8,7 @@ from .whois import WhoIs
 from .tcptraceroute import TcpTraceroute
 from botyo.server.blueprint import Blueprint
 from botyo.server.models import ZMethod
-from botyo.api.console.geo import Geo
+from botyo.api.console.geo import GeoCoder, GeoIP
 
 
 bp = Blueprint("console")
@@ -84,16 +84,32 @@ def whois_command(context: Context):
 
 
 @bp.command(
-    method=ZMethod.CONSOLE_GEO,
+    method=ZMethod.CONSOLE_GEOIP,
     desc="Geo info for given ip",
     icon="public")  # type: ignore
 def geo_command(context: Context):
     try:
         assert context.query
-        res = Geo(context.query).lookup()
+        res = GeoIP(context.query).lookup()
         if not res:
             return EmptyResult()
         else:
-            return RenderResult(method=ZMethod.CONSOLE_GEO, message=res)
+            return RenderResult(method=ZMethod.CONSOLE_GEOIP, message=res)
+    except ArgumentTypeError:
+        return RenderResult(message=to_mono("are you stupid?"))
+
+
+@bp.command(
+    method=ZMethod.CONSOLE_GEOCODER,
+    desc="Geo info for given address or gps",
+    icon="public")  # type: ignore
+def geocoder_command(context: Context):
+    try:
+        assert context.query
+        res = GeoCoder(context.query).lookup()
+        if not res:
+            return EmptyResult()
+        else:
+            return RenderResult(method=ZMethod.CONSOLE_GEOCODER, message=res)
     except ArgumentTypeError:
         return RenderResult(message=to_mono("are you stupid?"))

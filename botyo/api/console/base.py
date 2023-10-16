@@ -1,5 +1,6 @@
 from subprocess import Popen, PIPE, STDOUT
 import os
+from typing import Optional
 
 from botyo.server.output import TextOutput
 
@@ -35,16 +36,17 @@ class Base(object, metaclass=BaseMeta):
         )
 
     @property
-    def text(self) -> str:
+    def text(self) -> Optional[str]:
         with Popen(
             [self.__class__.executable, *self.args],
             stdout=PIPE,
             stderr=STDOUT,
             env=self.environment,
         ) as p:
+            assert p.stdout
             for line in iter(p.stdout.readline, b""):
-                line = line.decode().strip()
-                TextOutput.addRows([line])
+                lnt = line.decode().strip()
+                TextOutput.addRows([lnt])
             if p.returncode:
                 return None
         return TextOutput.render()
