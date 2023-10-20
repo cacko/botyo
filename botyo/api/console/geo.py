@@ -9,7 +9,9 @@ from botyo.server.output import TextOutput, Column
 from botyo.core.country import Country
 from pydantic import BaseModel, Extra
 import re
-
+from argparse import ArgumentParser
+from corestring import split_with_quotes
+from botyo.core import normalize_prompt
 
 RE_GPS = re.compile(r"^(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)")
 
@@ -142,20 +144,53 @@ class GeoIP(GeoBase, metaclass=GeoMeta):
         ])
 
 
+class GeoCoderParams(BaseModel):
+    query: list[str]
+    coder: Optional[str] = None
+
+
 class GeoCoder(GeoBase, metaclass=GeoMeta):
 
     __path: str
     __lookup_result: Optional[GeoLocation] = None
+    __params: GeoCoderParams
 
     def __init__(self, query) -> None:
+        self.__params = self.coder_params(query)
+        query = " ".join(self.__params.query)
         self.__path = f"address/{query.strip()}"
         if m := RE_GPS.match(query.strip()):
             self.__path = f"gps/{m.group(1)}/{m.group(3)}"
 
     @property
+    def arg_parser(self) -> ArgumentParser:
+        parser = ArgumentParser(description="QR Processing",
+                                exit_on_error=False)
+        parser.add_argument("query", nargs="+")
+        parser.add_argument("-c",
+                            "--coder",
+                            type=str)
+        return parser
+
+    def coder_params(
+        self,
+        prompt: Optional[str]
+    ) -> GeoCoderParams:
+        parser = self.arg_parser
+        if not prompt:
+            return GeoCoderParams(query=[""])
+        namespace, _ = parser.parse_known_args(
+            split_with_quotes(normalize_prompt(prompt))
+        )
+        return GeoCoderParams(**namespace.__dict__)
+
+    @property
     def lookup_result(self):
         if not self.__lookup_result:
-            req = Request(f"{__class__.api_url}/api/{self.__path}")
+            params_dict = self.__params.dict()
+            del params_dict["query"]
+            params = {k: v for k, v in params_dict.items() if v}
+            req = Request(f"{__class__.api_url}/api/{self.__path}", params=params)
             json = req.json
             self.__lookup_result = GeoLocation(**json)  # type: ignore
 
