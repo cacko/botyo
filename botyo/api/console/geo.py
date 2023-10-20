@@ -124,7 +124,7 @@ class GeoIP(GeoBase, metaclass=GeoMeta):
     @property
     def lookup_result(self):
         if not self.__lookup_result:
-            req = Request(f"{__class__.api_url}/api/lookup", params={"ip": self.__ip})
+            req = Request(f"{__class__.api_url}/api/ip/{self.__ip}")
             json = req.json
             self.__lookup_result = GeoLookup(**json)  # type: ignore
 
