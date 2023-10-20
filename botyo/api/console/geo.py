@@ -86,7 +86,26 @@ class GeoMeta(type):
         return Config.geo.base_url
 
 
-class GeoIP(object, metaclass=GeoMeta):
+class GeoBase(object):
+
+    def output(self, lines: list[tuple[str, str]]):
+        data = filter(
+            lambda x: x[0],
+            lines,
+        )
+        cols, row = reduce(  # type: ignore
+            lambda r, cr: (  # type: ignore
+                [*r[0], Column(title=cr[1], fullsize=True, size=40)],
+                [*r[1], cr[0]],
+            ),
+            data,
+            ([], []),
+        )
+        TextOutput.addRobustTable(cols, [row])
+        return TextOutput.render()
+
+
+class GeoIP(GeoBase, metaclass=GeoMeta):
 
     __ip: str
     __lookup_result: Optional[GeoLookup] = None
@@ -113,30 +132,17 @@ class GeoIP(object, metaclass=GeoMeta):
         result = self.lookup_result
         if not result:
             return ""
-        data = filter(
-            lambda x: x[0],
-            [
-                (result.country_with_flag, "Country"),
-                (result.city, "City"),
-                (result.subdivisions, "Area"),
-                (result.timezone, "Timezone"),
-                (result.gps, "Location"),
-                (result.isp, "ISP"),
-            ],
-        )
-        cols, row = reduce(
-            lambda r, cr: (
-                [*r[0], Column(title=cr[1], fullsize=True, size=40)],
-                [*r[1], cr[0]],
-            ),
-            data,
-            ([], []),
-        )
-        TextOutput.addRobustTable(cols, [row])
-        return TextOutput.render()
+        return self.output([
+            (result.country_with_flag, "Country"),
+            (result.city, "City"),
+            (result.subdivisions, "Area"),
+            (result.timezone, "Timezone"),
+            (result.gps, "Location"),
+            (result.isp, "ISP"),
+        ])
 
 
-class GeoCoder(object, metaclass=GeoMeta):
+class GeoCoder(GeoBase, metaclass=GeoMeta):
 
     __path: str
     __lookup_result: Optional[GeoLocation] = None
@@ -159,24 +165,11 @@ class GeoCoder(object, metaclass=GeoMeta):
         result = self.lookup_result
         if not result:
             return ""
-        data = filter(
-            lambda x: x[0],
-            [
-                (result.country_with_flag, "Country"),
-                (result.city, "City"),
-                (result.subdivions, "Area"),
-                (result.postCode, "Post Code"),
-                (result.gps, "Location"),
-                (result.addressLine, "Address"),
-            ],
-        )
-        cols, row = reduce(
-            lambda r, cr: (
-                [*r[0], Column(title=cr[1], fullsize=True, size=40)],
-                [*r[1], cr[0]],
-            ),
-            data,
-            ([], []),
-        )
-        TextOutput.addRobustTable(cols, [row])
-        return TextOutput.render()
+        return self.output([
+            (result.country_with_flag, "Country"),
+            (result.city, "City"),
+            (", ".join(result.subdivions), "Area"),
+            (result.postCode, "Post Code"),
+            (result.gps, "Location"),
+            (result.addressLine, "Address"),
+        ])
