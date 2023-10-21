@@ -180,16 +180,18 @@ class GeoCoder(GeoBase, metaclass=GeoMeta):
         self,
         prompt: Optional[str]
     ) -> GeoCoderParams:
-        if prompt.startswith("-"):
-            self.__add_dash = True
-            prompt.lstrip("-")
-        parser = self.arg_parser
-        if not prompt:
+        try:
+            assert prompt
+            if prompt.startswith("-"):
+                self.__add_dash = True
+                prompt.lstrip("-")
+            parser = self.arg_parser
+            namespace, _ = parser.parse_known_args(
+                split_with_quotes(normalize_prompt(prompt))
+            )
+            return GeoCoderParams(**namespace.__dict__)
+        except AssertionError:
             return GeoCoderParams(query=[""])
-        namespace, _ = parser.parse_known_args(
-            split_with_quotes(normalize_prompt(prompt))
-        )
-        return GeoCoderParams(**namespace.__dict__)
 
     @property
     def lookup_result(self):
