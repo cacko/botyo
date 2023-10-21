@@ -12,7 +12,6 @@ from botyo.server.models import (
 import logging
 from binascii import hexlify, unhexlify
 from socketserver import StreamRequestHandler
-import tempfile
 import time
 from botyo.server.connection import (
     Connection,
@@ -23,7 +22,7 @@ from typing import Optional
 from corefile import TempPath
 
 BYTEORDER = "little"
-CHUNKSIZE = 2**13
+CHUNKSIZE = 1024
 
 
 class SocketConnection(Connection, StreamRequestHandler):
