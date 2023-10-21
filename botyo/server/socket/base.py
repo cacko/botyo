@@ -1,4 +1,3 @@
-from queue import Queue
 
 
 class BaseSocket:

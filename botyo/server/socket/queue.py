@@ -1,6 +1,7 @@
 from queue import Queue as PyQueue, Empty
 from time import sleep
 
+
 class QueueMeta(type):
 
     __instance = None
@@ -28,6 +29,7 @@ class QueueMeta(type):
     @property
     def isEmpty(cls):
         return cls().empty()
+
 
 class Queue(PyQueue, metaclass=QueueMeta):
     pass

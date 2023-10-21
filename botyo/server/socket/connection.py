@@ -22,7 +22,7 @@ from typing import Optional
 from corefile import TempPath
 
 BYTEORDER = "little"
-CHUNKSIZE = 1024
+CHUNKSIZE = 2 ** 13
 
 
 class SocketConnection(Connection, StreamRequestHandler):
@@ -36,7 +36,8 @@ class SocketConnection(Connection, StreamRequestHandler):
 
     def setup(self) -> None:
         assert self.request
-        self.request.setblocking(False)
+        self.disable_nagle_algorithm = True
+        self.request.setblocking(True)
         return super().setup()
 
     def handle(self):
