@@ -178,6 +178,8 @@ class Attachment(BaseModel):
     contentType: Optional[str] = None
     duration: Optional[int] = Field(default=0)
     filename: Optional[str] = None
+    id: Optional[str] = None
+    size: Optional[int] = None
 
     def __init__(self, **data):
         super().__init__(**data)
