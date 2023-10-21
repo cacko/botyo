@@ -4,6 +4,7 @@ from typing import Optional
 from botyo.core.config import Config as app_config
 from pydantic import BaseModel
 
+
 class UnknownClientException(Exception):
     pass
 

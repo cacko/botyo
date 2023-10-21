@@ -162,8 +162,10 @@ class ImageMeta(type):
             cls.__variation_generator_parser = parser
         return cls.__variation_generator_parser
 
-    def variation_generator_params(cls,
-                                   prompt: str) -> VariationGeneratorParams:
+    def variation_generator_params(
+        cls,
+        prompt: str
+    ) -> VariationGeneratorParams:
         parser = cls.variation_generator_parser
         namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
         return VariationGeneratorParams(**namespace.__dict__)
@@ -334,7 +336,8 @@ class Image(object, metaclass=ImageMeta):
                 uuid4().hex,
                 json=params.dict()
             )
-        except AssertionError:
+        except AssertionError as e:
+            logging.info(e)
             return self.getResponse(
                 Action.VARIATION,
                 uuid4().hex,
@@ -445,13 +448,17 @@ class Image(object, metaclass=ImageMeta):
             **params
         )
 
-    def getResponse(self,
-                    action: Action,
-                    action_param=None,
-                    json: dict = {}):
+    def getResponse(
+        self,
+            action: Action,
+            action_param=None,
+            json: dict = {}
+    ):
         path = action.value
         if action_param:
             path = f"{path}/{action_param}"
+        logging.info(path)
+        logging.info(json)
         req = self.__make_request(path=path, json=json)
         # if req.status > 400:
         #     raise ApiError("Error")
