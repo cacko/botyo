@@ -20,6 +20,7 @@ from botyo.server.connection import (
     UnknownClientException
 )
 from typing import Optional
+from corefile import TempPath
 
 BYTEORDER = "little"
 CHUNKSIZE = 2**13
@@ -123,10 +124,7 @@ class SocketConnection(Connection, StreamRequestHandler):
             return 0
 
     def __handleAttachment(self, name) -> Path:
-        cache_path = Path(tempfile.gettempdir())
-        if not cache_path.exists():
-            cache_path.mkdir(parents=True)
-        p = cache_path / name
+        p = TempPath(name)
         with p.open("wb") as f:
             size = self.getHeader()
             size = size * 2
