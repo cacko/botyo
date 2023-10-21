@@ -29,6 +29,7 @@ class SocketConnection(Connection, StreamRequestHandler):
 
     __clientId: Optional[str] = None
     request: Optional[socket] = None
+    disable_nagle_algorithm = True
 
     @property
     def id(self) -> Optional[str]:
@@ -36,7 +37,6 @@ class SocketConnection(Connection, StreamRequestHandler):
 
     def setup(self) -> None:
         assert self.request
-        self.disable_nagle_algorithm = True
         self.request.setblocking(True)
         return super().setup()
 
