@@ -36,7 +36,7 @@ class SocketConnection(Connection, StreamRequestHandler):
 
     def setup(self) -> None:
         assert self.request
-        self.request.setblocking(True)
+        self.request.setblocking(False)
         return super().setup()
 
     def handle(self):
