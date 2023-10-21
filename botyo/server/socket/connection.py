@@ -55,6 +55,8 @@ class SocketConnection(Connection, StreamRequestHandler):
                 logging.debug(message)
                 if message.ztype == ZSONType.REQUEST:
                     request = ZSONRequest.parse_raw(msg_json)  # type: ignore
+                    logging.debug(request)
+
                     if request.method == CoreMethods.LOGIN:
                         if request.client in SocketConnection.connections:
                             logging.debug(
