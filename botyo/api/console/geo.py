@@ -184,11 +184,9 @@ class GeoCoder(GeoBase, metaclass=GeoMeta):
         try:
             assert prompt
             prompt.strip()
-            logging.warning(prompt)
             if prompt.startswith("-"):
                 self.__add_dash = True
-                prompt.lstrip("-")
-            logging.warning(prompt)
+                prompt = prompt.strip("-")
             parser = self.arg_parser
             namespace, _ = parser.parse_known_args(
                 split_with_quotes(normalize_prompt(prompt))
