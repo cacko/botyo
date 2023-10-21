@@ -183,6 +183,7 @@ class GeoCoder(GeoBase, metaclass=GeoMeta):
     ) -> GeoCoderParams:
         try:
             assert prompt
+            prompt.strip()
             if prompt.startswith("-"):
                 self.__add_dash = True
                 prompt.lstrip("-")
