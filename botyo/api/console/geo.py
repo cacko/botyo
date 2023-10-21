@@ -1,5 +1,6 @@
 from argparse import ArgumentTypeError
 from functools import reduce
+import logging
 from typing import Optional
 from cachable.request import Request
 from botyo.core.config import Config
@@ -185,6 +186,7 @@ class GeoCoder(GeoBase, metaclass=GeoMeta):
             if prompt.startswith("-"):
                 self.__add_dash = True
                 prompt.lstrip("-")
+            logging.warning(prompt)
             parser = self.arg_parser
             namespace, _ = parser.parse_known_args(
                 split_with_quotes(normalize_prompt(prompt))
