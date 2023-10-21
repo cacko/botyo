@@ -154,10 +154,14 @@ class GeoCoder(GeoBase, metaclass=GeoMeta):
     __path: str
     __lookup_result: Optional[GeoLocation] = None
     __params: GeoCoderParams
+    __add_dash: bool = False
 
     def __init__(self, query) -> None:
         self.__params = self.coder_params(query)
         query = " ".join(self.__params.query)
+        if self.__add_dash:
+            query = f"-{query}"
+            self.__add_dash = False
         self.__path = f"address/{query.strip()}"
         if m := RE_GPS.match(query.strip()):
             self.__path = f"gps/{m.group(1)}/{m.group(3)}"
@@ -176,6 +180,9 @@ class GeoCoder(GeoBase, metaclass=GeoMeta):
         self,
         prompt: Optional[str]
     ) -> GeoCoderParams:
+        if prompt.startswith("-"):
+            self.__add_dash = True
+            prompt.lstrip("-")
         parser = self.arg_parser
         if not prompt:
             return GeoCoderParams(query=[""])
