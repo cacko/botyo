@@ -124,8 +124,10 @@ class SocketConnection(Connection, StreamRequestHandler):
 
     def __handleAttachment(self, name) -> Path:
         p = TempPath(name)
+        logging.debug(p)
         with p.open("wb") as f:
             size = self.getHeader()
+            logging.debug(size)
             size = size * 2
             logging.debug(f">> ATTACHMENT size={size}")
             while size:
