@@ -119,7 +119,8 @@ class SocketConnection(Connection, StreamRequestHandler):
             data = self.rfile.read(4)
             assert data
             return int.from_bytes(data, byteorder="little", signed=False)
-        except AssertionError:
+        except AssertionError as e:
+            logging.debug(e)
             return 0
 
     def __handleAttachment(self, name) -> Path:
