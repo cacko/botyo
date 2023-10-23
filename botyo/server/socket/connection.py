@@ -46,9 +46,7 @@ class SocketConnection(Connection, StreamRequestHandler):
         while not self.server.is_closing:  # type: ignore
             try:
                 partSize = self.getHeader()
-                if not partSize:
-                    time.sleep(0.5)
-                    continue
+                assert partSize
                 data = self.rfile.read(partSize)
                 msg_json = data.decode()
                 logging.debug(f">> RECEIVE msg {msg_json}")
@@ -57,7 +55,6 @@ class SocketConnection(Connection, StreamRequestHandler):
                 if message.ztype == ZSONType.REQUEST:
                     request = ZSONRequest.parse_raw(msg_json)  # type: ignore
                     logging.debug(request)
-
                     if request.method == CoreMethods.LOGIN:
                         if request.client in SocketConnection.connections:
                             logging.debug(
@@ -89,6 +86,8 @@ class SocketConnection(Connection, StreamRequestHandler):
             except UnknownClientException:
                 logging.error(f"!! unknown client {self.__clientId}")
                 continue
+            except AssertionError:
+                pass
             except Exception as e:
                 logging.exception(e)
                 continue
