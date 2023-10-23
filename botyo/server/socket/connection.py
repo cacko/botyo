@@ -51,7 +51,6 @@ class SocketConnection(Connection, StreamRequestHandler):
                 msg_json = data.decode()
                 logging.debug(f">> RECEIVE msg {msg_json}")
                 message = ZSONMessage.parse_raw(msg_json)  # type: ignore
-                logging.debug(message)
                 if message.ztype == ZSONType.REQUEST:
                     request = ZSONRequest.parse_raw(msg_json)  # type: ignore
                     logging.debug(request)
@@ -125,7 +124,6 @@ class SocketConnection(Connection, StreamRequestHandler):
 
     def __handleAttachment(self, name) -> Path:
         p = TempPath(name)
-        logging.debug(p)
         with p.open("wb") as f:
             size = self.getHeader()
             logging.debug(size)

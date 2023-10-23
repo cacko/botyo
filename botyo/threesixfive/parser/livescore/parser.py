@@ -101,7 +101,6 @@ class Parser:
         req = Request(self.__endpoint)
         json = req.json
         today = datetime.now(tz=timezone.utc).date()
-        logging.debug(json)
         assert json
         self.__struct = ResponseScores(**json)
 
