@@ -14,13 +14,12 @@ from botyo.image.models import KonkatFile
 
 class KonkatMeta(type):
 
-
     def __call__(cls, *args: Any, **kwds: Any) -> Any:
-        i
+
         return type.__call__(
-                cls,
-                Path(app_config.cachable.path)
-            )
+            cls,
+            Path(app_config.cachable.path)
+        )
 
     def upload(cls, tmp_path: Path, collage_id: str) -> KonkatFile:
         return cls().do_upload(tmp_path, collage_id)
@@ -78,7 +77,7 @@ class Konkat(object, metaclass=KonkatMeta):
             )
 
     def do_delete(self, filename: str) -> bool:
-        file_dst = self.__storage /  filename
+        file_dst = self.__storage / filename
         if file_dst.exists():
             file_dst.unlink()
         return S3.delete(file_dst.name)
