@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Generator, Optional
 from uuid import uuid4
 from botyo.core.config import Config as app_config
@@ -79,6 +80,7 @@ class Konkat(object, metaclass=KonkatMeta):
             )
 
     def do_delete(self, filename: str) -> bool:
+        logging.warning(f"{self.__storage} {filename}")
         file_dst = self.__storage / filename
         if file_dst.exists():
             file_dst.unlink()
