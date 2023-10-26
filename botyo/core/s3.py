@@ -14,7 +14,7 @@ class S3Meta(type):
         return cls().upload_file(src, dst, skip_upload)
 
     def delete(cls, key: str):
-        logging.warning(key
+        logging.warning(key)
         return cls().delete_file(cls.src_key(key))
 
     def src_key(cls, dst):
