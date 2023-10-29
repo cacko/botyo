@@ -99,8 +99,8 @@ class CompetitionNeedle(Needle):
 
 
 class CompetitionMatch(Match):
-    minRatio = 60
-    method = MatchMethod.PARTIAL
+    minRatio = 10
+    method = MatchMethod.SIMILARITY
 
 
 class Footy(object, metaclass=FootyMeta):
