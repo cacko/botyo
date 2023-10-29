@@ -1,7 +1,7 @@
 from os import environ
 from pathlib import Path
 from typing import Optional
-from yaml import load, Loader
+from yaml import full_load
 from pydantic import BaseModel
 
 
@@ -211,5 +211,5 @@ class Config(object, metaclass=ConfigMeta):
         settings = Path(
             environ.get("SETTINGS_PATH", Path(__file__).parent.parent / "settings.yaml")
         )
-        data = load(settings.read_text(), Loader=Loader)
+        data = full_load(settings.read_text())
         self.struct = ConfigStruct(**data)  # type: ignore
