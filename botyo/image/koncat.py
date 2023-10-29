@@ -79,5 +79,5 @@ class Konkat(object, metaclass=KonkatMeta):
         file_dst = self.__storage / filename
         if file_dst.exists():
             file_dst.unlink()
-        return True
+        # return True
         return S3.delete(file_dst.name)
