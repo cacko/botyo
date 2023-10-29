@@ -49,4 +49,5 @@ class S3(object, metaclass=S3Meta):
     def delete_file(self, file_name: str) -> bool:
         bucket = app_config.s3.storage_bucket_name
         key = self.__class__.src_key(file_name)
+        logging.warning(f"delete key {key}")
         return self._client.delete_object(Bucket=bucket, Key=key)
