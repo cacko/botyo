@@ -2,66 +2,66 @@ from os import environ
 from pathlib import Path
 from typing import Optional
 from yaml import load, Loader
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 
-class OntvConfig(BaseModel, extra=Extra.ignore):
+class OntvConfig(BaseModel):
     api_url: str
     leagues: list[int]
 
 
-class ThreeSixFiveConfig(BaseModel, extra=Extra.ignore):
+class ThreeSixFiveConfig(BaseModel):
     competitions_json: str
     leagues_json: str
     countries_json: str
 
 
-class MusicConfig(BaseModel, extra=Extra.ignore):
+class MusicConfig(BaseModel):
     api_url: str
     storage: str
     codec: str
     beets_config: str
 
 
-class DemographicsConfig(BaseModel, extra=Extra.ignore):
+class DemographicsConfig(BaseModel):
     faggots: list[str]
     males: list[str]
 
 
-class CachableConfig(BaseModel, extra=Extra.ignore):
+class CachableConfig(BaseModel):
     path: str
 
 
-class ChatyoConfig(BaseModel, extra=Extra.ignore):
+class ChatyoConfig(BaseModel):
     base_url: Optional[str]
 
 
-class ImageConfig(BaseModel, extra=Extra.ignore):
+class ImageConfig(BaseModel):
     base_url: Optional[str]
 
 
-class GeoConfig(BaseModel, extra=Extra.ignore):
+class GeoConfig(BaseModel):
     base_url: Optional[str]
 
 
-class ApiConfig(BaseModel, extra=Extra.ignore):
+class ApiConfig(BaseModel):
     host: str
     port: int
     daemon_threads: bool
     nworkers: int
 
 
-class BeatsConfig(BaseModel, extra=Extra.ignore):
+class BeatsConfig(BaseModel):
     db_url: Optional[str]
     extractor_url: Optional[str]
     store_root: str
 
 
-class FavouritesConfig(BaseModel, extra=Extra.ignore):
+class FavouritesConfig(BaseModel):
     teams: list[int]
 
 
-class GoalsConfig(BaseModel, extra=Extra.ignore):
+class GoalsConfig(BaseModel):
     twitter: str
     api_key: str
     api_secret: str
@@ -115,7 +115,7 @@ class UsersConfig(BaseModel):
     superuser: SuperUser
 
 
-class ConfigStruct(BaseModel, extra=Extra.ignore):
+class ConfigStruct(BaseModel):
     geo: GeoConfig
     ontv: OntvConfig
     music: MusicConfig

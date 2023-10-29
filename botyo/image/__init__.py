@@ -334,14 +334,14 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(
                 Action.VARIATION,
                 uuid4().hex,
-                json=params.dict()
+                json=params.model_dump()
             )
         except AssertionError as e:
             logging.info(e)
             return self.getResponse(
                 Action.VARIATION,
                 uuid4().hex,
-                json=VariationGeneratorParams().dict()
+                json=VariationGeneratorParams().model_dump()
             )
 
     def do_txt2img(
@@ -355,7 +355,7 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(
                 action=action,
                 action_param=string_hash(params.prompt),
-                json=params.dict()
+                json=params.model_dump()
             )
         except (ValidationErr, ArgumentError) as e:
             logging.error(e)
@@ -372,7 +372,7 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(
                 action=action,
                 action_param=string_hash(params.code),
-                json=params.dict()
+                json=params.model_dump()
             )
         except (ValidationErr, ArgumentError) as e:
             logging.exception(e)
@@ -383,7 +383,7 @@ class Image(object, metaclass=ImageMeta):
             params = Image.image_generator_params(prompt)
             return self.getResponse(Action.GPS2IMG,
                                     params.prompt,
-                                    json=params.dict())
+                                    json=params.model_dump())
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
@@ -397,7 +397,7 @@ class Image(object, metaclass=ImageMeta):
             _, message = self.getResponse(
                 action=Action.UPLOAD2WALLIES,
                 action_param=ip.name,
-                json=params.dict()
+                json=params.model_dump()
             )
             return message
         except (ValidationErr, ArgumentError) as e:

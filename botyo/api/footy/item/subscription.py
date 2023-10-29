@@ -192,7 +192,7 @@ class SubscriptionClient:
         data = updateData.message
         payload = []
         if isinstance(data, list):
-            payload = [d.dict() for d in data]
+            payload = [d.model_dump() for d in data]
         elif isinstance(data, ZSONMessage):
             payload = json.loads(data.json())
         elif isinstance(data, SubscriptionEvent):

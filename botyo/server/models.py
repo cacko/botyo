@@ -6,7 +6,7 @@ from enum import EnumMeta, StrEnum
 from pathlib import Path
 import sys
 import requests
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 
@@ -145,7 +145,7 @@ class ZSONOption(BaseModel):
     choices: list[str]
 
 
-class CommandDef(BaseModel, extra=Extra.ignore):
+class CommandDef(BaseModel):
     method: ZMethod | CoreMethods
     desc: Optional[str] = None
     response: Optional[str] = None
@@ -206,7 +206,7 @@ NOT_FOUND_ICONS = [
 ]
 
 
-class RenderResult(BaseModel, extra=Extra.ignore):
+class RenderResult(BaseModel):
     method: Optional[ZMethod | CoreMethods] = None
     message: Optional[str] = Field(default="")
     attachment: Optional[Attachment] = None
@@ -250,7 +250,7 @@ class ErrorResult(EmptyResult):
         self.message = f"{emo} {self.message}"
 
 
-class ZSONMessage(BaseModel, extra=Extra.ignore):
+class ZSONMessage(BaseModel):
     ztype: Optional[ZSONType] = None
     id: Optional[str] = None
     client: Optional[str] = None
@@ -305,6 +305,6 @@ class JunkMessage(Exception):
     pass
 
 
-class ClassifyResult(BaseModel, extra=Extra.ignore):
+class ClassifyResult(BaseModel):
     label: str
     score: float

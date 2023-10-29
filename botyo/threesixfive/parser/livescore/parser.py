@@ -74,7 +74,7 @@ class BadgeFetcher:
 
     def _job(self, executor):
         for item in self.queue:
-            badge = Badge(**item.dict())
+            badge = Badge(**item.model_dump())
             if not badge.isCached:
                 yield executor.submit(badges, badge)
 

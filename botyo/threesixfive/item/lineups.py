@@ -4,16 +4,16 @@ from .models import Event, GameMember, LineupMember, LineupMemberStatus
 from botyo.core.store import RedisCachable
 from typing import Optional
 import logging
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel
 
 
 
-class TeamLineup(BaseModel, extra=Extra.ignore):
+class TeamLineup(BaseModel):
     lineup: list[LineupMember]
     team: GameCompetitor
 
 
-class LineupCache(BaseModel, extra=Extra.ignore):
+class LineupCache(BaseModel):
     home: TeamLineup
     away: TeamLineup
     members: list[GameMember]

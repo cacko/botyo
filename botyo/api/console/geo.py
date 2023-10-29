@@ -1,6 +1,5 @@
 from argparse import ArgumentTypeError
 from functools import reduce
-import logging
 from typing import Optional
 from cachable.request import Request
 from botyo.core.config import Config
@@ -8,7 +7,7 @@ from validators import ip_address, domain
 import socket
 from botyo.server.output import TextOutput, Column
 from botyo.core.country import Country
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 import re
 from argparse import ArgumentParser
 from corestring import split_with_quotes
@@ -17,12 +16,12 @@ from botyo.core import normalize_prompt
 RE_GPS = re.compile(r"^(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)")
 
 
-class GeoISP(BaseModel, extra=Extra.ignore):
+class GeoISP(BaseModel):
     id: int
     name: str
 
 
-class GeoLookup(BaseModel, extra=Extra.ignore):
+class GeoLookup(BaseModel):
     ISP: Optional[GeoISP] = None
     city: Optional[str] = None
     country: Optional[str] = None
@@ -198,7 +197,7 @@ class GeoCoder(GeoBase, metaclass=GeoMeta):
     @property
     def lookup_result(self):
         if not self.__lookup_result:
-            params_dict = self.__params.dict()
+            params_dict = self.__params.model_dump()
             del params_dict["query"]
             params = {k: v for k, v in params_dict.items() if v}
             req = Request(f"{__class__.api_url}/api/{self.__path}", params=params)

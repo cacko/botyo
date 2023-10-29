@@ -4,7 +4,7 @@ from fastapi import (
     WebSocketDisconnect,
 )
 import logging
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Field
 from botyo.server.command import CommandExec
 from botyo.server.connection import Context, Connection
 from botyo.core import perftime
@@ -76,13 +76,13 @@ class WSAttachment(BaseModel):
             return
 
 
-class PingMessage(BaseModel, extra=Extra.ignore):
+class PingMessage(BaseModel):
     ztype: Optional[ZSONType] = None
     id: Optional[str] = None
     client: Optional[str] = None
 
 
-class PongMessage(BaseModel, extra=Extra.ignore):
+class PongMessage(BaseModel):
     ztype: Optional[ZSONType] = Field(default=ZSONType.PONG)
     id: str
 
@@ -212,10 +212,10 @@ class WSConnection(Connection):
                 path = f"subscriptions/{response.id.split(':')[0]}/events"
                 await run_in_threadpool(
                     FirestoreClient().put,
-                    path=path, data=resp.dict()
+                    path=path, data=resp.model_dump()
                 )
             case _:
-                await self.websocket.send_json(resp.dict())
+                await self.websocket.send_json(resp.model_dump())
 
 
 class ConnectionManager:
@@ -268,7 +268,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     case ZSONType.PING.value:
                         ping = PingMessage(**data)
                         assert ping.id
-                        await websocket.send_json(PongMessage(id=ping.id).dict())
+                        await websocket.send_json(PongMessage(id=ping.id).model_dump())
                     case _:
                         await manager.process_command(data, client_id)
                 queue.task_done()

@@ -9,10 +9,10 @@ from botyo.core.bytes import nearest_bytes
 from botyo.core.config import Config as app_config
 import logging
 from requests.exceptions import JSONDecodeError
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Field
 
 
-class BeatsStruct(BaseModel, extra=Extra.ignore):
+class BeatsStruct(BaseModel):
     path: Path
     beats: list[float] = Field(default=[])
     tempo: float = Field(default=120.0)

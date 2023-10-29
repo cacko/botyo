@@ -1,5 +1,5 @@
 from enum import StrEnum
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
@@ -16,12 +16,12 @@ class BaseSeverity(StrEnum):
     CRITICAL = "CRITICAL"
 
 
-class CVEReference(BaseModel, extra=Extra.ignore):
+class CVEReference(BaseModel):
     url: str
     source: str
 
 
-class CVSSV2Data(BaseModel, extra=Extra.ignore):
+class CVSSV2Data(BaseModel):
     version: str
     vectorString: str
     accessVector: str
@@ -33,7 +33,7 @@ class CVSSV2Data(BaseModel, extra=Extra.ignore):
     baseScore: float
 
 
-class CVSSV2(BaseModel, extra=Extra.ignore):
+class CVSSV2(BaseModel):
     source: str
     type: str
     cvssData: CVSSV2Data
@@ -47,7 +47,7 @@ class CVSSV2(BaseModel, extra=Extra.ignore):
     userInteractionRequired: bool
 
 
-class CVSSV31Data(BaseModel, extra=Extra.ignore):
+class CVSSV31Data(BaseModel):
     version: str
     vectorString: str
     attackVector: str
@@ -62,7 +62,7 @@ class CVSSV31Data(BaseModel, extra=Extra.ignore):
     baseSeverity: str
 
 
-class CVSSV31(BaseModel, extra=Extra.ignore):
+class CVSSV31(BaseModel):
     source: str
     type: Optional[str]
     cvssData: CVSSV31Data
@@ -70,17 +70,17 @@ class CVSSV31(BaseModel, extra=Extra.ignore):
     impactScore: float
 
 
-class CVEDescription(BaseModel, extra=Extra.ignore):
+class CVEDescription(BaseModel):
     lang: str
     value: str
 
 
-class CVEMetrics(BaseModel, extra=Extra.ignore):
+class CVEMetrics(BaseModel):
     cvssMetricV31: Optional[list[CVSSV31]]
     cvssMetricV2: Optional[list[CVSSV2]]
 
 
-class CVEItem(BaseModel, extra=Extra.ignore):
+class CVEItem(BaseModel):
     id: str
     sourceIdentifier: str
     descriptions: list[CVEDescription]
@@ -122,11 +122,11 @@ class CVEItem(BaseModel, extra=Extra.ignore):
         return ""
 
 
-class Vulnerability(BaseModel, extra=Extra.ignore):
+class Vulnerability(BaseModel):
     cve: CVEItem
 
 
-class CVEResponse(BaseModel, extra=Extra.ignore):
+class CVEResponse(BaseModel):
     vulnerabilities: list[Vulnerability]
     resultsPerPage: int
     startIndex: int

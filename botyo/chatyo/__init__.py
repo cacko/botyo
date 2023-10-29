@@ -5,17 +5,17 @@ from cachable.request import Request, Method
 from botyo.core.config import Config
 from typing import Optional
 from botyo.server.models import Attachment
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel
 
 
-class Payload(BaseModel, extra=Extra.ignore):
+class Payload(BaseModel):
     message: str
     source: Optional[str] = None
     lang: Optional[str] = None
     detect_lang: Optional[bool] = None
 
 
-class Response(BaseModel, extra=Extra.ignore):
+class Response(BaseModel):
     response: str
     attachment: Optional[Attachment]
 
@@ -25,7 +25,7 @@ def getResponse(path: str, payload: Payload) -> Response:
     req = Request(
         url,
         Method.POST,
-        json=payload.dict()  # type: ignore
+        json=payload.model_dump()  # type: ignore
     )
     message = ""
     attachment = None

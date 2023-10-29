@@ -1,17 +1,15 @@
 from math import floor
-from pprint import pprint
 from zoneinfo import ZoneInfo
 from cachable.request import Request
 from datetime import datetime, timedelta, timezone
-from marshmallow import fields
 from botyo.server.output import TextOutput, Align, Column, shorten
 from coretime import time_hhmm
 from functools import reduce
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 import json
 
 
-class Event(BaseModel, extra=Extra.ignore):
+class Event(BaseModel):
     id: str
     event_id: int
     name: str

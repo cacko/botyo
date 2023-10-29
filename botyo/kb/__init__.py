@@ -6,15 +6,15 @@ from typing import Optional
 from cachable.request import Request
 from botyo.chatyo import Response, getResponse, Payload
 from botyo.core.store import RedisCachable
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 
-class KbStruct(BaseModel, extra=Extra.ignore):
+class KbStruct(BaseModel):
     summary: str
     content: str
 
 
-class WikiSearchArguments(BaseModel, extra=Extra.ignore):
+class WikiSearchArguments(BaseModel):
     gsrsearch: str
     action: str = "query"
     origin: str = "*"
@@ -24,18 +24,18 @@ class WikiSearchArguments(BaseModel, extra=Extra.ignore):
     gsrlimit: int = 5
 
 
-class PageItem(BaseModel, extra=Extra.ignore):
+class PageItem(BaseModel):
     pageid: int
     ns: int
     title: str
     index: int
 
 
-class QueryItem(BaseModel, extra=Extra.ignore):
+class QueryItem(BaseModel):
     pages: Optional[dict[str, PageItem]] = None
 
 
-class QueryResponse(BaseModel, extra=Extra.ignore):
+class QueryResponse(BaseModel):
     query: Optional[QueryItem] = None
 
 
@@ -57,7 +57,7 @@ class KnowledgeBase(RedisCachable):
     def search(self) -> list[PageItem]:
         try:
             args = WikiSearchArguments(gsrsearch=self.__query)
-            req = Request(WikiApi.BASE, params=args.dict())
+            req = Request(WikiApi.BASE, params=args.model_dump())
             json = req.json
             response: QueryResponse = QueryResponse(**json)
             assert response.query

@@ -4,7 +4,7 @@ from botyo.core.config import Config as app_config
 from typing import Optional
 from enum import StrEnum, IntEnum
 import requests
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 from random import choice
 import pandas as pd
 from shlex import split
@@ -28,7 +28,7 @@ def get_top_templates() -> list[int]:
     return [int(r['ID'])for _, r in df.iterrows()]
 
 
-class CaptionParams(BaseModel, extra=Extra.ignore):
+class CaptionParams(BaseModel):
     top_text: list[str]
     bottom_text: list[str]
     template_id: Optional[int] = None
@@ -47,12 +47,12 @@ class CaptionParams(BaseModel, extra=Extra.ignore):
         super().__init__(**data)
 
 
-class CaptionResponseData(BaseModel, extra=Extra.ignore):
+class CaptionResponseData(BaseModel):
     url: str
     page_url: str
 
 
-class CaptionResponse(BaseModel, extra=Extra.ignore):
+class CaptionResponse(BaseModel):
     success: bool
     data: CaptionResponseData
 

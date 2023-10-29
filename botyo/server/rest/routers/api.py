@@ -40,7 +40,7 @@ async def get_team_schedule(
                 logo = LeagueImagePixel(game.competitionId)
                 n64 = logo.base64
                 game.icon = n64
-                res.append(game.dict())
+                res.append(game.model_dump())
             return res
         except ValueError:
             pass
@@ -51,7 +51,7 @@ async def get_team_schedule(
             logo = LeagueImagePixel(game.competitionId)
             n64 = logo.base64
             game.icon = n64
-            res.append(game.dict())
+            res.append(game.model_dump())
         return res
     except AssertionError:
         raise HTTPException(status_code=404)
@@ -101,7 +101,7 @@ async def post_unsubscribe(request: Request):
                     data.get("webhook", ""),
                     headers=OTP(data.get("group", "")).headers,
                     json=CancelJobEvent(
-                        job_id=id_parts[0]).dict(),
+                        job_id=id_parts[0]).model_dump(),
                 )
                 return {"message": f"unsubscribed from {job.name}"}
         except ValueError:
@@ -133,7 +133,7 @@ def get_league_schedule(query: str):
             logo = LeagueImagePixel(data_league.id)
             n64 = logo.base64
             game.icon = n64
-            res.append(game.dict())
+            res.append(game.model_dump())
     except AssertionError:
         pass
     return res
@@ -143,7 +143,7 @@ def get_league_schedule(query: str):
 async def get_livescore():
     def scores(obj: Livescore):
         events = obj.items
-        return [g.dict() for g in events]
+        return [g.model_dump() for g in events]
 
     obj = Footy.livescore()
     if not obj:
@@ -155,7 +155,7 @@ async def get_livescore():
 async def get_beats(path: str):
     def extract(path):
         beats = Beats(path=path)
-        return beats.model.dict()
+        return beats.model.model_dump()
     try:
         return await run_in_threadpool(extract, path=path)
     except (FileNotFoundError):
@@ -184,7 +184,7 @@ async def upload_koncat(
 ):
     uploaded_path = TempPath(uuid4().hex)
     uploaded_path.write_bytes(file)
-    return Konkat.upload(uploaded_path, collage_id).dict()
+    return Konkat.upload(uploaded_path, collage_id).model_dump()
 
 
 @router.delete("/api/koncat/{filename}", tags=["api"])
@@ -194,9 +194,9 @@ async def delete_koncat(filename: str):
 
 @router.get("/api/koncat/files/{collage_id}", tags=["api"])
 async def get_konkat_files(collage_id: str):
-    return [k.dict() for k in Konkat.files(collage_id)]
+    return [k.model_dump() for k in Konkat.files(collage_id)]
 
 
 @router.get("/api/koncat/{collage_id}", tags=["api"])
 async def get_colage(collage_id: str):
-    return Konkat.collage(collage_id).dict()
+    return Konkat.collage(collage_id).model_dump()

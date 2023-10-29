@@ -127,7 +127,7 @@ class Player(Cachable):
                 member = next(
                     filter(lambda x: x.id == lineupMember.id, members), None)
                 assert member
-                game = PlayerGame(**game_details.dict())
+                game = PlayerGame(**game_details.model_dump())
                 team: GameCompetitor = competitors[member.competitorId]
                 game.teamId = team.id
                 game.teamName = team.name
@@ -163,7 +163,7 @@ class Player(Cachable):
 
     def tocache(self, res):
         RedisStorage.pipeline().hset(
-            __class__.hash_key, self.id, pickle.dumps(res.dict())
+            __class__.hash_key, self.id, pickle.dumps(res.model_dump())
         ).persist(__class__.hash_key).execute()
         return res
 

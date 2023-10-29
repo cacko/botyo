@@ -2,10 +2,10 @@ from typing import Any, Optional
 from .service_account import ServiceAccount
 import firebase_admin
 import firebase_admin.auth
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 
-class AuthUser(BaseModel, extra=Extra.ignore):
+class AuthUser(BaseModel):
     name: str
     picture: str
     exp: int

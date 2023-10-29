@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from botyo.core.config import Config
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 from typing import Optional
 from enum import Enum
 
@@ -18,7 +18,7 @@ class International(Enum):
         return cls.NOT_INTERNATIONAL
 
 
-class CountryItem(BaseModel, extra=Extra.ignore):
+class CountryItem(BaseModel):
     id: int
     name: str
     totalGames: Optional[int] = None
@@ -31,7 +31,7 @@ class CountryItem(BaseModel, extra=Extra.ignore):
         return International(self.id) is not International.NOT_INTERNATIONAL
 
 
-class LeagueItem(BaseModel, extra=Extra.ignore):
+class LeagueItem(BaseModel):
     id: int
     league_id: int
     league_name: str

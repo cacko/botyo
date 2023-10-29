@@ -5,21 +5,21 @@ from typing import Optional
 from corethread import StoppableThread
 from google.cloud.firestore import Client, DocumentReference
 from botyo.server.core import AppServer
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 from botyo.core.s3 import S3
 
 
 delete_done = threading.Event()
 
 
-class ItemPart(BaseModel, extra=Extra.ignore):
+class ItemPart(BaseModel):
     content: str
     type: str
     caption: Optional[str] = None
     contentType: Optional[str] = None
 
 
-class HistoryItem(BaseModel, extra=Extra.ignore):
+class HistoryItem(BaseModel):
     # title: Optional[str] = None
     # query: Optional[str] = None
     # method: Optional[str] = None

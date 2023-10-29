@@ -104,7 +104,7 @@ class SocketConnection(Connection, StreamRequestHandler):
             assert method
             command = CommandExec.triggered(method, message)
             assert command
-            context = Context(**message.dict())  # type: ignore
+            context = Context(**message.model_dump())  # type: ignore
             self.server.queue.put_nowait(  # type: ignore
                 (command, context, time.perf_counter()))
             logging.debug(

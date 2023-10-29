@@ -10,10 +10,10 @@ from botyo.threesixfive.url import Url
 from datetime import timedelta
 from typing import Optional
 from botyo.core.store import RedisCachable, TimeCachable
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 
-class TeamStruct(BaseModel, extra=Extra.ignore):
+class TeamStruct(BaseModel):
     competitors: list[Competitor]
     games: list[Game]
 

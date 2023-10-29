@@ -1,11 +1,10 @@
 from .livescore_details import ParserDetails
 from .models import Event, GameCompetitor
 from typing import Optional
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel
 
 
-
-class TeamStats(BaseModel, extra=Extra.ignore):
+class TeamStats(BaseModel):
     home: GameCompetitor
     away: GameCompetitor
 

@@ -16,7 +16,7 @@ from botyo.threesixfive.data import (
     CountryItem,
     International
 )
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel, Field
 from botyo.core.country import Country as Flag
 from botyo.unicode_text.emoji import Emoji
 
@@ -110,7 +110,7 @@ class ActionIcon(Enum):
     GOAL__DISALLOWED = ":double_exclamation_mark:"
 
 
-class Event(BaseModel, extra=Extra.ignore):
+class Event(BaseModel):
     id: str
     idEvent: int
     strSport: str
@@ -192,7 +192,7 @@ class Event(BaseModel, extra=Extra.ignore):
         return ""
 
 
-class Sport(BaseModel, extra=Extra.ignore):
+class Sport(BaseModel):
     id: int
     name: Optional[str] = None
     nameForURL: Optional[str] = None
@@ -200,7 +200,7 @@ class Sport(BaseModel, extra=Extra.ignore):
     liveGames: int = Field(default=0)
 
 
-class Country(BaseModel, extra=Extra.ignore):
+class Country(BaseModel):
     id: int
     name: str
     nameForURL: Optional[str] = None
@@ -212,7 +212,7 @@ class Country(BaseModel, extra=Extra.ignore):
         return International(self.id) is not International.NOT_INTERNATIONAL
 
 
-class Competitor(BaseModel, extra=Extra.ignore):
+class Competitor(BaseModel):
     id: int
     countryId: int
     sportId: int
@@ -226,7 +226,7 @@ class Competitor(BaseModel, extra=Extra.ignore):
     imageVersion: Optional[int] = None
 
 
-class StandingRow(BaseModel, extra=Extra.ignore):
+class StandingRow(BaseModel):
     competitor: Competitor
     gamePlayed: Optional[int] = None
     gamesWon: Optional[int] = None
@@ -248,12 +248,12 @@ class StandingRow(BaseModel, extra=Extra.ignore):
     unknown: Optional[Any] = None
 
 
-class StandingGroup(BaseModel, extra=Extra.ignore):
+class StandingGroup(BaseModel):
     num: int
     name: str
 
 
-class Standing(BaseModel, extra=Extra.ignore):
+class Standing(BaseModel):
     competitionId: int
     groups: Optional[list[StandingGroup]] = None
     seasonNum: Optional[int] = None
@@ -264,28 +264,28 @@ class Standing(BaseModel, extra=Extra.ignore):
     rows: Optional[list[StandingRow]] = None
 
 
-class StandingResponse(BaseModel, extra=Extra.ignore):
+class StandingResponse(BaseModel):
     lastUpdateId: int
     requestedUpdateId: int
     ttl: int
     standings: list[Standing]
 
 
-class Bracket(BaseModel, extra=Extra.ignore):
+class Bracket(BaseModel):
     lastUpdateId: int
     requestedUpdateId: int
     ttl: int
     stages: list[Standing]
 
 
-class BracketsResponse(BaseModel, extra=Extra.ignore):
+class BracketsResponse(BaseModel):
     lastUpdateId: int
     requestedUpdateId: int
     ttl: int
     brackets: Bracket
 
 
-class Competition(BaseModel, extra=Extra.ignore):
+class Competition(BaseModel):
     id: int
     countryId: int
     sportId: int
@@ -309,7 +309,7 @@ class Competition(BaseModel, extra=Extra.ignore):
         return Flag(country.name).flag
 
 
-class GameMember(BaseModel, extra=Extra.ignore):
+class GameMember(BaseModel):
     competitorId: Optional[int] = None
     name: Optional[str] = None
     id: Optional[int] = None
@@ -328,18 +328,18 @@ class GameMember(BaseModel, extra=Extra.ignore):
             return f"{self.name}"
 
 
-class LineupPosition(BaseModel, extra=Extra.ignore):
+class LineupPosition(BaseModel):
     id: int
     name: str
 
 
-class MemberStat(BaseModel, extra=Extra.ignore):
+class MemberStat(BaseModel):
     value: str
     name: str
     shortName: Optional[str] = None
 
 
-class LineupMember(BaseModel, extra=Extra.ignore):
+class LineupMember(BaseModel):
     id: int
     status: LineupMemberStatus
     statusText: str
@@ -347,14 +347,14 @@ class LineupMember(BaseModel, extra=Extra.ignore):
     stats: Optional[list[MemberStat]] = None
 
 
-class Lineup(BaseModel, extra=Extra.ignore):
+class Lineup(BaseModel):
     status: Optional[str] = None
     formation: Optional[str] = None
     hasFieldPositions: bool = Field(default=False)
     members: Optional[list[LineupMember]] = None
 
 
-class GameStatistic(BaseModel, extra=Extra.ignore):
+class GameStatistic(BaseModel):
     id: int
     name: str
     categoryId: int
@@ -365,7 +365,7 @@ class GameStatistic(BaseModel, extra=Extra.ignore):
     isPrimary: Optional[bool]
 
 
-class GameCompetitor(BaseModel, extra=Extra.ignore):
+class GameCompetitor(BaseModel):
     id: Optional[int] = None
     countryId: Optional[int] = None
     sportId: Optional[int] = None
@@ -426,18 +426,18 @@ class GameCompetitor(BaseModel, extra=Extra.ignore):
             return ""
 
 
-class OddsRate(BaseModel, extra=Extra.ignore):
+class OddsRate(BaseModel):
     decimal: Optional[float] = None
     fractional: Optional[str] = None
     american: Optional[str] = None
 
 
-class OddsOptions(BaseModel, extra=Extra.ignore):
+class OddsOptions(BaseModel):
     num: int
     rate: OddsRate
 
 
-class Odds(BaseModel, extra=Extra.ignore):
+class Odds(BaseModel):
     lineId: int
     gameId: int
     bookmakerId: int
@@ -445,12 +445,12 @@ class Odds(BaseModel, extra=Extra.ignore):
     options: list[OddsOptions]
 
 
-class GameFact(BaseModel, extra=Extra.ignore):
+class GameFact(BaseModel):
     id: str
     text: str
 
 
-class Game(BaseModel, extra=Extra.ignore):
+class Game(BaseModel):
     id: int
     sportId: int
     competitionId: int
@@ -614,14 +614,14 @@ class EVENT_SUBTYPE_NAME(Enum):
         return cls.UNKNOWN
 
 
-class GameEventType(BaseModel, extra=Extra.ignore):
+class GameEventType(BaseModel):
     id: Optional[int] = None
     name: Optional[str] = None
     subTypeId: Optional[int] = None
     subTypeName: Optional[str] = None
 
 
-class GameEvent(BaseModel, extra=Extra.ignore):
+class GameEvent(BaseModel):
     competitorId: int = Field(default=0)
     eventType: Optional[GameEventType] = None
     statusId: int = Field(default=0)
@@ -677,7 +677,7 @@ class GameDetails(Game):
             return ""
 
 
-class ResponseGame(BaseModel, extra=Extra.ignore):
+class ResponseGame(BaseModel):
     lastUpdateId: int
     requestedUpdateId: int
     game: GameDetails
@@ -697,7 +697,7 @@ class ResponseGame(BaseModel, extra=Extra.ignore):
         return self.game.shortStatusText
 
 
-class ResponseScores(BaseModel, extra=Extra.ignore):
+class ResponseScores(BaseModel):
     lastUpdateId: int
     requestedUpdateId: int
     ttl: int
@@ -715,7 +715,7 @@ class Position(IntEnum):
     NONE = 3
 
 
-class DetailsEvent(BaseModel, extra=Extra.ignore):
+class DetailsEvent(BaseModel):
     time: str
     action: str
     order: int = Field(default=0)
@@ -752,7 +752,7 @@ class DetailsEvent(BaseModel, extra=Extra.ignore):
             return ""
 
 
-class GoalEvent(BaseModel, extra=Extra.ignore):
+class GoalEvent(BaseModel):
     event_id: int
     game_event_id: int
     time: str
@@ -761,7 +761,7 @@ class GoalEvent(BaseModel, extra=Extra.ignore):
     score: str
 
 
-class DetailsEventPixel(BaseModel, extra=Extra.ignore):
+class DetailsEventPixel(BaseModel):
     event_id: int
     time: int
     action: str
@@ -861,7 +861,7 @@ class DetailsEventPixel(BaseModel, extra=Extra.ignore):
         )
 
 
-class SubscriptionEvent(BaseModel, extra=Extra.ignore):
+class SubscriptionEvent(BaseModel):
     start_time: datetime
     action: str
     league: str
@@ -885,12 +885,12 @@ class SubscriptionEvent(BaseModel, extra=Extra.ignore):
         self.id = md5(f"{event_name}".lower().encode()).hexdigest()
 
 
-class CancelJobEvent(BaseModel, extra=Extra.ignore):
+class CancelJobEvent(BaseModel):
     job_id: str
     action: str = "Cancel Job"
 
 
-class SearchResponse(BaseModel, extra=Extra.ignore):
+class SearchResponse(BaseModel):
     competitors: Optional[list[Competitor]] = None
     competitions: Optional[list[Competition]] = None
 
@@ -907,7 +907,7 @@ class SearchResponse(BaseModel, extra=Extra.ignore):
         return list(filter(lambda x: x.sportId == 1, self.competitions))
 
 
-class CompetitionResponse(BaseModel, extra=Extra.ignore):
+class CompetitionResponse(BaseModel):
     sports: list[Sport]
     countries: list[Country]
     competitions: list[Competition]

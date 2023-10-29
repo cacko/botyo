@@ -17,10 +17,10 @@ from datetime import timezone
 from cachable.models import TimeCache
 from botyo.core.store import TimeCachable
 import logging
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 
-class ParserDetailsResponse(BaseModel, extra=Extra.ignore):
+class ParserDetailsResponse(BaseModel):
     events: Optional[list[DetailsEvent]] = None
 
 

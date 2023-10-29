@@ -137,44 +137,44 @@ class UrlMeta(type):
 
     def search(cls, filter: str):
         query = SearchArguments(query=filter)
-        return f"{BASEURL.SEARCH.value}/?{urlencode(query.dict())}"
+        return f"{BASEURL.SEARCH.value}/?{urlencode(query.model_dump())}"
 
     def livescores(cls, leagues):
         if not leagues:
             query = AllScoresArguments()
-            return f"{BASEURL.ALLSCORES.value}/?{urlencode(query.dict())}"
+            return f"{BASEURL.ALLSCORES.value}/?{urlencode(query.model_dump())}"
         query = LiveScoresArguments(competitions=",".join(map(str, leagues)))
-        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.dict())}"
+        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.model_dump())}"
 
     def badge(cls, team_id):
         return f"{BASEURL.TEAM_IMAGE.value}/{team_id}"
 
     def game(cls, game_id):
         query = GameArguments(gameId=game_id)
-        return f"{BASEURL.GAME.value}/?{urlencode(query.dict())}"
+        return f"{BASEURL.GAME.value}/?{urlencode(query.model_dump())}"
 
     def competitions(cls):
         query = CompetitionsArguments()
-        return f"{BASEURL.COMPETITIONS.value}/?{urlencode(query.dict())}"
+        return f"{BASEURL.COMPETITIONS.value}/?{urlencode(query.model_dump())}"
 
     def competition_logo(cls, competition_id):
         return f"{BASEURL.COMPETITION_IMAGE.value}/{competition_id}"
 
     def competition_schedule(cls, competition_id):
         query = CompetitionScheduleArguments(competitions=competition_id)
-        return f"{BASEURL.COMPETITION_SCHEDULE.value}/?{urlencode(query.dict())}"
+        return f"{BASEURL.COMPETITION_SCHEDULE.value}/?{urlencode(query.model_dump())}"
 
     def standings(cls, competition_id):
         query = StandingsArguments(competitions=competition_id)
-        return f"{BASEURL.STANDINGS.value}/?{urlencode(query.dict())}"
+        return f"{BASEURL.STANDINGS.value}/?{urlencode(query.model_dump())}"
 
     def brackets(cls, competition_id):
         query = BracketsArguments(competitions=competition_id)
-        return f"{BASEURL.BRACKETS.value}/?{urlencode(query.dict())}"
+        return f"{BASEURL.BRACKETS.value}/?{urlencode(query.model_dump())}"
 
     def team_games(cls, competitor_id):
         query = CompetitorScoresArguments(competitors=competitor_id)
-        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.dict())}"
+        return f"{BASEURL.LIVESCORES.value}/?{urlencode(query.model_dump())}"
 
 
 class Url(metaclass=UrlMeta):

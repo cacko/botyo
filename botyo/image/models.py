@@ -1,6 +1,6 @@
 from enum import StrEnum
 from stringcase import constcase
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Field
 
 
 class Choices(object):
@@ -53,7 +53,7 @@ class BotyoPrompt(StrEnum):
                  "baarle, ilya kuvshinov, rossdraws ")
 
 
-class EmotionScores(BaseModel, extra=Extra.ignore):
+class EmotionScores(BaseModel):
     angry: float
     disgust: float
     fear: float
@@ -67,7 +67,7 @@ class EmotionScores(BaseModel, extra=Extra.ignore):
         pass
 
 
-class RaceScores(BaseModel, extra=Extra.ignore):
+class RaceScores(BaseModel):
     asian: float
     black: float
     indian: float
@@ -80,14 +80,14 @@ class RaceScores(BaseModel, extra=Extra.ignore):
         pass
 
 
-class FaceRegion(BaseModel, extra=Extra.ignore):
+class FaceRegion(BaseModel):
     h: int
     w: int
     x: int
     y: int
 
 
-class AnalyzeReponse(BaseModel, extra=Extra.ignore):
+class AnalyzeReponse(BaseModel):
     age: int
     dominant_emotion: str
     dominant_race: str
