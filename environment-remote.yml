@@ -176,7 +176,7 @@ dependencies:
       - firebase-admin==6.1.0
       - flake8==6.1.0
       - fs==2.4.16
-      - fuzzelinho==0.2.3
+      - fuzzelinho==0.2.5
       - google-api-core==2.11.0
       - google-api-python-client==2.76.0
       - google-auth==2.16.0
@@ -237,9 +237,9 @@ dependencies:
       - pyasn1-modules==0.2.8
       - pycodestyle==2.11.0
       - pycountry==22.3.5
-      - pydantic==1.10.12
+      - pydantic==2.4.2
       - pydantic-computed==0.1.1
-      - pydantic-core==2.6.3
+      - pydantic-core==2.10.1
       - pyfiglet==0.8.post1
       - pyflakes==3.1.0
       - pygments==2.16.1
