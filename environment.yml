@@ -2,6 +2,7 @@ name: botyo
 channels:
   - conda-forge
 dependencies:
+  - _openmp_mutex=4.5
   - appdirs=1.4.4
   - astroid=2.13.2
   - black=22.12.0
@@ -11,7 +12,6 @@ dependencies:
   - bzip2=1.0.8
   - ca-certificates=2023.5.7
   - cairo=1.16.0
-  - certifi=2023.5.7
   - cffi=1.15.1
   - click=8.1.3
   - colorama=0.4.6
@@ -36,33 +36,40 @@ dependencies:
   - isort=5.11.4
   - joblib=1.2.0
   - jpeg=9e
+  - keyutils=1.6.1
   - krb5=1.20.1
   - lame=3.100
   - lazy-object-proxy=1.9.0
+  - ld_impl_linux-aarch64=2.39
   - libbrotlicommon=1.0.9
   - libbrotlidec=1.0.9
   - libbrotlienc=1.0.9
-  - libcxx=16.0.6
   - libdeflate=1.17
   - libedit=3.1.20191231
   - libexpat=2.5.0
   - libffi=3.4.2
+  - libgcc-ng=12.2.0
   - libglib=2.74.1
+  - libgomp=12.2.0
   - libiconv=1.17
   - libidn2=2.3.4
+  - libnsl=2.0.0
   - libogg=1.3.4
   - libopus=1.3.1
   - libpng=1.6.39
   - libpq=15.1
   - libsqlite=3.40.0
+  - libstdcxx-ng=12.2.0
   - libtasn1=4.19.0
   - libunistring=0.9.10
   - libuuid=2.32.1
   - libwebp-base=1.2.4
   - libxcb=1.13
+  - libxml2=2.10.3
+  - libxslt=1.1.37
   - libzlib=1.2.13
+  - lxml=4.9.2
   - mccabe=0.7.0
-  - munkres=1.1.4
   - mypy=1.3.0
   - mypy_extensions=0.4.3
   - ncurses=6.3
@@ -103,52 +110,75 @@ dependencies:
   - wheel=0.38.4
   - wrapt=1.14.1
   - x264=1!164.3095
+  - xorg-kbproto=1.0.7
+  - xorg-libice=1.0.10
+  - xorg-libsm=1.2.3
+  - xorg-libx11=1.8.4
   - xorg-libxau=1.0.9
   - xorg-libxdmcp=1.1.3
+  - xorg-libxext=1.3.4
+  - xorg-libxrender=0.9.10
+  - xorg-renderproto=0.11.1
+  - xorg-xextproto=7.3.0
+  - xorg-xproto=7.0.31
   - xz=5.2.6
   - yapf=0.32.0
   - zlib=1.2.13
   - pip:
+      - a-cv-imwrite-imread-plus==0.13
+      - a-cv2-easy-resize==0.10
       - annotated-types==0.5.0
       - anyio==3.7.1
       - apscheduler==3.9.1.1
       - arrow==1.2.3
       - async-timeout==4.0.2
+      - audeer==1.19.0
+      - audiofile==1.2.1
+      - audmath==1.2.1
       - authlib==0.15.6
       - autoflake8==0.4.1
       - autopep8==2.0.2
       - beautifulsoup4==4.11.1
+      - beets==1.6.1
       - better-exceptions==0.3.3
       - blis==0.7.9
-      - boto3==1.26.60
-      - botocore==1.29.60
-      - cachable==0.3.41
+      - boto3==1.28.70
+      - botocore==1.31.70
+      - cachable==0.3.43
       - cachecontrol==0.12.11
       - cachetools==5.2.1
       - cairocffi==1.4.0
       - cairosvg==2.6.0
       - catalogue==2.0.8
+      - certifi==2022.12.7
       - charset-normalizer==3.0.1
+      - cloudpathlib==0.16.0
       - commonmark==0.9.1
-      - confection==0.0.4
+      - confection==0.1.3
+      - confuse==2.0.0
       - corefile==0.1.5
       - coreimage==0.0.52
       - corelog==0.0.12
       - corestring==0.1.22
       - corethread==0.1.3
       - coretime==0.1.4
+      - create-empty-image==0.10
       - cssselect2==0.7.0
+      - cv2-collage-v2==0.11
       - cymem==2.0.7
       - cytoolz==0.12.1
+      - dataclasses-json==0.5.7
       - defusedxml==0.7.1
       - emoji==2.8.0
       - emoji-country-flag==1.3.1
-      - fastapi==0.103.2
+      - faker==17.6.0
+      - fastapi==0.103.1
       - filetype==1.2.0
       - firebase-admin==6.1.0
       - flake8==6.1.0
+      - floret==0.10.4
       - fs==2.4.16
-      - fuzzelinho==0.2.2
+      - fuzzelinho==0.2.5
       - google-api-core==2.11.0
       - google-api-python-client==2.76.0
       - google-auth==2.16.0
@@ -162,9 +192,15 @@ dependencies:
       - grpcio==1.51.1
       - grpcio-status==1.51.1
       - h11==0.14.0
+      - h2==4.1.0
+      - hiredis==2.1.1
+      - hpack==4.0.0
       - httplib2==0.21.0
       - httptools==0.5.0
       - humanfriendly==10.0
+      - hypercorn==0.14.3
+      - hyperframe==6.0.1
+      - isiter==0.10
       - jellyfish==0.9.0
       - jinja2==3.1.2
       - jmespath==1.0.1
@@ -176,17 +212,24 @@ dependencies:
       - marshmallow==3.19.0
       - marshmallow-enum==1.5.1
       - mdurl==0.1.2
+      - mediafile==0.11.0
+      - mediainfo==0.0.9
       - msgpack==1.0.4
       - multiavatar==1.0.3
+      - munkres==1.1.4
       - murmurhash==1.0.9
+      - musicbrainzngs==0.7.1
+      - mutagen==1.46.0
       - networkx==3.0
       - numpy==1.24.1
       - opencv-python==4.8.0.76
+      - pandas==1.5.3
       - pathy==0.10.1
       - pillow==9.5.0
       - pilmoji==2.0.2
       - pixelme==0.4.13
       - preshed==3.0.8
+      - priority==2.0.0
       - progressor==1.0.16
       - prompt-toolkit==3.0.36
       - proto-plus==1.22.2
@@ -196,9 +239,9 @@ dependencies:
       - pyasn1-modules==0.2.8
       - pycodestyle==2.11.0
       - pycountry==22.3.5
-      - pydantic==1.10.12
+      - pydantic==2.4.2
       - pydantic-computed==0.1.1
-      - pydantic-core==2.6.3
+      - pydantic-core==2.10.1
       - pyfiglet==0.8.post1
       - pyflakes==3.1.0
       - pygments==2.16.1
@@ -208,6 +251,7 @@ dependencies:
       - pypng==0.20220715.0
       - python-dotenv==0.21.0
       - python-levenshtein==0.12.2
+      - python-multipart==0.0.6
       - python-twitter-v2==0.8.1
       - pytz==2022.7.1
       - pytz-deprecation-shim==0.1.0.post0
@@ -216,19 +260,21 @@ dependencies:
       - questionary==2.0.0
       - random-user-agent==1.0.1
       - rapidfuzz==3.1.0
+      - rectangle-packer==2.0.1
       - redis==4.4.2
       - requests-toolbelt==0.10.1
       - rich==12.6.0
       - rsa==4.9
-      - s3transfer==0.6.0
+      - s3transfer==0.7.0
       - scikit-learn==1.2.0
       - scipy==1.10.0
       - semver==3.0.1
       - setuptools==65.7.0
       - smart-open==6.3.0
       - sniffio==1.3.0
+      - soundfile==0.12.1
       - soupsieve==2.3.2.post1
-      - spacy==3.5.0
+      - spacy==3.7.2
       - spacy-legacy==3.0.11
       - spacy-loggers==1.0.4
       - srsly==2.4.5
@@ -237,17 +283,17 @@ dependencies:
       - structlog==22.3.0
       - tabulate==0.9.0
       - term-image==0.8.0.dev0
-      - textacy==0.12.0
+      - textacy==0.13.0
       - texttable==1.6.7
       - thefuzz==0.19.0
-      - thinc==8.1.7
+      - thinc==8.2.1
       - tinycss2==1.2.1
+      - tolerant-isinstance==0.10
+      - toml==0.10.2
       - toolz==0.12.0
       - touchtouch==0.11
       - tqdm==4.64.1
       - typer==0.7.0
-      - types-requests==2.31.0.2
-      - types-urllib3==1.26.25.14
       - typing-extensions==4.7.1
       - typing-inspect==0.8.0
       - tzdata==2022.7
@@ -260,10 +306,12 @@ dependencies:
       - wasabi==1.1.1
       - watchfiles==0.18.1
       - wcwidth==0.2.6
+      - weasel==0.3.3
       - webencodings==0.5.1
       - websockets==10.4
       - wikipedia==1.4.0
+      - wsproto==1.2.0
       - you-get==0.4.1650
 variables:
   allow_conda_downgrades: 'true'
-prefix: /Volumes/Devo/Users/jago/mambaforge/envs/botyo
+prefix: /store/home/jago/miniforge3/envs/botyo
