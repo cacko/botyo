@@ -1,5 +1,4 @@
-import logging
-from typing import Any, Generator, Optional
+from typing import Any, Generator
 from uuid import uuid4
 from botyo.core.config import Config as app_config
 from pathlib import Path
@@ -80,4 +79,5 @@ class Konkat(object, metaclass=KonkatMeta):
         file_dst = self.__storage / filename
         if file_dst.exists():
             file_dst.unlink()
+        return True
         return S3.delete(file_dst.name)
