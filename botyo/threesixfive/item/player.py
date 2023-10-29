@@ -26,8 +26,8 @@ class InternationalCompetitions(Enum):
 
 
 class PlayerMatch(Match):
-    minRatio = 80
-    method = MatchMethod.WRATIO
+    minRatio = 10
+    method = MatchMethod.SIMILARITY
 
 
 class PlayerNeedle(Needle):

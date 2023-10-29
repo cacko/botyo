@@ -29,8 +29,8 @@ class Race(Enum):
 
 
 class NameMatch(Match):
-    minRatio = 80
-    method = MatchMethod.PARTIALSET
+    minRatio = 10
+    method = MatchMethod.SIMILARITY
 
 
 class NameNeedle(Needle):

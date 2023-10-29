@@ -111,9 +111,9 @@ class CommandExec(metaclass=CommandExecMeta):
 
 
 class CommandMatch(Match):
-    minRatio = 85
+    minRatio = 30
     extensionMatching = False
-    method = MatchMethod.WRATIO
+    method = MatchMethod.SIMILARITY
 
 
 class CommandMatchNeedle(Needle):

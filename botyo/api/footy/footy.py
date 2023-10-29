@@ -85,8 +85,8 @@ class FootyMeta(type):
 
 
 class GameMatch(Match):
-    minRatio = 60
-    method = MatchMethod.WRATIO
+    minRatio = 10
+    method = MatchMethod.SIMILARITY
 
 
 class GameNeedle(Needle):

@@ -26,8 +26,8 @@ GOAL_CHECK_EXPIRATION = timedelta(minutes=15)
 
 
 class TeamsMatch(Match):
-    minRatio = 80
-    method = MatchMethod.WRATIO
+    minRatio = 10
+    method = MatchMethod.SIMILARITY
     exact_fields = ["score"]
 
 

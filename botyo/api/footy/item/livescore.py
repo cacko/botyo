@@ -14,8 +14,8 @@ import logging
 
 
 class GameMatch(Match):
-    minRatio = 80
-    method = MatchMethod.PARTIAL
+    minRatio = 10
+    method = MatchMethod.SIMILARITY
 
 
 class GameNeedle(Needle):
