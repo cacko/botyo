@@ -14,7 +14,6 @@ class S3Meta(type):
         return cls().upload_file(src, dst, skip_upload)
 
     def delete(cls, key: str):
-        logging.warning(key)
         return cls().delete_file(key)
 
     def src_key(cls, dst):
@@ -49,5 +48,4 @@ class S3(object, metaclass=S3Meta):
     def delete_file(self, file_name: str) -> bool:
         bucket = app_config.s3.storage_bucket_name
         key = self.__class__.src_key(file_name)
-        logging.warning(f"delete key {key}")
         return self._client.delete_object(Bucket=bucket, Key=key)
