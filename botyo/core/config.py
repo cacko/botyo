@@ -103,7 +103,7 @@ class SuperUser(BaseModel):
     def evaluate(self, source) -> Optional[str]:
         if self.signal.evaluate(source):
             return "signal"
-        if self.whatsapp.evaluate(source):
+        if self.whatsapp.evaluate(f"{source}"):
             return "whatsapp"
         if self.botyo.evaluate(source):
             return "botyo"
