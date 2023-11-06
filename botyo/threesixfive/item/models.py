@@ -361,7 +361,7 @@ class GameStatistic(BaseModel):
     categoryName: str
     value: str
     isMajor: Optional[bool]
-    valuePercentage: Optional[int]
+    valuePercentage: Optional[float]
     isPrimary: Optional[bool]
 
 
