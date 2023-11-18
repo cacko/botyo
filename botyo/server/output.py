@@ -1,6 +1,5 @@
 import re
 import tempfile
-from dataclasses import dataclass
 from enum import StrEnum
 from hashlib import blake2b
 from math import floor

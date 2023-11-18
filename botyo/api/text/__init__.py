@@ -51,6 +51,6 @@ def skills_commmand(context: Context):
     json = getResponse("text/skills", Payload(message=msg, source=context.source))
     res = RenderResult(
         message=f"{emojize(':loudspeaker:')} {json.response}",
-        method=ZMethod.TEXT_DETECT,
+        method=ZMethod.TEXT_SKILLS,
     )
     return res

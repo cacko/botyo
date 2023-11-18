@@ -1,5 +1,4 @@
 
-from traceback import print_exc
 from botyo.cli import pass_environment, Environment
 import click
 from botyo.commands import coro
