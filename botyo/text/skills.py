@@ -40,5 +40,5 @@ def output(response: list[Any]):
     for col, data in groupby(tokens, key=lambda t: t.entity_group):
         row = [f"{EntityGroup(col).title:<14}:"]
         row.append(", ".join(set([t.word.capitalize() for t in data])))
-        TextOutput.add_rows(" ".join(row))
+        TextOutput.add_rows(rows=[" ".join(row)])
     return TextOutput.render()
