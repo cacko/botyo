@@ -25,7 +25,7 @@ def output(response: list[Any]):
     cols = []
     row = []
     for col, data in groupby(tokens, key=lambda t: t.entity_group):
-        cols.append(Column(title=col, fullsize=True))
+        cols.append(Column(title=col, size=12))
         row.append(", ".join(set([t.word.capitalize() for t in data])))
     logging.warning(cols)
     logging.warning(row)
