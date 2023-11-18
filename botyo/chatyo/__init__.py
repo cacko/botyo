@@ -3,7 +3,7 @@ from uuid import uuid4
 from cachable.storage.file import FileStorage
 from cachable.request import Request, Method
 from botyo.core.config import Config
-from typing import Optional
+from typing import Any, Optional
 from botyo.server.models import Attachment
 from pydantic import BaseModel
 
@@ -16,7 +16,7 @@ class Payload(BaseModel):
 
 
 class Response(BaseModel):
-    response: str
+    response: str | list[Any]
     attachment: Optional[Attachment]
 
 
