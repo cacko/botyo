@@ -4,6 +4,7 @@ from botyo.server.models import RenderResult
 from botyo.server.socket.connection import Context
 from botyo.server.blueprint import Blueprint
 from botyo.chatyo import getResponse, Payload
+from botyo.text.skills import output as skills_output
 
 bp = Blueprint("text")
 
@@ -50,7 +51,7 @@ def skills_commmand(context: Context):
         return None
     json = getResponse("text/skills", Payload(message=msg, source=context.source))
     res = RenderResult(
-        message=f"{emojize(':loudspeaker:')} {json.response}",
+        message=skills_output(json.response),
         method=ZMethod.TEXT_SKILLS,
     )
     return res
