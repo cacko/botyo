@@ -37,3 +37,20 @@ def detect_commmand(context: Context):
         method=ZMethod.TEXT_DETECT,
     )
     return res
+
+
+@bp.command(
+    method=ZMethod.TEXT_SKILLS,
+    desc="extract skills from job description",
+    icon="rowing"
+)  # type: ignore
+def skills_commmand(context: Context):
+    msg = context.query
+    if not msg:
+        return None
+    json = getResponse("text/skills", Payload(message=msg, source=context.source))
+    res = RenderResult(
+        message=f"{emojize(':loudspeaker:')} {json.response}",
+        method=ZMethod.TEXT_DETECT,
+    )
+    return res

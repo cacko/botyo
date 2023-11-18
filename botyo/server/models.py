@@ -99,6 +99,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     # CHAT_MINDBLOWINGINNIT = "chat:mingblowinginnit"
     TEXT_GENERATE = "text:generate"
     TEXT_DETECT = "text:detect"
+    TEXT_SKILLS = "text:skills"
     TRANSLATE_EN_ES = "translate:en_es"
     TRANSLATE_ES_EN = "translate:es_en"
     TRANSLATE_EN_BG = "translate:en_bg"
