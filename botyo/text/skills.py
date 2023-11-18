@@ -21,7 +21,7 @@ class EntityGroup(StrEnum):
 
     @property
     def icon(self) -> EntityIcon:
-        return EntityIcon(self.name)
+        return EntityIcon[self.name]
 
     @property
     def title(self) -> str:
