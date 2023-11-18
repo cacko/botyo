@@ -1,9 +1,7 @@
-import logging
 from typing import Any
-import emoji
 from pydantic import BaseModel
 from enum import StrEnum
-from botyo.server.output import TextOutput, Column
+from botyo.server.output import TextOutput
 from itertools import groupby
 from emoji import emojize
 
@@ -39,8 +37,8 @@ class Token(BaseModel):
 def output(response: list[Any]):
     tokens = [Token(**t) for t in response]
     tokens = sorted(tokens, key=lambda t: t.entity_group)
-    for _, data in groupby(tokens, key=lambda t: t.entity_group):
-        row = [f"{data.entity_group.title:<14}:"]
+    for col, data in groupby(tokens, key=lambda t: t.entity_group):
+        row = [f"{EntityGroup(col).title:<14}:"]
         row.append(", ".join(set([t.word.capitalize() for t in data])))
         TextOutput.add_rows(" ".join(row))
     return TextOutput.render()
