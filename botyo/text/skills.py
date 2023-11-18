@@ -1,9 +1,18 @@
 import logging
 from typing import Any
+import emoji
 from pydantic import BaseModel
 from enum import StrEnum
 from botyo.server.output import TextOutput, Column
 from itertools import groupby
+from emoji import emojize
+
+
+class EntityIcon(StrEnum):
+    TECHNICAL = ":desktop_computer"
+    BUS = ":department_store:"
+    TECHNOLOGY = ":wrench:"
+    SOFT = ":man_office_worker:"
 
 
 class EntityGroup(StrEnum):
@@ -11,6 +20,14 @@ class EntityGroup(StrEnum):
     BUS = "BUS"
     TECHNOLOGY = "TECHNOLOGY"
     SOFT = "SOFT"
+
+    @property
+    def icon(self) -> EntityIcon:
+        return EntityIcon(self.name)
+
+    @property
+    def title(self) -> str:
+        return emojize(f"{self.icon.value} {self.value.capitalize()}")
 
 
 class Token(BaseModel):
@@ -22,12 +39,8 @@ class Token(BaseModel):
 def output(response: list[Any]):
     tokens = [Token(**t) for t in response]
     tokens = sorted(tokens, key=lambda t: t.entity_group)
-    cols = []
-    row = []
-    for col, data in groupby(tokens, key=lambda t: t.entity_group):
-        cols.append(Column(title=col, size=12))
+    for _, data in groupby(tokens, key=lambda t: t.entity_group):
+        row = [f"{data.entity_group.title:<14}:"]
         row.append(", ".join(set([t.word.capitalize() for t in data])))
-    logging.warning(cols)
-    logging.warning(row)
-    TextOutput.addRobustTable(cols, [row])
+        TextOutput.add_rows(" ".join(row))
     return TextOutput.render()
