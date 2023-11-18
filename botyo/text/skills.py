@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 from pydantic import BaseModel
 from enum import StrEnum
@@ -24,7 +25,9 @@ def output(response: list[Any]):
     cols = []
     row = []
     for col, data in groupby(tokens, key=lambda t: t.entity_group):
-        cols.append(Column(title=col))
+        cols.append(Column(title=col, fullsize=True))
         row.append(", ".join(set([t.word.capitalize() for t in data])))
+    logging.warning(cols)
+    logging.warning(row)
     TextOutput.addRobustTable(cols, [row])
     return TextOutput.render()
