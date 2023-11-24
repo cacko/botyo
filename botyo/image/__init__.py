@@ -322,7 +322,7 @@ class Image(object, metaclass=ImageMeta):
         try:
             return self.getResponse(
                 Action.GEOIMG, 
-                action_param=f"{map(str, [*location.location])}",
+                action_param=",".join(map(str, [*location.location])),
                 json=location.model_dump()
             )
         except (ValidationErr, ArgumentError) as e:
