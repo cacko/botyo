@@ -1,4 +1,5 @@
 import json
+from botyo.api.console.geo import GeoCoder
 
 from botyo.image import Image
 from botyo.image.models import Upload2Wallies
@@ -285,3 +286,32 @@ def image_fromqr(context: Context):
             method=ZMethod.IMAGE_QR2IMG,
             message=Image.qrgenerator_parser.format_help()
         )
+
+
+@bp.command(
+    method=ZMethod.IMAGE_GEOIMG,
+    desc="generates street view image from, coordinates",
+    icon="streetview",
+    uses_prompt=True
+)  # type: ignore
+def geoImage(context: Context):
+    try:
+        query = context.query
+        assert query
+        Image.is_admin = context.is_admin
+        geocoder = GeoCoder(context.query)
+        assert geocoder.lookup_result
+        attachment, msg = Image.geoimg(geocoder.lookup_result)
+        return RenderResult(
+            attachment=attachment,
+            message=geocoder.lookup(),
+            method=ZMethod.IMAGE_GEOIMG,
+        )
+    except ApiError as e:
+        return ErrorResult(
+            method=ZMethod.IMAGE_GEOIMG,
+            message=e.message
+        )
+    except AssertionError:
+        return ErrorResult(method=ZMethod.IMAGE_GEOIMG)
+

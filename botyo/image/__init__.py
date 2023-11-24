@@ -1,6 +1,7 @@
 from pathlib import Path
 from xml.dom import ValidationErr
 from requests import JSONDecodeError
+from botyo.api.console.geo import GeoLocation
 from botyo.core import normalize_prompt
 from botyo.server.models import Attachment, ApiError
 from cachable.request import Request, Method
@@ -11,10 +12,7 @@ import filetype
 from enum import Enum
 from botyo.server.output import TextOutput
 from emoji import emojize
-from botyo.image.models import (
-    AnalyzeReponse,
-    Upload2Wallies
-)
+from botyo.image.models import AnalyzeReponse, Upload2Wallies
 from typing import Optional
 from argparse import ArgumentParser, ArgumentError
 from pydantic import BaseModel, Field, validator
@@ -83,6 +81,7 @@ class Action(Enum):
     TXT2IMG = "image/txt2img"
     QR2IMG = "image/qr2img"
     GPS2IMG = "image/gps2img"
+    GEOIMG = "image/geoimg"
     UPLOAD2WALLIES = "image/upload2wallies"
     OPTIONS = "image/options"
 
@@ -96,7 +95,6 @@ class ImageOptions(BaseModel):
 
 
 class ImageMeta(type):
-
     __image_generator_parser: Optional[ArgumentParser] = None
     __variation_generator_parser: Optional[ArgumentParser] = None
     __qr_generator_parser: Optional[ArgumentParser] = None
@@ -119,9 +117,7 @@ class ImageMeta(type):
         return cls(attachment).do_classify()
 
     def pixel(
-            cls,
-            attachment: Attachment,
-            block_size: int = 8
+        cls, attachment: Attachment, block_size: int = 8
     ) -> tuple[Attachment, dict]:
         return cls(attachment).do_pixel(block_size)
 
@@ -146,72 +142,39 @@ class ImageMeta(type):
     def variation_generator_parser(cls) -> ArgumentParser:
         if not cls.__variation_generator_parser:
             parser = ArgumentParser(
-                description="Variation Generator",
-                add_help=False,
-                exit_on_error=False
+                description="Variation Generator", add_help=False, exit_on_error=False
             )
-            parser.add_argument("-n",
-                                "--num_images_per_prompt",
-                                type=int)
-            parser.add_argument("-g",
-                                "--guidance_scale",
-                                type=float)
-            parser.add_argument("-s",
-                                "--num_inference_steps",
-                                type=int)
+            parser.add_argument("-n", "--num_images_per_prompt", type=int)
+            parser.add_argument("-g", "--guidance_scale", type=float)
+            parser.add_argument("-s", "--num_inference_steps", type=int)
             cls.__variation_generator_parser = parser
         return cls.__variation_generator_parser
 
-    def variation_generator_params(
-        cls,
-        prompt: str
-    ) -> VariationGeneratorParams:
+    def variation_generator_params(cls, prompt: str) -> VariationGeneratorParams:
         parser = cls.variation_generator_parser
         namespace, _ = parser.parse_known_args(split_with_quotes(prompt))
         return VariationGeneratorParams(**namespace.__dict__)
 
-    @ property
+    @property
     def image_generator_parser(cls) -> ArgumentParser:
         if not cls.__image_generator_parser:
-            parser = ArgumentParser(description="Image Processing",
-                                    exit_on_error=False)
+            parser = ArgumentParser(description="Image Processing", exit_on_error=False)
             parser.add_argument("prompt", nargs="*")
-            parser.add_argument("-n",
-                                "--negative_prompt",
-                                type=str)
-            parser.add_argument("-g",
-                                "--guidance_scale",
-                                type=float)
-            parser.add_argument("-k",
-                                "--image_guidance_scale",
-                                type=float)
+            parser.add_argument("-n", "--negative_prompt", type=str)
+            parser.add_argument("-g", "--guidance_scale", type=float)
+            parser.add_argument("-k", "--image_guidance_scale", type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-s", "--seed", type=int)
-            parser.add_argument(
-                "-m",
-                "--model",
-                choices=cls.options.model
-            )
+            parser.add_argument("-m", "--model", choices=cls.options.model)
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-a", "--auto_prompt", type=int)
-            parser.add_argument(
-                "-r",
-                "--aspect-ratio",
-                choices=cls.options.resolution
-            )
+            parser.add_argument("-r", "--aspect-ratio", choices=cls.options.resolution)
             parser.add_argument("-e", "--editing_prompt", action="append", type=str)
-            parser.add_argument(
-                "-t",
-                "--template",
-                choices=cls.options.template
-            )
+            parser.add_argument("-t", "--template", choices=cls.options.template)
             cls.__image_generator_parser = parser
         return cls.__image_generator_parser
 
-    def image_generator_params(
-        cls,
-        prompt: Optional[str]
-    ) -> ImageGeneratorParams:
+    def image_generator_params(cls, prompt: Optional[str]) -> ImageGeneratorParams:
         parser = cls.image_generator_parser
         if not prompt:
             return ImageGeneratorParams(prompt=[""])
@@ -223,37 +186,22 @@ class ImageMeta(type):
     @property
     def qrgenerator_parser(cls) -> ArgumentParser:
         if not cls.__qr_generator_parser:
-            parser = ArgumentParser(description="QR Processing",
-                                    exit_on_error=False)
+            parser = ArgumentParser(description="QR Processing", exit_on_error=False)
             parser.add_argument("code", nargs="+")
-            parser.add_argument("-p",
-                                "--prompt",
-                                type=str)
-            parser.add_argument("-n",
-                                "--negative_prompt",
-                                type=str)
-            parser.add_argument("-g",
-                                "--guidance_scale",
-                                type=float)
-            parser.add_argument("-c",
-                                "--controlnet_conditioning_scale",
-                                type=float)
+            parser.add_argument("-p", "--prompt", type=str)
+            parser.add_argument("-n", "--negative_prompt", type=str)
+            parser.add_argument("-g", "--guidance_scale", type=float)
+            parser.add_argument("-c", "--controlnet_conditioning_scale", type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-s", "--seed", type=int)
             parser.add_argument(
-                "-m",
-                "--model",
-                choices=cls.options.qrcode,
-                default='default'
+                "-m", "--model", choices=cls.options.qrcode, default="default"
             )
             parser.add_argument("-a", "--auto_prompt", type=int)
             cls.__qr_generator_parser = parser
         return cls.__qr_generator_parser
 
-    def qr_generator_params(
-        cls,
-        prompt: Optional[str]
-    ) -> QRGeneratorParams:
+    def qr_generator_params(cls, prompt: Optional[str]) -> QRGeneratorParams:
         parser = cls.qrgenerator_parser
         if not prompt:
             return QRGeneratorParams(code=[""])
@@ -263,9 +211,7 @@ class ImageMeta(type):
         return QRGeneratorParams(**namespace.__dict__)
 
     def variation(
-        cls,
-        attachment: Attachment,
-        prompt: Optional[str] = None
+        cls, attachment: Attachment, prompt: Optional[str] = None
     ) -> tuple[Attachment, str]:
         return cls(attachment).do_variation(prompt)
 
@@ -275,18 +221,17 @@ class ImageMeta(type):
     def qr2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_qr2img(prompt)
 
-    def upload2wallies(
-        cls,
-        params: Upload2Wallies
-    ) -> str:
+    def upload2wallies(cls, params: Upload2Wallies) -> str:
         return cls().do_upload2wallies(params)
 
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_gps2img(prompt)
 
+    def geoimg(cls, location: GeoLocation) -> tuple[Attachment, str]:
+        return cls().do_geoimg(location)
+
 
 class Image(object, metaclass=ImageMeta):
-
     __attachment: Optional[Attachment] = None
 
     def __init__(self, attachment: Optional[Attachment] = None) -> None:
@@ -304,12 +249,8 @@ class Image(object, metaclass=ImageMeta):
                     analyses.dominant_emotion,
                     emojize(analyses.emotion_icon),
                 ],
-                [
-                    "Race: ", analyses.dominant_race,
-                    emojize(analyses.race_icon)
-                ],
-                ["Gender: ", analyses.dominant_gender,
-                 emojize(analyses.gender_icon)],
+                ["Race: ", analyses.dominant_race, emojize(analyses.race_icon)],
+                ["Gender: ", analyses.dominant_gender, emojize(analyses.gender_icon)],
             ]
             TextOutput.addRows(["".join(map(str, row)) for row in rows])
             message = TextOutput.render()
@@ -332,47 +273,37 @@ class Image(object, metaclass=ImageMeta):
             assert prompt
             params = Image.variation_generator_params(prompt)
             return self.getResponse(
-                Action.VARIATION,
-                uuid4().hex,
-                json=params.model_dump()
+                Action.VARIATION, uuid4().hex, json=params.model_dump()
             )
         except AssertionError as e:
             logging.info(e)
             return self.getResponse(
                 Action.VARIATION,
                 uuid4().hex,
-                json=VariationGeneratorParams().model_dump()
+                json=VariationGeneratorParams().model_dump(),
             )
 
-    def do_txt2img(
-        self,
-        prompt: str,
-        action: Action = Action.TXT2IMG
-    ):
+    def do_txt2img(self, prompt: str, action: Action = Action.TXT2IMG):
         try:
             params = Image.image_generator_params(prompt)
             logging.info(params)
             return self.getResponse(
                 action=action,
                 action_param=string_hash(params.prompt),
-                json=params.model_dump()
+                json=params.model_dump(),
             )
         except (ValidationErr, ArgumentError) as e:
             logging.error(e)
             raise ApiError(f"{e}")
 
-    def do_qr2img(
-        self,
-        prompt: str,
-        action: Action = Action.QR2IMG
-    ):
+    def do_qr2img(self, prompt: str, action: Action = Action.QR2IMG):
         try:
             params = Image.qr_generator_params(prompt)
             logging.info(params)
             return self.getResponse(
                 action=action,
                 action_param=string_hash(params.code),
-                json=params.model_dump()
+                json=params.model_dump(),
             )
         except (ValidationErr, ArgumentError) as e:
             logging.exception(e)
@@ -381,9 +312,19 @@ class Image(object, metaclass=ImageMeta):
     def do_gps2img(self, prompt: str):
         try:
             params = Image.image_generator_params(prompt)
-            return self.getResponse(Action.GPS2IMG,
-                                    params.prompt,
-                                    json=params.model_dump())
+            return self.getResponse(
+                Action.GPS2IMG, params.prompt, json=params.model_dump()
+            )
+        except (ValidationErr, ArgumentError) as e:
+            raise ApiError(f"{e}")
+
+    def do_geoimg(self, location: GeoLocation):
+        try:
+            return self.getResponse(
+                Action.GEOIMG, 
+                action_param=f"{map(str, [*location.location])}",
+                json=location.model_dump()
+            )
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
@@ -397,7 +338,7 @@ class Image(object, metaclass=ImageMeta):
             _, message = self.getResponse(
                 action=Action.UPLOAD2WALLIES,
                 action_param=ip.name,
-                json=params.model_dump()
+                json=params.model_dump(),
             )
             return message
         except (ValidationErr, ArgumentError) as e:
@@ -415,26 +356,20 @@ class Image(object, metaclass=ImageMeta):
             fp = p.open("rb")
             assert kind
             params["files"] = {
-                "file": (f"{p.name}.{kind.extension}", fp, mime, {
-                    "Expires": "0"
-                })
+                "file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})
             }
             params["data"] = reduce(
-                lambda r, x: {
-                    **r,
-                    **({
-                        x: json.get(x)
-                    } if json.get(x, None) else {})
-                }, json.keys(), {})
+                lambda r, x: {**r, **({x: json.get(x)} if json.get(x, None) else {})},
+                json.keys(),
+                {},
+            )
             logging.debug(params)
         else:
             params["json"] = reduce(
-                lambda r, x: {
-                    **r,
-                    **({
-                        x: json.get(x)
-                    } if json.get(x, None) else {})
-                }, json.keys(), {})
+                lambda r, x: {**r, **({x: json.get(x)} if json.get(x, None) else {})},
+                json.keys(),
+                {},
+            )
             logging.debug(params["json"])
 
         extra_headers = {}
@@ -445,15 +380,10 @@ class Image(object, metaclass=ImageMeta):
             f"{Config.image.base_url}/{path}",
             method=Method.POST,
             extra_headers=extra_headers,
-            **params
+            **params,
         )
 
-    def getResponse(
-        self,
-            action: Action,
-            action_param=None,
-            json: dict = {}
-    ):
+    def getResponse(self, action: Action, action_param=None, json: dict = {}):
         path = action.value
         if action_param:
             path = f"{path}/{action_param}"
@@ -471,7 +401,7 @@ class Image(object, metaclass=ImageMeta):
             for part in multipart.parts:
                 content_type = part.headers.get(
                     b"content-type",  # type: ignore
-                    b""  # type: ignore
+                    b"",  # type: ignore
                 ).decode()
                 if "image/png" in content_type:
                     fp = cp / f"{uuid4().hex}.png"
