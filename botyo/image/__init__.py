@@ -81,7 +81,7 @@ class Action(Enum):
     TXT2IMG = "image/txt2img"
     QR2IMG = "image/qr2img"
     GPS2IMG = "image/gps2img"
-    GEOIMG = "image/geoimg"
+    STREETVIEW = "image/streetview"
     UPLOAD2WALLIES = "image/upload2wallies"
     OPTIONS = "image/options"
 
@@ -227,8 +227,8 @@ class ImageMeta(type):
     def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_gps2img(prompt)
 
-    def geoimg(cls, location: GeoLocation) -> tuple[Attachment, str]:
-        return cls().do_geoimg(location)
+    def streetview(cls, location: GeoLocation) -> tuple[Attachment, str]:
+        return cls().do_streetview(location)
 
 
 class Image(object, metaclass=ImageMeta):
@@ -318,10 +318,10 @@ class Image(object, metaclass=ImageMeta):
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
-    def do_geoimg(self, location: GeoLocation):
+    def do_streetview(self, location: GeoLocation):
         try:
             return self.getResponse(
-                Action.GEOIMG, 
+                Action.STREETVIEW, 
                 action_param=",".join(map(str, [*location.location])),
                 json=location.model_dump()
             )

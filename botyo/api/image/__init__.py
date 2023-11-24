@@ -11,7 +11,7 @@ from botyo.server.models import (
     ApiError,
     ZMethod,
     ZSONOption,
-    ClassifyResult
+    ClassifyResult,
 )
 from stringcase import titlecase
 import logging
@@ -62,32 +62,32 @@ bp = Blueprint("image")
 #         return ErrorResult(method=ZMethod.IMAGE_TAG)
 
 
-# @bp.command(
-#     method=ZMethod.IMAGE_HOWCUTE,
-#     desc="howcute faces in image",
-#     upload=True,
-#     icon="thumb_up"
-# )  # type: ignore
-# def image_howcute(context: Context):
-#     try:
-#         attachment = context.attachment
-#         assert attachment
-#         attachment, message = Image.howcute(attachment)
-#         assert attachment and message
-#         return RenderResult(
-#             message=message,
-#             attachment=attachment,
-#             method=ZMethod.IMAGE_HOWCUTE,
-#         )
-#     except AssertionError:
-#         return ErrorResult(method=ZMethod.IMAGE_HOWCUTE)
+@bp.command(
+    method=ZMethod.IMAGE_HOWCUTE,
+    desc="howcute faces in image",
+    upload=True,
+    icon="thumb_up"
+)  # type: ignore
+def image_howcute(context: Context):
+    try:
+        attachment = context.attachment
+        assert attachment
+        attachment, message = Image.howcute(attachment)
+        assert attachment and message
+        return RenderResult(
+            message=message,
+            attachment=attachment,
+            method=ZMethod.IMAGE_HOWCUTE,
+        )
+    except AssertionError:
+        return ErrorResult(method=ZMethod.IMAGE_HOWCUTE)
 
 
 @bp.command(
     method=ZMethod.IMAGE_CLASSIFY,
     desc="Classify objects in images",
     upload=True,
-    icon="data_object"
+    icon="data_object",
 )  # type: ignore
 def image_classify(context: Context):
     try:
@@ -104,19 +104,13 @@ def image_classify(context: Context):
             method=ZMethod.IMAGE_CLASSIFY,
         )
     except ApiError as e:
-        return ErrorResult(
-            method=ZMethod.IMAGE_CLASSIFY,
-            message=e.message
-        )
+        return ErrorResult(method=ZMethod.IMAGE_CLASSIFY, message=e.message)
     except AssertionError:
         return ErrorResult(method=ZMethod.IMAGE_CLASSIFY)
 
 
 @bp.command(
-    method=ZMethod.IMAGE_PIXEL,
-    desc="pixel image",
-    upload=True,
-    icon="pix"
+    method=ZMethod.IMAGE_PIXEL, desc="pixel image", upload=True, icon="pix"
 )  # type: ignore
 def image_pixel(context: Context):
     try:
@@ -130,10 +124,7 @@ def image_pixel(context: Context):
             method=ZMethod.IMAGE_PIXEL,
         )
     except ApiError as e:
-        return ErrorResult(
-            method=ZMethod.IMAGE_PIXEL,
-            message=e.message
-        )
+        return ErrorResult(method=ZMethod.IMAGE_PIXEL, message=e.message)
     except AssertionError as e:
         logging.exception(e)
         return ErrorResult(method=ZMethod.IMAGE_PIXEL)
@@ -143,7 +134,7 @@ def image_pixel(context: Context):
     method=ZMethod.IMAGE_VARIATION,
     desc="variation of image",
     upload=True,
-    icon="difference"
+    icon="difference",
 )  # type: ignore
 def image_variation(context: Context):
     try:
@@ -156,10 +147,7 @@ def image_variation(context: Context):
             method=ZMethod.IMAGE_VARIATION,
         )
     except ApiError as e:
-        return ErrorResult(
-            method=ZMethod.IMAGE_VARIATION,
-            message=e.message
-        )
+        return ErrorResult(method=ZMethod.IMAGE_VARIATION, message=e.message)
     except AssertionError:
         return ErrorResult(method=ZMethod.IMAGE_VARIATION)
 
@@ -172,8 +160,8 @@ def image_variation(context: Context):
     options=[
         ZSONOption(option="-m", choices=Image.options.model),
         ZSONOption(option="-r", choices=Image.options.resolution),
-        ZSONOption(option="-t", choices=Image.options.template)
-    ]
+        ZSONOption(option="-t", choices=Image.options.template),
+    ],
 )  # type: ignore
 def image_fromtext(context: Context):
     try:
@@ -188,24 +176,20 @@ def image_fromtext(context: Context):
             # message=message
         )
     except ApiError as e:
-
         logging.error(e)
         return RenderResult(
             method=ZMethod.IMAGE_TXT2IMG,
-            message=Image.image_generator_parser.format_help()
+            message=Image.image_generator_parser.format_help(),
         )
     except AssertionError as e:
         logging.error(e)
         return RenderResult(
             method=ZMethod.IMAGE_TXT2IMG,
-            message=Image.image_generator_parser.format_help()
+            message=Image.image_generator_parser.format_help(),
         )
 
 
-@bp.command(
-    method=ZMethod.IMAGE_UPLOAD2WALLIES,
-    admin=True
-)  # type: ignore
+@bp.command(method=ZMethod.IMAGE_UPLOAD2WALLIES, admin=True)  # type: ignore
 def upload2wallies(context: Context):
     try:
         query = context.query
@@ -221,8 +205,7 @@ def upload2wallies(context: Context):
         return RenderResult(method=ZMethod.IMAGE_UPLOAD2WALLIES)
     except ApiError:
         return ErrorResult(
-            error="Already uploaded",
-            method=ZMethod.IMAGE_UPLOAD2WALLIES
+            error="Already uploaded", method=ZMethod.IMAGE_UPLOAD2WALLIES
         )
 
 
@@ -230,7 +213,7 @@ def upload2wallies(context: Context):
     method=ZMethod.IMAGE_GPS2IMG,
     desc="generates image for given gps coordinates",
     icon="satellite",
-    uses_prompt=True
+    uses_prompt=True,
 )  # type: ignore
 def gps2Image(context: Context):
     try:
@@ -244,10 +227,7 @@ def gps2Image(context: Context):
             method=ZMethod.IMAGE_GPS2IMG,
         )
     except ApiError as e:
-        return ErrorResult(
-            method=ZMethod.IMAGE_GPS2IMG,
-            message=e.message
-        )
+        return ErrorResult(method=ZMethod.IMAGE_GPS2IMG, message=e.message)
     except AssertionError:
         return ErrorResult(method=ZMethod.IMAGE_GPS2IMG)
 
@@ -259,7 +239,7 @@ def gps2Image(context: Context):
     uses_prompt=True,
     options=[
         ZSONOption(option="-m", choices=Image.options.qrcode),
-    ]
+    ],
 )  # type: ignore
 def image_fromqr(context: Context):
     try:
@@ -274,25 +254,22 @@ def image_fromqr(context: Context):
             # message=message
         )
     except ApiError as e:
-
         logging.error(e)
         return RenderResult(
-            method=ZMethod.IMAGE_QR2IMG,
-            message=Image.qrgenerator_parser.format_help()
+            method=ZMethod.IMAGE_QR2IMG, message=Image.qrgenerator_parser.format_help()
         )
     except AssertionError as e:
         logging.error(e)
         return RenderResult(
-            method=ZMethod.IMAGE_QR2IMG,
-            message=Image.qrgenerator_parser.format_help()
+            method=ZMethod.IMAGE_QR2IMG, message=Image.qrgenerator_parser.format_help()
         )
 
 
 @bp.command(
-    method=ZMethod.IMAGE_GEOIMG,
+    method=ZMethod.IMAGE_STREETVIEW,
     desc="generates street view image from, coordinates",
     icon="streetview",
-    uses_prompt=True
+    uses_prompt=True,
 )  # type: ignore
 def geoImage(context: Context):
     try:
@@ -301,17 +278,13 @@ def geoImage(context: Context):
         Image.is_admin = context.is_admin
         geocoder = GeoCoder(context.query)
         assert geocoder.lookup_result
-        attachment, msg = Image.geoimg(geocoder.lookup_result)
+        attachment, msg = Image.streetview(geocoder.lookup_result)
         return RenderResult(
             attachment=attachment,
             message=geocoder.lookup(),
-            method=ZMethod.IMAGE_GEOIMG,
+            method=ZMethod.IMAGE_STREETVIEW,
         )
     except ApiError as e:
-        return ErrorResult(
-            method=ZMethod.IMAGE_GEOIMG,
-            message=e.message
-        )
+        return ErrorResult(method=ZMethod.IMAGE_STREETVIEW, message=e.message)
     except AssertionError:
-        return ErrorResult(method=ZMethod.IMAGE_GEOIMG)
-
+        return ErrorResult(method=ZMethod.IMAGE_STREETVIEW)
