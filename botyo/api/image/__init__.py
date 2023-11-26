@@ -70,6 +70,7 @@ bp = Blueprint("image")
 )  # type: ignore
 def image_howcute(context: Context):
     try:
+        logging.info(context)
         attachment = context.attachment
         assert attachment
         attachment, message = Image.howcute(attachment)
