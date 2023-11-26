@@ -77,7 +77,7 @@ class SocketConnection(Connection, StreamRequestHandler):
                             request.attachment.path = request.attachment.filename
                         download = self.__handleAttachment(
                             Path(request.attachment.path).name)
-                        request.attachment.path = download.resolve().as_posix()
+                        request.attachment.path = download.resolve().absolute().as_posix()
                     
                     logging.info(request)
                     self.onRequest(message=request)
