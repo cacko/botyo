@@ -74,7 +74,7 @@ class VariationGeneratorParams(BaseModel):
 class Action(Enum):
     ANALYZE = "face/analyze"
     TAG = "face/tag"
-    HOWCUTE = "face/howcute"
+    HOWCUTE = "image/howcute"
     CLASSIFY = "image/classify"
     PIXEL = "image/pixel"
     VARIATION = "image/variation"
