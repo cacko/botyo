@@ -184,12 +184,12 @@ class Attachment(BaseModel):
     id: Optional[str] = None
     size: Optional[int] = None
 
-    def __init__(self, **data):
-        super().__init__(**data)
-        if self.filename:
-            self.path = self.filename
-        elif self.path:
-            self.filename = Path(self.path).name
+    # def __init__(self, **data):
+    #     super().__init__(**data)
+    #     if self.filename:
+    #         self.path = self.filename
+    #     elif self.path:
+    #         self.filename = Path(self.path).name
 
 
 NOT_FOUND = [
