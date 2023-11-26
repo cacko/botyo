@@ -347,10 +347,9 @@ class Image(object, metaclass=ImageMeta):
     def __make_request(self, path: str, json: dict = {}):
         attachment = self.__attachment
         params: dict = {}
-
+        logging.info(self.__attachment)
         if attachment:
-            assert isinstance(attachment, dict)
-            p = Path(attachment.get("path", ""))
+            p = Path(attachment.path)
             kind = filetype.guess(p.as_posix())
             mime = attachment.get("contentType")
             fp = p.open("rb")
