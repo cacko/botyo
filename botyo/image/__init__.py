@@ -351,7 +351,7 @@ class Image(object, metaclass=ImageMeta):
         if attachment:
             p = Path(attachment.path)
             kind = filetype.guess(p.as_posix())
-            mime = attachment.get("contentType")
+            mime = attachment.contentType
             fp = p.open("rb")
             assert kind
             params["files"] = {
