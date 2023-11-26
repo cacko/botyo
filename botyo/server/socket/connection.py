@@ -78,6 +78,8 @@ class SocketConnection(Connection, StreamRequestHandler):
                         download = self.__handleAttachment(
                             Path(request.attachment.path).name)
                         request.attachment.path = download.resolve().as_posix()
+                    
+                    logging.info(request)
                     self.onRequest(message=request)
                     continue
             except (BrokenPipeError):
