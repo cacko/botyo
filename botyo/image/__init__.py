@@ -325,7 +325,7 @@ class Image(object, metaclass=ImageMeta):
             gps_part = ",".join(map(str,location.location)),
             return self.getResponse(
                 Action.STREETVIEW,
-                action_param=f"{choice(self.__class__.options.style)/{gps_part}}"
+                action_param=f"{choice(self.__class__.options.styles)/{gps_part}}"
                 method=Method.GET
             )
         except (ValidationErr, ArgumentError) as e:
