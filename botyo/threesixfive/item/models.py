@@ -10,12 +10,7 @@ from stringcase import constcase
 from emoji import emojize
 import sys
 from hashlib import md5
-from botyo.threesixfive.data import (
-    Data365,
-    LeagueItem,
-    CountryItem,
-    International
-)
+from botyo.threesixfive.data import Data365, LeagueItem, CountryItem, International
 from pydantic import BaseModel, Field
 from botyo.core.country import Country as Flag
 from botyo.unicode_text.emoji import Emoji
@@ -78,6 +73,15 @@ class ShortGameStatus(StrEnum):
     ENDED = "Ended"
     JUSTENDED = "Just Ended"
     SCORE = "Score"
+    NOTVALID = "NA"
+
+    @classmethod
+    def _missing_(cls, value):
+        value = value.lower()
+        for member in cls:
+            if member.value == value:
+                return member
+        return cls.NOTVALID
 
 
 class OrderWeight(Enum):
@@ -142,7 +146,8 @@ class Event(BaseModel):
             self.displayStatus = GameStatus(self.strStatus).value
             if delta < 0 and self.displayStatus in [GameStatus.NS.value]:
                 self.displayStatus = self.startTime.astimezone(
-                    ZoneInfo("Europe/London")).strftime("%H:%M")
+                    ZoneInfo("Europe/London")
+                ).strftime("%H:%M")
             else:
                 self.displayStatus = self.displayStatus.value
         except Exception:
@@ -152,21 +157,24 @@ class Event(BaseModel):
                 self.sort = OrderWeight.INPLAY.value * int(self.strStatus)
                 self.displayStatus = f'{self.strStatus}"'
             else:
-                self.sort = OrderWeight[self.strStatus.translate(
-                    punctuation).upper()].value * abs(delta)
+                self.sort = OrderWeight[
+                    self.strStatus.translate(punctuation).upper()
+                ].value * abs(delta)
         except KeyError:
             self.sort = int(OrderWeight.JUNK.value * abs(delta))
         if any([self.intAwayScore == -1, self.intHomeScore == -1]):
             self.displayScore = ""
         else:
             self.displayScore = ":".join(
-                [f"{self.intHomeScore:.0f}", f"{self.intAwayScore:.0f}"])
+                [f"{self.intHomeScore:.0f}", f"{self.intAwayScore:.0f}"]
+            )
 
     @property
     def is_international(self) -> bool:
         try:
             league = next(
-                filter(lambda x: x.id == self.idLeague, Data365.leagues), None)
+                filter(lambda x: x.id == self.idLeague, Data365.leagues), None
+            )
             assert league
             return league.is_international
         except AssertionError:
@@ -178,8 +186,7 @@ class Event(BaseModel):
 
     @property
     def event_name(self) -> str:
-        return "/".join(
-            [s if s else "" for s in [self.strHomeTeam, self.strAwayTeam]])
+        return "/".join([s if s else "" for s in [self.strHomeTeam, self.strAwayTeam]])
 
     @property
     def inProgress(self) -> bool:
@@ -304,7 +311,8 @@ class Competition(BaseModel):
         if International(self.countryId) is International.NOT_INTERNATIONAL:
             return ""
         country = next(
-            filter(lambda x: x.id == self.countryId, Data365.countries), None)
+            filter(lambda x: x.id == self.countryId, Data365.countries), None
+        )
         assert country
         return Flag(country.name).flag
 
@@ -386,7 +394,8 @@ class GameCompetitor(BaseModel):
     @property
     def country(self) -> CountryItem:
         country = next(
-            filter(lambda x: x.id == self.countryId, Data365.countries), None)
+            filter(lambda x: x.id == self.countryId, Data365.countries), None
+        )
         assert country
         return country
 
@@ -485,9 +494,8 @@ class Game(BaseModel):
         if self.roundNum is None:
             return ""
         return " ".join(
-            list(
-                filter(lambda x: x,
-                       [f"{self.roundName}", f"{self.roundNum:,0f}"])))
+            list(filter(lambda x: x, [f"{self.roundName}", f"{self.roundNum:,0f}"]))
+        )
 
     @property
     def postponed(self) -> bool:
@@ -519,11 +527,13 @@ class Game(BaseModel):
             _status = GameStatus(status)
             if _status in (GameStatus.FT, GameStatus.AET):
                 return True
-            return any([
-                _status == GameStatus.HT,
-                _status == GameStatus.PPD,
-                re.match(r"^\d+$", status) is not None
-            ])
+            return any(
+                [
+                    _status == GameStatus.HT,
+                    _status == GameStatus.PPD,
+                    re.match(r"^\d+$", status) is not None,
+                ]
+            )
         except ValueError:
             return False
 
@@ -545,16 +555,18 @@ class Game(BaseModel):
 
     @property
     def displayScore(self) -> str:
-        return ":".join([
-            f"{max(self.homeCompetitor.score_int, 0):.0f}",
-            f"{max(self.awayCompetitor.score_int, 0):.0f}",
-        ])
+        return ":".join(
+            [
+                f"{max(self.homeCompetitor.score_int, 0):.0f}",
+                f"{max(self.awayCompetitor.score_int, 0):.0f}",
+            ]
+        )
 
     @property
     def league(self) -> LeagueItem:
         league = next(
-            filter(lambda x: x.id == self.competitionId, Data365.leagues),
-            None)
+            filter(lambda x: x.id == self.competitionId, Data365.leagues), None
+        )
         assert league
         return league
 
@@ -565,15 +577,19 @@ class Game(BaseModel):
         league = self.league
         assert league
         if league.is_international:
-            res = " - ".join([
-                f"{self.homeCompetitor.name_with_flag}",
-                f"{self.awayCompetitor.name_with_flag}",
-            ])
+            res = " - ".join(
+                [
+                    f"{self.homeCompetitor.name_with_flag}",
+                    f"{self.awayCompetitor.name_with_flag}",
+                ]
+            )
         else:
-            res = " - ".join([
-                self.homeCompetitor.name,
-                self.awayCompetitor.name,
-            ])
+            res = " - ".join(
+                [
+                    self.homeCompetitor.name,
+                    self.awayCompetitor.name,
+                ]
+            )
 
         if all([not self.not_started, not self.ended]):
             res = f"{res} {self.displayScore}"
@@ -669,10 +685,9 @@ class GameDetails(Game):
         try:
             assert self.homeCompetitor
             assert self.awayCompetitor
-            return ":".join([
-                f"{self.homeCompetitor.score:.0f}",
-                f"{self.awayCompetitor.score:.0f}"
-            ])
+            return ":".join(
+                [f"{self.homeCompetitor.score:.0f}", f"{self.awayCompetitor.score:.0f}"]
+            )
         except AssertionError:
             return ""
 
@@ -846,8 +861,9 @@ class DetailsEventPixel(BaseModel):
         )
 
     @classmethod
-    def startTimeEvent(cls, event_name: str, event_id: int, league_id,
-                       home_id: int, away_id: int):
+    def startTimeEvent(
+        cls, event_name: str, event_id: int, league_id, home_id: int, away_id: int
+    ):
         return cls(
             time=0,
             action="Game Start",
