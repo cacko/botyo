@@ -323,7 +323,7 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(
                 Action.STREETVIEW,
                 action_param=",".join(map(str, [*location.location])),
-                json=location.model_dump(),
+                method=Method.GET
             )
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
