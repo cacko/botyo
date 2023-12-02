@@ -37,6 +37,7 @@ STATUS_MAP = {
     "After Pen": "AET",
     "Half Time": "HT",
     "2nd Half": "2nd",
+    "1st Half": "1st"
 }
 
 
@@ -57,6 +58,15 @@ class GameStatus(StrEnum):
     BEFORE_PENALTIES = "Before Penalties"
     PENALTIES = "Penalties"
     SCHEDULED = "Scheduled"
+    NOTVALID = "NA"
+
+    @classmethod
+    def _missing_(cls, value):
+        value = value.lower()
+        for member in cls:
+            if member.value == value:
+                return member
+        return cls.NOTVALID
 
 
 class ShortGameStatus(StrEnum):
