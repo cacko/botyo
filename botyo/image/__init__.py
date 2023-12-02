@@ -314,8 +314,11 @@ class Image(object, metaclass=ImageMeta):
     def do_gps2img(self, prompt: str):
         try:
             params = Image.image_generator_params(prompt)
+            
             return self.getResponse(
-                Action.GPS2IMG, params.prompt, json=params.model_dump()
+                Action.GPS2IMG,
+                action_param=f"{choice(self.__class__.options.styles)}/{gps_part}",
+                method=Method.GET
             )
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")

@@ -210,27 +210,27 @@ def upload2wallies(context: Context):
         )
 
 
-@bp.command(
-    method=ZMethod.IMAGE_GPS2IMG,
-    desc="generates image for given gps coordinates",
-    icon="satellite",
-    uses_prompt=True,
-)  # type: ignore
-def gps2Image(context: Context):
-    try:
-        query = context.query
-        assert query
-        Image.is_admin = context.is_admin
-        attachment, msg = Image.gps2img(query)
-        return RenderResult(
-            attachment=attachment,
-            message=msg,
-            method=ZMethod.IMAGE_GPS2IMG,
-        )
-    except ApiError as e:
-        return ErrorResult(method=ZMethod.IMAGE_GPS2IMG, message=e.message)
-    except AssertionError:
-        return ErrorResult(method=ZMethod.IMAGE_GPS2IMG)
+# @bp.command(
+#     method=ZMethod.IMAGE_GPS2IMG,
+#     desc="generates image for given gps coordinates",
+#     icon="satellite",
+#     uses_prompt=True,
+# )  # type: ignore
+# def gps2Image(context: Context):
+#     try:
+#         query = context.query
+#         assert query
+#         Image.is_admin = context.is_admin
+#         attachment, msg = Image.gps2img(query)
+#         return RenderResult(
+#             attachment=attachment,
+#             message=msg,
+#             method=ZMethod.IMAGE_GPS2IMG,
+#         )
+#     except ApiError as e:
+#         return ErrorResult(method=ZMethod.IMAGE_GPS2IMG, message=e.message)
+#     except AssertionError:
+#         return ErrorResult(method=ZMethod.IMAGE_GPS2IMG)
 
 
 @bp.command(
