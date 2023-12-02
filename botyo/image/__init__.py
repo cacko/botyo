@@ -1,4 +1,5 @@
 from pathlib import Path
+from random import choice
 from xml.dom import ValidationErr
 from requests import JSONDecodeError
 from botyo.api.console.geo import GeoLocation
@@ -321,9 +322,10 @@ class Image(object, metaclass=ImageMeta):
 
     def do_streetview(self, location: GeoLocation):
         try:
+            gps_part = ",".join(map(str,location.location)),
             return self.getResponse(
                 Action.STREETVIEW,
-                action_param=",".join(map(str, [*location.location])),
+                action_param=f"{choice(self.__class__.options.style)/{gps_part}}"
                 method=Method.GET
             )
         except (ValidationErr, ArgumentError) as e:
