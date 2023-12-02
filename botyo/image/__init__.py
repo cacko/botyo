@@ -92,6 +92,7 @@ class ImageOptions(BaseModel):
     category: list[str]
     template: list[str]
     qrcode: list[str]
+    styles: list[str]
 
 
 class ImageMeta(type):
