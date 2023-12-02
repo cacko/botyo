@@ -79,7 +79,7 @@ class SocketConnection(Connection, StreamRequestHandler):
                             Path(request.attachment.path).name)
                         request.attachment.path = download.resolve().absolute().as_posix()
                     
-                    logging.info(request)
+                    logging.debug(request)
                     self.onRequest(message=request)
                     continue
             except (BrokenPipeError):

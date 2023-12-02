@@ -321,9 +321,9 @@ class Image(object, metaclass=ImageMeta):
     def do_streetview(self, location: GeoLocation):
         try:
             return self.getResponse(
-                Action.STREETVIEW, 
+                Action.STREETVIEW,
                 action_param=",".join(map(str, [*location.location])),
-                json=location.model_dump()
+                json=location.model_dump(),
             )
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
@@ -333,7 +333,7 @@ class Image(object, metaclass=ImageMeta):
         params: Upload2Wallies,
     ):
         try:
-            logging.info(params)
+            logging.debug(params)
             ip = Path(params.image_url)
             _, message = self.getResponse(
                 action=Action.UPLOAD2WALLIES,
@@ -344,10 +344,10 @@ class Image(object, metaclass=ImageMeta):
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
-    def __make_request(self, path: str, json: dict = {}):
+    def __make_request(self, path: str, json: dict = {}, method: Method = Method.POST):
         attachment = self.__attachment
         params: dict = {}
-        logging.info(self.__attachment)
+        logging.debug(self.__attachment)
         if attachment:
             p = Path(attachment.path)
             kind = filetype.guess(p.as_posix())
@@ -377,18 +377,18 @@ class Image(object, metaclass=ImageMeta):
 
         return Request(
             f"{Config.image.base_url}/{path}",
-            method=Method.POST,
+            method=method,
             extra_headers=extra_headers,
             **params,
         )
 
-    def getResponse(self, action: Action, action_param=None, json: dict = {}):
+    def getResponse(
+        self, action: Action, action_param=None, json: dict = {}, method=Method.POST
+    ):
         path = action.value
         if action_param:
             path = f"{path}/{action_param}"
-        logging.info(path)
-        logging.info(json)
-        req = self.__make_request(path=path, json=json)
+        req = self.__make_request(path=path, json=json, method=method)
         # if req.status > 400:
         #     raise ApiError("Error")
         message = ""
