@@ -81,7 +81,6 @@ class Action(Enum):
     VARIATION = "image/variation"
     TXT2IMG = "image/txt2img"
     QR2IMG = "image/qr2img"
-    GPS2IMG = "image/gps2img"
     STREETVIEW = "image/streetview"
     UPLOAD2WALLIES = "image/upload2wallies"
     OPTIONS = "image/options"
@@ -226,9 +225,6 @@ class ImageMeta(type):
     def upload2wallies(cls, params: Upload2Wallies) -> str:
         return cls().do_upload2wallies(params)
 
-    def gps2img(cls, prompt: str) -> tuple[Attachment, str]:
-        return cls().do_gps2img(prompt)
-
     def streetview(cls, location: GeoLocation) -> tuple[Attachment, str]:
         return cls().do_streetview(location)
 
@@ -309,18 +305,6 @@ class Image(object, metaclass=ImageMeta):
             )
         except (ValidationErr, ArgumentError) as e:
             logging.exception(e)
-            raise ApiError(f"{e}")
-
-    def do_gps2img(self, prompt: str):
-        try:
-            params = Image.image_generator_params(prompt)
-            
-            return self.getResponse(
-                Action.GPS2IMG,
-                action_param=f"{choice(self.__class__.options.styles)}/{gps_part}",
-                method=Method.GET
-            )
-        except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
     def do_streetview(self, location: GeoLocation):
