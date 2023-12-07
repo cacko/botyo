@@ -76,7 +76,8 @@ class StreetViewGeneratorParams(BaseModel):
     style: Optional[str] = None
     
     def __init__(self, **kwds):
-        kwds.setdefault("style", choice(Image.options.styles))
+        if not "style" in kwds:
+            kwds["style"] =  choice(Image.options.styles)
         super().__init__(**kwds)
 
 
