@@ -1,4 +1,5 @@
 import json
+from random import choice
 from botyo.api.console.geo import GeoCoder
 
 from botyo.image import Image
@@ -259,6 +260,8 @@ def geoImage(context: Context):
         params = Image.street_generator_params(query)
         geocoder = GeoCoder(' '.join(params.query))
         assert geocoder.lookup_result
+        if not params.style:
+            params.style = choice(Image.options.styles)
         attachment, msg = Image.streetview(geocoder.lookup_result, params.style)
         return RenderResult(
             attachment=attachment,
