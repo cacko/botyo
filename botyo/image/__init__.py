@@ -73,7 +73,7 @@ class VariationGeneratorParams(BaseModel):
 
 class StreetViewGeneratorParams(BaseModel):
     query: list[str]
-    style: Optional[str] = None
+    style: str
     
     def __init__(self, **kwds):
         if not "style" in kwds:
