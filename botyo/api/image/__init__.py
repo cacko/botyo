@@ -66,7 +66,7 @@ bp = Blueprint("image")
     method=ZMethod.IMAGE_HOWCUTE,
     desc="howcute faces in image",
     upload=True,
-    icon="thumb_up"
+    icon="thumb_up",
 )  # type: ignore
 def image_howcute(context: Context):
     try:
@@ -208,30 +208,6 @@ def upload2wallies(context: Context):
         return ErrorResult(
             error="Already uploaded", method=ZMethod.IMAGE_UPLOAD2WALLIES
         )
-
-
-# @bp.command(
-#     method=ZMethod.IMAGE_GPS2IMG,
-#     desc="generates image for given gps coordinates",
-#     icon="satellite",
-#     uses_prompt=True,
-# )  # type: ignore
-# def gps2Image(context: Context):
-#     try:
-#         query = context.query
-#         assert query
-#         Image.is_admin = context.is_admin
-#         attachment, msg = Image.gps2img(query)
-#         return RenderResult(
-#             attachment=attachment,
-#             message=msg,
-#             method=ZMethod.IMAGE_GPS2IMG,
-#         )
-#     except ApiError as e:
-#         return ErrorResult(method=ZMethod.IMAGE_GPS2IMG, message=e.message)
-#     except AssertionError:
-#         return ErrorResult(method=ZMethod.IMAGE_GPS2IMG)
-
 
 @bp.command(
     method=ZMethod.IMAGE_QR2IMG,
