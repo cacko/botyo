@@ -73,14 +73,8 @@ class VariationGeneratorParams(BaseModel):
 
 class StreetViewGeneratorParams(BaseModel):
     query: list[str]
-    style: str
+    style: Optional[str] = None
     
-    def __init__(self, **kwds):
-        if not "style" in kwds:
-            kwds["style"] =  choice(Image.options.styles)
-        super().__init__(**kwds)
-
-
 class Action(Enum):
     ANALYZE = "face/analyze"
     TAG = "face/tag"
