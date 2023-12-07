@@ -71,6 +71,14 @@ class VariationGeneratorParams(BaseModel):
     num_inference_steps: Optional[int] = Field(default=50)
     num_images_per_prompt: Optional[int] = Field(default=1)
 
+class StreetViewGeneratorParams(BaseModel):
+    query: list[str]
+    style: Optional[str] = None
+    
+    def __init__(self, **kwds):
+        kwds.setdefault("style", choice(Image.options.styles))
+        super().__init__(**kwds)
+
 
 class Action(Enum):
     ANALYZE = "face/analyze"
@@ -99,6 +107,7 @@ class ImageMeta(type):
     __image_generator_parser: Optional[ArgumentParser] = None
     __variation_generator_parser: Optional[ArgumentParser] = None
     __qr_generator_parser: Optional[ArgumentParser] = None
+    __street_generator_parser: Optional[ArgumentParser] = None
     __options: Optional[ImageOptions] = None
     __is_admin: bool = False
 
@@ -210,6 +219,25 @@ class ImageMeta(type):
             split_with_quotes(normalize_prompt(prompt))
         )
         return QRGeneratorParams(**namespace.__dict__)
+    
+    
+    @property
+    def streetgenerator_parser(cls) -> ArgumentParser:
+        if not cls.__street_generator_parser:
+            parser = ArgumentParser(description="QR Processing", exit_on_error=False)
+            parser.add_argument("query", nargs="+")
+            parser.add_argument("-s", "--style",choices=cls.options.styles)
+            cls.__street_generator_parser = parser
+        return cls.__street_generator_parser
+
+    def street_generator_params(cls, prompt: Optional[str]) -> StreetViewGeneratorParams:
+        parser = cls.streetgenerator_parser
+        if not prompt:
+            return StreetViewGeneratorParams(query=[""])
+        namespace, _ = parser.parse_known_args(
+            split_with_quotes(normalize_prompt(prompt))
+        )
+        return StreetViewGeneratorParams(**namespace.__dict__)
 
     def variation(
         cls, attachment: Attachment, prompt: Optional[str] = None
@@ -225,8 +253,8 @@ class ImageMeta(type):
     def upload2wallies(cls, params: Upload2Wallies) -> str:
         return cls().do_upload2wallies(params)
 
-    def streetview(cls, location: GeoLocation) -> tuple[Attachment, str]:
-        return cls().do_streetview(location)
+    def streetview(cls, location: GeoLocation, style: str) -> tuple[Attachment, str]:
+        return cls().do_streetview(location, style)
 
 
 class Image(object, metaclass=ImageMeta):
@@ -307,12 +335,12 @@ class Image(object, metaclass=ImageMeta):
             logging.exception(e)
             raise ApiError(f"{e}")
 
-    def do_streetview(self, location: GeoLocation):
+    def do_streetview(self, location: GeoLocation, style: str):
         try:
             gps_part = ",".join(map(str,location.location))
             return self.getResponse(
                 Action.STREETVIEW,
-                action_param=f"{choice(self.__class__.options.styles)}/{gps_part}",
+                action_param=f"{style}/{gps_part}",
                 method=Method.GET
             )
         except (ValidationErr, ArgumentError) as e:

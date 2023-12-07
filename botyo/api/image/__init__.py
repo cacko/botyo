@@ -247,15 +247,19 @@ def image_fromqr(context: Context):
     desc="generates street view image from, coordinates",
     icon="streetview",
     uses_prompt=True,
+    options=[
+        ZSONOption(option="-s", choices=Image.options.styles),
+    ],
 )  # type: ignore
 def geoImage(context: Context):
     try:
         query = context.query
         assert query
         Image.is_admin = context.is_admin
-        geocoder = GeoCoder(context.query)
+        params = Image.street_generator_params(query)
+        geocoder = GeoCoder(' '.join(params.query))
         assert geocoder.lookup_result
-        attachment, msg = Image.streetview(geocoder.lookup_result)
+        attachment, msg = Image.streetview(geocoder.lookup_result, params.style)
         return RenderResult(
             attachment=attachment,
             message=geocoder.lookup(),
