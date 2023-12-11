@@ -232,6 +232,7 @@ class ImageMeta(type):
         namespace, _ = parser.parse_known_args(
             split_with_quotes(normalize_prompt(prompt))
         )
+        
         return StreetViewGeneratorParams(**namespace.__dict__)
 
     def variation(

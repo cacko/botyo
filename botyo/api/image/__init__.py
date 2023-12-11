@@ -258,8 +258,10 @@ def geoImage(context: Context):
         assert query
         Image.is_admin = context.is_admin
         params = Image.street_generator_params(query)
+        logging.debug(params)
         geocoder = GeoCoder(' '.join(params.query))
         assert geocoder.lookup_result
+        logging.debug(geocoder.lookup_result)
         if not params.style:
             params.style = choice(Image.options.styles)
         attachment, msg = Image.streetview(geocoder.lookup_result, params.style)
