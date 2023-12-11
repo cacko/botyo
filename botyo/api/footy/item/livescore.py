@@ -84,6 +84,7 @@ class Livescore(LivescoreData):
                 strLeague=filt
             ))
         ] if filt else []
+        logging.debug(f"filtered {filteredIds}")
         filtered: list[ScoreRow] = [
             ScoreRow(
                 status=x.displayStatus,
