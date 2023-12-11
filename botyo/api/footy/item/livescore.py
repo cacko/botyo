@@ -14,8 +14,8 @@ import logging
 
 
 class GameMatch(Match):
-    minRatio = 10
-    method = MatchMethod.SIMILARITY
+    minRatio = 80
+    method = MatchMethod.WRATIO
 
 
 class GameNeedle(Needle):
