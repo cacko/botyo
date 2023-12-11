@@ -14,7 +14,7 @@ import logging
 
 
 class GameMatch(Match):
-    minRatio = 80
+    minRatio = 70
     method = MatchMethod.WRATIO
 
 
