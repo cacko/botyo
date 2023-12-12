@@ -51,17 +51,12 @@ class ImageGeneratorParams(BaseModel):
 
 class Image2GeneratorParams(BaseModel):
     prompt: Optional[str] = None
-    height: Optional[int] = None
-    width: Optional[int] = None
     guidance_scale: Optional[float] = None
     num_inference_steps: Optional[int] = None
     negative_prompt: Optional[str] = None
     strength: Optional[float] = None
     upscale: int = Field(default=2)
-    auto_prompt: Optional[str] = None
     model: Optional[str] = None
-    aspect_ratio: Optional[str] = None
-    editing_prompt: Optional[list[str]] = None
     template: Optional[str] = None
 
 
@@ -218,10 +213,7 @@ class ImageMeta(type):
             parser.add_argument("-s", "--strength", type=float)
             parser.add_argument("-m", "--model", choices=cls.options.model)
             parser.add_argument("-u", "--upscale", action="store_true")
-            parser.add_argument("-a", "--auto_prompt", type=int)
-            parser.add_argument("-r", "--aspect_ratio", choices=cls.options.resolution)
-            parser.add_argument("-e", "--editing_prompt", action="append", type=str)
-            parser.add_argument("-t", "--template", choices=cls.options.template)
+            parser.add_argument("-t", "--template", choices=cls.options.styles)
             cls.__image2_generator_parser = parser
         return cls.__image2_generator_parser
 
