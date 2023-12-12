@@ -50,6 +50,30 @@ class ImageGeneratorParams(BaseModel):
         return 1
 
 
+class Image2GeneratorParams(BaseModel):
+    prompt: str
+    height: Optional[int] = None
+    width: Optional[int] = None
+    guidance_scale: Optional[float] = None
+    num_inference_steps: Optional[int] = None
+    negative_prompt: Optional[str] = None
+    strength: Optional[int] = None
+    upscale: int = Field(default=2)
+    auto_prompt: Optional[str] = None
+    model: Optional[str] = None
+    aspect_ratio: Optional[str] = None
+    editing_prompt: Optional[list[str]] = None
+    template: Optional[str] = None
+
+
+    @validator("upscale")
+    def static_upscale(cls, upscale: Optional[bool] = None):
+        if not upscale:
+            return 0
+        return 1
+
+
+
 class QRGeneratorParams(BaseModel):
     code: list[str]
     prompt: Optional[str] = None
@@ -87,6 +111,7 @@ class Action(Enum):
     STREETVIEW = "image/streetview"
     UPLOAD2WALLIES = "image/upload2wallies"
     OPTIONS = "image/options"
+    IMG2IMG = "image/img2img"
 
 
 class ImageOptions(BaseModel):
@@ -100,6 +125,7 @@ class ImageOptions(BaseModel):
 
 class ImageMeta(type):
     __image_generator_parser: Optional[ArgumentParser] = None
+    __image2_generator_parser: Optional[ArgumentParser] = None
     __variation_generator_parser: Optional[ArgumentParser] = None
     __qr_generator_parser: Optional[ArgumentParser] = None
     __street_generator_parser: Optional[ArgumentParser] = None
@@ -187,6 +213,33 @@ class ImageMeta(type):
             split_with_quotes(normalize_prompt(prompt))
         )
         return ImageGeneratorParams(**namespace.__dict__)
+    
+    
+
+    @property
+    def image2_generator_parser(cls) -> ArgumentParser:
+        if not cls.__image2_generator_parser:
+            parser = ArgumentParser(description="Image Processing", exit_on_error=False)
+            parser.add_argument("-p", "--prompt")
+            parser.add_argument("-n", "--negative_prompt", type=str)
+            parser.add_argument("-g", "--guidance_scale", type=float)
+            parser.add_argument("-i", "--num_inference_steps", type=int)
+            parser.add_argument("-s", "--strength", type=int)
+            parser.add_argument("-m", "--model", choices=cls.options.model)
+            parser.add_argument("-u", "--upscale", action="store_true")
+            parser.add_argument("-a", "--auto_prompt", type=int)
+            parser.add_argument("-r", "--aspect_ratio", choices=cls.options.resolution)
+            parser.add_argument("-e", "--editing_prompt", action="append", type=str)
+            parser.add_argument("-t", "--template", choices=cls.options.template)
+            cls.__image2_generator_parser = parser
+        return cls.__image2_generator_parser
+
+    def image2_generator_params(cls, prompt: Optional[str]) -> Image2GeneratorParams:
+        parser = cls.image2_generator_parser
+        namespace, _ = parser.parse_known_args(
+            split_with_quotes(normalize_prompt(prompt))
+        )
+        return Image2GeneratorParams(**namespace.__dict__)
 
     @property
     def qrgenerator_parser(cls) -> ArgumentParser:
@@ -239,6 +292,9 @@ class ImageMeta(type):
         cls, attachment: Attachment, prompt: Optional[str] = None
     ) -> tuple[Attachment, str]:
         return cls(attachment).do_variation(prompt)
+    
+    def img2img(cls, attachment: Attachment, prompt: str) -> tuple[Attachment, str]:
+        return cls(attachment).do_img2img(prompt)
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt)
@@ -304,6 +360,17 @@ class Image(object, metaclass=ImageMeta):
                 uuid4().hex,
                 json_data=VariationGeneratorParams().model_dump(),
             )
+
+    def do_img2img(self, prompt: str):
+        try:
+            assert prompt
+            params = Image.image2_generator_params(prompt)
+            return self.getResponse(
+                Action.IMG2IMG, uuid4().hex, json_data=params.model_dump()
+            )
+        except (ValidationErr, ArgumentError) as e:
+            logging.error(e)
+            raise ApiError(f"{e}")
 
     def do_txt2img(self, prompt: str, action: Action = Action.TXT2IMG):
         try:
