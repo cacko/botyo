@@ -66,12 +66,6 @@ class Image2GeneratorParams(BaseModel):
     template: Optional[str] = None
 
 
-    @validator("upscale")
-    def static_upscale(cls, upscale: Optional[bool] = None):
-        if not upscale:
-            return 0
-        return 1
-
 
 
 class QRGeneratorParams(BaseModel):
