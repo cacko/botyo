@@ -51,7 +51,7 @@ class ImageGeneratorParams(BaseModel):
 
 
 class Image2GeneratorParams(BaseModel):
-    prompt: str
+    prompt: Optional[str] = None
     height: Optional[int] = None
     width: Optional[int] = None
     guidance_scale: Optional[float] = None
