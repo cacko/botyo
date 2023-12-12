@@ -14,6 +14,7 @@ from .item.stats import Stats
 from .item.livescore import Livescore
 from .item.lineups import Lineups
 from .item.competitions import Competitions
+from .item.facts import Facts
 from .item.team import Team
 from botyo.threesixfive.exception import GameNotFound, TeamNotFound, CompetitionNotFound
 from botyo.core.config import Config
@@ -47,6 +48,9 @@ class FootyMeta(type):
 
     def lineups(cls, query: str) -> Lineups:
         return cls().getLineups(query)
+
+    def facts(cls, query: str) -> Facts:
+        return cls().getFacts(query)
 
     def team(cls, query: str) -> Team:
         return cls().getTeam(query)
@@ -182,6 +186,10 @@ class Footy(object, metaclass=FootyMeta):
     def getLineups(self, query: str) -> Lineups:
         item = self.__queryGame(query)
         return Lineups(item)
+
+    def getFacts(self, query: str) -> Facts:
+        item = self.__queryGame(query)
+        return Facts(item)
 
     def getStats(self, query: str) -> Stats:
         item = self.__queryGame(query)

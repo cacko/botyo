@@ -67,15 +67,13 @@ def subscribe_command(context: Context):
     try:
         assert context.query
         result = Footy.subscribe(
-            client=context.client,
-            groupID=context.group,
-            query=context.query
+            client=context.client, groupID=context.group, query=context.query
         )
         return RenderResult(
             method=ZMethod.FOOTY_SUBSCRIBE,
             message=result.message,
             group=context.group,
-            new_id=result.sub_id
+            new_id=result.sub_id,
         )
     except Exception as e:
         logging.exception(e)
@@ -101,7 +99,6 @@ def unsubscribe_command(context: Context):
             message=result.message,
             new_id=result.sub_id,
             group=context.group,
-
         )
     except Exception:
         return EmptyResult()
@@ -130,9 +127,8 @@ def subscriptions_command(context: Context) -> RenderResult:
 
 
 @bp.command(
-    method=ZMethod.FOOTY_LEAGUES,
-    desc="Enabled leagues",
-    icon="emoji_events")  # type: ignore
+    method=ZMethod.FOOTY_LEAGUES, desc="Enabled leagues", icon="emoji_events"
+)  # type: ignore
 def competitions_command(context: Context) -> RenderResult:
     try:
         competitions = Footy.competitions()
@@ -143,10 +139,21 @@ def competitions_command(context: Context) -> RenderResult:
         return EmptyResult()
 
 
+@bp.command(method=ZMethod.FOOTY_FACTS, desc="Gxzame facts", icon="fact_check")  # type: ignore
+def facts_command(context: Context) -> RenderResult:
+    try:
+        assert context.query
+        facts = Footy.facts(context.query)
+        message = facts.message
+        assert message
+        return RenderResult(message=message, method=ZMethod.FOOTY_FACTS)
+    except Exception:
+        return EmptyResult()
+
+
 @bp.command(
-    method=ZMethod.FOOTY_LINEUP,
-    desc="Game lineup",
-    icon="fact_check")  # type: ignore
+    method=ZMethod.FOOTY_LINEUP, desc="Game lineup", icon="sports_soccer"
+)  # type: ignore
 def lineups_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -163,9 +170,8 @@ def lineups_command(context: Context) -> RenderResult:
 
 # type: ignore
 @bp.command(
-    method=ZMethod.FOOTY_STATS,
-    desc="Game stats",
-    icon="equalizer")  # type: ignore
+    method=ZMethod.FOOTY_STATS, desc="Game stats", icon="equalizer"
+)  # type: ignore
 def stats_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -179,9 +185,8 @@ def stats_command(context: Context) -> RenderResult:
 
 # type: ignore
 @bp.command(
-    method=ZMethod.FOOTY_PLAYER,
-    desc="Player stats",
-    icon="snowboarding")  # type: ignore
+    method=ZMethod.FOOTY_PLAYER, desc="Player stats", icon="snowboarding"
+)  # type: ignore
 def player_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -205,9 +210,8 @@ def player_command(context: Context) -> RenderResult:
 
 # type: ignore
 @bp.command(
-    method=ZMethod.FOOTY_STANDINGS,
-    desc="standings",
-    icon="signal_cellular_alt")  # type: ignore
+    method=ZMethod.FOOTY_STANDINGS, desc="standings", icon="signal_cellular_alt"
+)  # type: ignore
 def standings_Command(context: Context):
     try:
         query = context.query
@@ -241,10 +245,7 @@ def standings_Command(context: Context):
         return EmptyResult()
 
 
-@bp.command(
-    method=ZMethod.FOOTY_TEAM,
-    desc="Team info",
-    icon="groups")  # type: ignore
+@bp.command(method=ZMethod.FOOTY_TEAM, desc="Team info", icon="groups")  # type: ignore
 def team_command(context: Context) -> RenderResult:
     try:
         assert context.query
@@ -259,9 +260,8 @@ def team_command(context: Context) -> RenderResult:
 
 # type: ignore
 @bp.command(
-    method=ZMethod.FOOTY_FIXTURES,
-    desc="League fixtures",
-    icon="calendar_month")   # type: ignore
+    method=ZMethod.FOOTY_FIXTURES, desc="League fixtures", icon="calendar_month"
+)  # type: ignore
 def fixtures_command(context: Context) -> RenderResult:
     try:
         assert context.query
