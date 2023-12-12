@@ -357,9 +357,8 @@ class Image(object, metaclass=ImageMeta):
                 json_data=VariationGeneratorParams().model_dump(),
             )
 
-    def do_img2img(self, prompt: str):
+    def do_img2img(self, prompt: Optional[str] = None):
         try:
-            assert prompt
             params = Image.image2_generator_params(prompt)
             return self.getResponse(
                 Action.IMG2IMG, uuid4().hex, json_data=params.model_dump()
@@ -377,9 +376,13 @@ class Image(object, metaclass=ImageMeta):
                 action_param=string_hash(params.prompt),
                 json_data=params.model_dump(),
             )
-        except (ValidationErr, ArgumentError) as e:
-            logging.error(e)
-            raise ApiError(f"{e}")
+        except AssertionError as e:
+            logging.info(e)
+            return self.getResponse(
+                action=action,
+                action_param=uuid4().hex,
+                json_data=Image2GeneratorParams().model_dump(),
+            )
 
     def do_qr2img(self, prompt: str, action: Action = Action.QR2IMG):
         try:
