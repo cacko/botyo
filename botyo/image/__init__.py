@@ -371,11 +371,12 @@ class Image(object, metaclass=ImageMeta):
             params["files"] = {
                 "file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})
             }
-            params["data"] = reduce(
+            form_data = reduce(
                 lambda r, x: {**r, **({x: json.get(x)} if json.get(x, None) else {})},
                 json.keys(),
                 {},
             )
+            params["data"] = {**form_data, "data": form_data}
             logging.debug(params)
         else:
             params["json"] = reduce(
