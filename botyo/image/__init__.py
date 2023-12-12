@@ -1,5 +1,4 @@
 from pathlib import Path
-from random import choice
 from xml.dom import ValidationErr
 from requests import JSONDecodeError
 from botyo.api.console.geo import GeoLocation
@@ -57,15 +56,13 @@ class Image2GeneratorParams(BaseModel):
     guidance_scale: Optional[float] = None
     num_inference_steps: Optional[int] = None
     negative_prompt: Optional[str] = None
-    strength: Optional[int] = None
+    strength: Optional[float] = None
     upscale: int = Field(default=2)
     auto_prompt: Optional[str] = None
     model: Optional[str] = None
     aspect_ratio: Optional[str] = None
     editing_prompt: Optional[list[str]] = None
     template: Optional[str] = None
-
-
 
 
 class QRGeneratorParams(BaseModel):
@@ -89,10 +86,12 @@ class VariationGeneratorParams(BaseModel):
     num_inference_steps: Optional[int] = Field(default=50)
     num_images_per_prompt: Optional[int] = Field(default=1)
 
+
 class StreetViewGeneratorParams(BaseModel):
     query: list[str]
     style: Optional[str] = None
-    
+
+
 class Action(Enum):
     ANALYZE = "face/analyze"
     TAG = "face/tag"
@@ -207,8 +206,6 @@ class ImageMeta(type):
             split_with_quotes(normalize_prompt(prompt))
         )
         return ImageGeneratorParams(**namespace.__dict__)
-    
-    
 
     @property
     def image2_generator_parser(cls) -> ArgumentParser:
@@ -218,7 +215,7 @@ class ImageMeta(type):
             parser.add_argument("-n", "--negative_prompt", type=str)
             parser.add_argument("-g", "--guidance_scale", type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
-            parser.add_argument("-s", "--strength", type=int)
+            parser.add_argument("-s", "--strength", type=float)
             parser.add_argument("-m", "--model", choices=cls.options.model)
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-a", "--auto_prompt", type=int)
@@ -263,32 +260,33 @@ class ImageMeta(type):
             split_with_quotes(normalize_prompt(prompt))
         )
         return QRGeneratorParams(**namespace.__dict__)
-    
-    
+
     @property
     def streetgenerator_parser(cls) -> ArgumentParser:
         if not cls.__street_generator_parser:
             parser = ArgumentParser(description="QR Processing", exit_on_error=False)
             parser.add_argument("query", nargs="+")
-            parser.add_argument("-s", "--style",choices=cls.options.styles)
+            parser.add_argument("-s", "--style", choices=cls.options.styles)
             cls.__street_generator_parser = parser
         return cls.__street_generator_parser
 
-    def street_generator_params(cls, prompt: Optional[str]) -> StreetViewGeneratorParams:
+    def street_generator_params(
+        cls, prompt: Optional[str]
+    ) -> StreetViewGeneratorParams:
         parser = cls.streetgenerator_parser
         if not prompt:
             return StreetViewGeneratorParams(query=[""])
         namespace, _ = parser.parse_known_args(
             split_with_quotes(normalize_prompt(prompt))
         )
-        
+
         return StreetViewGeneratorParams(**namespace.__dict__)
 
     def variation(
         cls, attachment: Attachment, prompt: Optional[str] = None
     ) -> tuple[Attachment, str]:
         return cls(attachment).do_variation(prompt)
-    
+
     def img2img(cls, attachment: Attachment, prompt: str) -> tuple[Attachment, str]:
         return cls(attachment).do_img2img(prompt)
 
@@ -399,11 +397,9 @@ class Image(object, metaclass=ImageMeta):
 
     def do_streetview(self, location: GeoLocation, style: str):
         try:
-            gps_part = ",".join(map(str,location.location))
+            gps_part = ",".join(map(str, location.location))
             return self.getResponse(
-                Action.STREETVIEW,
-                action_param=f"{style}/{gps_part}",
-                method=Method.GET
+                Action.STREETVIEW, action_param=f"{style}/{gps_part}", method=Method.GET
             )
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
@@ -424,7 +420,9 @@ class Image(object, metaclass=ImageMeta):
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
-    def __make_request(self, path: str, json_data: dict = {}, method: Method = Method.POST):
+    def __make_request(
+        self, path: str, json_data: dict = {}, method: Method = Method.POST
+    ):
         attachment = self.__attachment
         params: dict = {}
         logging.debug(self.__attachment)
@@ -438,7 +436,10 @@ class Image(object, metaclass=ImageMeta):
                 "file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})
             }
             form_data = reduce(
-                lambda r, x: {**r, **({x: json_data.get(x)} if json_data.get(x, None) else {})},
+                lambda r, x: {
+                    **r,
+                    **({x: json_data.get(x)} if json_data.get(x, None) else {}),
+                },
                 json_data.keys(),
                 {},
             )
@@ -446,7 +447,10 @@ class Image(object, metaclass=ImageMeta):
             logging.debug(params)
         else:
             params["json"] = reduce(
-                lambda r, x: {**r, **({x: json_data.get(x)} if json_data.get(x, None) else {})},
+                lambda r, x: {
+                    **r,
+                    **({x: json_data.get(x)} if json_data.get(x, None) else {}),
+                },
                 json_data.keys(),
                 {},
             )
@@ -464,7 +468,11 @@ class Image(object, metaclass=ImageMeta):
         )
 
     def getResponse(
-        self, action: Action, action_param=None, json_data: dict = {}, method=Method.POST
+        self,
+        action: Action,
+        action_param=None,
+        json_data: dict = {},
+        method=Method.POST,
     ):
         path = action.value
         if action_param:
