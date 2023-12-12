@@ -230,6 +230,8 @@ class ImageMeta(type):
 
     def image2_generator_params(cls, prompt: Optional[str]) -> Image2GeneratorParams:
         parser = cls.image2_generator_parser
+        if not prompt:
+            return Image2GeneratorParams()
         namespace, _ = parser.parse_known_args(
             split_with_quotes(normalize_prompt(prompt))
         )
