@@ -33,17 +33,11 @@ class Team:
             g = []
             if game.homeCompetitor.id == self.__competitor.id:
                 assert game.awayCompetitor.name
-                g.append(
-                    game.awayCompetitor.name_with_flag
-                    if game.league.is_international
-                    else game.awayCompetitor.name)
+                g.append(game.awayCompetitor.name)
             else:
                 assert game.homeCompetitor.name
                 name = game.homeCompetitor.name
-                if game.league.is_international:
-                    name = game.homeCompetitor.name_with_flag
-                g.append(
-                    f"@{name}")
+                g.append(f"@{name}")
 
             g.append(game.competitionDisplayName)
             startTime = game.startTime
