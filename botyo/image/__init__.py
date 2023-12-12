@@ -295,14 +295,14 @@ class Image(object, metaclass=ImageMeta):
             assert prompt
             params = Image.variation_generator_params(prompt)
             return self.getResponse(
-                Action.VARIATION, uuid4().hex, json=params.model_dump()
+                Action.VARIATION, uuid4().hex, json_data=params.model_dump()
             )
         except AssertionError as e:
             logging.info(e)
             return self.getResponse(
                 Action.VARIATION,
                 uuid4().hex,
-                json=VariationGeneratorParams().model_dump(),
+                json_data=VariationGeneratorParams().model_dump(),
             )
 
     def do_txt2img(self, prompt: str, action: Action = Action.TXT2IMG):
@@ -312,7 +312,7 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(
                 action=action,
                 action_param=string_hash(params.prompt),
-                json=params.model_dump(),
+                json_data=params.model_dump(),
             )
         except (ValidationErr, ArgumentError) as e:
             logging.error(e)
@@ -325,7 +325,7 @@ class Image(object, metaclass=ImageMeta):
             return self.getResponse(
                 action=action,
                 action_param=string_hash(params.code),
-                json=params.model_dump(),
+                json_data=params.model_dump(),
             )
         except (ValidationErr, ArgumentError) as e:
             logging.exception(e)
@@ -352,13 +352,13 @@ class Image(object, metaclass=ImageMeta):
             _, message = self.getResponse(
                 action=Action.UPLOAD2WALLIES,
                 action_param=ip.name,
-                json=params.model_dump(),
+                json_data=params.model_dump(),
             )
             return message
         except (ValidationErr, ArgumentError) as e:
             raise ApiError(f"{e}")
 
-    def __make_request(self, path: str, json: dict = {}, method: Method = Method.POST):
+    def __make_request(self, path: str, json_data: dict = {}, method: Method = Method.POST):
         attachment = self.__attachment
         params: dict = {}
         logging.debug(self.__attachment)
@@ -372,16 +372,16 @@ class Image(object, metaclass=ImageMeta):
                 "file": (f"{p.name}.{kind.extension}", fp, mime, {"Expires": "0"})
             }
             form_data = reduce(
-                lambda r, x: {**r, **({x: json.get(x)} if json.get(x, None) else {})},
-                json.keys(),
+                lambda r, x: {**r, **({x: json_data.get(x)} if json_data.get(x, None) else {})},
+                json_data.keys(),
                 {},
             )
-            params["data"] = {**form_data, "data": form_data}
+            params["data"] = {**form_data, "data": json.dumps(form_data)}
             logging.debug(params)
         else:
             params["json"] = reduce(
-                lambda r, x: {**r, **({x: json.get(x)} if json.get(x, None) else {})},
-                json.keys(),
+                lambda r, x: {**r, **({x: json_data.get(x)} if json_data.get(x, None) else {})},
+                json_data.keys(),
                 {},
             )
             logging.debug(params["json"])
@@ -398,12 +398,12 @@ class Image(object, metaclass=ImageMeta):
         )
 
     def getResponse(
-        self, action: Action, action_param=None, json: dict = {}, method=Method.POST
+        self, action: Action, action_param=None, json_data: dict = {}, method=Method.POST
     ):
         path = action.value
         if action_param:
             path = f"{path}/{action_param}"
-        req = self.__make_request(path=path, json=json, method=method)
+        req = self.__make_request(path=path, json_data=json_data, method=method)
         # if req.status > 400:
         #     raise ApiError("Error")
         message = ""
