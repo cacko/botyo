@@ -212,7 +212,7 @@ def image2image(context: Context):
     except ApiError:
         return RenderResult(
             method=ZMethod.IMAGE_IMG2IMG,
-            message=Image.image_generator_parser.format_help()
+            message=Image.image2_generator_params.format_help()
         )
     except AssertionError:
         return RenderResult(method=ZMethod.IMAGE_IMG2IMG)
