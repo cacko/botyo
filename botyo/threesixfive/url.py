@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 class BASEURL(Enum):
     ALLSCORES = "https://webws.365scores.com/web/games/allscores"
     LIVESCORES = "https://webws.365scores.com/web/games/current"
+    H2H = "https://webws.365scores.com/web/games/h2h"
     GAME = "https://webws.365scores.com/web/game"
     COMPETITIONS = "https://webws.365scores.com/web/competitions"
     COMPETITION_IMAGE = (
@@ -119,6 +120,15 @@ class GameArguments(BaseModel):
     userCountryId: int = Field(default=1)
 
 
+class H2HArguments(BaseModel):
+    gameId: int
+    appTypeId: int = Field(default=5)
+    langId: int = Field(default=1)
+    timezoneName: str = Field(default="UTC")
+    userCountryId: int = Field(default=1)
+
+
+
 class CompetitionsArguments(BaseModel):
     appTypeId: int = Field(default=5)
     langId: int = Field(default=1)
@@ -152,6 +162,10 @@ class UrlMeta(type):
     def game(cls, game_id):
         query = GameArguments(gameId=game_id)
         return f"{BASEURL.GAME.value}/?{urlencode(query.model_dump())}"
+    
+    def h2h(cls, game_id):
+        query = H2HArguments(gameId=game_id)
+        return f"{BASEURL.H2H.value}/?{urlencode(query.model_dump())}"
 
     def competitions(cls):
         query = CompetitionsArguments()

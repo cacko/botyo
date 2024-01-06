@@ -1,3 +1,4 @@
+from botyo.threesixfive.url import Url
 from .livescore_details import ParserDetails
 from .models import Event, H2HGame
 from botyo.core.store import RedisCachable
@@ -36,7 +37,7 @@ class H2H(RedisCachable):
 
     def __fetch(self):
         try:
-            details = ParserDetails.get(self.__item.details)
+            details = ParserDetails.get(Url.h2h(self.__item.id))
             assert details
             assert details.h2hGames
             self._struct = details.h2hGames
