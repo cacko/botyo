@@ -39,7 +39,7 @@ class H2H(RedisCachable):
             details = ParserDetails.get(self.__item.details)
             assert details
             assert details.h2hGames
-            self._struct = detals.hh2hGames
+            self._struct = detals.h2hGames
             return self.tocache(self._struct)
         except AssertionError as e:
             logging.exception(e)
