@@ -94,6 +94,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     FOOTY_GOALS = "ft:goals"
     FOOTY_LIVE = "ft:live"
     FOOTY_TEAM = "ft:team"
+    FOOTY_H2H = "ft:h2h"
     CHAT_DIALOG = "chat:dialog"
     # CHAT_YOUCOMINGTODAY = "chat:youcomingtoday"
     # CHAT_MINDBLOWINGINNIT = "chat:mingblowinginnit"

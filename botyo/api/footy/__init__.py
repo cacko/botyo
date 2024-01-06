@@ -270,3 +270,18 @@ def fixtures_command(context: Context) -> RenderResult:
         return RenderResult(message=message, method=ZMethod.FOOTY_FIXTURES)
     except Exception:
         return EmptyResult()
+
+@bp.command(
+    method=ZMethod.FOOTY_H2H,
+    desc="Head to head stats for active games",
+    icon="scoreboard",
+)  # type: ignore
+def h2h_command(context: Context):
+    try:
+        assert context.query
+        stats = Footy.h2h(context.query)
+        message = stats.message
+        assert message
+        return RenderResult(message=message, method=ZMethod.FOOTY_STATS)
+    except Exception:
+        return EmptyResult()

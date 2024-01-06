@@ -469,6 +469,23 @@ class GameFact(BaseModel):
     text: str
 
 
+class H2HGame(BaseModel):
+    id: int
+    sportId: int
+    competitionId: int
+    seasonNum: int
+    roundNum: int
+    competitionDisplayName: str
+    startTime: datetime
+    statusGroup: int
+    statusText: str
+    shortStatusText: str
+    homeCompetitor: GameCompetitor
+    awayCompetitor: GameCompetitor
+    winner: int
+    scores: list[int]
+
+
 class Game(BaseModel):
     id: int
     sportId: int
@@ -483,6 +500,7 @@ class Game(BaseModel):
     gameTimeDisplay: str
     homeCompetitor: GameCompetitor
     awayCompetitor: GameCompetitor
+    h2hGames: Optional[H2HGame] = None
     odds: Optional[Odds] = None
     roundName: str = Field(default="")
     roundNum: Optional[int] = None
