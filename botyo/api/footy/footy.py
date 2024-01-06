@@ -124,7 +124,6 @@ class Footy(object, metaclass=FootyMeta):
             return res
         except ValueError:
             pass
-        logging.warn(items)
         matcher = GameMatch(haystack=items)
         game = matcher.fuzzy(GameNeedle(strHomeTeam=query, strAwayTeam=query))
         if not len(game):
@@ -210,13 +209,9 @@ class Footy(object, metaclass=FootyMeta):
     def removeSubscription(self, client: str, query: str, group) -> SubscriptionResult:
         item = self.__queryGame(query)
         sc = SubscriptionClient(client_id=client, group_id=group)
-        logging.warning(sc)
         sub = Subscription.get(event=item, sc=sc)
-        logging.warning(sub)
         sub_id = sub.id
         sub.cancel(sc)
-        logging.warning(sub.id)
-        logging.warning(Scheduler.get_jobs())
         icon = emojize(":dango:")
         return SubscriptionResult(
             message=f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}",
