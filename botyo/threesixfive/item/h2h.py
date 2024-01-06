@@ -24,6 +24,10 @@ class H2H(RedisCachable):
     @property
     def id(self):
         return f"{self.__item.id}"
+    
+    @property
+    def isCached(self) -> bool:
+        return False
 
     @property
     def games(self) -> Optional[list[H2HGame]]:
