@@ -282,6 +282,7 @@ def h2h_command(context: Context):
         stats = Footy.h2h(context.query)
         message = stats.message
         assert message
-        return RenderResult(message=message, method=ZMethod.FOOTY_STATS)
-    except Exception:
+        return RenderResult(message=message, method=ZMethod.FOOTY_H2H)
+    except Exception as e:
+        logging.exception(e)
         return EmptyResult()
