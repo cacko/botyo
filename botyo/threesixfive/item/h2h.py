@@ -43,6 +43,7 @@ class H2H(RedisCachable):
         try:
             req = Request(Url.h2h(self.__item.id))
             json = req.json
+            logging.warn(json)
             details = ResponseGame(**json)  # type: ignore
             assert details
             assert details.h2hGames
