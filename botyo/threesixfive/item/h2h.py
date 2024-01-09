@@ -42,6 +42,7 @@ class H2H(RedisCachable):
     def __fetch(self):
         try:
             req = Request(Url.h2h(self.__item.id))
+            logging.warn(Url.h2h(self.__item.id))
             json = req.json
             logging.warn(json)
             details = ResponseGame(**json)  # type: ignore
