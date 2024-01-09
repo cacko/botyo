@@ -473,8 +473,6 @@ class H2HGame(BaseModel):
     id: int
     sportId: int
     competitionId: int
-    seasonNum: int
-    roundNum: int
     competitionDisplayName: str
     startTime: datetime
     statusGroup: int
@@ -484,6 +482,8 @@ class H2HGame(BaseModel):
     awayCompetitor: GameCompetitor
     winner: int
     scores: list[int]
+    roundNum: Optional[int] = None
+    seasonNum: Optional[int] = None
 
 
 class Game(BaseModel):
