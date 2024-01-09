@@ -1,5 +1,5 @@
 from botyo.threesixfive.url import Url
-from .models import Event, H2HGame
+from .models import Event, H2HGame, ResponseGame
 from botyo.core.store import RedisCachable
 from typing import Optional
 import logging
