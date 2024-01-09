@@ -500,7 +500,7 @@ class Game(BaseModel):
     gameTimeDisplay: str
     homeCompetitor: GameCompetitor
     awayCompetitor: GameCompetitor
-    h2hGames: Optional[H2HGame] = None
+    h2hGames: Optional[list[H2HGame]] = None
     odds: Optional[Odds] = None
     roundName: str = Field(default="")
     roundNum: Optional[int] = None
