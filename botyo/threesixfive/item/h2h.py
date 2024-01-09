@@ -1,5 +1,5 @@
 from botyo.threesixfive.url import Url
-from .models import Event, H2HGame, ResponseGame
+from .models import Event, H2HGame, ResponseGame, ResponseH2H
 from botyo.core.store import RedisCachable
 from typing import Optional
 import logging
@@ -45,7 +45,7 @@ class H2H(RedisCachable):
             logging.warn(Url.h2h(self.__item.idEvent))
             json = req.json
             logging.warn(json)
-            details = ResponseGame(**json)  # type: ignore
+            details = ResponseH2H(**json)  # type: ignore
             assert details
             assert details.h2hGames
             self._struct = details.h2hGames

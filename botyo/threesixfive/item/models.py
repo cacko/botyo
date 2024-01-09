@@ -738,6 +738,9 @@ class ResponseGame(BaseModel):
         if not self.game:
             return None
         return self.game.shortStatusText
+    
+class ResponseH2H(BaseModel):
+    game: Game
 
 
 class ResponseScores(BaseModel):
