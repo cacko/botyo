@@ -301,7 +301,6 @@ class Subscription(metaclass=SubscriptionMeta):
         #         del self.goals_queue[gid]
 
     def sendGoal(self, message: str, attachment: Path, player: Optional[str] = None):
-        return
         for sc in self.subscriptions:
             if sc.is_rest:
                 continue
@@ -332,7 +331,6 @@ class Subscription(metaclass=SubscriptionMeta):
                 pass
 
     def processGoals(self, game: GameDetails):
-        return
         try:
             events = game.events
             members = game.members
@@ -368,7 +366,6 @@ class Subscription(metaclass=SubscriptionMeta):
             pass
 
     def checkGoals(self, updated: Optional[ResponseGame] = None):
-        return
         if updated:
             try:
                 assert updated.game
