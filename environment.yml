@@ -217,7 +217,7 @@ dependencies:
       - opencv-python==4.8.0.76
       - pandas==1.5.3
       - pathy==0.10.1
-      - pillow==10.1.0
+      - pillow==9.5.0
       - pilmoji==2.0.2
       - pixelme==0.4.13
       - preshed==3.0.8

@@ -42,7 +42,7 @@ class Emoji(object, metaclass=EmojiMeta):
                            (255, 255, 255, 0)) as image:
                 with Pilmoji(image) as pilmoji:
                     pilmoji.text((0, 0), self.__txt.strip(), (0, 0, 0),
-                                 __class__.font)
+                                 self.__class__.font)
                     self.__image = pilmoji.image
         return self.__image
 

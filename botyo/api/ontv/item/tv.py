@@ -15,7 +15,7 @@ class Event(BaseModel):
     name: str
     time: datetime
     channels: list[str]
-    tvchannels: list[int]
+    # tvchannels: list[int]
     sport: str
     country: str
     season: str
