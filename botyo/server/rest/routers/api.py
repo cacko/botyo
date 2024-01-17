@@ -1,5 +1,6 @@
 from turtle import title
 from typing import Annotated
+from urllib import request
 from uuid import uuid4
 from requests import post
 from botyo.api.footy.item.livescore import Livescore
@@ -20,6 +21,7 @@ from corefile import TempPath
 from botyo.lametric import LaMetric
 from botyo.lametric.models import Track as LametricTrack
 from botyo.core.image import download_image
+import requests
 
 router = APIRouter()
 
@@ -181,11 +183,8 @@ async def post_nowplaying(
         return LaMetric.nowplaying(text, icon.as_posix())
     except AssertionError as e:
         logging.error(e)
-    return {}
-
-    data = await request.body()
-
-    logging.warning(data)
+    except requests.exceptions.InvalidURL:
+        logging.error(f"art={art}, artist={artist}, track={track}")
     return {}
 
 
