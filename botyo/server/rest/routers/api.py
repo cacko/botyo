@@ -177,7 +177,7 @@ async def put_nowplaying(request: Request):
 
 @router.post("/api/nowplaying", tags=["api"])
 async def post_nowplaying(request: Request):
-    data = await request.json()
+    data = await request.form()
     logging.warning(data)
     return {}
 
