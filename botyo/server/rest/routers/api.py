@@ -162,8 +162,8 @@ async def get_beats(path: str):
         raise HTTPException(404)
 
 
-@router.post("/api/nowplaying", tags=["api"])
-async def post_nowplaying(request: Request):
+@router.put("/api/nowplaying", tags=["api"])
+async def put_nowplaying(request: Request):
     def persist(data: dict):
         _ = Track(**data)
         Track.persist()
@@ -173,6 +173,12 @@ async def post_nowplaying(request: Request):
         await run_in_threadpool(persist, data=data)
     except AssertionError as e:
         logging.error(e)
+    return {}
+
+@router.post("/api/nowplaying", tags=["api"])
+async def post_nowplaying(request: Request):
+    data = await request.json()
+    logging.warning(data)
     return {}
 
 
