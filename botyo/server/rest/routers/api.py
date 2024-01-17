@@ -176,7 +176,7 @@ async def post_nowplaying(
     track: Annotated[str, Form()],
 ):
     try:
-        text = f"{artist}  / {title}"
+        text = f"{artist}  / {track}"
         icon = download_image(art)
         return LaMetric.nowplaying(text, icon.as_posix())
     except AssertionError as e:
