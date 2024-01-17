@@ -182,7 +182,7 @@ async def put_nowplaying(request: Request):
     return {}
 
 @router.post("/api/nowplaying", tags=["api"])
-async def post_nowplaying(track: Annotated[LametricTrack, Body(enbed=True)]):
+async def post_nowplaying(track: LametricTrack):
     try:
         text = f"{track.artist}  / {track.title}"
         icon = download_image(track.art)
