@@ -27,7 +27,7 @@ class OTP(object, metaclass=OTPMeta):
 
     def __init__(self) -> None:
         conf = app_config.lametric
-        self.__totp = pyotp.TOTP(conf.get("secret"))
+        self.__totp = pyotp.TOTP(conf.secret)
 
     def getCode(self):
         return self.__totp.now()

@@ -45,7 +45,7 @@ class LaMetric(object, metaclass=LaMetricMeta):
         conf = app_config.lametric
         if not conf:
             return
-        host = environ.get("LAMETRIC_CONTROLLER", conf.get("host"))
+        host = environ.get("LAMETRIC_CONTROLLER", conf.host)
         try:
             response = requests.request(
                 method=method.value,
