@@ -13,14 +13,7 @@ from botyo.threesixfive.item.models import CancelJobEvent
 from botyo.core.otp import OTP
 from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
 from botyo.api.footy.footy import Footy
-from fastapi import (
-    APIRouter,
-    Body,
-    File,
-    Request,
-    HTTPException,
-    Form
-)
+from fastapi import APIRouter, Body, File, Request, HTTPException, Form
 import logging
 from fastapi.concurrency import run_in_threadpool
 from corefile import TempPath
@@ -64,9 +57,7 @@ async def get_team_schedule(
 
 
 @router.post("/api/subscribe", tags=["api"])
-async def post_subscribe(
-    request: Request
-):
+async def post_subscribe(request: Request):
     data = await request.json()
     assert isinstance(data, dict)
     res = Footy.subscribe(
@@ -81,10 +72,7 @@ async def post_subscribe(
 async def post_subscriptions(request: Request):
     data = await request.json()
     assert isinstance(data, dict)
-    sc = SubscriptionClient(
-        data.get("webhook", ""),
-        data.get("group")
-    )
+    sc = SubscriptionClient(data.get("webhook", ""), data.get("group"))
     jobs = Subscription.forGroup(sc)
     return [{"id": job.id, "text": job.name} for job in jobs]
 
@@ -93,10 +81,7 @@ async def post_subscriptions(request: Request):
 async def post_unsubscribe(request: Request):
     data = await request.json()
     assert isinstance(data, dict)
-    sc = SubscriptionClient(
-        data.get("webhook", ""),
-        data.get("group")
-    )
+    sc = SubscriptionClient(data.get("webhook", ""), data.get("group"))
     jobs = Subscription.forGroup(sc)
     id_parts = data.get("id", "").split(":")
     for job in jobs:
@@ -106,8 +91,7 @@ async def post_unsubscribe(request: Request):
                 post(
                     data.get("webhook", ""),
                     headers=OTP(data.get("group", "")).headers,
-                    json=CancelJobEvent(
-                        job_id=id_parts[0]).model_dump(),
+                    json=CancelJobEvent(job_id=id_parts[0]).model_dump(),
                 )
                 return {"message": f"unsubscribed from {job.name}"}
         except ValueError:
@@ -162,9 +146,10 @@ async def get_beats(path: str):
     def extract(path):
         beats = Beats(path=path)
         return beats.model.model_dump()
+
     try:
         return await run_in_threadpool(extract, path=path)
-    except (FileNotFoundError):
+    except FileNotFoundError:
         raise HTTPException(404)
 
 
@@ -173,6 +158,7 @@ async def put_nowplaying(request: Request):
     def persist(data: dict):
         _ = Track(**data)
         Track.persist()
+
     try:
         data = await request.json()
         assert isinstance(data, dict)
@@ -181,18 +167,24 @@ async def put_nowplaying(request: Request):
         logging.error(e)
     return {}
 
+
 @router.post("/api/nowplaying", tags=["api"])
-async def post_nowplaying(track: LametricTrack):
+async def post_nowplaying(
+    art: Annotated[str, Form()],
+    artist: Annotated[str, Form()],
+    album: Annotated[str, Form()],
+    track: Annotated[str, Form()],
+):
     try:
-        text = f"{track.artist}  / {track.title}"
-        icon = download_image(track.art)
+        text = f"{artist}  / {title}"
+        icon = download_image(art)
         return LaMetric.nowplaying(text, icon.as_posix())
     except AssertionError as e:
         logging.error(e)
     return {}
-    
+
     data = await request.body()
-    
+
     logging.warning(data)
     return {}
 
