@@ -1,4 +1,5 @@
 from turtle import title
+from typing import Annotated
 from uuid import uuid4
 from requests import post
 from botyo.api.footy.item.livescore import Livescore
@@ -14,6 +15,7 @@ from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
 from botyo.api.footy.footy import Footy
 from fastapi import (
     APIRouter,
+    Body,
     File,
     Request,
     HTTPException,
@@ -23,6 +25,7 @@ import logging
 from fastapi.concurrency import run_in_threadpool
 from corefile import TempPath
 from botyo.lametric import LaMetric
+from botyo.lametric.models import Track as LametricTrack
 from botyo.core.image import download_image
 
 router = APIRouter()
@@ -179,10 +182,10 @@ async def put_nowplaying(request: Request):
     return {}
 
 @router.post("/api/nowplaying", tags=["api"])
-async def post_nowplaying(art: str, artist: str, album: str, track: str):
+async def post_nowplaying(track: Annotated[LametricTrack, Body(enbed=True)]):
     try:
-        text = f"{artist}  / {title}"
-        icon = download_image(art)
+        text = f"{track.artist}  / {track.title}"
+        icon = download_image(track.art)
         return LaMetric.nowplaying(text, icon.as_posix())
     except AssertionError as e:
         logging.error(e)

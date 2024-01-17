@@ -1,5 +1,7 @@
 from enum import StrEnum
 
+from pydantic import BaseModel
+
 
 class Status(StrEnum):
     PLAYING = "playing"
@@ -11,3 +13,9 @@ class Status(StrEnum):
     NEXT = "next"
     PREVIOUS = "previous"
     ERROR = "error"
+
+class Track(BaseModel):
+    art: str
+    artist: str
+    album: str
+    track: str
