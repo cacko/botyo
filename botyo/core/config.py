@@ -115,6 +115,10 @@ class UsersConfig(BaseModel):
     superuser: SuperUser
 
 
+class LametricConfig(BaseModel):
+    host: str
+    secret: str
+
 class ConfigStruct(BaseModel):
     geo: GeoConfig
     ontv: OntvConfig
@@ -131,6 +135,7 @@ class ConfigStruct(BaseModel):
     s3: Optional[S3Config] = None
     imgflip: Optional[ImgFlipConfig] = None
     users: UsersConfig
+    lametric: LametricConfig
 
 
 class ConfigMeta(type):
@@ -200,6 +205,10 @@ class ConfigMeta(type):
     @property
     def users(cls) -> UsersConfig:
         return cls().struct.users
+    
+    @property
+    def lametric(cls) -> LametricConfig:
+        return cls().struct.lametric
 
 
 class Config(object, metaclass=ConfigMeta):
