@@ -59,7 +59,7 @@ class Konkat(object, metaclass=KonkatMeta):
         input_path = f"{self.__storage.as_posix()}/{collage_id}*"
         collage_path, collage_hash = Concat(file_dst).concat_from_paths([
             Path(input_path)
-        ])
+        ], shuffle=True)
         filename = f"koncat_{collage_id}_{collage_hash}.webp"
         file_dst = self.__storage / filename
         move(collage_path.as_posix(), file_dst.as_posix())
