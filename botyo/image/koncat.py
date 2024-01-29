@@ -24,8 +24,8 @@ class KonkatMeta(type):
     def upload(cls, tmp_path: Path, collage_id: str) -> KonkatFile:
         return cls().do_upload(tmp_path, collage_id)
 
-    def collage(cls, collage_id: str) -> KonkatFile:
-        return cls().get_collage(collage_id)
+    def collage(cls, collage_id: str, shuffle: bool = False) -> KonkatFile:
+        return cls().get_collage(collage_id, shuffle)
 
     def files(cls, collage_id: str) -> list[KonkatFile]:
         return [kf for kf in cls().get_files(collage_id)]
@@ -53,13 +53,13 @@ class Konkat(object, metaclass=KonkatMeta):
             url=f"https://cdn.cacko.net/{s3key}"
         )
 
-    def get_collage(self, collage_id: str) -> KonkatFile:
+    def get_collage(self, collage_id: str, shuffle: bool = False) -> KonkatFile:
         filename = f"collage_{collage_id}.webp"
         file_dst = self.__storage / filename
         input_path = f"{self.__storage.as_posix()}/{collage_id}*"
         collage_path, collage_hash = Concat(file_dst).concat_from_paths([
             Path(input_path)
-        ], shuffle=False)
+        ], shuffle=shuffle)
         filename = f"koncat_{collage_id}_{collage_hash}.webp"
         file_dst = self.__storage / filename
         move(collage_path.as_posix(), file_dst.as_posix())

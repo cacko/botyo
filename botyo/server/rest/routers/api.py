@@ -159,7 +159,7 @@ async def get_beats(path: str):
 async def put_nowplaying(request: Request):
     def persist(data: dict):
         _ = Track(**data)
-        Track.persist()
+        Track.persis
 
     try:
         data = await request.json()
@@ -192,7 +192,7 @@ async def post_nowplaying(
 async def upload_koncat(
     request: Request,
     file: bytes = File(),
-    collage_id: str = Form(),
+    collage_id: str = Form()
 ):
     uploaded_path = TempPath(uuid4().hex)
     uploaded_path.write_bytes(file)
@@ -210,5 +210,5 @@ async def get_konkat_files(collage_id: str):
 
 
 @router.get("/api/koncat/{collage_id}", tags=["api"])
-async def get_colage(collage_id: str):
+async def get_colage(collage_id: str, shuffle: bool = False) :
     return Konkat.collage(collage_id).model_dump()
