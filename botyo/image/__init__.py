@@ -58,6 +58,7 @@ class Image2GeneratorParams(BaseModel):
     model: Optional[str] = None
     template: Optional[str] = None
     style: Optional[str] = None
+    strength: Optional[float] = None
 
 
 class QRGeneratorParams(BaseModel):
@@ -214,6 +215,7 @@ class ImageMeta(type):
             parser.add_argument("-g", "--guidance_scale", type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-s", "--style", choices=cls.options.styles)
+            parser.add_argument("-st", "--strength", type=float)
             parser.add_argument("-m", "--model", choices=cls.options.model)
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-t", "--template", choices=cls.options.template)

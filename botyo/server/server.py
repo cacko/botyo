@@ -93,7 +93,8 @@ class Server(object, metaclass=ServerMeta):
             pass
         for srv in self.servers:
             srv.stop()
-        self.tcpserver.terminate()
+        if self.tcpserver:
+            self.tcpserver.terminate()
 
 
 class Worker(StoppableThread):
