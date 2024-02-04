@@ -196,7 +196,12 @@ def image_fromtext(context: Context):
     desc="image of image",
     upload=True,
     icon="collections",
-    uses_prompt=True
+    uses_prompt=True,
+    options=[
+        ZSONOption(option="-m", choices=Image.options.model),
+        ZSONOption(option="-s", choices=Image.options.styles),
+        ZSONOption(option="-t", choices=Image.options.template),
+    ],
 )  # type: ignore
 def image2image(context: Context):
     try:

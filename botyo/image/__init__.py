@@ -54,10 +54,10 @@ class Image2GeneratorParams(BaseModel):
     guidance_scale: Optional[float] = None
     num_inference_steps: Optional[int] = None
     negative_prompt: Optional[str] = None
-    strength: Optional[float] = None
     upscale: int = Field(default=2)
     model: Optional[str] = None
     template: Optional[str] = None
+    style: Optional[str] = None
 
 
 class QRGeneratorParams(BaseModel):
@@ -155,6 +155,7 @@ class ImageMeta(type):
             json_data = rs.json
             assert json_data
             cls.__options = ImageOptions(**json_data)
+            logging.debug(cls.__options)
         return cls.__options
 
     @property
@@ -205,7 +206,9 @@ class ImageMeta(type):
     @property
     def image2_generator_parser(cls) -> ArgumentParser:
         if not cls.__image2_generator_parser:
-            parser = ArgumentParser(description="Image Processing", exit_on_error=False)
+            parser = ArgumentParser(
+                description="Image2Image Processing", exit_on_error=False
+            )
             parser.add_argument("-p", "--prompt")
             parser.add_argument("-n", "--negative_prompt", type=str)
             parser.add_argument("-g", "--guidance_scale", type=float)
@@ -219,11 +222,10 @@ class ImageMeta(type):
 
     def image2_generator_params(cls, prompt: Optional[str]) -> Image2GeneratorParams:
         parser = cls.image2_generator_parser
-        if not prompt:
-            return Image2GeneratorParams()
-        namespace, _ = parser.parse_known_args(
-            split_with_quotes(normalize_prompt(prompt))
-        )
+        logging.debug(prompt)
+        args = split_with_quotes(normalize_prompt(prompt))
+        logging.debug(args)
+        namespace, _ = parser.parse_known_args(args)
         return Image2GeneratorParams(**namespace.__dict__)
 
     @property
@@ -418,6 +420,7 @@ class Image(object, metaclass=ImageMeta):
         attachment = self.__attachment
         params: dict = {}
         logging.debug(self.__attachment)
+        logging.debug(json_data)
         if attachment:
             p = Path(attachment.path)
             kind = filetype.guess(p.as_posix())

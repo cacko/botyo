@@ -11,7 +11,7 @@ from markdown import markdown
 from PIL import Image, ImageDraw, ImageFont
 from tabulate import tabulate
 from texttable import Texttable
-from textacy.preprocessing import pipeline, remove, replace
+from textacy.preprocessing import pipeline, remove, replace, normalize
 from .unicode_text import convert, STYLE_MONO
 from pydantic import BaseModel
 
@@ -24,6 +24,7 @@ def clean_markdown(s: str):
         remove.html_tags,
         replace.emojis,
         replace.hashtags,
+        normalize.repeating_chars
     )
     return clean_pipeline(html)
 
