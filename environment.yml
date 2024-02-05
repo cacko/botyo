@@ -12,7 +12,6 @@ dependencies:
   - ca-certificates=2023.5.7
   - cairo=1.16.0
   - cffi=1.15.1
-  - click=8.1.3
   - colorama=0.4.6
   - cryptography=39.0.0
   - cycler=0.11.0
@@ -31,7 +30,6 @@ dependencies:
   - freetype=2.12.1
   - gettext=0.21.1
   - icu=70.1
-  - idna=3.4
   - isort=5.11.4
   - joblib=1.2.0
   - jpeg=9e
@@ -41,6 +39,7 @@ dependencies:
   - libbrotlicommon=1.0.9
   - libbrotlidec=1.0.9
   - libbrotlienc=1.0.9
+  - libcxx=16.0.6
   - libdeflate=1.17
   - libedit=3.1.20191231
   - libexpat=2.5.0
@@ -90,7 +89,6 @@ dependencies:
   - python-dateutil=2.8.2
   - python_abi=3.11
   - readline=8.1.2
-  - requests=2.28.2
   - six=1.16.0
   - sqlite=3.40.0
   - threadpoolctl=3.1.0
@@ -100,7 +98,6 @@ dependencies:
   - typed-ast=1.5.4
   - typing=3.10.0.0
   - unicodedata2=15.0.0
-  - urllib3=1.26.14
   - wheel=0.38.4
   - wrapt=1.14.1
   - x264=1!164.3095
@@ -121,7 +118,7 @@ dependencies:
   - pip:
       - a-cv-imwrite-imread-plus==0.13
       - a-cv2-easy-resize==0.10
-      - annotated-types==0.5.0
+      - annotated-types==0.6.0
       - anyio==3.7.1
       - apscheduler==3.10.3
       - arrow==1.2.3
@@ -133,6 +130,7 @@ dependencies:
       - autoflake8==0.4.1
       - autopep8==2.0.2
       - beautifulsoup4==4.11.1
+      - beets==1.6.0
       - better-exceptions==0.3.3
       - blis==0.7.9
       - boto3==1.28.70
@@ -143,16 +141,17 @@ dependencies:
       - cairocffi==1.4.0
       - cairosvg==2.6.0
       - catalogue==2.0.8
-      - certifi==2022.12.7
-      - charset-normalizer==3.0.1
+      - certifi==2023.11.17
+      - charset-normalizer==3.3.2
+      - click==8.1.7
       - cloudpathlib==0.16.0
       - commonmark==0.9.1
       - confection==0.1.3
       - confuse==2.0.0
       - corefile==0.1.5
-      - coreimage==0.0.64
-      - corelog==0.0.12
-      - corestring==0.2.5
+      - coreimage==0.0.84
+      - corelog==0.0.16
+      - corestring==0.3.7
       - corethread==0.1.3
       - coretime==0.1.5
       - create-empty-image==0.10
@@ -162,15 +161,18 @@ dependencies:
       - cytoolz==0.12.1
       - dataclasses-json==0.5.7
       - defusedxml==0.7.1
-      - emoji==2.8.0
+      - einops==0.7.0
+      - emoji==2.10.0
       - emoji-country-flag==1.3.1
       - faker==17.6.0
       - fastapi==0.103.1
+      - filelock==3.13.1
       - filetype==1.2.0
       - firebase-admin==6.1.0
-      - flake8==6.1.0
+      - flake8==7.0.0
       - floret==0.10.4
       - fs==2.4.16
+      - fsspec==2023.12.2
       - fuzzelinho==0.2.5
       - google-api-core==2.11.0
       - google-api-python-client==2.76.0
@@ -193,31 +195,33 @@ dependencies:
       - humanfriendly==10.0
       - hypercorn==0.14.3
       - hyperframe==6.0.1
+      - idna==3.6
       - isiter==0.10
       - jellyfish==0.9.0
-      - jinja2==3.1.2
+      - jinja2==3.1.3
       - jmespath==1.0.1
       - langcodes==3.3.0
       - levenshtein==0.21.0
       - markdown==3.4.1
-      - markdown-it-py==2.1.0
-      - markupsafe==2.1.2
+      - markdown-it-py==3.0.0
+      - markupsafe==2.1.4
       - marshmallow==3.19.0
       - marshmallow-enum==1.5.1
       - mdurl==0.1.2
       - mediafile==0.11.0
       - mediainfo==0.0.9
+      - mpmath==1.3.0
       - msgpack==1.0.4
       - multiavatar==1.0.3
       - murmurhash==1.0.9
       - musicbrainzngs==0.7.1
       - mutagen==1.46.0
-      - networkx==3.0
-      - numpy==1.24.1
-      - opencv-python==4.8.0.76
+      - networkx==3.2.1
+      - numpy==1.26.3
+      - opencv-python==4.9.0.80
       - pandas==1.5.3
       - pathy==0.10.1
-      - pillow==9.5.0
+      - pillow==10.2.0
       - pilmoji==2.0.2
       - pixelme==0.4.13
       - preshed==3.0.8
@@ -229,13 +233,13 @@ dependencies:
       - py-avataaars==1.1.2
       - pyasn1==0.4.8
       - pyasn1-modules==0.2.8
-      - pycodestyle==2.11.0
+      - pycodestyle==2.11.1
       - pycountry==22.3.5
-      - pydantic==2.4.2
-      - pydantic-core==2.10.1
-      - pyfiglet==0.8.post1
-      - pyflakes==3.1.0
-      - pygments==2.16.1
+      - pydantic==2.5.3
+      - pydantic-core==2.14.6
+      - pyfiglet==1.0.2
+      - pyflakes==3.2.0
+      - pygments==2.17.2
       - pyjwt==2.6.0
       - pyotp==2.8.0
       - pyphen==0.13.2
@@ -248,20 +252,22 @@ dependencies:
       - pytz-deprecation-shim==0.1.0.post0
       - pyyaml==6.0
       - qrcode==7.4.2
-      - questionary==2.0.0
+      - questionary==2.0.1
       - random-user-agent==1.0.1
       - rapidfuzz==3.1.0
       - rectangle-packer==2.0.2
       - redis==4.4.2
-      - requests-toolbelt==0.10.1
-      - rich==12.6.0
+      - requests==2.31.0
+      - requests-toolbelt==1.0.0
+      - rich==13.7.0
       - rsa==4.9
       - s3transfer==0.7.0
+      - safetensors==0.4.2
       - scikit-learn==1.2.0
       - scipy==1.10.0
       - segno==1.6.0
-      - semver==3.0.1
-      - setuptools==65.7.0
+      - semver==3.0.2
+      - setuptools==69.0.3
       - smart-open==6.3.0
       - sniffio==1.3.0
       - soundfile==0.12.1
@@ -269,10 +275,12 @@ dependencies:
       - spacy==3.7.2
       - spacy-legacy==3.0.11
       - spacy-loggers==1.0.4
+      - spandrel==0.2.1
       - srsly==2.4.5
       - starlette==0.27.0
       - stringcase==1.2.0
-      - structlog==22.3.0
+      - structlog==24.1.0
+      - sympy==1.12
       - tabulate==0.9.0
       - term-image==0.8.0
       - textacy==0.13.0
@@ -283,21 +291,24 @@ dependencies:
       - tolerant-isinstance==0.10
       - toml==0.10.2
       - toolz==0.12.0
+      - torch==2.1.2
+      - torchvision==0.16.2
       - touchtouch==0.11
       - tqdm==4.64.1
       - typer==0.7.0
-      - typing-extensions==4.7.1
+      - typing-extensions==4.9.0
       - typing-inspect==0.8.0
       - tzdata==2022.7
       - tzlocal==4.2
       - unidecode==1.3.6
       - uritemplate==4.1.1
+      - urllib3==2.1.0
       - uvicorn==0.20.0
       - uvloop==0.17.0
       - validators==0.20.0
       - wasabi==1.1.1
       - watchfiles==0.18.1
-      - wcwidth==0.2.6
+      - wcwidth==0.2.13
       - weasel==0.3.3
       - webencodings==0.5.1
       - websockets==10.4
