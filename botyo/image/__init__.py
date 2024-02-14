@@ -69,7 +69,7 @@ class FaceGeneratorParams(BaseModel):
     model: Optional[str] = None
     template: Optional[str] = None
     scale: Optional[float] = None
-    face_index: Optional[int] = None
+    # face_index: Optional[int] = None
 
 class QRGeneratorParams(BaseModel):
     code: list[str]
@@ -254,7 +254,7 @@ class ImageMeta(type):
             parser.add_argument("-g", "--guidance_scale", type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-sc", "--scale", type=float)
-            parser.add_argument("-fi", "--face_index", type=int)
+            # parser.add_argument("-fi", "--face_index", type=int)
             parser.add_argument("-m", "--model", choices=cls.options.model)
             parser.add_argument("-t", "--template", choices=cls.options.template)
             cls.__face_generator_parser = parser
