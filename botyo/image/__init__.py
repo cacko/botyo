@@ -61,6 +61,15 @@ class Image2GeneratorParams(BaseModel):
     strength: Optional[float] = None
 
 
+class FaceGeneratorParams(BaseModel):
+    prompt: Optional[str] = None
+    guidance_scale: Optional[float] = None
+    num_inference_steps: Optional[int] = None
+    negative_prompt: Optional[str] = None
+    model: Optional[str] = None
+    template: Optional[str] = None
+    scale: Optional[float] = None
+
 class QRGeneratorParams(BaseModel):
     code: list[str]
     prompt: Optional[str] = None
@@ -101,6 +110,7 @@ class Action(Enum):
     UPLOAD2WALLIES = "image/upload2wallies"
     OPTIONS = "image/options"
     IMG2IMG = "image/img2img"
+    FACE2IMG = "image/face2img"
 
 
 class ImageOptions(BaseModel):
@@ -115,6 +125,7 @@ class ImageOptions(BaseModel):
 class ImageMeta(type):
     __image_generator_parser: Optional[ArgumentParser] = None
     __image2_generator_parser: Optional[ArgumentParser] = None
+    __face_generator_parser: Optional[ArgumentParser] = None
     __variation_generator_parser: Optional[ArgumentParser] = None
     __qr_generator_parser: Optional[ArgumentParser] = None
     __street_generator_parser: Optional[ArgumentParser] = None
@@ -230,6 +241,31 @@ class ImageMeta(type):
         namespace, _ = parser.parse_known_args(args)
         return Image2GeneratorParams(**namespace.__dict__)
 
+
+    @property
+    def face_generator_parser(cls) -> ArgumentParser:
+        if not cls.__face_generator_parser:
+            parser = ArgumentParser(
+                description="Face2Image Processing", exit_on_error=False
+            )
+            parser.add_argument("-p", "--prompt")
+            parser.add_argument("-n", "--negative_prompt", type=str)
+            parser.add_argument("-g", "--guidance_scale", type=float)
+            parser.add_argument("-i", "--num_inference_steps", type=int)
+            parser.add_argument("-sc", "--scale", type=float)
+            parser.add_argument("-m", "--model", choices=cls.options.model)
+            parser.add_argument("-t", "--template", choices=cls.options.template)
+            cls.__face_generator_parser = parser
+        return cls.__face_generator_parser
+
+    def face_generator_params(cls, prompt: Optional[str]) -> Image2GeneratorParams:
+        parser = cls.face_generator_parser
+        logging.debug(prompt)
+        args = split_with_quotes(normalize_prompt(prompt))
+        logging.debug(args)
+        namespace, _ = parser.parse_known_args(args)
+        return FaceGeneratorParams(**namespace.__dict__)
+
     @property
     def qrgenerator_parser(cls) -> ArgumentParser:
         if not cls.__qr_generator_parser:
@@ -285,6 +321,9 @@ class ImageMeta(type):
 
     def img2img(cls, attachment: Attachment, prompt: str) -> tuple[Attachment, str]:
         return cls(attachment).do_img2img(prompt)
+    
+    def face2img(cls, attachment: Attachment, prompt: str) -> tuple[Attachment, str]:
+        return cls(attachment).do_face2img(prompt)
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt)
@@ -356,6 +395,17 @@ class Image(object, metaclass=ImageMeta):
             params = Image.image2_generator_params(prompt)
             return self.getResponse(
                 Action.IMG2IMG, uuid4().hex, json_data=params.model_dump()
+            )
+        except (ValidationErr, ArgumentError) as e:
+            logging.error(e)
+            raise ApiError(f"{e}")
+        
+
+    def do_face2img(self, prompt: Optional[str] = None):
+        try:
+            params = Image.face_generator_params(prompt)
+            return self.getResponse(
+                Action.FACE2IMG, uuid4().hex, json_data=params.model_dump()
             )
         except (ValidationErr, ArgumentError) as e:
             logging.error(e)

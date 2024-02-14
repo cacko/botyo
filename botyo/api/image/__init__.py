@@ -222,6 +222,37 @@ def image2image(context: Context):
     except AssertionError:
         return RenderResult(method=ZMethod.IMAGE_IMG2IMG)
 
+@bp.command(
+    method=ZMethod.IMAGE_FACE2IMG,
+    desc="face to image",
+    upload=True,
+    icon="collections",
+    uses_prompt=True,
+    options=[
+        ZSONOption(option="-m", choices=Image.options.model),
+        ZSONOption(option="-t", choices=Image.options.template),
+    ],
+)  # type: ignore
+def face2image(context: Context):
+    try:
+        attachment = context.attachment
+        assert attachment
+        Image.is_admin = context.is_admin
+        attachment, _ = Image.face2img(attachment, context.query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_FACE2IMG,
+        )
+    except ApiError:
+        return RenderResult(
+            method=ZMethod.IMAGE_FACE2IMG,
+            message=Image.image2_generator_params.format_help()
+        )
+    except AssertionError:
+        return RenderResult(method=ZMethod.IMAGE_FACE2IMG)
+
+
 
 
 @bp.command(method=ZMethod.IMAGE_UPLOAD2WALLIES, admin=True)  # type: ignore
