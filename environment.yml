@@ -309,7 +309,6 @@ dependencies:
       - tzlocal==4.2
       - unidecode==1.3.6
       - uritemplate==4.1.1
-      - urllib3==2.1.0
       - uvicorn==0.20.0
       - uvloop==0.17.0
       - validators==0.20.0
