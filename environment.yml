@@ -53,7 +53,6 @@ dependencies:
   - libsqlite=3.45.1
   - libtasn1=4.19.0
   - libunistring=0.9.10
-  - libuuid=2.32.1
   - libwebp-base=1.2.4
   - libxcb=1.13
   - libxml2=2.10.3
