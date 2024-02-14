@@ -487,7 +487,7 @@ class Image(object, metaclass=ImageMeta):
             form_data = reduce(
                 lambda r, x: {
                     **r,
-                    **({x: json_data.get(x)} if json_data.get(x, None) else {}),
+                    **({x: json_data.get(x)} if json_data.get(x, None) is not None else {}),
                 },
                 json_data.keys(),
                 {},
@@ -498,7 +498,7 @@ class Image(object, metaclass=ImageMeta):
             params["json"] = reduce(
                 lambda r, x: {
                     **r,
-                    **({x: json_data.get(x)} if json_data.get(x, None) else {}),
+                    **({x: json_data.get(x)} if json_data.get(x, None) is not None else {}),
                 },
                 json_data.keys(),
                 {},
