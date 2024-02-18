@@ -249,7 +249,7 @@ class ImageMeta(type):
             parser = ArgumentParser(
                 description="Face2Image Processing", exit_on_error=False
             )
-            parser.add_argument("-p", "--prompt")
+            parser.add_argument("prompt", nargs="*")
             parser.add_argument("-n", "--negative_prompt", type=str)
             parser.add_argument("-g", "--guidance_scale", type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
