@@ -62,7 +62,7 @@ class Image2GeneratorParams(BaseModel):
 
 
 class FaceGeneratorParams(BaseModel):
-    prompt: Optional[str] = None
+    prompt: Optional[list[str]] = None
     guidance_scale: Optional[float] = None
     num_inference_steps: Optional[int] = None
     negative_prompt: Optional[str] = None
@@ -70,6 +70,14 @@ class FaceGeneratorParams(BaseModel):
     template: Optional[str] = None
     scale: Optional[float] = None
     face_index: Optional[int] = None
+    
+    @validator("prompt")
+    def static_prompt(cls, prompt: list[str]):
+        try:
+            assert prompt
+            return " ".join(prompt)
+        except AssertionError:
+            return ""
 
 class QRGeneratorParams(BaseModel):
     code: list[str]
