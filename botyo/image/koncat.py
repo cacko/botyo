@@ -7,8 +7,9 @@ from botyo.core.s3 import S3
 from corefile import filepath
 from filetype import guess_extension
 from coreimage.organise.concat import Concat
-from PIL.ImageOps import exif_transpose
+from PIL.ImageOps import exif_transpose. rc
 from PIL import Image
+from PIL.ExifTags import 
 from botyo.image.models import KonkatFile
 
 
@@ -44,6 +45,7 @@ class Konkat(object, metaclass=KonkatMeta):
         file_name = f"{collage_id}__{uuid4().hex}.{extension}"
         file_dst = self.__storage / file_name
         with Image.open(tmp_path.as_posix()) as img:
+            print(img.getexif())
             exif_transpose(img, in_place=True)
             img.save(file_dst.as_posix())
         s3key = S3.upload(file_dst, file_name)
