@@ -7,9 +7,8 @@ from botyo.core.s3 import S3
 from corefile import filepath
 from filetype import guess_extension
 from coreimage.organise.concat import Concat
-from PIL.ImageOps import exif_transpose. rc
+from PIL.ImageOps import exif_transpose
 from PIL import Image
-from PIL.ExifTags import 
 from botyo.image.models import KonkatFile
 
 
