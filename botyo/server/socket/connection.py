@@ -125,6 +125,7 @@ class SocketConnection(Connection, StreamRequestHandler):
             connection = SocketConnection.client(request.client)
             assert isinstance(connection, StreamRequestHandler)
             connection.request.close()
+            logging.debug(f"disconnecting {request.client}")
             del SocketConnection.connections[request.client]
             return 0
 
