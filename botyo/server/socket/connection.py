@@ -121,9 +121,7 @@ class SocketConnection(Connection, StreamRequestHandler):
             assert data
             return int.from_bytes(data, byteorder="little", signed=False)
         except AssertionError as e:
-            request = self.request
-            self.finish()
-            logging.debug(f"disconnecting {request}")
+            logging.debug("no size")
             return 0
 
     def __handleAttachment(self, name) -> Path:
