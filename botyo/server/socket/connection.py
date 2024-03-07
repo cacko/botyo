@@ -43,7 +43,7 @@ class SocketConnection(Connection, StreamRequestHandler):
     def handle(self):
         assert self.request
         logging.info(f"new client connection {self.request.getpeername()}")
-        while not self.server.is_closing:  # type: ignore
+        while not self.server.is_closing():
             try:
                 partSize = self.getHeader()
                 assert partSize
