@@ -43,7 +43,7 @@ class SocketConnection(Connection, StreamRequestHandler):
     def handle(self):
         assert self.request
         logging.info(f"new client connection {self.request.getpeername()}")
-        while not self.rfile.closed:
+        while not self.server.is_closing:
             try:
                 partSize = self.getHeader()
                 assert partSize
@@ -114,6 +114,10 @@ class SocketConnection(Connection, StreamRequestHandler):
 
         except Exception as e:
             logging.exception(e)
+            
+    def finish(self) -> None:
+        logging.warning(f"{self.connection} finish")
+        return super().finish()
 
     def getHeader(self) -> int:
         try:
