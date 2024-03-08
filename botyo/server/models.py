@@ -309,7 +309,14 @@ class NoCommand(Exception):
 class JunkMessage(Exception):
     pass
 
+class Classfier(StrEnum):
+    OBJECTS='Classifier'
+    AGE='Age'
+    GENDER='Gender'
+    ATTRACTION='Attraction'
+    ETHNIC='Ethnic'
 
 class ClassifyResult(BaseModel):
     label: str
     score: float
+    cls: Classfier
