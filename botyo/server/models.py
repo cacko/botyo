@@ -359,12 +359,12 @@ class ClassifyResult(BaseModel):
     def output(self) -> str:
         match self.cls:
             case Classfier.OBJECTS:
-                return f"{titlecase(self.label)} - {self.score * 100:.2f}%"
+                return f"{titlecase(self.label)} {self.score * 100:.2f}%"
             case Classfier.AGE:
-                return f"Age: {self.label} years old"
+                return f"Age: {self.label} years old {self.score * 100:.2f}%"
             case Classfier.GENDER:
-                return f"Gender: {titlecase(self.label)} {Gender(self.label).icon}"
+                return f"Gender: {titlecase(self.label)} {Gender(self.label).icon} {self.score * 100:.2f}%"
             case Classfier.ATTRACTION:
-                return f"Attraction: {titlecase(self.label)} {Attraction(self.label).icon}"
+                return f"Attraction: {titlecase(self.label)} {Attraction(self.label).icon} {self.score * 10:.0f}/10"
             case Classfier.ETHNIC:
-                return f"Ethnicity: {titlecase(self.label)} - {self.score * 100:.2f}%"
+                return f"Ethnicity: {titlecase(self.label)} {self.score * 100:.2f}%"
