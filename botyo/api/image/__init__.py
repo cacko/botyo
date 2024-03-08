@@ -101,7 +101,7 @@ def image_classify(context: Context):
         results = [ClassifyResult(**x) for x in message.get("response", [])]
         return RenderResult(
             message="\n".join(
-                [f"{titlecase(x.label)} - {x.score}" for x in results if x.score < 1]
+                [x.output() for x in results if x.score < 1]
             ),
             method=ZMethod.IMAGE_CLASSIFY,
         )

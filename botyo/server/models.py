@@ -1,5 +1,6 @@
 from uuid import uuid4
 from typing import Optional, TypeVar
+from corestring import titlecase
 from emoji import emojize
 from random import choice
 from enum import EnumMeta, StrEnum
@@ -211,6 +212,8 @@ NOT_FOUND_ICONS = [
 ]
 
 
+
+
 class RenderResult(BaseModel):
     method: Optional[ZMethod | CoreMethods] = None
     message: Optional[str] = Field(default="")
@@ -315,8 +318,53 @@ class Classfier(StrEnum):
     GENDER='Gender'
     ATTRACTION='Attraction'
     ETHNIC='Ethnic'
+    
+class Gender(StrEnum):
+    MALE = "male"
+    FEMALE = "female"
+    
+    @property
+    def icon(self):
+        match self:
+            case Gender.MALE:
+                return emojize(':male_sign')
+            case Gender.FEMALE:
+                return emojize(':female_sign:')
+            
+class Attraction(StrEnum):
+    NOT_ATTRACTIVE = "not attractive"
+    ATTRACTIVE = "attractive"
+    
+    @property
+    def icon(self):
+        match self:
+            case Attraction.NOT_ATTRACTIVE:
+                return emojize(":thumbs_down:")
+            case Attraction.ATTRACTIVE:
+                return emojize(':thumbs_up:')
 
 class ClassifyResult(BaseModel):
     label: str
     score: float
     cls: Classfier
+    
+    @property
+    def icon(self):
+        match self.cls:
+            case Classfier.AGE:
+                return f"Age: {self.label} years old"
+            case Classfier.GENDER:
+                return f"Gender: {self.label} "
+            
+    def output(self) -> str:
+        match self.cls:
+            case Classfier.OBJECTS:
+                return f"{titlecase(self.label)} - {self.score * 100:.2f}%"
+            case Classfier.AGE:
+                return f"Age: {self.label} years old"
+            case Classfier.GENDER:
+                return f"Gender: {titlecase(self.label)} {Gender(self.label).icon}"
+            case Classfier.ATTRACTION:
+                return f"Attraction: {titlecase(self.label)} {Attraction(self.label).icon}"
+            case Classfier.ETHNIC:
+                return f"Ethnicity: {titlecase(self.label)} - {self.score * 100:.2f}%"
