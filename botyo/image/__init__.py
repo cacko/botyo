@@ -381,7 +381,7 @@ class Image(object, metaclass=ImageMeta):
         return self.getResponse(Action.HOWCUTE)
 
     def do_classify(self):
-        return self.getResponse(Action.CLASSIFY, uuid4().hex)
+        return self.getResponse(Action.CLASSIFY)
 
     def do_pixel(self, block_size):
         return self.getResponse(Action.PIXEL, block_size)
