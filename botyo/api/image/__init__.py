@@ -64,28 +64,6 @@ bp = Blueprint("image")
 
 
 @bp.command(
-    method=ZMethod.IMAGE_HOWCUTE,
-    desc="howcute faces in image",
-    upload=True,
-    icon="thumb_up",
-)  # type: ignore
-def image_howcute(context: Context):
-    try:
-        logging.info(context)
-        attachment = context.attachment
-        assert attachment
-        attachment, message = Image.howcute(attachment)
-        assert attachment and message
-        return RenderResult(
-            message=message,
-            attachment=attachment,
-            method=ZMethod.IMAGE_HOWCUTE,
-        )
-    except AssertionError:
-        return ErrorResult(method=ZMethod.IMAGE_HOWCUTE)
-
-
-@bp.command(
     method=ZMethod.IMAGE_CLASSIFY,
     desc="Classify objects in images",
     upload=True,

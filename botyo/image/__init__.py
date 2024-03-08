@@ -109,7 +109,6 @@ class StreetViewGeneratorParams(BaseModel):
 class Action(Enum):
     ANALYZE = "face/analyze"
     TAG = "face/tag"
-    HOWCUTE = "image/howcute"
     CLASSIFY = "image/classify"
     PIXEL = "image/pixel"
     VARIATION = "image/variation"
@@ -149,9 +148,6 @@ class ImageMeta(type):
 
     def analyze(cls, attachment: Attachment) -> tuple[Attachment, str]:
         return cls(attachment).do_analyze()
-
-    def howcute(cls, attachment: Attachment) -> tuple[Attachment, str]:
-        return cls(attachment).do_howcute()
 
     def classify(cls, attachment: Attachment) -> tuple[Attachment, dict]:
         return cls(attachment).do_classify()
@@ -376,9 +372,6 @@ class Image(object, metaclass=ImageMeta):
 
     def do_tag(self):
         return self.getResponse(Action.TAG)
-
-    def do_howcute(self):
-        return self.getResponse(Action.HOWCUTE)
 
     def do_classify(self):
         return self.getResponse(Action.CLASSIFY)

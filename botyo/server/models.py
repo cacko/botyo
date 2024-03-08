@@ -124,7 +124,6 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     IMAGE_QR2IMG = "image:qr2img"
     IMAGE_FACE2IMG = "image:face2img"
     IMAGE_UPLOAD2WALLIES = "image:upload2wallies"
-    IMAGE_HOWCUTE = "image:howcute"
     IMAGE_CLASSIFY = "image:classify"
     EVENT_COUNTDOWN = "event:countdown"
     EVENT_CALENDAR = "event:calendar"
@@ -361,10 +360,10 @@ class ClassifyResult(BaseModel):
             case Classfier.OBJECTS:
                 return f"{titlecase(self.label)} {self.score * 100:.2f}%"
             case Classfier.AGE:
-                return f"Age: {self.label} years old {self.score * 100:.2f}%"
+                return f"{emojize(':calendar:')} {self.label} years old {self.score * 100:.2f}%"
             case Classfier.GENDER:
-                return f"Gender: {titlecase(self.label)} {Gender(self.label).icon} {self.score * 100:.2f}%"
+                return f"{Gender(self.label).icon} {titlecase(self.label)} {self.score * 100:.2f}%"
             case Classfier.ATTRACTION:
-                return f"Attraction: {titlecase(self.label)} {Attraction(self.label).icon} {self.score * 10:.0f}/10"
+                return f"{Attraction(self.label).icon} {titlecase(self.label)} {self.score * 10:.0f}/10"
             case Classfier.ETHNIC:
-                return f"Ethnicity: {titlecase(self.label)} {self.score * 100:.2f}%"
+                return f"{titlecase(self.label)} {self.score * 100:.2f}%"
