@@ -1,8 +1,10 @@
 from pathlib import Path
 from xml.dom import ValidationErr
+from matplotlib.artist import kwdoc
 from requests import JSONDecodeError
 from botyo.api.console.geo import GeoLocation
 from botyo.core import normalize_prompt
+from botyo.firebase.rdb import OptionsDb
 from botyo.server.models import Attachment, ApiError
 from cachable.request import Request, Method
 from cachable.storage.file import FileStorage
@@ -164,6 +166,13 @@ class ImageMeta(type):
     @is_admin.setter
     def is_admin(cls, val: bool):
         cls.__is_admin = val
+
+    def initOptions(cls):
+        lst = OptionsDb().get_listener(callback=cls.callbackOptions)
+
+    def callbackOptions(cls ,*args, **kwds):
+        logging.warning(args)
+        logging.warning(kwds)
 
     @property
     def options(cls) -> ImageOptions:
