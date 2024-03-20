@@ -3,7 +3,7 @@ import logging
 from typing import Any, Optional
 from botyo.firebase.service_account import db, ServiceAccount
 
-app = ServiceAccount.get_app()
+app = ServiceAccount.app.db
 
 class OptionsDb(object):
 
