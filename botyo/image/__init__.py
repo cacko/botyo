@@ -1,10 +1,10 @@
 from pathlib import Path
 from xml.dom import ValidationErr
-from matplotlib.artist import kwdoc
 from requests import JSONDecodeError
 from botyo.api.console.geo import GeoLocation
 from botyo.core import normalize_prompt
 from botyo.firebase.rdb import OptionsDb
+from botyo.firebase.service_account import ServiceAccount
 from botyo.server.models import Attachment, ApiError
 from cachable.request import Request, Method
 from cachable.storage.file import FileStorage
@@ -22,6 +22,7 @@ from corestring import split_with_quotes, string_hash
 import logging
 from functools import reduce
 import json
+from os import environ
 
 
 class ImageGeneratorParams(BaseModel):
@@ -582,5 +583,5 @@ class Image(object, metaclass=ImageMeta):
                 raise ApiError(f"{e}")
         return attachment, message
 
-
+ServiceAccount.register(Path(environ.get("BOTYO_SERVICE_ACCOUNT", "")))
 Image.initOptions()
