@@ -22,7 +22,7 @@ from corestring import split_with_quotes, string_hash
 import logging
 from functools import reduce
 import json
-from os import environ
+from firebase_admin.db import Event
 
 
 class ImageGeneratorParams(BaseModel):
@@ -73,7 +73,7 @@ class FaceGeneratorParams(BaseModel):
     template: Optional[str] = None
     scale: Optional[float] = None
     face_index: Optional[int] = None
-    
+
     @validator("prompt")
     def static_prompt(cls, prompt: list[str]):
         try:
@@ -81,6 +81,7 @@ class FaceGeneratorParams(BaseModel):
             return " ".join(prompt)
         except AssertionError:
             return ""
+
 
 class QRGeneratorParams(BaseModel):
     code: list[str]
@@ -171,9 +172,9 @@ class ImageMeta(type):
     def initOptions(cls):
         lst = OptionsDb().get_listener(callback=cls.callbackOptions)
 
-    def callbackOptions(cls ,*args, **kwds):
-        logging.warning(args)
-        logging.warning(kwds)
+    def callbackOptions(cls, event: Event):
+        cls.__options = ImageOptions(**event.data)
+        print(cls.__options)
 
     @property
     def options(cls) -> ImageOptions:
@@ -256,7 +257,6 @@ class ImageMeta(type):
         namespace, _ = parser.parse_known_args(args)
         return Image2GeneratorParams(**namespace.__dict__)
 
-
     @property
     def face_generator_parser(cls) -> ArgumentParser:
         if not cls.__face_generator_parser:
@@ -338,7 +338,7 @@ class ImageMeta(type):
 
     def img2img(cls, attachment: Attachment, prompt: str) -> tuple[Attachment, str]:
         return cls(attachment).do_img2img(prompt)
-    
+
     def face2img(cls, attachment: Attachment, prompt: str) -> tuple[Attachment, str]:
         return cls(attachment).do_face2img(prompt)
 
@@ -413,7 +413,6 @@ class Image(object, metaclass=ImageMeta):
         except (ValidationErr, ArgumentError) as e:
             logging.error(e)
             raise ApiError(f"{e}")
-        
 
     def do_face2img(self, prompt: Optional[str] = None):
         try:
@@ -499,7 +498,11 @@ class Image(object, metaclass=ImageMeta):
             form_data = reduce(
                 lambda r, x: {
                     **r,
-                    **({x: json_data.get(x)} if json_data.get(x, None) is not None else {}),
+                    **(
+                        {x: json_data.get(x)}
+                        if json_data.get(x, None) is not None
+                        else {}
+                    ),
                 },
                 json_data.keys(),
                 {},
@@ -510,7 +513,11 @@ class Image(object, metaclass=ImageMeta):
             params["json"] = reduce(
                 lambda r, x: {
                     **r,
-                    **({x: json_data.get(x)} if json_data.get(x, None) is not None else {}),
+                    **(
+                        {x: json_data.get(x)}
+                        if json_data.get(x, None) is not None
+                        else {}
+                    ),
                 },
                 json_data.keys(),
                 {},
@@ -582,5 +589,6 @@ class Image(object, metaclass=ImageMeta):
                 logging.error(e)
                 raise ApiError(f"{e}")
         return attachment, message
+
 
 Image.initOptions()
