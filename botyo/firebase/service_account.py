@@ -39,7 +39,7 @@ class ServiceAccount(object, metaclass=ServiceAccountMeta):
         if not self.__app:
             self.__app = initialize_app(
                 self.get_credentials(), 
-                databaseURL=environ.get("BOTYO_REALTIME_DB"))
+                dict(databaseURL=environ.get("BOTYO_REALTIME_DB")))
         return self.__app
 
     def get_credentials(self) -> credentials.Certificate:
