@@ -1,7 +1,9 @@
 from datetime import datetime
 import logging
 from typing import Any, Optional
-from botyo.firebase.service_account import db
+from botyo.firebase.service_account import db, ServiceAccount
+
+app = ServiceAccount.get_app()
 
 class OptionsDb(object):
 
