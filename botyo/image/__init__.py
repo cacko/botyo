@@ -583,5 +583,4 @@ class Image(object, metaclass=ImageMeta):
                 raise ApiError(f"{e}")
         return attachment, message
 
-ServiceAccount.register(Path(environ.get("BOTYO_SERVICE_ACCOUNT", "")))
 Image.initOptions()

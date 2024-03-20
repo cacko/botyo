@@ -1,8 +1,9 @@
-from datetime import datetime
-import logging
-from typing import Any, Optional
+from os import environ
+from pathlib import Path
+from typing import Any
 from botyo.firebase.service_account import db, ServiceAccount
 
+ServiceAccount.register(Path(environ.get("BOTYO_SERVICE_ACCOUNT", "")))
 app = ServiceAccount.app
 
 class OptionsDb(object):
