@@ -581,3 +581,6 @@ class Image(object, metaclass=ImageMeta):
                 logging.error(e)
                 raise ApiError(f"{e}")
         return attachment, message
+
+
+Image.initOptions()
