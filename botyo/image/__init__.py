@@ -173,9 +173,8 @@ class ImageMeta(type):
         lst = OptionsDb().get_listener(callback=cls.callbackOptions)
 
     def callbackOptions(cls, event: Event):
-        logging.warning(event.data)
+        logging.debug(event.data)
         cls.__options = ImageOptions(**event.data)
-        print(cls.__options)
 
     @property
     def options(cls) -> ImageOptions:
