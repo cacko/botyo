@@ -23,7 +23,7 @@ class ICONS(Enum):
 @bp.command(
     method=ZMethod.KNOWLEDGE_ARTICLE,
     desc="search and displayed the first match for a term from wikipedia",
-    icon="library_books"
+    icon="library_books",
 )  # type: ignore
 def article_command(context: Context):
     try:
@@ -40,27 +40,23 @@ def article_command(context: Context):
 
 
 @bp.command(
-    method=ZMethod.KNOWLEDGE_ASK,
-    desc="ask to Bard",
-    icon="contact_support"
+    method=ZMethod.KNOWLEDGE_ASK, desc="ask to Gemini", icon="contact_support"
 )  # type: ignore
 def bard_command(context: Context):
     msg = context.query
     if not msg:
         return None
-    response = getResponse("text/bard", Payload(message=msg, source=context.source))
+    response = getResponse("text/gemini", Payload(message=msg, source=context.source))
     res = RenderResult(
         attachment=response.attachment,
-        message=response.response, 
-        method=ZMethod.KNOWLEDGE_ASK
-        )
+        message=response.response,
+        method=ZMethod.KNOWLEDGE_ASK,
+    )
     return res
 
 
 @bp.command(
-    method=ZMethod.KNOWLEDGE_TELL,
-    desc="ask to be told",
-    icon="short_text"
+    method=ZMethod.KNOWLEDGE_TELL, desc="ask to be told", icon="short_text"
 )  # type: ignore
 def tell_command(context: Context):
     try:
@@ -79,9 +75,7 @@ def tell_command(context: Context):
 
 
 @bp.command(
-    method=ZMethod.KNOWLEDGE_WTF,
-    desc="wtf is that",
-    icon="contact_support"
+    method=ZMethod.KNOWLEDGE_WTF, desc="wtf is that", icon="contact_support"
 )  # type: ignore
 def wtf_command(context: Context):
     try:
@@ -90,9 +84,9 @@ def wtf_command(context: Context):
             return None
         answer = KnowledgeBase.wolfram(title)
         return RenderResult(
-            message=f"{ICONS.QUESTION.value} {answer.response}"
-            if answer.response
-            else None,
+            message=(
+                f"{ICONS.QUESTION.value} {answer.response}" if answer.response else None
+            ),
             attachment=answer.attachment,
             method=ZMethod.KNOWLEDGE_WTF,
         )

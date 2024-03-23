@@ -159,7 +159,7 @@ async def get_beats(path: str):
 async def put_nowplaying(request: Request):
     def persist(data: dict):
         _ = Track(**data)
-        Track.persist
+        Track.persisttask
 
     try:
         data = await request.json()

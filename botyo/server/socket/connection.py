@@ -146,7 +146,7 @@ class SocketConnection(Connection, StreamRequestHandler):
 
     def _request(self, method: Method):
         req = ZSONRequest(method=method, source="")
-        data = req.json().encode()
+        data = req.model_dump_json()
         self.wfile.write(
             len(data).to_bytes(4, byteorder="little", signed=False))
         self.wfile.write(data)
