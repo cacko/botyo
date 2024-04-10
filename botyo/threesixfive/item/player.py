@@ -25,8 +25,8 @@ class InternationalCompetitions(Enum):
     INTERNATIONAL = "International"
 
 
-class PlayerMat7h(Match):
-    minRatio = 10
+class PlayerMatch(Match):
+    minRatio = 70
     method = MatchMethod.WRATIO
 
 
