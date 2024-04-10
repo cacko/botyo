@@ -65,7 +65,7 @@ class Image2GeneratorParams(BaseModel):
 
 
 class FaceGeneratorParams(BaseModel):
-    prompt: Optional[str] = None
+    prompt: Optional[list[str]|str] = None
     guidance_scale: Optional[float] = None
     num_inference_steps: Optional[int] = None
     negative_prompt: Optional[str] = None
