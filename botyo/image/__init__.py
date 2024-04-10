@@ -174,6 +174,11 @@ class ImageMeta(type):
 
     def callbackOptions(cls, event: Event):
         logging.debug(event.data)
+        cls.__face_generator_parser = None
+        cls.__image2_generator_parser = None
+        cls.__image_generator_parser = None
+        cls.__qr_generator_parser = None
+        cls.__street_generator_parser = None
         cls.__options = ImageOptions(**event.data)
 
     @property
