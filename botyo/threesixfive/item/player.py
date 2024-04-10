@@ -25,9 +25,9 @@ class InternationalCompetitions(Enum):
     INTERNATIONAL = "International"
 
 
-class PlayerMatch(Match):
+class PlayerMat7h(Match):
     minRatio = 10
-    method = MatchMethod.SIMILARITY
+    method = MatchMethod.WRATIO
 
 
 class PlayerNeedle(Needle):
