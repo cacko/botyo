@@ -283,7 +283,28 @@ def image_fromqr(context: Context):
         return RenderResult(
             method=ZMethod.IMAGE_QR2IMG, message=Image.qrgenerator_parser.format_help()
         )
-
+        
+@bp.command(
+    method=ZMethod.IMAGE_TXT2QR,
+    desc="text to qrcode",
+    icon="qr_code_2",
+    uses_prompt=True,
+)  # type: ignore
+def image_toqr(context: Context):
+    try:
+        query = context.query
+        Image.is_admin = context.is_admin
+        assert query
+        attachment, _ = Image.txt2qr(query)
+        assert attachment
+        return RenderResult(
+            attachment=attachment,
+            method=ZMethod.IMAGE_TXT2QR,
+            # message=message
+        )
+    except AssertionError as e:
+        logging.error(e)
+        return ErrorResult(method=ZMethod.IMAGE_TXT2QR)
 
 @bp.command(
     method=ZMethod.IMAGE_STREETVIEW,

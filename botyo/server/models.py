@@ -122,6 +122,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     IMAGE_TXT2IMG = "image:txt2img"
     IMAGE_IMG2IMG = "image:img2img"
     IMAGE_QR2IMG = "image:qr2img"
+    IMAGE_TXT2QR = "image:txt2qr"
     IMAGE_FACE2IMG = "image:face2img"
     IMAGE_UPLOAD2WALLIES = "image:upload2wallies"
     IMAGE_CLASSIFY = "image:classify"

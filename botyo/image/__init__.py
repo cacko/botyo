@@ -122,6 +122,7 @@ class Action(Enum):
     UPLOAD2WALLIES = "image/upload2wallies"
     OPTIONS = "image/options"
     IMG2IMG = "image/img2img"
+    TXT2QR = "image/txt2qr"
     FACE2IMG = "image/face2img"
 
 
@@ -353,6 +354,9 @@ class ImageMeta(type):
     def qr2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_qr2img(prompt)
 
+    def txt2qr(cls, prompt: str) -> tuple[Attachment, str]:
+        return cls().do_txt2qr(prompt)
+
     def upload2wallies(cls, params: Upload2Wallies) -> str:
         return cls().do_upload2wallies(params)
 
@@ -454,6 +458,20 @@ class Image(object, metaclass=ImageMeta):
                 action=action,
                 action_param=string_hash(params.code),
                 json_data=params.model_dump(),
+            )
+        except (ValidationErr, ArgumentError) as e:
+            logging.exception(e)
+            raise ApiError(f"{e}")
+        
+        
+    def do_txt2qr(self, prompt: str, action: Action = Action.TXT2QR):
+        try:
+            params = {"code": prompt}
+            logging.info(params)
+            return self.getResponse(
+                action=action,
+                action_param=string_hash(prompt),
+                json_data=params,
             )
         except (ValidationErr, ArgumentError) as e:
             logging.exception(e)
