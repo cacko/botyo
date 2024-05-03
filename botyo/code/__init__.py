@@ -26,5 +26,5 @@ class Code(object, metaclass=CodeMeta):
         text
     ) -> Response:
         return getResponse(
-            path, Payload(user=text)
+            path, Payload(message=text)
         )
