@@ -180,7 +180,7 @@ class ImageMeta(type):
         cls.__image_generator_parser = None
         cls.__qr_generator_parser = None
         cls.__street_generator_parser = None
-        cls.__options = ImageOptions(**event.data)
+        cls.__options = ImageOptions(**event.data.get("image", {}))
 
     @property
     def options(cls) -> ImageOptions:

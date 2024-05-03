@@ -10,7 +10,7 @@ class OptionsDb(object):
 
     @property
     def root_ref(self):
-        return db.reference(f"app/image")
+        return db.reference(f"app/")
 
     def options(self, **kwds):
         options_ref = self.root_ref.child("options")
