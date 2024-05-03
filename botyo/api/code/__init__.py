@@ -10,6 +10,7 @@ bp = Blueprint("code")
 
 @bp.command(
     method=ZMethod.CODE_PHP,
+    desc="Generates sample PHP code by given instructions",
     icon="php"
 )  # type: ignore
 def php_command(context: Context):
@@ -23,9 +24,10 @@ def php_command(context: Context):
 
 @bp.command(
     method=ZMethod.CODE_PYTHON,
+    desc="Generates sample Python code by given instructions",
     icon="source"
 )  # type: ignore
-def php_command(context: Context):
+def python_command(context: Context):
     msg = context.query
     if not msg:
         return None

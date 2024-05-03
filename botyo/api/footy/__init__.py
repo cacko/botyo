@@ -271,6 +271,7 @@ def fixtures_command(context: Context) -> RenderResult:
     except Exception:
         return EmptyResult()
 
+
 @bp.command(
     method=ZMethod.FOOTY_H2H,
     desc="Head to head stats for active games",
