@@ -19,9 +19,7 @@ def php_command(context: Context):
     if not msg:
         return None
     resp = Code.php(text=msg)
-    res = RenderResult(
-        message=format_mixed_text(resp.response), method=ZMethod.CODE_PHP, plain=True
-    )
+    res = RenderResult(message=resp.response, method=ZMethod.CODE_PHP, plain=True)
     return res
 
 
@@ -35,9 +33,7 @@ def python_command(context: Context):
     if not msg:
         return None
     resp = Code.python(text=msg)
-    res = RenderResult(
-        message=format_mixed_text(resp.response), method=ZMethod.CODE_PYTHON, plain=True
-    )
+    res = RenderResult(message=resp.response, method=ZMethod.CODE_PYTHON, plain=True)
     return res
 
 
@@ -52,7 +48,7 @@ def javascript_command(context: Context):
         return None
     resp = Code.javascript(text=msg)
     res = RenderResult(
-        message=format_mixed_text(resp.response),
+        message=resp.response,
         method=ZMethod.CODE_JAVASCRIPT,
         plain=True,
     )
