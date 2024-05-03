@@ -68,6 +68,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     CONSOLE_GEOCODER = "console:geocoder"
     CODE_PHP = "code:php"
     CODE_PYTHON = "code:python"
+    CODE_JAVASCRIPT = "code:javascript"
     CVE_CVE = "cve:cve"
     # CVE_ALERT = "cve:alert"
     # CVE_UNALERT = "cve:unalert"

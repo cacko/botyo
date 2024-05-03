@@ -24,7 +24,7 @@ def clean_markdown(s: str):
         remove.html_tags,
         replace.emojis,
         replace.hashtags,
-        normalize.repeating_chars
+        normalize.repeating_chars,
     )
     return clean_pipeline(html)
 
@@ -263,3 +263,12 @@ def align_whitespace(text):
 
 def split_with_quotes(text):
     return TextOutput.splitWithQuotes(text)
+
+
+def format_mixed_text(text):
+    def re_sub(matchobj):
+        return to_mono(matchobj.group(1))
+
+    res = re.sub(r"```(.+)```", re_sub, text, flags=re.MULTILINE | re.DOTALL)
+
+    return res
