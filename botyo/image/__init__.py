@@ -301,7 +301,7 @@ class ImageMeta(type):
             parser.add_argument("-c", "--controlnet_conditioning_scale", type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-s", "--seed", type=int)
-            parser.add_argument("-t", "--template", choices=cls.options.qrcode)
+            parser.add_argument("-t", "--template", choices=cls.options.qrcode, default="default")
             parser.add_argument("-m", "--model", choices=cls.options.model)
             parser.add_argument("-a", "--auto_prompt", type=int)
             cls.__qr_generator_parser = parser
