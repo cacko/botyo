@@ -258,8 +258,8 @@ def upload2wallies(context: Context):
     icon="qr_code_2",
     uses_prompt=True,
     options=[
-        ZSONOption(option="-m", choices=Image.options.model),
-        ZSONOption(option="-t", choices=Image.options.qrcode),
+        ZSONOption(option="-m", choices=Image.options.qrcode_models),
+        ZSONOption(option="-t", choices=Image.options.qrcode_templates),
     ],
 )  # type: ignore
 def image_fromqr(context: Context):
