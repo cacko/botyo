@@ -92,7 +92,7 @@ class QRGeneratorParams(BaseModel):
     negative_prompt: Optional[str] = None
     seed: Optional[int] = None
     auto_prompt: Optional[str] = None
-    model: Optional[str] = None
+    template: Optional[str] = None
 
     @validator("code")
     def static_code(cls, code: list[str]):
@@ -301,7 +301,7 @@ class ImageMeta(type):
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-s", "--seed", type=int)
             parser.add_argument(
-                "-m", "--model", choices=cls.options.qrcode, default="default"
+                "-t", "--template", choices=cls.options.qrcode, default="default"
             )
             parser.add_argument("-a", "--auto_prompt", type=int)
             cls.__qr_generator_parser = parser
