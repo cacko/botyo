@@ -1,6 +1,4 @@
-from turtle import title
 from typing import Annotated
-from urllib import request
 from uuid import uuid4
 from requests import post
 from botyo.api.footy.item.livescore import Livescore
@@ -159,7 +157,6 @@ async def get_beats(path: str):
 async def put_nowplaying(request: Request):
     def persist(data: dict):
         _ = Track(**data)
-        Track.persisttask
 
     try:
         data = await request.json()
