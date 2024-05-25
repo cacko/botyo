@@ -133,6 +133,33 @@ def image_variation(context: Context):
 
 
 @bp.command(
+    method=ZMethod.IMAGE_IMG2TXT,
+    desc="print text on invoice objects in images",
+    upload=True,
+    icon="data_object",
+)  # type: ignore
+def image_to_text(context: Context):
+    try:
+        attachment = context.attachment
+        assert attachment
+        logging.debug(attachment)
+        attachment, message = Image.classify(attachment)
+        assert message
+        results = [ClassifyResult(**x) for x in message.get("response", [])]
+        return RenderResult(
+            message="\n".join(
+                [x.output() for x in results if x.score < 1]
+            ),
+            method=ZMethod.IMAGE_CLASSIFY,
+        )
+    except ApiError as e:
+        return ErrorResult(method=ZMethod.IMAGE_CLASSIFY, message=e.message)
+    except AssertionError:
+        return ErrorResult(method=ZMethod.IMAGE_CLASSIFY)
+
+
+
+@bp.command(
     method=ZMethod.IMAGE_TXT2IMG,
     desc="text to image",
     icon="brush",
