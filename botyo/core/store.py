@@ -32,7 +32,6 @@ class QueueDict(dict, metaclass=QueueDictMeta):
         try:
             data = RedisStorage.hgetall(self.__storage_key)
             if not data:
-                logging.debug("no data")
                 return {}
             items = {k.decode(): self.loads(v) for k, v in data.items()}
             return items
