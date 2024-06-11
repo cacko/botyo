@@ -134,7 +134,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     EVENT_CALENDAR = "event:calendar"
     EVENT_SCHEDULE = "event:schedule"
     EVENT_CANCEL = "event:cancel"
-    MEME_CAPTION = "meme:caption"
+    # MEME_CAPTION = "meme:caption"
 
 
 class CoreMethods(StrEnum, metaclass=MethodMeta):

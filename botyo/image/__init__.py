@@ -62,6 +62,7 @@ class Image2GeneratorParams(BaseModel):
     template: Optional[str] = None
     style: Optional[str] = None
     strength: Optional[float] = None
+    no_auto_caption: Optional[bool] = None
 
     @validator("prompt")
     def static_prompt(cls, prompt: list[str]):
@@ -266,6 +267,7 @@ class ImageMeta(type):
             parser.add_argument("-m", "--model", choices=cls.options.model)
             parser.add_argument("-u", "--upscale", action="store_true")
             parser.add_argument("-t", "--template", choices=cls.options.template)
+            parser.add_argument("-nc", "--no_auto_prompt", action="store_true")
             cls.__image2_generator_parser = parser
         return cls.__image2_generator_parser
 
