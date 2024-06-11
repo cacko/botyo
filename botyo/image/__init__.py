@@ -53,7 +53,7 @@ class ImageGeneratorParams(BaseModel):
 
 
 class Image2GeneratorParams(BaseModel):
-    prompt: Optional[str] = None
+    prompt: Optional[list[str] | str] = None
     guidance_scale: Optional[float] = None
     num_inference_steps: Optional[int] = None
     negative_prompt: Optional[str] = None
@@ -62,6 +62,14 @@ class Image2GeneratorParams(BaseModel):
     template: Optional[str] = None
     style: Optional[str] = None
     strength: Optional[float] = None
+
+    @validator("prompt")
+    def static_prompt(cls, prompt: list[str]):
+        try:
+            assert prompt
+            return " ".join(prompt)
+        except AssertionError:
+            return ""
 
 
 class FaceGeneratorParams(BaseModel):
@@ -159,7 +167,7 @@ class ImageMeta(type):
 
     def classify(cls, attachment: Attachment) -> tuple[Attachment, dict]:
         return cls(attachment).do_classify()
-    
+
     def to_text(cls, attachment: Attachment):
         return cls(attachment).do_img2txt()
 
@@ -306,7 +314,12 @@ class ImageMeta(type):
             parser.add_argument("-c", "--controlnet_conditioning_scale", type=float)
             parser.add_argument("-i", "--num_inference_steps", type=int)
             parser.add_argument("-s", "--seed", type=int)
-            parser.add_argument("-t", "--template", choices=cls.options.qrcode_templates, default="default")
+            parser.add_argument(
+                "-t",
+                "--template",
+                choices=cls.options.qrcode_templates,
+                default="default",
+            )
             parser.add_argument("-m", "--model", choices=cls.options.qrcode_models)
             parser.add_argument("-a", "--auto_prompt", type=int)
             cls.__qr_generator_parser = parser
@@ -355,7 +368,6 @@ class ImageMeta(type):
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt)
-    
 
     def qr2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_qr2img(prompt)
@@ -400,7 +412,7 @@ class Image(object, metaclass=ImageMeta):
 
     def do_classify(self):
         return self.getResponse(Action.CLASSIFY)
-    
+
     def do_img2txt(self):
         return self.getResponse(Action.IMG2TXT)
 

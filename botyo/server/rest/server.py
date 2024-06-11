@@ -37,7 +37,7 @@ class _APIServer(StoppableThread):
             port=api_config.port,
             use_colors=True,
             factory=True,
-            workers=4
+            loop="uvloop"
         )
         self.__server = uvicorn.Server(server_config)
         super().__init__(*args, **kwargs)
