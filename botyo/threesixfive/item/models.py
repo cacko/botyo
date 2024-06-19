@@ -496,8 +496,7 @@ class Game(BaseModel):
     statusText: str
     shortStatusText: str
     gameTimeAndStatusDisplayType: int
-    gameTime: int
-    gameTimeDisplay: str
+
     homeCompetitor: GameCompetitor
     awayCompetitor: GameCompetitor
     h2hGames: Optional[list[H2HGame]] = None
@@ -513,6 +512,8 @@ class Game(BaseModel):
     hasTVNetworks: Optional[bool] = None
     hasBetsTeaser: Optional[bool] = None
     matchFacts: Optional[list[GameFact]] = None
+    gameTime: Optional[int] = None
+    gameTimeDisplay: Optional[str] = None
     winDescription: str = Field(default="")
     aggregateText: str = Field(default="")
     icon: str = Field(default="")
