@@ -29,6 +29,15 @@ class Predict(object):
 
     def getGame(self, **kwds) -> Game:
         game, _ = Game.get_or_create(**kwds)
+        try:
+            assert game.has_started
+            assert not game.result
+            game.home_score = kwds.get("home_score", -1)
+            game.away_score = kwds.get("away_score", -1)
+            game.status = kwds.get("status")
+            game.save()
+        except AssertionError:
+            pass
         return game
 
     def today_predictions(self) -> str:

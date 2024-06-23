@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.subscription import UpdateData
 from botyo.threesixfive.item.team import Team
@@ -22,7 +23,7 @@ class Game(DbModel):
 
     @classmethod
     def on_livescore_event(cls, data: UpdateData):
-        id = data.message.icon
+        pass
 
     @classmethod
     def get_or_create(cls, **kwargs) -> tuple["Game", bool]:
@@ -71,6 +72,15 @@ class Game(DbModel):
     @property
     def Status(self) -> GameStatus:
         return GameStatus(self.status)
+    
+    @property
+    def result(self) -> Optional[str]:
+        try:
+            assert self.home_score > -1
+            assert self.away_score > -1
+            return f"{self.home_score}:{self.away_score}"
+        except AssertionError:
+            return None
 
     @property
     def can_predict(self) -> bool:
@@ -86,6 +96,10 @@ class Game(DbModel):
             return self.can_predict
         except Exception:
             raise False
+        
+    @property
+    def has_started(self) -> bool:
+        return self.start_time < datetime.now(tz=timezone.utc)
 
     class Meta:
         database = Database.db
