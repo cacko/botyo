@@ -30,7 +30,7 @@ class Predict(object):
         return game
     
     def today_predictions(self) -> str:
-        predictions = [x for x in Prediction.get_in_progress(User=self.user)]
+        predictions = [x.score_row for x in Prediction.get_in_progress(User=self.user)]
         TextOutput.addRows(predictions)
         return TextOutput.render() if len(predictions) else None
 

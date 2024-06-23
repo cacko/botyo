@@ -42,7 +42,7 @@ class Prediction(DbModel):
     @classmethod
     def get_in_progress(cls, **kwargs) -> Generator["Prediction", None, None]:
         user: User = kwargs.get("User")
-        query = cls.select().join_from(Prediction, Game).join_from(Prediction, User)
+        query = Prediction.select().join_from(Prediction, Game).join_from(Prediction, User)
         query: Query = query.where(
             (fn.date(Game.start_time) == datetime.now(tz=timezone.utc).date()) & (User.phone == user.phone)
         )
