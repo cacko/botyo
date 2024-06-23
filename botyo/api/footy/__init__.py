@@ -296,7 +296,6 @@ def h2h_command(context: Context):
 )
 def predict_command(context: Context):
     try:
-        assert context.query
         predict = Footy.predict(client=context.source)
         message = predict.predict(query=context.query)
         assert message
