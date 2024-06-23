@@ -105,7 +105,7 @@ class Prediction(DbModel):
     @property
     def AwayTeam(self) -> Competitor:
         return self.Game.away_team
-
+    
     @property
     def score(self) -> str:
         return self.Game.score

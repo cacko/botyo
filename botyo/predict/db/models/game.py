@@ -1,5 +1,3 @@
-import logging
-import stat
 from typing import Optional
 from numpy import save
 from psycopg2 import IntegrityError
@@ -7,7 +5,12 @@ from botyo.api.footy.item.subscription import UpdateData
 from botyo.threesixfive.item.team import Team
 from botyo.predict.db.database import Database
 from botyo.threesixfive.item.competition import CompetitionData
-from botyo.threesixfive.item.models import Competition, Competitor, GameStatus
+from botyo.threesixfive.item.models import (
+    Competition,
+    Competitor,
+    GameStatus,
+    Game as DataGame,
+)
 from .base import DbModel, PredictionNotAllow
 from peewee import CharField, DateTimeField, IntegerField
 from datetime import datetime, timezone
@@ -23,9 +26,8 @@ class Game(DbModel):
     home_score = IntegerField(default=-1)
     away_score = IntegerField(default=-1)
 
-
     def save(self, force_insert=False, only=None):
-        super().save(force_insert, only)        
+        super().save(force_insert, only)
 
     @classmethod
     def on_livescore_event(cls, data: UpdateData):
@@ -41,9 +43,13 @@ class Game(DbModel):
         try:
             game: Game = query.get()
             try:
-                home_score = kwargs.get("home_score", None)
-                away_score = kwargs.get("away_score", None)
-                status = kwargs.get("status", None)
+                home_score = kwargs.get(
+                    "home_score", game.game.homeCompetitor.score_int
+                )
+                away_score = kwargs.get(
+                    "away_score", game.game.awayCompetitor.score_int
+                )
+                status = kwargs.get("status", game.game.shortStatusText)
                 assert game.result
                 assert home_score is not None
                 assert away_score is not None
@@ -52,9 +58,9 @@ class Game(DbModel):
                 assert status
                 game.status = status
             except AssertionError:
-                game,save()
+                pass
             return game, False
-                
+
         except cls.DoesNotExist:
             try:
                 if defaults:
@@ -85,6 +91,7 @@ class Game(DbModel):
             ),
             None,
         )
+
     @property
     def league(self) -> Competition:
         return CompetitionData(self.league_id).competition
@@ -92,11 +99,11 @@ class Game(DbModel):
     @property
     def Status(self) -> GameStatus:
         return GameStatus(self.status)
-    
+
     @property
     def score(self) -> str:
         return f"{self.home_score}:{self.away_score}"
-    
+
     @property
     def result(self) -> Optional[str]:
         try:
@@ -105,6 +112,26 @@ class Game(DbModel):
             return f"{self.home_score}:{self.away_score}"
         except AssertionError:
             return None
+
+    @property
+    def game(self) -> Optional[DataGame]:
+        try:
+            ht = Team(self.home_team_id)
+            assert ht
+            game = next(filter(lambda g: g.id == self.id_event, ht.team.games), None)
+            assert game
+            return game
+        except AssertionError:
+            pass
+        try:
+            at = Team(self.away_team_id)
+            assert at
+            game = next(filter(lambda g: g.id == self.id_event, at.team.games), None)
+            assert game
+            return game
+        except AssertionError:
+            pass
+        return None
 
     @property
     def can_predict(self) -> bool:
@@ -120,11 +147,11 @@ class Game(DbModel):
             return self.can_predict
         except Exception:
             raise False
-        
+
     @property
     def has_started(self) -> bool:
         return self.start_time < datetime.now(tz=timezone.utc)
-    
+
     class Meta:
         database = Database.db
         table_name = "predict_game"
