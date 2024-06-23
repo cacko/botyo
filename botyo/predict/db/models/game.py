@@ -64,7 +64,6 @@ class Game(DbModel):
 
     @property
     def home_team(self) -> Competitor:
-        logging.warning(Team(self.home_team_id).team)
         return next(
             filter(
                 lambda t: t.id == self.home_team_id,

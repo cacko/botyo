@@ -29,6 +29,8 @@ class Predict(object):
 
     def getGame(self, **kwds) -> Game:
         game, _ = Game.get_or_create(**kwds)
+        logging.warn(game.to_dict())
+        logging.warn(kwds)
         try:
             assert game.has_started
             assert not game.result
