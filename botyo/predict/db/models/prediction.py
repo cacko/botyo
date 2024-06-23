@@ -4,7 +4,7 @@ from typing import Any, Generator, Optional
 from numpy import mat
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.components import PredictionRow
-from botyo.threesixfive.item.models import Competitor
+from botyo.threesixfive.item.models import Competitor, GameStatus
 from botyo.predict.db.database import Database
 from .base import DbModel
 from .user import User
@@ -51,7 +51,7 @@ class Prediction(DbModel):
             Prediction.select().join_from(Prediction, Game).join_from(Prediction, User)
         )
         query: Query = query.where(
-            (Game.status == ) & 
+            (Game.status.in_([GameStatus.NS.value, GameStatus.SCHEDULED.value])) & 
             (User.phone == user.phone)
         )
         yield from query.execute()
