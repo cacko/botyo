@@ -153,8 +153,11 @@ class Footy(object, metaclass=FootyMeta):
         _ = self.__queryGame(query)
         return []
 
-    def getPredict(self, client: str) -> Predict:
-        return Predict(client)
+    def getPredict(self, client: str, source: Optional[str] = None) -> Predict:
+        return Predict(
+            client=client,
+            source=source
+        )
 
     def getCompetition(self, query: str) -> CompetitionData:
         item = self.__queryCompetition(query)

@@ -43,7 +43,6 @@ class Predict(object):
         qc, preds = self.process_query(query)
         comp = Competitions.search(" ".join(qc))
         assert comp
-        logging.warn(comp)
         ls = Livescore(
             with_details=False,
             with_progress=False,
@@ -72,11 +71,9 @@ class Predict(object):
                 event=game,
                 sc=sc
             )
-            logging.warn(sub)
             pred_pred, _ = Prediction.get_or_create(
                 User=self.user, Game=pred_game, prediction=pred
             )
-            assert pred_pred
             predictions.append(
                 ScoreRow(
                     status=game.displayStatus,
