@@ -8,7 +8,7 @@ from peewee import CharField
 
 class User(DbModel):
     phone = CharField(null=False, unique=True)
-    name = CharField()
+    name = CharField(null=True)
     
     @classmethod
     def get_or_create(cls, **kwargs) -> tuple["User", bool]:

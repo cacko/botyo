@@ -34,6 +34,9 @@ class Prediction(DbModel):
                     return query.get(), False
                 except cls.DoesNotExist:
                     raise exc
+                
+    @classmethod
+    def get_in_progress(cls, **kwargs)
 
     class Meta:
         database = Database.db
