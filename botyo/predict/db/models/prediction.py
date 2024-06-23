@@ -51,7 +51,7 @@ class Prediction(DbModel):
             Prediction.select().join_from(Prediction, Game).join_from(Prediction, User)
         )
         query: Query = query.where(
-            # (fn.date(Game.start_time) == datetime.now(tz=timezone.utc).date()) & 
+            (Game.status == ) & 
             (User.phone == user.phone)
         )
         yield from query.execute()
@@ -116,6 +116,9 @@ class Prediction(DbModel):
 
     @property
     def prediction_row(self) -> PredictionRow:
+        game = Game.get_or_create(
+            id_event=self.Game.id_event
+        )
         return PredictionRow(
             status=self.status,
             home=self.HomeTeam.name,
