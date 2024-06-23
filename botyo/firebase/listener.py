@@ -44,6 +44,8 @@ class DeleteListener(StoppableThread):
                 pass
 
     def on_snapshot(self, col_snapshot, changes, read_time):
+        loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
+        logging.info(loggers)
         for change in changes:
             match change.type.name:
                 case 'REMOVED':

@@ -2,11 +2,9 @@
 
 from functools import reduce
 import logging
-from botyo import cli
 from botyo.api.footy.item.competitions import Competitions
 from botyo.api.footy.item.components import ScoreRow
 from botyo.api.footy.item.livescore import Livescore
-from botyo.server.models import RenderResult
 from botyo.server.output import TextOutput
 
 
