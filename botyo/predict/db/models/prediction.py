@@ -96,7 +96,6 @@ class Prediction(DbModel):
     def score_row(self) -> ScoreRow:
         return ScoreRow(
             status=self.Game.status,
-            score=self.prediction,
             home=self.HomeTeam.name,
             away=self.AwayTeam.name,
             score=self.prediction,
