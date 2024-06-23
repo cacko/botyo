@@ -158,6 +158,11 @@ class SubscriptionClient:
         return Connection.client(self.client_id)
 
     def sendUpdate(self, data: UpdateData):
+        try:
+            callable(self.client_id, self.group_id)
+            getattr(self.client_id, self.group_id)(data)
+        except Exception as e:
+            pass
         if self.is_rest:
             return self.updateREST(data)
         return self.updateBotyo(data)

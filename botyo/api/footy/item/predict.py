@@ -3,10 +3,10 @@ from functools import reduce
 import logging
 from typing import Optional
 
-from torch import Use
 from botyo.api.footy.item.competitions import Competitions
 from botyo.api.footy.item.components import ScoreRow
 from botyo.api.footy.item.livescore import Livescore
+from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
 from botyo.predict.db.models import User, Game, Prediction
 from botyo.server.output import TextOutput
 
@@ -78,6 +78,15 @@ class Predict(object):
                     is_international=game.is_international,
                 )
             )
+            sc = SubscriptionClient(
+                client_id=Game,
+                group_id="on_livescore"
+            )
+            sub = Subscription.get(
+                event=game,
+                sc=sc
+            )
+            logging.warn(sub)
         TextOutput.addRows(predictions)
         return TextOutput.render() if len(predictions) else None
 

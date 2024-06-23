@@ -1,5 +1,6 @@
 import logging
 from psycopg2 import IntegrityError
+from botyo.api.footy.item.subscription import UpdateData
 from botyo.threesixfive.item.team import Team
 from botyo.predict.db.database import Database
 from botyo.threesixfive.item.competition import CompetitionData
@@ -18,6 +19,10 @@ class Game(DbModel):
     start_time = DateTimeField()
     home_score = IntegerField(default=-1)
     away_score = IntegerField(default=-1)
+
+    @classmethod
+    def on_livescore_event(cls, data: UpdateData):
+        logging.warn(data)
 
     @classmethod
     def get_or_create(cls, **kwargs) -> tuple["Game", bool]:
