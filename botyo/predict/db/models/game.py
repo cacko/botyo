@@ -23,6 +23,10 @@ class Game(DbModel):
     home_score = IntegerField(default=-1)
     away_score = IntegerField(default=-1)
 
+
+    def save(self, force_insert=False, only=None):
+        super().save(force_insert, only)        
+
     @classmethod
     def on_livescore_event(cls, data: UpdateData):
         pass
@@ -120,7 +124,7 @@ class Game(DbModel):
     @property
     def has_started(self) -> bool:
         return self.start_time < datetime.now(tz=timezone.utc)
-
+    
     class Meta:
         database = Database.db
         table_name = "predict_game"

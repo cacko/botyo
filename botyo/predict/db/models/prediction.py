@@ -51,8 +51,8 @@ class Prediction(DbModel):
             Prediction.select().join_from(Prediction, Game).join_from(Prediction, User)
         )
         query: Query = query.where(
-            (fn.date(Game.start_time) == datetime.now(tz=timezone.utc).date())
-            & (User.phone == user.phone)
+            # (fn.date(Game.start_time) == datetime.now(tz=timezone.utc).date()) & 
+            (User.phone == user.phone)
         )
         yield from query.execute()
 
@@ -89,7 +89,7 @@ class Prediction(DbModel):
         except Exception as e:
             logging.exception(e)
 
-    def save(self, force_insert: bool = ..., only: Any | None = ...):
+    def save(self, force_insert=False, only=None):
         home_score, away_score = PREDICTION_PATTERN.findall(self.prediction.strip())
         self.prediction = f"{home_score}:{away_score}"
         return super().save(force_insert, only)
