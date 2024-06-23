@@ -1,12 +1,12 @@
 from enum import unique
 
 from psycopg2 import IntegrityError
-from botyo.api.footy.item.team import Team
+from botyo.threesixfive.item.team import Team, TeamStruct 
 from botyo.predict.db import PredictionNotAllow
 from botyo.predict.db.database import Database
 from botyo.threesixfive.data import LeagueItem
 from botyo.threesixfive.item.competition import CompetitionData
-from botyo.threesixfive.item.models import Competition, GameStatus
+from botyo.threesixfive.item.models import Competition, Competitor, GameStatus
 from .base import DbModel
 from peewee import CharField, DateTimeField, IntegerField
 from datetime import datetime, timezone
@@ -42,12 +42,12 @@ class Game(DbModel):
                     raise exc
                 
     @property
-    def home_team(self) -> Team:
-        return Team(self.home_team_id)
+    def home_team(self) -> Competitor:
+        return Team(self.home_team_id).team.competitors.pop(0)
     
     @property
-    def away_team(self) -> Team:
-        return Team(self.away_team_id)
+    def away_team(self) -> Competitor:
+        return Team(self.away_team_id).team.competitors.pop(0)
     
     @property
     def league(self) -> Competition:

@@ -1,14 +1,9 @@
-from _typeshed import Incomplete
 import logging
-from telnetlib import GA
 from typing import Any, Generator, Optional
-from venv import logger
-from datetime import datetime, timezone
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.components import ScoreRow
-from botyo.predict.db import PredictionNotAllow
+from botyo.threesixfive.item.models import Competitor
 from botyo.predict.db.database import Database
-from botyo.threesixfive.item.models import GameStatus
 from .base import DbModel
 from .user import User
 from .game import Game
@@ -70,7 +65,7 @@ class Prediction(DbModel):
             logging.exception(e)
 
     @classmethod
-    def insert(cls, data: Incomplete | None = ..., /, **insert):
+    def insert(cls, data: Optional[Any]= None, **insert):
         game: Optional[Game] = insert.get("Game")
         try:
             assert isinstance(data, dict)
@@ -88,19 +83,24 @@ class Prediction(DbModel):
     @property
     def can_predict(self) -> bool:
         return self.Game.canPredict
+    
+    @property
+    def HomeTeam(self) -> Competitor:
+        return self.Game.home_team
+    
+    @property
+    def AwayTeam(self) -> Competitor:
+        return self.Game.away_team
 
     @property
     def score_row(self) -> ScoreRow:
-        p_hscore, p_ascore = map('int', self.prediction.split(":"))
         return ScoreRow(
-            id_event=self.Game.id_event,
-            league_id=self.Game.league_id,
-            home_team_id=self.Game.home_team_id,
-            away_team_id=self.Game.away_team_id,
             status=self.Game.status,
-            start_time=self.Game.start_time,
-            home_score=p_hscore,
-            away_score=p_ascore,
+            score=self.prediction,
+            home=self.HomeTeam.name,
+            away=self.AwayTeam.name,
+            score=self.prediction,
+            league = "",
         )
 
     class Meta:
