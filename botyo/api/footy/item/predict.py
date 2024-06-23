@@ -63,6 +63,15 @@ class Predict(object):
                 home_score=game.intHomeScore,
                 away_score=game.intAwayScore,
             )
+            sc = SubscriptionClient(
+                client_id=Game,
+                group_id="on_livescore_event"
+            )
+            sub = Subscription.get(
+                event=game,
+                sc=sc
+            )
+            logging.warn(sub)
             pred_pred, _ = Prediction.get_or_create(
                 User=self.user, Game=pred_game, prediction=pred
             )
@@ -78,15 +87,7 @@ class Predict(object):
                     is_international=game.is_international,
                 )
             )
-            sc = SubscriptionClient(
-                client_id=Game,
-                group_id="on_livescore"
-            )
-            sub = Subscription.get(
-                event=game,
-                sc=sc
-            )
-            logging.warn(sub)
+
         TextOutput.addRows(predictions)
         return TextOutput.render() if len(predictions) else None
 
