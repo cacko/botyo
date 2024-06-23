@@ -65,7 +65,6 @@ class Predict(object):
                 User=self.user, Game=pred_game, prediction=pred
             )
             assert pred_pred
-            logging.warn([pred_pred, pred_game, pred_pred.can_predict])
             predictions.append(
                 ScoreRow(
                     status=game.displayStatus,

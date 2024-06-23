@@ -7,7 +7,7 @@ from botyo.predict.db.database import Database
 from .base import DbModel
 from .user import User
 from .game import Game
-from peewee import CharField, TimestampField, ForeignKeyField, fn
+from peewee import CharField, TimestampField, ForeignKeyField, fn, Query
 
 
 class Prediction(DbModel):
@@ -42,10 +42,10 @@ class Prediction(DbModel):
     def get_in_progress(cls, **kwargs) -> Generator["Prediction", None, None]:
         user: User = kwargs.get("User")
         query = cls.select().join_from(Prediction, Game).join_from(Prediction, User)
-        query = query.where(
+        query: Query = query.where(
             (fn.DATE(Game.start_time) == fn.CURRENT_DATE) & (User.phone == user.phone)
         )
-        yield from query
+        yield from query.iterator()
 
     @classmethod
     def update(cls, data: Optional[Any], **update):
