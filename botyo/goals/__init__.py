@@ -160,6 +160,7 @@ class GoalsMeta(type):
         return root
 
     def goal_video(cls, q: Query) -> Optional[Path]:
+        return None
         fp = cls.output_dir / \
             DownloadItem.get_filename(q.event_id, q.game_event_id)
         if fp.exists():
@@ -186,6 +187,7 @@ class Goals(object, metaclass=GoalsMeta):
         return self.__videoData
 
     def __fetch(self, **kwds):
+        return
         tweets = Twitter.media(**kwds)
         for t in tweets:
             t_id, t_text = (
@@ -218,6 +220,7 @@ class Goals(object, metaclass=GoalsMeta):
 
     def do_search(self, query: list[Query],
                   **kwds) -> Generator[DownloadItem, None, None]:
+        return
         matcher = TeamsMatch(haystack=query)
         try:
             self.__fetch(**kwds)
