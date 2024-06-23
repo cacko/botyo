@@ -1,5 +1,7 @@
 import logging
+import stat
 from typing import Optional
+from numpy import save
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.subscription import UpdateData
 from botyo.threesixfive.item.team import Team
@@ -33,7 +35,22 @@ class Game(DbModel):
         query = query.where((cls.id_event == id_event))
 
         try:
-            return query.get(), False
+            game: Game = query.get()
+            try:
+                home_score = kwargs.get("home_score", None)
+                away_score = kwargs.get("away_score", None)
+                status = kwargs.get("status", None)
+                assert game.result
+                assert home_score is not None
+                assert away_score is not None
+                game.home_score = home_score
+                game.away_score = away_score
+                assert status
+                game.status = status
+            except AssertionError:
+                game,save()
+            return game, False
+                
         except cls.DoesNotExist:
             try:
                 if defaults:
