@@ -2,12 +2,14 @@ from enum import unique
 
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.team import Team
+from botyo.predict.db import PredictionNotAllow
 from botyo.predict.db.database import Database
 from botyo.threesixfive.data import LeagueItem
 from botyo.threesixfive.item.competition import CompetitionData
-from botyo.threesixfive.item.models import Competition
+from botyo.threesixfive.item.models import Competition, GameStatus
 from .base import DbModel
 from peewee import CharField, DateTimeField, IntegerField
+from datetime import datetime, timezone
 
 class Game(DbModel):
     id_event = IntegerField(null=False, unique=True)
@@ -50,6 +52,25 @@ class Game(DbModel):
     @property
     def league(self) -> Competition:
         return CompetitionData(self.league_id).competition
+    
+    @property
+    def Status(self) -> GameStatus:
+        return GameStatus(self.status)
+
+    @property
+    def can_predict(self) -> bool:
+        try:
+            assert self.start_time < datetime.now(tz=timezone.utc)
+            return True
+        except AssertionError:
+            raise PredictionNotAllow()
+        
+    @property
+    def canPredict(self) -> bool:
+        try:
+            return self.can_predict
+        except Exception:
+            raise False
 
     class Meta:
         database = Database.db
