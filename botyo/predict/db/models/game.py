@@ -1,6 +1,6 @@
 import logging
 from psycopg2 import IntegrityError
-from botyo.threesixfive.item.team import Team 
+from botyo.threesixfive.item.team import Team
 from botyo.predict.db.database import Database
 from botyo.threesixfive.item.competition import CompetitionData
 from botyo.threesixfive.item.models import Competition, Competitor, GameStatus
@@ -8,16 +8,17 @@ from .base import DbModel, PredictionNotAllow
 from peewee import CharField, DateTimeField, IntegerField
 from datetime import datetime, timezone
 
+
 class Game(DbModel):
     id_event = IntegerField(null=False, unique=True)
     league_id = IntegerField(null=False)
     home_team_id = IntegerField(null=False)
-    away_team_id =  IntegerField(null=False)
+    away_team_id = IntegerField(null=False)
     status = CharField()
     start_time = DateTimeField()
     home_score = IntegerField(default=-1)
     away_score = IntegerField(default=-1)
-    
+
     @classmethod
     def get_or_create(cls, **kwargs) -> tuple["Game", bool]:
         defaults = kwargs.pop("defaults", {})
@@ -37,20 +38,31 @@ class Game(DbModel):
                     return query.get(), False
                 except cls.DoesNotExist:
                     raise exc
-                
+
     @property
     def home_team(self) -> Competitor:
         logging.warning(Team(self.home_team_id).team)
-        return Team(self.home_team_id).team.competitors.pop(0)
-    
+        return next(
+            filter(
+                lambda t: t.id == self.home_team_id,
+                Team(self.home_team_id).team.competitors,
+            ),
+            None,
+        )
+
     @property
     def away_team(self) -> Competitor:
-        return Team(self.away_team_id).team.competitors.pop(0)
-    
+        return next(
+            filter(
+                lambda t: t.id == self.home_team_id,
+                Team(self.away_team_id).team.competitors,
+            ),
+            None,
+        )
     @property
     def league(self) -> Competition:
         return CompetitionData(self.league_id).competition
-    
+
     @property
     def Status(self) -> GameStatus:
         return GameStatus(self.status)
@@ -62,7 +74,7 @@ class Game(DbModel):
             return True
         except AssertionError:
             raise PredictionNotAllow()
-        
+
     @property
     def canPredict(self) -> bool:
         try:
