@@ -83,6 +83,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     MUSIC_NOWPLAYING_ART = "music:nowart"
     ONTV_TV = "ontv:tv"
     HELP = "help"
+    FOOTY_PREDICT = "ft:predict"
     FOOTY_STANDINGS = "ft:standings"
     FOOTY_LEAGUES = "ft:leagues"
     FOOTY_FACTS = "ft:facts"

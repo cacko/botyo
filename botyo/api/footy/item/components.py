@@ -122,3 +122,4 @@ class ScoreRow:
     @property
     def win(self):
         return self.row.win
+

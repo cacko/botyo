@@ -1,3 +1,4 @@
+from botyo import cli
 from botyo.api.footy.item.standings import Standings
 from fuzzelinho import Match, MatchMethod, Needle
 from botyo.server.blueprint import Blueprint
@@ -284,6 +285,22 @@ def h2h_command(context: Context):
         message = stats.message
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_H2H)
+    except Exception as e:
+        logging.exception(e)
+        return EmptyResult()
+
+@bp.command(
+    method=ZMethod.FOOTY_PREDICT,
+    desc="predcit league results",
+    icon="scoreboard"
+)
+def predict_command(context: Context):
+    try:
+        assert context.query
+        predict = Footy.predict(client=context.client)
+        message = predict.predict(query=context.query)
+        assert message
+        return RenderResult(message=message, method=ZMethod.FOOTY_PREDICT)
     except Exception as e:
         logging.exception(e)
         return EmptyResult()

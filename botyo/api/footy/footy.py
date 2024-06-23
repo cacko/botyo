@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 from botyo.api.footy.item.h2h import H2H
 
+from botyo.api.footy.item.predict import Predict
 from botyo.server.scheduler import Scheduler
 from .item.subscription import Subscription, SubscriptionClient
 from fuzzelinho import Match, MatchMethod, Needle
@@ -67,6 +68,9 @@ class FootyMeta(type):
 
     def player(cls, query: str) -> Player:
         return cls().getPlayer(query)
+    
+    def predict(cls, client) -> Predict:
+        return cls().getPredict(client)
 
     # def precache(cls):
     #     return cls().precacheLivegames()
@@ -102,14 +106,6 @@ class GameNeedle(Needle):
     strAwayTeam: Optional[str] = ""
 
 
-class CompetitionNeedle(Needle):
-    league_name: str
-
-
-class CompetitionMatch(Match):
-    minRatio = 70
-    method = MatchMethod.WRATIO
-
 
 class Footy(object, metaclass=FootyMeta):
     def __queryGame(self, query) -> Event:
@@ -140,26 +136,7 @@ class Footy(object, metaclass=FootyMeta):
         return Team(item)
 
     def __queryCompetition(self, query) -> LeagueItem:
-        if not query.strip():
-            raise CompetitionNotFound
-        items = self.getCompetitions().current
-        try:
-            idCompetition = int(query)
-            res = next(filter(lambda x: x.id == idCompetition, items), None)
-            if not res:
-                raise CompetitionNotFound
-            return res
-        except ValueError:
-            pass
-        matcher = CompetitionMatch(haystack=items)
-        results = matcher.fuzzy(
-            CompetitionNeedle(
-                league_name=query,
-            )
-        )
-        if not len(results):
-            raise CompetitionNotFound
-        return results[0]
+        return Competitions.search(query)
 
     def getLivescore(self, inprogress=False) -> Livescore:
         return Livescore(
@@ -170,13 +147,14 @@ class Footy(object, metaclass=FootyMeta):
         )
 
     def getCompetitions(self) -> Competitions:
-        return Competitions(
-            Config.ontv.leagues,
-        )
+        return Competitions()
 
     def getGoals(self, query: str) -> list[Goal]:
         _ = self.__queryGame(query)
         return []
+    
+    def getPredict(self, client: str) -> Predict:
+        return Predict(client)
 
     def getCompetition(self, query: str) -> CompetitionData:
         item = self.__queryCompetition(query)

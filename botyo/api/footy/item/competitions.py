@@ -1,12 +1,26 @@
 from datetime import datetime, timezone, timedelta
+from botyo.core.config import Config
 
 from botyo.server.output import TextOutput, Column, Align
 from botyo.threesixfive.data import Data365
 from botyo.threesixfive.data import LeagueItem
+from botyo.threesixfive.exception import CompetitionNotFound
 from botyo.threesixfive.item.competition import CompetitionData
 from cachable import TimeCacheable
 from zoneinfo import ZoneInfo
 from itertools import groupby
+from fuzzelinho import Match, MatchMethod, Needle
+
+
+
+class CompetitionNeedle(Needle):
+    league_name: str
+
+
+class CompetitionMatch(Match):
+    minRatio = 70
+    method = MatchMethod.WRATIO
+
 
 
 class CompetitionItem(TimeCacheable):
@@ -59,12 +73,44 @@ class CompetitionItem(TimeCacheable):
         return TextOutput.render()
 
 
-class Competitions:
+class CompetitionsMeta(type):
+    
+    __instances: dict[str, 'Competitions'] = {}
+    
+    def __call__(cls, *args, **kwargs):
+        k = cls.__name__
+        if k not in cls.__instances:
+            cls.__instances[k] = type.__call__(cls, *args, **kwargs)
+        return cls.__instances[k]
+
+    def search(cls, query: str):
+        if not query.strip():
+            raise CompetitionNotFound
+        items = cls().current
+        try:
+            idCompetition = int(query)
+            res = next(filter(lambda x: x.id == idCompetition, items), None)
+            if not res:
+                raise CompetitionNotFound
+            return res
+        except ValueError:
+            pass
+        matcher = CompetitionMatch(haystack=items)
+        results = matcher.fuzzy(
+            CompetitionNeedle(
+                league_name=query,
+            )
+        )
+        if not len(results):
+            raise CompetitionNotFound
+        return results[0]
+
+class Competitions(object, metaclass=CompetitionsMeta):
 
     leagues: list[int] = []
 
-    def __init__(self, leagues: list[int]):
-        self.leagues = leagues
+    def __init__(self):
+        self.leagues = Config.ontv.leagues
 
     @property
     def competitions(self) -> list[LeagueItem]:
