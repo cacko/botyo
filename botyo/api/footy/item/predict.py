@@ -8,8 +8,6 @@ from botyo.api.footy.item.livescore import Livescore
 from botyo.server.output import TextOutput
 
 
-
-
 class Predict(object):
     
     

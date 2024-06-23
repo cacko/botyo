@@ -3,7 +3,7 @@ from .models import User, Prediction, Game
 
 
 def create_tables(drop=False):
-    tables = [Prediction, User, Game]
+    tables = [User, Game, Prediction]
     if drop:
         Database.db.drop_tables(tables)
     Database.db.create_tables(tables)
