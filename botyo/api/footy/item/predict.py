@@ -2,9 +2,12 @@
 
 from functools import reduce
 import logging
+
+from torch import Use
 from botyo.api.footy.item.competitions import Competitions
 from botyo.api.footy.item.components import ScoreRow
 from botyo.api.footy.item.livescore import Livescore
+from botyo.predict.db.models import User, Game, Prediction
 from botyo.server.output import TextOutput
 
 
@@ -27,9 +30,25 @@ class Predict(object):
         )
         games = ls.items
         assert len(preds) == len(games)
+        user = User.get_or_create(phone=self.client)
         predictions = []
         for pred, game in zip(preds, games):
-            logging.warn([pred, game])
+            pred_game = Game.get_or_create(
+                   id_event=game.idEvent,
+                    league_id=game.idLeague,
+                    home_team_id=game.idHomeTeam,
+                    away_team_id=game.idAwayTeam,
+                    status=game.strStatus,
+                    start_time=game.startTime,
+                    home_score=game.intHomeScore,
+                    away_score=game.intAwayScore
+            )
+            pred_pred = Prediction.get_or_create(
+                User=user,
+                Game=pred_game,
+                prediction=pred
+            )
+            logging.warn([pred_pred, game])
             predictions.append(ScoreRow(
                 status=game.displayStatus,
                 home=game.strHomeTeam,
