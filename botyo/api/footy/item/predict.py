@@ -30,10 +30,10 @@ class Predict(object):
         )
         games = ls.items
         assert len(preds) == len(games)
-        user = User.get_or_create(phone=self.client)
+        user, _ = User.get_or_create(phone=self.client)
         predictions = []
         for pred, game in zip(preds, games):
-            pred_game = Game.get_or_create(
+            pred_game, _ = Game.get_or_create(
                    id_event=game.idEvent,
                     league_id=game.idLeague,
                     home_team_id=game.idHomeTeam,
@@ -43,12 +43,13 @@ class Predict(object):
                     home_score=game.intHomeScore,
                     away_score=game.intAwayScore
             )
-            pred_pred = Prediction.get_or_create(
+            pred_pred, _ = Prediction.get_or_create(
                 User=user,
                 Game=pred_game,
                 prediction=pred
             )
-            logging.warn([pred_pred, game])
+            assert pred_pred
+            logging.warn([pred_pred, pred_game, pred_pred.can_predict])
             predictions.append(ScoreRow(
                 status=game.displayStatus,
                 home=game.strHomeTeam,

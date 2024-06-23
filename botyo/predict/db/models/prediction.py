@@ -1,5 +1,6 @@
 from telnetlib import GA
-
+from venv import logger
+from datetime import datetime, timezone
 from psycopg2 import IntegrityError
 from botyo.predict.db.database import Database
 from .base import DbModel
@@ -15,7 +16,7 @@ class Prediction(DbModel):
     timestamp = TimestampField()
 
     @classmethod
-    def get_or_create(cls: "Prediction", **kwargs) -> tuple["Game", bool]:
+    def get_or_create(cls: "Prediction", **kwargs) -> tuple["Prediction", bool]:
         defaults = kwargs.pop("defaults", {})
         game: Game = kwargs.get("Game")
         user: User = kwargs.get("User")
@@ -43,10 +44,12 @@ class Prediction(DbModel):
         # query = query.where(
         #     (Game.start_time == game.id) & (User.phone == user.phone)
         # )
-        
+
     @property
-    def can_predict(self) -> bool: 
-        
+    def can_predict(self) -> bool:
+        logger.warning(
+            [self.Game.start_time, datetime.now(tz=timezone.utc), self.Game.status]
+        )
 
     class Meta:
         database = Database.db
