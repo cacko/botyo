@@ -50,7 +50,7 @@ def create_app():
     text_bp.register(app)
     translate_bp.register(app)
     image_bp.register(app)
-    meme_bp.register(app)
+    # meme_bp.register(app)
     return app
 
 

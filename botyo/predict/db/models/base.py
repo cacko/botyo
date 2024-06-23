@@ -3,7 +3,7 @@ from playhouse.shortcuts import model_to_dict
 from humanfriendly.tables import format_robust_table
 
 
-class PredictionNotAllow(Exception):
+class PredictionNotAllow(BaseException):
     pass
 
 class DbModel(Model):
