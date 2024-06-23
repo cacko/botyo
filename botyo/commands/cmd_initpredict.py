@@ -1,6 +1,8 @@
+import logging
 from botyo.cli import pass_environment, Environment
 import click
 from botyo.commands import coro
+from botyo.predict.db import create_tables
 
 
 @click.command("initpredict", short_help="init predict db")
@@ -8,7 +10,6 @@ from botyo.commands import coro
 @coro
 def cli(ctx: Environment):
     try:
-        from botyo.predict.db import create_tables
         create_tables()
     except Exception as e:
-        print(e)
+        logging.exception(e)

@@ -1,10 +1,6 @@
-import logging
-
 from botyo.predict.db.database import Database
 from .base import DbModel
-from peewee import CharField, DateTimeField, fn, IntegerField, ForeignKeyField
-from playhouse.shortcuts import model_to_dict
-from datetime import timezone, datetime, timedelta
+from peewee import CharField, DateTimeField, IntegerField
 
 class Game(DbModel):
     id = CharField(null=False)

@@ -1,9 +1,9 @@
 from .game import Game
-from .prediction import Prediction
 from .user import User
+from .prediction import Prediction
 
 __all__ = [
     "Game",
+    "User",
     "Prediction",
-    "User"
 ]
