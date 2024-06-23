@@ -43,7 +43,7 @@ class Prediction(DbModel):
         user: User = kwargs.get("User")
         query = cls.select().join_from(Prediction, Game).join_from(Prediction, User)
         query: Query = query.where(
-            (fn.DATE(Game.start_time) == fn.CURRENT_DATE) & (User.phone == user.phone)
+            (fn.DATE(Game.start_time) == fn.current_date) & (User.phone == user.phone)
         )
         yield from query.execute()
 
