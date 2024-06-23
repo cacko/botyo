@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 import logging
 from typing import Any, Generator, Optional
+from numpy import mat
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.components import PredictionRow, ScoreRow
 from botyo.threesixfive.item.models import Competitor
@@ -116,8 +117,20 @@ class Prediction(DbModel):
         )
         
     def points(self) -> int:
-        home_goals, away_goals = map(int, self.prediction.split(":"))
-        pass
+        home_goals, away_goals = map("int", self.prediction.split(":"))
+        if all([home_goals == self.Game.home_score, away_goals == self.Game.away_score]):
+            return 3
+        pdiff = home_goals - away_goals
+        gdiff = self.Game.home_score - self.Game.away_score
+        match pdiff:
+            case 0:
+                return 1 if gdiff == 0 else 0
+            case pdiff if pdiff > 0:
+                return 1 if gdiff > 0 else 0
+            case pdiff if pdiff < 0:
+                return 1 if gdiff < 0 else 0
+        
+
 
     class Meta:
         database = Database.db

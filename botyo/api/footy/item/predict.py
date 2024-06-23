@@ -90,6 +90,7 @@ class Predict(object):
                     score=pred_game.score,
                     prediction=pred_pred.prediction,
                     away=pred_game.away_team.name,
+                    points=pred_pred.points,
                     win=game.win,
                     league=pred_game.league.name,
                     is_international=pred_game.league.is_international,

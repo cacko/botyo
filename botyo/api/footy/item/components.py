@@ -7,7 +7,7 @@ from botyo.core.country import Country as Flag
 ScoreData = namedtuple("ScoreData", "status,home,away,score,win", defaults=["vs", ""])
 
 PredictionData = namedtuple(
-    "ScoreData", "status,home,away,score,prediction,win", defaults=["vs", ""]
+    "ScoreData", "status,home,away,score,prediction,win,points", defaults=["vs", ""]
 )
 
 
@@ -51,7 +51,9 @@ class ScoreRow:
             score = "vs"
         self.league = league
         self.is_international = is_international
-        self.row = ScoreData(status=status, score=score, home=home, away=away, win=win)
+        self.row = ScoreData(
+            status=status, score=score, home=home, away=away, win=win, points=points
+        )
 
     def __str__(self) -> str:
         match self.format:
@@ -139,6 +141,7 @@ class PredictionRow(ScoreRow):
         prediction,
         home,
         away,
+        points,
         win: str = "",
         format: ScoreFormat = ScoreFormat.LIST,
         league: str = "",
@@ -156,6 +159,7 @@ class PredictionRow(ScoreRow):
             home=home,
             away=away,
             win=win,
+            points=points
         )
 
     def __str__(self) -> str:
