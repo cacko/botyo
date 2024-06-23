@@ -58,4 +58,4 @@ class Predict(object):
                 r[0].append(q)
             return r
         
-        return tuple(reduce(reduce_func), query.split(), ([], []))
+        return tuple(reduce(reduce_func, query.split(), ([], [])))
