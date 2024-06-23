@@ -22,7 +22,7 @@ class Game(DbModel):
 
     @classmethod
     def on_livescore_event(cls, data: UpdateData):
-        logging.warn(data)
+        id = data.message.icon
 
     @classmethod
     def get_or_create(cls, **kwargs) -> tuple["Game", bool]:

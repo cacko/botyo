@@ -1,6 +1,7 @@
 import logging
 from typing import Optional
 from pydantic import BaseModel
+from botyo import cli
 from botyo.api.footy.item.h2h import H2H
 
 from botyo.api.footy.item.predict import Predict
@@ -62,15 +63,15 @@ class FootyMeta(type):
 
     def stats(cls, query: str) -> Stats:
         return cls().getStats(query)
-    
+
     def h2h(cls, query: str) -> H2H:
         return cls().getH2H(query)
 
     def player(cls, query: str) -> Player:
         return cls().getPlayer(query)
-    
-    def predict(cls, client) -> Predict:
-        return cls().getPredict(client)
+
+    def predict(cls, client, source) -> Predict:
+        return cls().getPredict(client=client, source=source)
 
     # def precache(cls):
     #     return cls().precacheLivegames()
@@ -104,7 +105,6 @@ class GameMatch(Match):
 class GameNeedle(Needle):
     strHomeTeam: str
     strAwayTeam: Optional[str] = ""
-
 
 
 class Footy(object, metaclass=FootyMeta):
@@ -152,7 +152,7 @@ class Footy(object, metaclass=FootyMeta):
     def getGoals(self, query: str) -> list[Goal]:
         _ = self.__queryGame(query)
         return []
-    
+
     def getPredict(self, client: str) -> Predict:
         return Predict(client)
 
@@ -175,7 +175,7 @@ class Footy(object, metaclass=FootyMeta):
     def getStats(self, query: str) -> Stats:
         item = self.__queryGame(query)
         return Stats(item)
-    
+
     def getH2H(self, query: str) -> H2H:
         item = self.__queryGame(query)
         return H2H(item)
@@ -192,8 +192,7 @@ class Footy(object, metaclass=FootyMeta):
         sub.cancel(sc)
         icon = emojize(":dango:")
         return SubscriptionResult(
-            message=f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}",
-            sub_id=sub_id
+            message=f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}", sub_id=sub_id
         )
 
     def getSubscription(self, client: str, query: str, group) -> SubscriptionResult:

@@ -15,14 +15,15 @@ class Predict(object):
 
     __user: Optional[User] = None
 
-    def __init__(self, client: str):
+    def __init__(self, client: str, source: str):
         self.client = client
-        logging.warn(f"predict client = {client}")
+        self.source = source
+        logging.warn(f"predict client = {source}")
 
     @property
     def user(self) -> User:
         if not self.__user:
-            user, _ = User.get_or_create(phone=self.client)
+            user, _ = User.get_or_create(phone=self.source)
             self.__user = user
         return self.__user
 
@@ -64,7 +65,7 @@ class Predict(object):
                 away_score=game.intAwayScore,
             )
             sc = SubscriptionClient(
-                client_id=Game,
+                client_id=self.client,
                 group_id="on_livescore_event"
             )
             sub = Subscription.get(
