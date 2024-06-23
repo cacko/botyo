@@ -10,7 +10,6 @@ from botyo.server.output import TextOutput
 
 class Predict(object):
     
-    
     def __init__(self, client: str):
         self.client =  client
         logging.debug(f"predict client = {client}")

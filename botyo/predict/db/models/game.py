@@ -4,7 +4,6 @@ from .base import DbModel
 from peewee import CharField, DateTimeField, IntegerField
 
 class Game(DbModel):
-    id = CharField(null=False)
     id_event = IntegerField(null=False, unique=True)
     league_id = IntegerField(null=False)
     home_team_id = IntegerField(null=False)
