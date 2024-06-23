@@ -12,13 +12,13 @@ class Predict(object):
     
     def __init__(self, client: str):
         self.client =  client
-        logging.debug(f"predict client = {client}")
+        logging.warn(f"predict client = {client}")
                 
     def predict(self, query: str):
         qc, preds = self.process_query(query)
         comp = Competitions.search(" ".join(qc))
         assert comp
-        logging.debug(comp)
+        logging.warn(comp)
         ls =  Livescore (
             with_details=False,
             with_progress=False,
@@ -26,10 +26,10 @@ class Predict(object):
             inprogress=False,
         )
         games = ls.items
-        logging.debug([ls.items, preds])
         assert len(preds) == len(games)
         predictions = []
         for pred, game in zip(preds, games):
+            logging.warn([pred, game])
             predictions.append(ScoreRow(
                 status=game.displayStatus,
                 home=game.strHomeTeam,
