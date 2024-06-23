@@ -3,10 +3,11 @@ from botyo.predict.db.database import Database
 from .base import DbModel
 from peewee import CharField
 
+
 class User(DbModel):
     phone = CharField(null=False, unique=True)
     name = CharField(null=True)
-    
+
     @classmethod
     def get_or_create(cls, **kwargs) -> tuple["User", bool]:
         defaults = kwargs.pop("defaults", {})
@@ -26,6 +27,15 @@ class User(DbModel):
                     return query.get(), False
                 except cls.DoesNotExist:
                     raise exc
+
+    @property
+    def display_name(self) -> str:
+        try:
+            assert self.name
+            return self.name
+        except AssertionError:
+            pass
+        return self.phone
 
     class Meta:
         database = Database.db

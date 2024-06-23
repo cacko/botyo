@@ -54,7 +54,7 @@ class Game(DbModel):
     def away_team(self) -> Competitor:
         return next(
             filter(
-                lambda t: t.id == self.home_team_id,
+                lambda t: t.id == self.away_team_id,
                 Team(self.away_team_id).team.competitors,
             ),
             None,

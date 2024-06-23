@@ -1,3 +1,4 @@
+from curses.ascii import US
 from functools import reduce
 import logging
 from typing import Optional
@@ -28,9 +29,10 @@ class Predict(object):
     def getGame(self, **kwds) -> Game:
         game, _ = Game.get_or_create(**kwds)
         return game
-    
+
     def today_predictions(self) -> str:
         predictions = [x.score_row for x in Prediction.get_in_progress(User=self.user)]
+        predictions.insert(0, [f"Predictions by {User.display_name}"])
         TextOutput.addRows(predictions)
         return TextOutput.render() if len(predictions) else None
 
@@ -49,7 +51,7 @@ class Predict(object):
         )
         games = ls.items
         assert len(preds) == len(games)
-        predictions = []
+        predictions = [[f"Predictions by {User.display_name}"]]
         for pred, game in zip(preds, games):
             pred_game = self.getGame(
                 id_event=game.idEvent,
