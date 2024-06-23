@@ -104,18 +104,24 @@ class Prediction(DbModel):
     @property
     def score(self) -> str:
         return self.Game.score
+    
+    @property
+    def status(self) -> str:
+        return self.Game.status
 
     @property
     def prediction_row(self) -> PredictionRow:
         return PredictionRow(
-            status=self.Game.status,
+            status=self.status,
             home=self.HomeTeam.name,
             away=self.AwayTeam.name,
-            score=self.Game.score,
+            score=self.score,
             prediction=self.prediction,
+            points=self.points, 
             league = "",
         )
         
+    @property
     def points(self) -> int:
         home_goals, away_goals = map("int", self.prediction.split(":"))
         if all([home_goals == self.Game.home_score, away_goals == self.Game.away_score]):
