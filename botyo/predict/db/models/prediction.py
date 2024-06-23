@@ -20,7 +20,9 @@ class Prediction(DbModel):
         game: Game = kwargs.get("Game")
         user: User = kwargs.get("User")
         query = cls.select().join_from(Prediction, Game).join_from(Prediction, User)
-        query = query.where((Game.id_event == game.id) & (User.phone == user.phone))
+        query = query.where(
+            (Game.id_event == game.id_event) & (User.phone == user.phone)
+        )
         try:
             return query.get(), False
         except cls.DoesNotExist:
@@ -41,6 +43,10 @@ class Prediction(DbModel):
         # query = query.where(
         #     (Game.start_time == game.id) & (User.phone == user.phone)
         # )
+        
+    @property
+    def can_predict(self) -> bool: 
+        
 
     class Meta:
         database = Database.db

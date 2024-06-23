@@ -1,7 +1,11 @@
 from enum import unique
 
 from psycopg2 import IntegrityError
+from botyo.api.footy.item.team import Team
 from botyo.predict.db.database import Database
+from botyo.threesixfive.data import LeagueItem
+from botyo.threesixfive.item.competition import CompetitionData
+from botyo.threesixfive.item.models import Competition
 from .base import DbModel
 from peewee import CharField, DateTimeField, IntegerField
 
@@ -34,6 +38,18 @@ class Game(DbModel):
                     return query.get(), False
                 except cls.DoesNotExist:
                     raise exc
+                
+    @property
+    def home_team(self) -> Team:
+        return Team(self.home_team_id)
+    
+    @property
+    def away_team(self) -> Team:
+        return Team(self.away_team_id)
+    
+    @property
+    def league(self) -> Competition:
+        return CompetitionData(self.league_id).competition
 
     class Meta:
         database = Database.db
