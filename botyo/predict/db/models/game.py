@@ -1,5 +1,4 @@
 from typing import Optional
-from numpy import save
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.subscription import UpdateData
 from botyo.threesixfive.item.team import Team
@@ -27,7 +26,6 @@ class Game(DbModel):
     away_score = IntegerField(default=-1)
 
     def save(self, force_insert=False, only=None):
-        
         super().save(force_insert, only)
 
     @classmethod
@@ -44,6 +42,7 @@ class Game(DbModel):
         try:
             game: Game = query.get()
             try:
+                assert game.result == "-1:-1"
                 home_score = kwargs.get(
                     "home_score", game.game.homeCompetitor.score_int
                 )
@@ -51,7 +50,6 @@ class Game(DbModel):
                     "away_score", game.game.awayCompetitor.score_int
                 )
                 status = kwargs.get("status", game.game.shortStatusText)
-                assert game.result
                 assert home_score is not None
                 assert away_score is not None
                 game.home_score = home_score
@@ -138,7 +136,7 @@ class Game(DbModel):
     @property
     def can_predict(self) -> bool:
         try:
-            assert self.start_time < datetime.now(tz=timezone.utc)
+            assert self.start_time.astimezone(tz=timezone.utc) < datetime.now(tz=timezone.utc)
             return True
         except AssertionError:
             raise PredictionNotAllow()
@@ -152,7 +150,7 @@ class Game(DbModel):
 
     @property
     def has_started(self) -> bool:
-        return self.start_time < datetime.now(tz=timezone.utc)
+        return self.start_time.astimezone(tz=timezone.utc) < datetime.now(tz=timezone.utc)
 
     class Meta:
         database = Database.db
