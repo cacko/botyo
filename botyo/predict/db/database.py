@@ -2,9 +2,8 @@ import logging
 from playhouse.db_url import parse
 from playhouse.postgres_ext import PostgresqlExtDatabase
 from typing import Optional, Any
-import os
 from peewee import OperationalError
-from termo_service.config import app_config
+from botyo.core.config import Config
 
 class ReconnectingDB(PostgresqlExtDatabase):
     
@@ -31,7 +30,7 @@ class DatabaseMeta(type):
 class Database(object, metaclass=DatabaseMeta):
 
     def __init__(self):
-        parsed = parse(app_config.db.url)
+        parsed = parse(Config.predict.db_url)
         self.__db = ReconnectingDB(**parsed)
 
     def get_db(self) -> ReconnectingDB:
