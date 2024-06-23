@@ -4,7 +4,7 @@ import logging
 from typing import Optional
 
 from botyo.api.footy.item.competitions import Competitions
-from botyo.api.footy.item.components import ScoreRow
+from botyo.api.footy.item.components import PredictionRow
 from botyo.api.footy.item.livescore import Livescore
 from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
 from botyo.predict.db.models import User, Game, Prediction
@@ -41,7 +41,7 @@ class Predict(object):
         return game
 
     def today_predictions(self) -> str:
-        predictions = [x.score_row for x in Prediction.get_in_progress(User=self.user)]
+        predictions = [x.prediction_row for x in Prediction.get_in_progress(User=self.user)]
         predictions.insert(0, [f"Predictions by {self.user.display_name}"])
         TextOutput.addRows(predictions)
         return TextOutput.render() if len(predictions) else None
@@ -84,14 +84,15 @@ class Predict(object):
                 User=self.user, Game=pred_game, prediction=pred
             )
             predictions.append(
-                ScoreRow(
+                PredictionRow(
                     status=game.displayStatus,
-                    home=game.strHomeTeam,
-                    score=pred,
-                    away=game.strAwayTeam,
+                    home=pred_game.home_team.name,
+                    score=pred_game.score,
+                    prediction=pred_pred.prediction,
+                    away=pred_game.away_team.name,
                     win=game.win,
-                    league=game.strLeague,
-                    is_international=game.is_international,
+                    league=pred_game.league.name,
+                    is_international=pred_game.league.is_international,
                 )
             )
 

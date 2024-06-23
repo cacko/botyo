@@ -2,14 +2,16 @@ from datetime import datetime, timezone
 import logging
 from typing import Any, Generator, Optional
 from psycopg2 import IntegrityError
-from botyo.api.footy.item.components import ScoreRow
+from botyo.api.footy.item.components import PredictionRow, ScoreRow
 from botyo.threesixfive.item.models import Competitor
 from botyo.predict.db.database import Database
 from .base import DbModel
 from .user import User
 from .game import Game
 from peewee import CharField, TimestampField, ForeignKeyField, fn, Query
+import re
 
+PREDICTION_PATTERN = re.compile(r"(\d+)[^\d](\d+)")
 
 class Prediction(DbModel):
     User = ForeignKeyField(User)
@@ -80,6 +82,11 @@ class Prediction(DbModel):
             return super().insert(data, **insert)
         except Exception as e:
             logging.exception(e)
+    
+    def save(self, force_insert: bool = ..., only: Any | None = ...):
+        home_score, away_score = PREDICTION_PATTERN.findall(self.prediction.strip())
+        self.prediction = f"{home_score}:{away_score}"
+        return super().save(force_insert, only)
 
     @property
     def can_predict(self) -> bool:
@@ -92,16 +99,25 @@ class Prediction(DbModel):
     @property
     def AwayTeam(self) -> Competitor:
         return self.Game.away_team
+    
+    @property
+    def score(self) -> str:
+        return self.Game.score
 
     @property
-    def score_row(self) -> ScoreRow:
-        return ScoreRow(
+    def prediction_row(self) -> PredictionRow:
+        return PredictionRow(
             status=self.Game.status,
             home=self.HomeTeam.name,
             away=self.AwayTeam.name,
-            score=self.prediction,
+            score=self.Game.score,
+            prediction=self.prediction,
             league = "",
         )
+        
+    def points(self) -> int:
+        home_goals, away_goals = map(int, self.prediction.split(":"))
+        pass
 
     class Meta:
         database = Database.db

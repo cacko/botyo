@@ -74,6 +74,10 @@ class Game(DbModel):
         return GameStatus(self.status)
     
     @property
+    def score(self) -> str:
+        return f"{self.home_score}:{self.away_score}"
+    
+    @property
     def result(self) -> Optional[str]:
         try:
             assert self.home_score > -1

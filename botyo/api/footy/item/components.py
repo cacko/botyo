@@ -6,6 +6,10 @@ from botyo.core.country import Country as Flag
 
 ScoreData = namedtuple("ScoreData", "status,home,away,score,win", defaults=["vs", ""])
 
+PredictionData = namedtuple(
+    "ScoreData", "status,home,away,score,prediction,win", defaults=["vs", ""]
+)
+
 
 class ScoreFormat(Enum):
     STANDALONE = 1
@@ -123,3 +127,62 @@ class ScoreRow:
     def win(self):
         return self.row.win
 
+
+class PredictionRow(ScoreRow):
+
+    row: PredictionData
+
+    def __init__(
+        self,
+        status,
+        score,
+        prediction,
+        home,
+        away,
+        win: str = "",
+        format: ScoreFormat = ScoreFormat.LIST,
+        league: str = "",
+        is_international: bool = False,
+    ):
+        self.format = format
+        if not score:
+            score = "vs"
+        self.league = league
+        self.is_international = is_international
+        self.row = PredictionData(
+            status=status,
+            score=score,
+            prediction=prediction,
+            home=home,
+            away=away,
+            win=win,
+        )
+
+    def __str__(self) -> str:
+
+        cols = [
+            Column(size=5, align=Align.RIGHT),
+            Column(size=16, align=Align.RIGHT),
+            Column(size=10, align=Align.CENTER),
+            Column(size=10, align=Align.CENTER),
+            Column(size=16, align=Align.LEFT),
+        ]
+        row = [
+            self.row.status,
+            f" {self.home}",
+            self.row.prediction,
+            self.row.score,
+            f"{self.away}",
+        ]
+
+        if self.row.score == "-1:-1":
+            cols.pop(3)
+            row.pop(3)
+
+        TextOutput.addColumns(cols, [row])
+        if self.row.win:
+            TextOutput.addColumns(
+                [Column(size=sum([x.size for x in cols]), align=Align.CENTER)],
+                [[self.row.win]],
+            )
+        return TextOutput.render()

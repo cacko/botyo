@@ -325,6 +325,10 @@ class Competition(BaseModel):
         )
         assert country
         return Flag(country.name).flag
+    
+    @property
+    def is_international(self) -> bool:
+        return International(self.countryId) is not International.NOT_INTERNATIONAL
 
 
 class GameMember(BaseModel):
