@@ -45,7 +45,7 @@ class Prediction(DbModel):
         query: Query = query.where(
             (fn.DATE(Game.start_time) == fn.CURRENT_DATE) & (User.phone == user.phone)
         )
-        yield from query.iterator()
+        yield from query.execute()
 
     @classmethod
     def update(cls, data: Optional[Any], **update):
