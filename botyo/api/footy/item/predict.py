@@ -32,7 +32,7 @@ class Predict(object):
         )
         games = ls.items
         logging.debug([ls.items, preds])
-        assert len(preds) != len(games)
+        assert len(preds) == len(games)
         predictions = []
         for pred, game in zip(preds, games):
             predictions.append(ScoreRow(
