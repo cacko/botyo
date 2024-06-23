@@ -1,3 +1,4 @@
+import logging
 from psycopg2 import IntegrityError
 from botyo.threesixfive.item.team import Team 
 from botyo.predict.db.database import Database
@@ -39,6 +40,7 @@ class Game(DbModel):
                 
     @property
     def home_team(self) -> Competitor:
+        logging.warning(Team(self.home_team_id).team)
         return Team(self.home_team_id).team.competitors.pop(0)
     
     @property
