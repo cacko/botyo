@@ -36,7 +36,13 @@ class Prediction(DbModel):
                     raise exc
                 
     @classmethod
-    def get_in_progress(cls, **kwargs)
+    def get_in_progress(cls, **kwargs):
+        pass
+        # user: User = kwargs.get("User")
+        # query = cls.select().join(Game).join(User)
+        # query = query.where(
+        #     (Game.start_time == game.id) & (User.phone == user.phone)
+        # )    
 
     class Meta:
         database = Database.db
