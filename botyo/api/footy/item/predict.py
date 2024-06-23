@@ -23,6 +23,7 @@ class Predict(object):
         qc, preds = self.process_query(query)
         comp = Competitions.search(" ".join(qc))
         assert comp
+        logging.debug(comp)
         ls =  Livescore (
             with_details=False,
             with_progress=False,
@@ -30,6 +31,7 @@ class Predict(object):
             inprogress=False,
         )
         games = ls.items
+        logging.debug([ls.items, preds])
         assert len(preds) != len(games)
         predictions = []
         for pred, game in zip(preds, games):

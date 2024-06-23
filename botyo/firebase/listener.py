@@ -48,7 +48,6 @@ class DeleteListener(StoppableThread):
             match change.type.name:
                 case 'REMOVED':
                     doc = change.document
-                    logging.info(f"removed {doc.to_dict()}")
                     self.handle_removed(HistoryItem(**doc.to_dict()))
                     delete_done.set()
                 case 'MODIFIED':
