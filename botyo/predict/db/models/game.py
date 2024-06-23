@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.subscription import UpdateData
@@ -41,8 +42,11 @@ class Game(DbModel):
 
         try:
             game: Game = query.get()
+            logging.warn(game)
+            logging.warn(game.game)
+            logging.warn(kwargs)
             try:
-                assert game.result == "-1:-1"
+                assert game.result
                 home_score = kwargs.get(
                     "home_score", game.game.homeCompetitor.score_int
                 )
@@ -118,6 +122,7 @@ class Game(DbModel):
         try:
             ht = Team(self.home_team_id)
             assert ht
+            logging.warn(ht.team.games)
             game = next(filter(lambda g: g.id == self.id_event, ht.team.games), None)
             assert game
             return game
@@ -126,6 +131,7 @@ class Game(DbModel):
         try:
             at = Team(self.away_team_id)
             assert at
+            logging.warn(at.team.games)
             game = next(filter(lambda g: g.id == self.id_event, at.team.games), None)
             assert game
             return game
