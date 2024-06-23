@@ -27,6 +27,7 @@ class Game(DbModel):
     away_score = IntegerField(default=-1)
 
     def save(self, force_insert=False, only=None):
+        
         super().save(force_insert, only)
 
     @classmethod
@@ -59,6 +60,7 @@ class Game(DbModel):
                 game.status = status
             except AssertionError:
                 pass
+            game.save()
             return game, False
 
         except cls.DoesNotExist:
