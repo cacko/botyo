@@ -2,9 +2,6 @@ from .database import Database
 from .models import User, Prediction, Game
 
 
-class PredictionNotAllow(Exception):
-    pass
-
 def create_tables(drop=True):
     tables = [
         Prediction,

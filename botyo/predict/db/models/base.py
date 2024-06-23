@@ -3,6 +3,9 @@ from playhouse.shortcuts import model_to_dict
 from humanfriendly.tables import format_robust_table
 
 
+class PredictionNotAllow(Exception):
+    pass
+
 class DbModel(Model):
     @classmethod
     def fetch(cls, *query, **filters):

@@ -1,6 +1,3 @@
-from enum import unique
-from typing import Literal
-
 from psycopg2 import IntegrityError
 from botyo.predict.db.database import Database
 from .base import DbModel

@@ -1,13 +1,9 @@
-from enum import unique
-
 from psycopg2 import IntegrityError
-from botyo.threesixfive.item.team import Team, TeamStruct 
-from botyo.predict.db import PredictionNotAllow
+from botyo.threesixfive.item.team import Team 
 from botyo.predict.db.database import Database
-from botyo.threesixfive.data import LeagueItem
 from botyo.threesixfive.item.competition import CompetitionData
 from botyo.threesixfive.item.models import Competition, Competitor, GameStatus
-from .base import DbModel
+from .base import DbModel, PredictionNotAllow
 from peewee import CharField, DateTimeField, IntegerField
 from datetime import datetime, timezone
 
