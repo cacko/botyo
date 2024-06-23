@@ -1,7 +1,7 @@
 from os import environ
 from pathlib import Path
 from typing import Optional
-from yaml import full_load
+import yaml
 from pydantic import BaseModel
 
 
@@ -56,6 +56,9 @@ class BeatsConfig(BaseModel):
     extractor_url: Optional[str]
     store_root: str
 
+
+class PredictConfig(BaseModel):
+    db_url: str
 
 class FavouritesConfig(BaseModel):
     teams: list[int]
@@ -136,89 +139,11 @@ class ConfigStruct(BaseModel):
     imgflip: Optional[ImgFlipConfig] = None
     users: UsersConfig
     lametric: LametricConfig
+    predict: PredictConfig
 
 
-class ConfigMeta(type):
-    _instance = None
-
-    def __call__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(ConfigMeta, cls).__call__(*args, **kwargs)
-        return cls._instance
-
-    @property
-    def geo(cls) -> GeoConfig:
-        return cls().struct.geo
-
-    @property
-    def beats(cls) -> BeatsConfig:
-        return cls().struct.beats
-
-    @property
-    def favourites(cls) -> FavouritesConfig:
-        return cls().struct.favourites
-
-    @property
-    def api(cls) -> ApiConfig:
-        return cls().struct.api
-
-    @property
-    def ontv(cls) -> OntvConfig:
-        return cls().struct.ontv
-
-    @property
-    def music(cls) -> MusicConfig:
-        return cls().struct.music
-
-    @property
-    def demographics(cls) -> DemographicsConfig:
-        return cls().struct.demographics
-
-    @property
-    def cachable(cls) -> CachableConfig:
-        return cls().struct.cachable
-
-    @property
-    def threesixfive(cls) -> ThreeSixFiveConfig:
-        return cls().struct.threesixfive
-
-    @property
-    def chatyo(cls) -> ChatyoConfig:
-        return cls().struct.chatyo
-
-    @property
-    def image(cls) -> ImageConfig:
-        return cls().struct.image
-
-    @property
-    def goals(cls) -> GoalsConfig:
-        return cls().struct.goals
-
-    @property
-    def s3(cls) -> S3Config:
-        return cls().struct.s3
-
-    @property
-    def imgflip(cls) -> ImgFlipConfig:
-        return cls().struct.imgflip
-
-    @property
-    def users(cls) -> UsersConfig:
-        return cls().struct.users
-    
-    @property
-    def lametric(cls) -> LametricConfig:
-        return cls().struct.lametric
-
-
-class Config(object, metaclass=ConfigMeta):
-
-    struct: ConfigStruct
-
-    def __init__(self):
-
-        settings = Path(
-            environ.get("SETTINGS_PATH", Path(__file__).parent.parent / "settings.yaml")
-        )
-        data = full_load(settings.read_text())
-        self.struct = ConfigStruct(**data)  # type: ignore
+config_root = Path(
+    environ.get("SETTINGS_PATH", Path(__file__).parent.parent / "settings.yaml")
+)
+data = yaml.full_load(Path(config_root).read_text())
+Config = ConfigStruct(**data)

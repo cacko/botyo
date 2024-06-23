@@ -16,7 +16,7 @@ class Predict(object):
     def __init__(self, client: str):
         self.client =  client
         logging.debug(f"predict client = {client}")
-        
+                
     def predict(self, query: str):
         qc, preds = self.process_query(query)
         comp = Competitions.search(" ".join(qc))
