@@ -59,45 +59,19 @@ class Prediction(DbModel):
         )
         yield from prefetch(query, Game, User)
 
-    @classmethod
-    def update(cls, data: Optional[Any], **update):
-        game: Optional[Game] = update.get("Game")
-        try:
-            assert isinstance(data, dict)
-            assert "Game" in data
-            game: Game = data.get("Game")
-        except AssertionError:
-            pass
-
-        try:
-            assert game
-            assert game.can_predict
-            return super().update(data, **update)
-        except Exception as e:
-            logging.exception(e)
-
-    @classmethod
-    def insert(cls, data: Optional[Any] = None, **insert):
-        game: Optional[Game] = insert.get("Game")
-        try:
-            assert isinstance(data, dict)
-            assert "Game" in data
-            game: Game = data.get("Game")
-        except AssertionError:
-            pass
-        try:
-            assert game
-            assert game.can_predict
-            return super().insert(data, **insert)
-        except Exception as e:
-            logging.exception(e)
 
     def save(self, force_insert=False, only=None):
-        home_score, away_score = PREDICTION_PATTERN.findall(
-            self.prediction.strip()
-        ).pop(0)
-        self.prediction = f"{home_score}:{away_score}"
-        return super().save(force_insert, only)
+        try:
+            assert self.Game
+            assert self.can_predict
+            home_score, away_score = PREDICTION_PATTERN.findall(
+                self.prediction.strip()
+            ).pop(0)
+            self.prediction = f"{home_score}:{away_score}"
+            return super().save(force_insert, only)
+        except AssertionError:
+            pass
+        return None
 
     @property
     def can_predict(self) -> bool:
