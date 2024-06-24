@@ -64,7 +64,6 @@ class DbPrediction(DbModel):
         defaults = kwargs.pop("defaults", {})
         game: DbGame = kwargs.get("Game")
         user: DbUser = kwargs.get("User")
-        # game = game.update_miss()
         query = (
             cls.select(DbPrediction, DbGame, DbUser)
             .join_from(DbPrediction, DbGame)
@@ -116,12 +115,8 @@ class DbPrediction(DbModel):
         try:
             assert self.Game
             assert self.can_predict
-            home_score, away_score = PREDICTION_PATTERN.findall(
-                self.prediction.strip()
-            ).pop(0)
-            self.prediction = f"{home_score}:{away_score}"
         except AssertionError as e:
-            logging.error(e)
+            logging.exception(e)
             only: list[str] = self.dirty_fields
             only.remove("prediction")
         return super().save(force_insert, only)
@@ -147,8 +142,14 @@ class DbPrediction(DbModel):
         return self.Game.status
 
     @property
+    def goals(self):
+        return tuple(map(
+            lambda g: to_int(g, default=-1),
+            PREDICTION_PATTERN.findall(self.prediction.strip()).pop(0),
+        ))
+
+    @property
     def prediction_row(self) -> PredictionRow:
-        self.Game = self.Game.update_miss()
         return PredictionRow(
             status=self.status,
             home=self.HomeTeam.name,
@@ -161,9 +162,7 @@ class DbPrediction(DbModel):
 
     @property
     def points(self) -> int:
-        home_goals, away_goals = map(
-            lambda g: to_int(g, default=-1), self.prediction.split(":")
-        )
+        home_goals, away_goals = self.goals
         assert any([home_goals != -1, away_goals != -1])
         if all(
             [home_goals == self.Game.home_score, away_goals == self.Game.away_score]

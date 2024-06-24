@@ -54,7 +54,7 @@ class DbGame(DbModel):
 
         try:
             game = query.get()
-            return game.update_miss(), False
+            return game, False
         except cls.DoesNotExist:
             try:
                 if defaults:
