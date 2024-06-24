@@ -80,19 +80,7 @@ class Predict(object):
             if not is_created:
                 pred_pred.prediction = pred
                 pred_pred.save(only=["prediction"])
-            predictions.append(
-                PredictionRow(
-                    status=game.displayStatus,
-                    home=pred_game.home_team.name,
-                    score=pred_game.result,
-                    prediction=pred_pred.prediction,
-                    away=pred_game.away_team.name,
-                    points=pred_pred.points,
-                    win=game.win,
-                    league=pred_game.league.name,
-                    is_international=pred_game.league.is_international,
-                )
-            )
+            predictions.append(pred_pred.prediction_row)
 
         TextOutput.addRows(predictions)
         return TextOutput.render() if len(predictions) else None

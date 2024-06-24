@@ -141,7 +141,8 @@ class DbPrediction(DbModel):
         return self.Game.status
     
     @property
-    def 
+    def display_status(self) -> str:
+        return self.Game.game.displayStatus
 
     @property
     def goals(self):
@@ -153,7 +154,7 @@ class DbPrediction(DbModel):
     @property
     def prediction_row(self) -> PredictionRow:
         return PredictionRow(
-            status=self.status,
+            status=self.display_status,
             home=self.HomeTeam.name,
             away=self.AwayTeam.name,
             score=self.score,
