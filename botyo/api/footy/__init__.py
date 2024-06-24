@@ -303,7 +303,15 @@ def h2h_command(context: Context):
 def predict_command(context: Context):
     try:
         predict = Footy.predict(client=context.client, source=context.source)
-        message = predict.predict(query=context.query)
+        query = context.query
+        message = None
+        try:
+            assert query
+            assert query.startswith("user=")
+            username = query.split("=")[-1]
+            message = predict.for_user(username=username)
+        except AssertionError:
+            message = predict.predict(query=context.query)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_PREDICT)
     except Exception as e:

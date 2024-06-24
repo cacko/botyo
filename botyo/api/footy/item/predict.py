@@ -42,6 +42,20 @@ class Predict(object):
         TextOutput.addRows([f"Predictions by {self.user.display_name}", *predictions])
         return TextOutput.render() if len(predictions) else None
 
+    def for_user(self, username: str):
+        try:
+            user = DbUser.get(DbUser.name == username)
+            assert user
+            predictions = [
+                x.prediction_row for x in DbPrediction.get_in_progress(User=user)
+            ]
+            TextOutput.addRows(
+                [f"Predictions by {self.user.display_name}", *predictions]
+            )
+            return TextOutput.render() if len(predictions) else None
+        except AssertionError:
+            return None
+
     def predict(self, query: Optional[str] = None):
         if not query:
             return self.today_predictions()
