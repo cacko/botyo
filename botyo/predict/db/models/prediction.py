@@ -87,7 +87,7 @@ class DbPrediction(DbModel):
     @classmethod
     def calculate_missing(cls, **kwargs) -> Generator["DbPrediction", None, None]:
         query = (
-            DbPrediction.select(DbPrediction, DbGame, DbUser)
+            DbPrediction.select(DbPrediction)
             .join_from(DbPrediction, DbGame)
             .join_from(DbPrediction, DbUser)
         ).where(
