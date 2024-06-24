@@ -105,14 +105,14 @@ class ScoreRow:
 
     @property
     def home(self) -> str:
-        # if self.is_international:
-        #     return f"{Flag(name=self.row.home).with_flag(self.row.home)}"
+        if self.is_international:
+            return f"{Flag(name=self.row.home).with_flag(self.row.home)}"
         return self.row.home
 
     @property
     def away(self) -> str:
-        # if self.is_international:
-        #     return f"{Flag(name=self.row.away).with_flag(self.row.away)}"
+        if self.is_international:
+            return f"{Flag(name=self.row.away).with_flag(self.row.away)}"
         return self.row.away
 
     @property
