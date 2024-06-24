@@ -175,7 +175,7 @@ class PredictionRow(ScoreRow):
             f" {self.home}",
             self.row.score,
             f"{self.away}",
-            f"{self.row.prediction}/{self.row.points},
+            f"{self.row.prediction}/{self.row.points}",
         ]
 
         try:
