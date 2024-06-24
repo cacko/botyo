@@ -6,7 +6,7 @@ from typing import Optional
 from botyo.api.footy.item.competitions import Competitions
 from botyo.api.footy.item.components import PredictionRow
 from botyo.api.footy.item.livescore import Livescore
-from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
+from botyo.api.footy.item.subscription import Subscription, SubscriptionClass, SubscriptionClient
 from botyo.predict.db.models import User, Game, Prediction
 from botyo.server.output import TextOutput
 
@@ -68,7 +68,7 @@ class Predict(object):
                 away_score=game.intAwayScore,
             )
             sc = SubscriptionClient(
-                client_id=self.client, group_id="on_livescore_event"
+                client_id=SubscriptionClass.PREDICTION.value, group_id="on_livescore_event"
             )
             sub = Subscription.get(event=game, sc=sc)
             pred_pred, _ = Prediction.get_or_create(

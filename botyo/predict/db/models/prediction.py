@@ -5,6 +5,7 @@ from typing import Any, Generator, Optional
 from numpy import mat
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.components import PredictionRow
+from botyo.api.footy.item.subscription import UpdateData
 from botyo.threesixfive.item.models import Competitor, GameStatus
 from botyo.predict.db.database import Database
 from .base import DbModel
@@ -44,6 +45,23 @@ class Prediction(DbModel):
         return None
 
     @classmethod
+    def on_livescore_event(cls, data: UpdateData):
+        game: Game = Game.get(Game.id_event == data.message.event_id)
+        home_score, away_score = PREDICTION_PATTERN.findall(
+            data.score_message.strip()
+        ).pop(0)
+        game.home_score = home_score
+        game.away_score = away_score
+        game.status = data.status
+        game.save()
+        if not game.ended:
+            return
+        for pred in Prediction.select().where(
+            (Prediction.calculated == False) & (Game.id_event == game.id_event)
+        ):
+            pred.on_ended()
+
+    @classmethod
     def get_or_create(cls: "Prediction", **kwargs) -> tuple["Prediction", bool]:
         defaults = kwargs.pop("defaults", {})
         game: Game = kwargs.get("Game")
@@ -73,11 +91,10 @@ class Prediction(DbModel):
             .join_from(Prediction, Game)
             .join_from(Prediction, User)
         ).where(
-            (Prediction.calculated == False) &
-            (Game.status.in_([GameStatus.FT.value, GameStatus.AET.value]))
+            (Prediction.calculated == False)
+            & (Game.status.in_([GameStatus.FT.value, GameStatus.AET.value]))
         )
         yield from prefetch(query, Game, User)
-        
 
     @classmethod
     def get_in_progress(cls, **kwargs) -> Generator["Prediction", None, None]:

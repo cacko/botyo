@@ -1,5 +1,7 @@
+from numpy import mat
 from botyo.api.footy.item.lineups import Lineups
 from botyo.api.logo.team import TeamLogoPixel
+from botyo.predict.db.models.prediction import Prediction
 from botyo.threesixfive.exception import GameNotFound
 from botyo.threesixfive.item.league import LeagueImage
 from pixelme import Pixelate
@@ -25,7 +27,7 @@ from botyo.threesixfive.item.models import (
 from botyo.server.models import ZMethod
 from .player import Player
 from cachable.request import Request
-from enum import Enum
+from enum import Enum, StrEnum
 from hashlib import blake2b
 from emoji import emojize
 from datetime import datetime, timezone
@@ -131,6 +133,10 @@ class UpdateData(BaseModel):
     status: str
     msgId: Optional[str] = None
     icon: Optional[str] = None
+    
+
+class SubscriptionClass(StrEnum):
+    PREDICTION = "prediction"
 
 
 class SubscriptionClient:
@@ -159,8 +165,10 @@ class SubscriptionClient:
 
     def sendUpdate(self, data: UpdateData):
         try:
-            callable(self.client_id, self.group_id)
-            getattr(self.client_id, self.group_id)(data)
+            cls = SubscriptionClass(self.client_id)
+            match cls:
+                case SubscriptionClass.PREDICTION:
+                    getattr(Prediction, self.group_id)(data)
         except Exception as e:
             pass
         if self.is_rest:

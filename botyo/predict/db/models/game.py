@@ -48,10 +48,6 @@ class Game(DbModel):
         return self
 
     @classmethod
-    def on_livescore_event(cls, data: UpdateData):
-        pass
-
-    @classmethod
     def get_or_create(cls, **kwargs) -> tuple["Game", bool]:
         defaults = kwargs.pop("defaults", {})
         query = cls.select()
