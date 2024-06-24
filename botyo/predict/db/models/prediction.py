@@ -52,7 +52,7 @@ class Prediction(DbModel):
             Prediction.select(Prediction, Game, User).join_from(Prediction, Game).join_from(Prediction, User)
         )
         query: Query = query.where(
-            # (Game.)) & 
+            (fn.date(Game.start_time) == datetime.now(tz=timezone.utc).date()) &
             (User.phone == user.phone)
         )
         yield from prefetch(query, Game, User)

@@ -52,7 +52,10 @@ class Predict(object):
             inprogress=False,
         )
         games = ls.items
-        assert len(preds) == len(games)
+        try:
+            assert len(preds) == len(games)
+        except AssertionError:
+            return ls.render(group_by_league=False)
         predictions = [f"Predictions by {self.user.display_name}"]
         for pred, game in zip(preds, games):
             pred_game = self.getGame(

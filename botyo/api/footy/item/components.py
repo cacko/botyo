@@ -176,12 +176,14 @@ class PredictionRow(ScoreRow):
             self.row.score,
             f"{self.away}",
             self.row.prediction,
-            self.row.points
+            self.row.points,
         ]
 
         if self.row.score == "-1:-1":
             cols.pop(2)
             row.pop(2)
+            cols.pop(5)
+            row.pop(5)
 
         TextOutput.addColumns(cols, [row])
         if self.row.win:
