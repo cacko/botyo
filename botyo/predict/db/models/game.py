@@ -39,10 +39,10 @@ class Game(DbModel):
             assert away_score is not None
             self.home_score = home_score
             self.away_score = away_score
-            self.save(only=['home_score', 'away_score'])
+            self.save(only=["home_score", "away_score"])
             assert status
             self.status = status
-            self.save(only=['status'])
+            self.save(only=["status"])
         except AssertionError:
             pass
         return self
@@ -148,13 +148,22 @@ class Game(DbModel):
         try:
             return self.can_predict
         except PredictionNotAllow:
-            raise False
+            return False
 
     @property
-    def has_started(self) -> bool:
+    def started(self) -> bool:
         return self.start_time.astimezone(tz=timezone.utc) < datetime.now(
             tz=timezone.utc
         )
+
+    @property
+    def ended(self) -> bool:
+        try:
+            game = self.game
+            assert game
+            return game.ended
+        except:
+            return False
 
     class Meta:
         database = Database.db

@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import logging
+from telnetlib import GA
 from typing import Any, Generator, Optional
 from numpy import mat
 from psycopg2 import IntegrityError
@@ -9,7 +10,15 @@ from botyo.predict.db.database import Database
 from .base import DbModel
 from .user import User
 from .game import Game
-from peewee import CharField, TimestampField, ForeignKeyField, fn, Query, prefetch
+from peewee import (
+    CharField,
+    TimestampField,
+    ForeignKeyField,
+    fn,
+    Query,
+    prefetch,
+    BooleanField,
+)
 from corestring import to_int
 import re
 
@@ -21,6 +30,18 @@ class Prediction(DbModel):
     Game = ForeignKeyField(Game)
     prediction = CharField()
     timestamp = TimestampField()
+    calculated = BooleanField(default=False)
+
+    def on_ended(self):
+        try:
+            assert self.Game.ended
+            self.User.add_points(self.points)
+            self.calculated = True
+            self.save(only=["calculated"])
+            return self
+        except AssertionError:
+            pass
+        return None
 
     @classmethod
     def get_or_create(cls: "Prediction", **kwargs) -> tuple["Prediction", bool]:
@@ -46,6 +67,19 @@ class Prediction(DbModel):
                     raise exc
 
     @classmethod
+    def calculate_missing(cls, **kwargs) -> Generator["Prediction", None, None]:
+        query = (
+            Prediction.select(Prediction, Game, User)
+            .join_from(Prediction, Game)
+            .join_from(Prediction, User)
+        ).where(
+            (Prediction.calculated == False) &
+            (Game.status.in_([GameStatus.FT.value, GameStatus.AE]))
+        )
+        yield from prefetch(query, Game, User)
+        
+
+    @classmethod
     def get_in_progress(cls, **kwargs) -> Generator["Prediction", None, None]:
         user: User = kwargs.get("User")
         query = (
@@ -58,7 +92,6 @@ class Prediction(DbModel):
             & (User.phone == user.phone)
         )
         yield from prefetch(query, Game, User)
-
 
     def save(self, force_insert=False, only=None):
         try:

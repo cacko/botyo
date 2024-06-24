@@ -1,12 +1,16 @@
 from psycopg2 import IntegrityError
 from botyo.predict.db.database import Database
 from .base import DbModel
-from peewee import CharField
+from peewee import CharField, IntegerField
 
 
 class User(DbModel):
     phone = CharField(null=False, unique=True)
     name = CharField(null=True)
+    wins = IntegerField(default=0)
+    draws = IntegerField(default=0)
+    losses = IntegerField(default=0)
+    points = IntegerField(default=0)
 
     @classmethod
     def get_or_create(cls, **kwargs) -> tuple["User", bool]:
@@ -27,6 +31,17 @@ class User(DbModel):
                     return query.get(), False
                 except cls.DoesNotExist:
                     raise exc
+                
+    def add_points(self, points: int):
+        self.points += points
+        match points:
+            case 3:
+                self.wins += 1
+            case 1:
+                self.draws += 1
+            case 0:
+                self.losses += 1
+        self.save(only=['points', 'wins', 'draws', 'losses'])
 
     @property
     def display_name(self) -> str:
