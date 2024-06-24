@@ -218,8 +218,8 @@ def standings_Command(context: Context):
         query = context.query
         group = None
         assert query
-        if query == "predict":
-            predict = Footy.getPredictStandings(
+        if query.lower() == "predict":
+            predict = Footy.predict_standings(
                 client=context.client, source=context.source
             )
             message = predict.standings()
