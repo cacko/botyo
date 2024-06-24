@@ -74,7 +74,7 @@ class Prediction(DbModel):
             .join_from(Prediction, User)
         ).where(
             (Prediction.calculated == False) &
-            (Game.status.in_([GameStatus.FT.value, GameStatus.AE]))
+            (Game.status.in_([GameStatus.FT.value, GameStatus.AET.value]))
         )
         yield from prefetch(query, Game, User)
         
