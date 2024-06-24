@@ -51,9 +51,7 @@ class ScoreRow:
             score = "vs"
         self.league = league
         self.is_international = is_international
-        self.row = ScoreData(
-            status=status, score=score, home=home, away=away, win=win, points=points
-        )
+        self.row = ScoreData(status=status, score=score, home=home, away=away, win=win)
 
     def __str__(self) -> str:
         match self.format:
@@ -159,7 +157,7 @@ class PredictionRow(ScoreRow):
             home=home,
             away=away,
             win=win,
-            points=points
+            points=points,
         )
 
     def __str__(self) -> str:
@@ -167,21 +165,23 @@ class PredictionRow(ScoreRow):
         cols = [
             Column(size=5, align=Align.RIGHT),
             Column(size=16, align=Align.RIGHT),
-            Column(size=10, align=Align.CENTER),
-            Column(size=10, align=Align.CENTER),
+            Column(size=5, align=Align.CENTER),
             Column(size=16, align=Align.LEFT),
+            Column(size=5, align=Align.CENTER),
+            Column(size=1, align=Align.CENTER),
         ]
         row = [
             self.row.status,
             f" {self.home}",
-            self.row.prediction,
             self.row.score,
             f"{self.away}",
+            self.row.prediction,
+            self.row.points
         ]
 
         if self.row.score == "-1:-1":
-            cols.pop(3)
-            row.pop(3)
+            cols.pop(2)
+            row.pop(2)
 
         TextOutput.addColumns(cols, [row])
         if self.row.win:
