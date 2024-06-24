@@ -27,6 +27,7 @@ class Predict(object):
         return self.__user
     
     
+    
 
     def getGame(self, **kwds) -> DbGame:
         game, _ = DbGame.get_or_create(**kwds)
