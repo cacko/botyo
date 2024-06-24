@@ -430,10 +430,10 @@ class GameCompetitor(BaseModel):
     @property
     def score_int(self) -> int:
         try:
-            assert self.score
+            assert self.score is not None
             return self.score
         except AssertionError:
-            return 0
+            return -1
 
     @property
     def shortName(self) -> str:

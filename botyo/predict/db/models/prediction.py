@@ -51,7 +51,7 @@ class Prediction(DbModel):
             Prediction.select().join_from(Prediction, Game).join_from(Prediction, User)
         )
         query: Query = query.where(
-            (Game.status.in_([GameStatus.NS.value, GameStatus.SCHEDULED.value])) & 
+            # (Game.)) & 
             (User.phone == user.phone)
         )
         yield from query.execute()
@@ -119,6 +119,7 @@ class Prediction(DbModel):
         game = Game.get_or_create(
             id_event=self.Game.id_event
         )
+        self.Game = game
         return PredictionRow(
             status=self.status,
             home=self.HomeTeam.name,

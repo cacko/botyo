@@ -48,10 +48,10 @@ class Game(DbModel):
             try:
                 assert game.result
                 home_score = kwargs.get(
-                    "home_score", game.game.homeCompetitor.score_int
+                    "home_score", game.game.homeCompetitor.score
                 )
                 away_score = kwargs.get(
-                    "away_score", game.game.awayCompetitor.score_int
+                    "away_score", game.game.awayCompetitor.score
                 )
                 status = kwargs.get("status", game.game.shortStatusText)
                 assert home_score is not None

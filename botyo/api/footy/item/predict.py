@@ -44,7 +44,7 @@ class Predict(object):
 
     def today_predictions(self) -> str:
         predictions = [x.prediction_row for x in Prediction.get_in_progress(User=self.user)]
-        predictions.insert(0, [f"Predictions by {self.user.display_name}"])
+        predictions.insert(0, f"Predictions by {self.user.display_name}")
         TextOutput.addRows(predictions)
         return TextOutput.render() if len(predictions) else None
 
@@ -62,7 +62,7 @@ class Predict(object):
         )
         games = ls.items
         assert len(preds) == len(games)
-        predictions = [[f"Predictions by {self.user.display_name}"]]
+        predictions = [f"Predictions by {self.user.display_name}"]
         for pred, game in zip(preds, games):
             pred_game = self.getGame(
                 id_event=game.idEvent,
