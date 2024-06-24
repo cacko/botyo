@@ -49,11 +49,13 @@ class Prediction(DbModel):
     def get_in_progress(cls, **kwargs) -> Generator["Prediction", None, None]:
         user: User = kwargs.get("User")
         query = (
-            Prediction.select(Prediction, Game, User).join_from(Prediction, Game).join_from(Prediction, User)
+            Prediction.select(Prediction, Game, User)
+            .join_from(Prediction, Game)
+            .join_from(Prediction, User)
         )
         query: Query = query.where(
-            (fn.date(Game.start_time) == datetime.now(tz=timezone.utc).date()) &
-            (User.phone == user.phone)
+            (fn.date(Game.start_time) == datetime.now(tz=timezone.utc).date())
+            & (User.phone == user.phone)
         )
         yield from prefetch(query, Game, User)
 
@@ -91,7 +93,9 @@ class Prediction(DbModel):
             logging.exception(e)
 
     def save(self, force_insert=False, only=None):
-        home_score, away_score = PREDICTION_PATTERN.findall(self.prediction.strip())
+        home_score, away_score = PREDICTION_PATTERN.findall(
+            self.prediction.strip()
+        ).pop(0)
         self.prediction = f"{home_score}:{away_score}"
         return super().save(force_insert, only)
 
@@ -106,10 +110,10 @@ class Prediction(DbModel):
     @property
     def AwayTeam(self) -> Competitor:
         return self.Game.away_team
-    
+
     @property
     def score(self) -> str:
-        return self.Game.score
+        return self.Game.result
 
     @property
     def status(self) -> str:

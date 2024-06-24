@@ -18,7 +18,6 @@ class Predict(object):
     def __init__(self, client: str, source: str):
         self.client = client
         self.source = source
-        logging.warn(f"predict client = {source}")
 
     @property
     def user(self) -> User:

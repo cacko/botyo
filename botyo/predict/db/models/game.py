@@ -118,7 +118,6 @@ class Game(DbModel):
         try:
             ht = Team(self.home_team_id)
             assert ht
-            logging.warn(ht.team.games)
             game = next(filter(lambda g: g.id == self.id_event, ht.team.games), None)
             assert game
             return game
@@ -127,7 +126,6 @@ class Game(DbModel):
         try:
             at = Team(self.away_team_id)
             assert at
-            logging.warn(at.team.games)
             game = next(filter(lambda g: g.id == self.id_event, at.team.games), None)
             assert game
             return game

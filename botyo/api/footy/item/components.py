@@ -1,3 +1,4 @@
+from typing import Optional
 from botyo.server.output import Align, Column, TextOutput
 from collections import namedtuple
 from enum import Enum
@@ -135,12 +136,12 @@ class PredictionRow(ScoreRow):
     def __init__(
         self,
         status,
-        score,
         prediction,
         home,
         away,
         points,
         win: str = "",
+        score: Optional[str] = None,
         format: ScoreFormat = ScoreFormat.LIST,
         league: str = "",
         is_international: bool = False,
@@ -179,7 +180,9 @@ class PredictionRow(ScoreRow):
             self.row.points,
         ]
 
-        if self.row.score == "-1:-1":
+        try:
+            assert self.row.score
+        except AssertionError:
             cols.pop(2)
             row.pop(2)
             cols.pop(5)

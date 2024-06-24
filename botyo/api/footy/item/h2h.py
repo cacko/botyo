@@ -8,7 +8,6 @@ class H2H(H2HData):
     def message(self) -> str:
         try:
             games = self.games
-            logging.warn(games)
             if not games:
                 return ""
             # home = ga.home
