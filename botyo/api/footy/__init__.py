@@ -218,6 +218,13 @@ def standings_Command(context: Context):
         query = context.query
         group = None
         assert query
+        if query == "predict":
+            predict = Footy.getPredictStandings(
+                client=context.client, source=context.source
+            )
+            message = predict.standings()
+            assert message
+            return RenderResult(method=ZMethod.FOOTY_STANDINGS, message=message)
         if ":" in query:
             query, group = query.split(":", 1)
         league_id = 0
@@ -289,10 +296,9 @@ def h2h_command(context: Context):
         logging.exception(e)
         return EmptyResult()
 
+
 @bp.command(
-    method=ZMethod.FOOTY_PREDICT,
-    desc="predcit league results",
-    icon="scoreboard"
+    method=ZMethod.FOOTY_PREDICT, desc="predcit league results", icon="scoreboard"
 )
 def predict_command(context: Context):
     try:
@@ -300,21 +306,6 @@ def predict_command(context: Context):
         message = predict.predict(query=context.query)
         assert message
         return RenderResult(message=message, method=ZMethod.FOOTY_PREDICT)
-    except Exception as e:
-        logging.exception(e)
-        return EmptyResult()
-    
-@bp.command(
-    method=ZMethod.FOOTY_PREDICT_STANDINGS,
-    desc="predicitons standings",
-    icon="scoreboard"
-)
-def predict_standing_command(context: Context):
-    try:
-        predict = Footy.predict_standings(client=context.client, source=context.source)
-        message = predict.standings()
-        assert message
-        return RenderResult(message=message, method=ZMethod.FOOTY_PREDICT_STANDINGS)
     except Exception as e:
         logging.exception(e)
         return EmptyResult()

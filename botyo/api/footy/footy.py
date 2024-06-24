@@ -160,7 +160,9 @@ class Footy(object, metaclass=FootyMeta):
     def getPredict(self, client: str, source: Optional[str] = None) -> Predict:
         return Predict(client=client, source=source)
 
-    def getPredictStandings(self, client: str, source: Optional[str] = None) -> Predict:
+    def getPredictStandings(
+        self, client: str, source: Optional[str] = None
+    ) -> PredictStandings:
         return PredictStandings(client=client, source=source)
 
     def getCompetition(self, query: str) -> CompetitionData:
