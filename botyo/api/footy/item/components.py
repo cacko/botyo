@@ -181,12 +181,13 @@ class PredictionRow(ScoreRow):
         ]
 
         try:
-            assert self.row.score ==
-        except AssertionError:
+            assert self.row.score == "vs"
             cols.pop()
             row.pop()
             cols.pop(2)
             row.pop(2)
+        except AssertionError:
+            pass
 
 
         TextOutput.addColumns(cols, [row])
