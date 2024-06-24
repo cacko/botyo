@@ -99,7 +99,7 @@ class DbPrediction(DbModel):
     def get_in_progress(cls, **kwargs) -> Generator["DbPrediction", None, None]:
         user: DbUser = kwargs.get("User")
         query = (
-            DbPrediction.select(DbPrediction, DbGame, DbUser)
+            DbPrediction.select(DbPrediction)
             .join_from(DbPrediction, DbGame)
             .join_from(DbPrediction, DbUser)
         )

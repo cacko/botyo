@@ -21,7 +21,7 @@ class Predict(object):
     def __init__(self, client: str, source: str):
         self.client = client
         if not source.startswith("+"):
-            source = "+" + re.findall(r"^(\d+)", source).pop(0)[0]
+            source = "+" + re.findall(r"^(\d+)", source).pop(0)
         self.source = source
 
     @property
@@ -39,6 +39,7 @@ class Predict(object):
         predictions = [
             [str(x.prediction_row)] for x in DbPrediction.get_in_progress(User=self.user)
         ]
+        logging.warn([[f"Predictions by {self.user.display_name}"], *predictions])
         TextOutput.addRows(
             [[f"Predictions by {self.user.display_name}"], *predictions]
         )
@@ -85,6 +86,8 @@ class Predict(object):
                 pred_pred.prediction = pred
                 pred_pred.save(only=["prediction"])
             predictions.append([str(pred_pred.prediction_row)])
+        
+        logging.warn([[f"Predictions by {self.user.display_name}"], *predictions])
 
         TextOutput.addRows(
             [[f"Predictions by {self.user.display_name}"], *predictions]
