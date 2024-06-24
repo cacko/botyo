@@ -175,13 +175,11 @@ class PredictionRow(ScoreRow):
             f" {self.home}",
             self.row.score,
             f"{self.away}",
-            f"{self.row.prediction} - ,
+            f"{self.row.prediction}/{self.row.points},
         ]
 
         try:
             assert self.row.score == "vs"
-            cols.pop()
-            row.pop()
             cols.pop()
             row.pop()
             row[2] = self.row.prediction

@@ -150,6 +150,10 @@ class DbPrediction(DbModel):
                 PREDICTION_PATTERN.findall(prediction.strip()).pop(0),
             )
         )
+        
+    @property
+    def display_prediction(self) -> str:
+        return ":".join(DbPrediction.goals(self.prediction))
 
     @property
     def prediction_row(self) -> PredictionRow:
@@ -158,7 +162,7 @@ class DbPrediction(DbModel):
             home=self.HomeTeam.name,
             away=self.AwayTeam.name,
             score=self.score,
-            prediction=self.prediction,
+            prediction=self.display_prediction,
             points=self.points,
             league="",
             is_international=self.Game.league.is_international,
