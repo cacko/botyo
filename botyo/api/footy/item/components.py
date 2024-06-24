@@ -181,7 +181,7 @@ class PredictionRow(ScoreRow):
         ]
 
         try:
-            assert self.row.score
+            assert self.row.score ==
         except AssertionError:
             cols.pop()
             row.pop()
