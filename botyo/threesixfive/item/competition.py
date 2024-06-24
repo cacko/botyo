@@ -50,7 +50,7 @@ class CompetitionData(TimeCachable):
             self._struct = self.__fetch()  # type: ignore
             if not self._struct:
                 return None
-        return self._struct.struct  # type: ignore
+        return self._struct.struct.competitions[0]  # type: ignore
 
     @property
     def games(self) -> Optional[list[Game]]:
