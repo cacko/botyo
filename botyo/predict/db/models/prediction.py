@@ -9,7 +9,7 @@ from botyo.predict.db.database import Database
 from .base import DbModel
 from .user import User
 from .game import Game
-from peewee import CharField, TimestampField, ForeignKeyField, fn, Query
+from peewee import CharField, TimestampField, ForeignKeyField, fn, Query, prefetch
 from corestring import to_int
 import re
 
@@ -48,13 +48,13 @@ class Prediction(DbModel):
     def get_in_progress(cls, **kwargs) -> Generator["Prediction", None, None]:
         user: User = kwargs.get("User")
         query = (
-            Prediction.select().join_from(Prediction, Game).join_from(Prediction, User)
+            Prediction.select(Prediction, Game, User).join_from(Prediction, Game).join_from(Prediction, User)
         )
         query: Query = query.where(
             # (Game.)) & 
             (User.phone == user.phone)
         )
-        yield from query.execute()
+        yield from prefetch(query, Game, User)
 
     @classmethod
     def update(cls, data: Optional[Any], **update):
