@@ -37,12 +37,9 @@ class Predict(object):
 
     def today_predictions(self) -> str:
         predictions = [
-            [str(x.prediction_row)] for x in DbPrediction.get_in_progress(User=self.user)
+            x.prediction_row for x in DbPrediction.get_in_progress(User=self.user)
         ]
-        logging.warn([[f"Predictions by {self.user.display_name}"], *predictions])
-        TextOutput.addRows(
-            [[f"Predictions by {self.user.display_name}"], *predictions]
-        )
+        TextOutput.addRows([f"Predictions by {self.user.display_name}", *predictions])
         return TextOutput.render() if len(predictions) else None
 
     def predict(self, query: Optional[str] = None):
@@ -85,13 +82,9 @@ class Predict(object):
             if not is_created:
                 pred_pred.prediction = pred
                 pred_pred.save(only=["prediction"])
-            predictions.append([str(pred_pred.prediction_row)])
-        
-        logging.warn([[f"Predictions by {self.user.display_name}"], *predictions])
+            predictions.append(pred_pred.prediction_row)
 
-        TextOutput.addRows(
-            [[f"Predictions by {self.user.display_name}"], *predictions]
-        )
+        TextOutput.addRows([f"Predictions by {self.user.display_name}", *predictions])
         return TextOutput.render() if len(predictions) else None
 
     def process_query(self, query: str) -> tuple[list[str]]:
