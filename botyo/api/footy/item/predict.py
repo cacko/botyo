@@ -2,9 +2,8 @@ from curses.ascii import US
 from functools import reduce
 import logging
 from typing import Optional
-
+import re
 from botyo.api.footy.item.competitions import Competitions
-from botyo.api.footy.item.components import PredictionRow
 from botyo.api.footy.item.livescore import Livescore
 from botyo.api.footy.item.subscription import Subscription, SubscriptionClass, SubscriptionClient
 from botyo.predict.db.models import DbUser, DbGame, DbPrediction
@@ -17,6 +16,8 @@ class Predict(object):
 
     def __init__(self, client: str, source: str):
         self.client = client
+        if not source.startswith("+"):
+            source = "+" + re.findall(r"^(\d+)", source).pop(0)[0]
         self.source = source
 
     @property
