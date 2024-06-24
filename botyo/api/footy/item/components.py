@@ -168,24 +168,23 @@ class PredictionRow(ScoreRow):
             Column(size=16, align=Align.RIGHT),
             Column(size=5, align=Align.CENTER),
             Column(size=16, align=Align.LEFT),
-            Column(size=5, align=Align.CENTER),
-            Column(size=1, align=Align.CENTER),
+            Column(size=7, align=Align.CENTER),
         ]
         row = [
             self.row.status,
             f" {self.home}",
             self.row.score,
             f"{self.away}",
-            self.row.prediction,
-            self.row.points,
+            f"{self.row.prediction} - ,
         ]
 
         try:
             assert self.row.score == "vs"
             cols.pop()
             row.pop()
-            cols.pop(2)
-            row.pop(2)
+            cols.pop()
+            row.pop()
+            row[2] = self.row.prediction
         except AssertionError:
             pass
 
