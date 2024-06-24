@@ -4,7 +4,7 @@ from .base import DbModel
 from peewee import CharField, IntegerField
 
 
-class User(DbModel):
+class DbUser(DbModel):
     phone = CharField(null=False, unique=True)
     name = CharField(null=True)
     wins = IntegerField(default=0)
@@ -13,7 +13,7 @@ class User(DbModel):
     points = IntegerField(default=0)
 
     @classmethod
-    def get_or_create(cls, **kwargs) -> tuple["User", bool]:
+    def get_or_create(cls, **kwargs) -> tuple["DbUser", bool]:
         defaults = kwargs.pop("defaults", {})
         query = cls.select()
         phone = kwargs.get("phone")

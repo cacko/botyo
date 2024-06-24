@@ -14,7 +14,7 @@ from peewee import CharField, DateTimeField, IntegerField
 from datetime import datetime, timezone
 
 
-class Game(DbModel):
+class DbGame(DbModel):
     id_event = IntegerField(null=False, unique=True)
     league_id = IntegerField(null=False)
     home_team_id = IntegerField(null=False)
@@ -46,14 +46,14 @@ class Game(DbModel):
         return self
 
     @classmethod
-    def get_or_create(cls, **kwargs) -> tuple["Game", bool]:
+    def get_or_create(cls, **kwargs):
         defaults = kwargs.pop("defaults", {})
         query = cls.select()
         id_event = kwargs.get("id_event")
         query = query.where((cls.id_event == id_event))
 
         try:
-            game: Game = query.get()
+            game = query.get()
             return game.update_miss(), False
         except cls.DoesNotExist:
             try:

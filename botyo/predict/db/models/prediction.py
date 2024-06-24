@@ -1,15 +1,13 @@
 from datetime import datetime, timezone
 import logging
-from telnetlib import GA
 from typing import Any, Generator, Optional
-from numpy import mat
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.components import PredictionRow
 from botyo.threesixfive.item.models import Competitor, GameStatus, UpdateData
 from botyo.predict.db.database import Database
 from .base import DbModel
-from .user import User
-from .game import Game
+from .user import DbUser
+from .game import DbGame
 from peewee import (
     CharField,
     TimestampField,
@@ -25,9 +23,9 @@ import re
 PREDICTION_PATTERN = re.compile(r"(\d+)[^\d](\d+)")
 
 
-class Prediction(DbModel):
-    User = ForeignKeyField(User)
-    Game = ForeignKeyField(Game)
+class DbPrediction(DbModel):
+    User = ForeignKeyField(DbUser)
+    Game = ForeignKeyField(DbGame)
     prediction = CharField()
     timestamp = TimestampField()
     calculated = BooleanField(default=False)
@@ -45,7 +43,7 @@ class Prediction(DbModel):
 
     @classmethod
     def on_livescore_event(cls, data: UpdateData):
-        game: Game = Game.get(Game.id_event == data.message.event_id)
+        game: DbGame = DbGame.get(DbGame.id_event == data.message.event_id)
         home_score, away_score = PREDICTION_PATTERN.findall(
             data.score_message.strip()
         ).pop(0)
@@ -55,20 +53,20 @@ class Prediction(DbModel):
         game.save()
         if not game.ended:
             return
-        for pred in Prediction.select().where(
-            (Prediction.calculated == False) & (Game.id_event == game.id_event)
+        for pred in DbPrediction.select().where(
+            (DbPrediction.calculated == False) & (DbGame.id_event == game.id_event)
         ):
             pred.on_ended()
 
     @classmethod
-    def get_or_create(cls: "Prediction", **kwargs) -> tuple["Prediction", bool]:
+    def get_or_create(cls: "DbPrediction", **kwargs) -> tuple["DbPrediction", bool]:
         defaults = kwargs.pop("defaults", {})
-        game: Game = kwargs.get("Game")
-        user: User = kwargs.get("User")
+        game: DbGame = kwargs.get("Game")
+        user: DbUser = kwargs.get("User")
         # game = game.update_miss()
-        query = cls.select().join_from(Prediction, Game).join_from(Prediction, User)
+        query = cls.select().join_from(DbPrediction, DbGame).join_from(DbPrediction, DbUser)
         query = query.where(
-            (Game.id_event == game.id_event) & (User.phone == user.phone)
+            (DbGame.id_event == game.id_event) & (DbUser.phone == user.phone)
         )
         try:
             return query.get(), False
@@ -84,30 +82,30 @@ class Prediction(DbModel):
                     raise exc
 
     @classmethod
-    def calculate_missing(cls, **kwargs) -> Generator["Prediction", None, None]:
+    def calculate_missing(cls, **kwargs) -> Generator["DbPrediction", None, None]:
         query = (
-            Prediction.select(Prediction, Game, User)
-            .join_from(Prediction, Game)
-            .join_from(Prediction, User)
+            DbPrediction.select(DbPrediction, DbGame, DbUser)
+            .join_from(DbPrediction, DbGame)
+            .join_from(DbPrediction, DbUser)
         ).where(
-            (Prediction.calculated == False)
-            & (Game.status.in_([GameStatus.FT.value, GameStatus.AET.value]))
+            (DbPrediction.calculated == False)
+            & (DbGame.status.in_([GameStatus.FT.value, GameStatus.AET.value]))
         )
-        yield from prefetch(query, Game, User)
+        yield from prefetch(query, DbGame, DbUser)
 
     @classmethod
-    def get_in_progress(cls, **kwargs) -> Generator["Prediction", None, None]:
-        user: User = kwargs.get("User")
+    def get_in_progress(cls, **kwargs) -> Generator["DbPrediction", None, None]:
+        user: DbUser = kwargs.get("User")
         query = (
-            Prediction.select(Prediction, Game, User)
-            .join_from(Prediction, Game)
-            .join_from(Prediction, User)
+            DbPrediction.select(DbPrediction, DbGame, DbUser)
+            .join_from(DbPrediction, DbGame)
+            .join_from(DbPrediction, DbUser)
         )
         query: Query = query.where(
-            (fn.date(Game.start_time) == datetime.now(tz=timezone.utc).date())
-            & (User.phone == user.phone)
+            (fn.date(DbGame.start_time) == datetime.now(tz=timezone.utc).date())
+            & (DbUser.phone == user.phone)
         )
-        yield from prefetch(query, Game, User)
+        yield from prefetch(query, DbGame, DbUser)
 
     def save(self, force_insert=False, only=None):
         try:

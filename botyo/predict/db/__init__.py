@@ -1,12 +1,12 @@
 from .database import Database
-from .models import User, Prediction, Game
+from .models import DbUser, DbPrediction, DbGame
 
 
 def create_tables(drop=True):
     tables = [
-        Prediction,
-        User,
-        Game
+        DbPrediction,
+        DbUser,
+        DbGame
     ]
     if drop:
         Database.db.drop_tables(tables)

@@ -1,9 +1,11 @@
-from .game import Game
-from .user import User
-from .prediction import Prediction
+from .game import DbGame
+from .user import DbUser
+from .prediction import DbPrediction
+from .base import DbModel
 
 __all__ = [
-    "Game",
-    "User",
-    "Prediction",
+    "DbGame",
+    "DbUser",
+    "DbPrediction",
+    "DbModel"
 ]

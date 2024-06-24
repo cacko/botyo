@@ -7,32 +7,32 @@ from botyo.api.footy.item.competitions import Competitions
 from botyo.api.footy.item.components import PredictionRow
 from botyo.api.footy.item.livescore import Livescore
 from botyo.api.footy.item.subscription import Subscription, SubscriptionClass, SubscriptionClient
-from botyo.predict.db.models import User, Game, Prediction
+from botyo.predict.db.models import DbUser, DbGame, DbPrediction
 from botyo.server.output import TextOutput
 
 
 class Predict(object):
 
-    __user: Optional[User] = None
+    __user: Optional[DbUser] = None
 
     def __init__(self, client: str, source: str):
         self.client = client
         self.source = source
 
     @property
-    def user(self) -> User:
+    def user(self) -> DbUser:
         if not self.__user:
-            user, _ = User.get_or_create(phone=self.source)
+            user, _ = DbUser.get_or_create(phone=self.source)
             self.__user = user
         return self.__user
 
-    def getGame(self, **kwds) -> Game:
-        game, _ = Game.get_or_create(**kwds)
+    def getGame(self, **kwds) -> DbGame:
+        game, _ = DbGame.get_or_create(**kwds)
         return game
 
     def today_predictions(self) -> str:
         predictions = [
-            x.prediction_row for x in Prediction.get_in_progress(User=self.user)
+            x.prediction_row for x in DbPrediction.get_in_progress(User=self.user)
         ]
         predictions.insert(0, f"Predictions by {self.user.display_name}")
         TextOutput.addRows(predictions)
@@ -71,7 +71,7 @@ class Predict(object):
                 client_id=SubscriptionClass.PREDICTION.value, group_id="on_livescore_event"
             )
             sub = Subscription.get(event=game, sc=sc)
-            pred_pred, _ = Prediction.get_or_create(
+            pred_pred, _ = DbPrediction.get_or_create(
                 User=self.user, Game=pred_game, prediction=pred
             )
             logging.warning(pred_pred)
