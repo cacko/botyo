@@ -5,7 +5,6 @@ from botyo.predict.db.models.prediction import Prediction
 from botyo.threesixfive.exception import GameNotFound
 from botyo.threesixfive.item.league import LeagueImage
 from pixelme import Pixelate
-
 from .components import ScoreFormat, ScoreRow
 from .livescore_details import ParserDetails
 from botyo.server.output import TextOutput
@@ -23,6 +22,7 @@ from botyo.threesixfive.item.models import (
     ResponseGame,
     SubscriptionEvent,
     GoalEvent,
+    UpdateData
 )
 from botyo.server.models import ZMethod
 from .player import Player
@@ -124,15 +124,6 @@ class Cache(RedisCachable):
             return None
         except GameNotFound:
             return None
-
-
-class UpdateData(BaseModel):
-    message: str | list[DetailsEventPixel] | SubscriptionEvent
-    score_message: str
-    start_time: datetime
-    status: str
-    msgId: Optional[str] = None
-    icon: Optional[str] = None
     
 
 class SubscriptionClass(StrEnum):

@@ -983,6 +983,15 @@ class OddBoomaker:
     imageVersion: int  # 1
 
 
+
+class UpdateData(BaseModel):
+    message: str | list[DetailsEventPixel] | SubscriptionEvent
+    score_message: str
+    start_time: datetime
+    status: str
+    msgId: Optional[str] = None
+    icon: Optional[str] = None
+
 # @dataclass_json(undefined=Undefined.EXCLUDE)
 # @dataclass
 # class Odds:

@@ -1,7 +1,5 @@
-import logging
 from typing import Optional
 from psycopg2 import IntegrityError
-from botyo.api.footy.item.subscription import UpdateData
 from botyo.threesixfive.item.team import Team
 from botyo.predict.db.database import Database
 from botyo.threesixfive.item.competition import CompetitionData

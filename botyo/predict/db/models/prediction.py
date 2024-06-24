@@ -5,8 +5,7 @@ from typing import Any, Generator, Optional
 from numpy import mat
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.components import PredictionRow
-from botyo.api.footy.item.subscription import UpdateData
-from botyo.threesixfive.item.models import Competitor, GameStatus
+from botyo.threesixfive.item.models import Competitor, GameStatus, UpdateData
 from botyo.predict.db.database import Database
 from .base import DbModel
 from .user import User
