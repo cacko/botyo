@@ -50,7 +50,7 @@ class Predict(object):
                 x.prediction_row for x in DbPrediction.get_in_progress(User=user)
             ]
             TextOutput.addRows(
-                [f"Predictions by {self.user.display_name}", *predictions]
+                [f"Predictions by {user.display_name}", *predictions]
             )
             return TextOutput.render() if len(predictions) else None
         except AssertionError:
