@@ -45,9 +45,7 @@ class DbPrediction(DbModel):
     @classmethod
     def on_livescore_event(cls, data: UpdateData):
         game: DbGame = DbGame.get(DbGame.id_event == data.message.event_id)
-        home_score, away_score = PREDICTION_PATTERN.findall(
-            data.score_message.strip()
-        ).pop(0)
+        home_score, away_score = cls.goals(data.score_message)
         game.home_score = home_score
         game.away_score = away_score
         game.status = data.status
@@ -133,23 +131,25 @@ class DbPrediction(DbModel):
         return self.Game.away_team
 
     @property
-    def score(self) -> str:
+    def score(self) -> Optional[str]:
         return self.Game.result
 
     @property
     def status(self) -> str:
         return self.Game.status
-    
+
     @property
     def display_status(self) -> str:
         return self.Game.game.displayStatus
 
-    @property
-    def goals(self):
-        return tuple(map(
-            lambda g: to_int(g, default=-1),
-            PREDICTION_PATTERN.findall(self.prediction.strip()).pop(0),
-        ))
+    @classmethod
+    def goals(cls, prediction: str) -> tuple[int, int]:
+        return tuple(
+            map(
+                lambda g: to_int(g, default=-1),
+                PREDICTION_PATTERN.findall(prediction.strip()).pop(0),
+            )
+        )
 
     @property
     def prediction_row(self) -> PredictionRow:
@@ -161,26 +161,29 @@ class DbPrediction(DbModel):
             prediction=self.prediction,
             points=self.points,
             league="",
-            is_international=self.Game.league.is_international
+            is_international=self.Game.league.is_international,
         )
 
     @property
     def points(self) -> int:
-        home_goals, away_goals = self.goals
-        assert any([home_goals != -1, away_goals != -1])
-        if all(
-            [home_goals == self.Game.home_score, away_goals == self.Game.away_score]
-        ):
-            return 3
-        pdiff = home_goals - away_goals
-        gdiff = self.Game.home_score - self.Game.away_score
-        match pdiff:
-            case 0:
-                return 1 if gdiff == 0 else 0
-            case pdiff if pdiff > 0:
-                return 1 if gdiff > 0 else 0
-            case pdiff if pdiff < 0:
-                return 1 if gdiff < 0 else 0
+        try:
+            home_goals, away_goals = DbPrediction.goals(self.prediction)
+            assert any([home_goals != -1, away_goals != -1])
+            if all(
+                [home_goals == self.Game.home_score, away_goals == self.Game.away_score]
+            ):
+                return 3
+            pdiff = home_goals - away_goals
+            gdiff = self.Game.home_score - self.Game.away_score
+            match pdiff:
+                case 0:
+                    return 1 if gdiff == 0 else 0
+                case pdiff if pdiff > 0:
+                    return 1 if gdiff > 0 else 0
+                case pdiff if pdiff < 0:
+                    return 1 if gdiff < 0 else 0
+        except AssertionError:
+            return 0
 
     class Meta:
         database = Database.db

@@ -8,7 +8,7 @@ from botyo.core.country import Country as Flag
 ScoreData = namedtuple("ScoreData", "status,home,away,score,win", defaults=["vs", ""])
 
 PredictionData = namedtuple(
-    "ScoreData", "status,home,away,score,prediction,win,points", defaults=["vs", ""]
+    "PredictionData", "status,home,away,score,prediction,win,points", defaults=["vs", ""]
 )
 
 
