@@ -141,13 +141,13 @@ class Game(DbModel):
             )
             return True
         except AssertionError:
-            raise PredictionNotAllow()
+            raise PredictionNotAllow
 
     @property
     def canPredict(self) -> bool:
         try:
             return self.can_predict
-        except Exception:
+        except PredictionNotAllow:
             raise False
 
     @property
