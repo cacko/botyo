@@ -17,7 +17,7 @@ class Predict(object):
     def __init__(self, client: str, source: str):
         self.client = client
         if not source.startswith("+"):
-            source = "+" + re.findall(r"^(\d+)", source).pop(0)[0]
+            source = "+" + re.findall(r"^(\d+)", source).pop(0)
         self.source = source
 
     @property
