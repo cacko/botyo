@@ -29,21 +29,12 @@ class Predict(object):
 
     def getGame(self, **kwds) -> Game:
         game, _ = Game.get_or_create(**kwds)
-        logging.warn(game.to_dict())
-        logging.warn(kwds)
-        try:
-            assert game.has_started
-            assert not game.result
-            game.home_score = kwds.get("home_score", -1)
-            game.away_score = kwds.get("away_score", -1)
-            game.status = kwds.get("status")
-            game.save()
-        except AssertionError:
-            pass
         return game
 
     def today_predictions(self) -> str:
-        predictions = [x.prediction_row for x in Prediction.get_in_progress(User=self.user)]
+        predictions = [
+            x.prediction_row for x in Prediction.get_in_progress(User=self.user)
+        ]
         predictions.insert(0, f"Predictions by {self.user.display_name}")
         TextOutput.addRows(predictions)
         return TextOutput.render() if len(predictions) else None
@@ -75,13 +66,9 @@ class Predict(object):
                 away_score=game.intAwayScore,
             )
             sc = SubscriptionClient(
-                client_id=self.client,
-                group_id="on_livescore_event"
+                client_id=self.client, group_id="on_livescore_event"
             )
-            sub = Subscription.get(
-                event=game,
-                sc=sc
-            )
+            sub = Subscription.get(event=game, sc=sc)
             pred_pred, _ = Prediction.get_or_create(
                 User=self.user, Game=pred_game, prediction=pred
             )

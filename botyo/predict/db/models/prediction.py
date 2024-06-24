@@ -27,6 +27,7 @@ class Prediction(DbModel):
         defaults = kwargs.pop("defaults", {})
         game: Game = kwargs.get("Game")
         user: User = kwargs.get("User")
+        game = game.update_miss()
         query = cls.select().join_from(Prediction, Game).join_from(Prediction, User)
         query = query.where(
             (Game.id_event == game.id_event) & (User.phone == user.phone)
@@ -116,10 +117,7 @@ class Prediction(DbModel):
 
     @property
     def prediction_row(self) -> PredictionRow:
-        game = Game.get_or_create(
-            id_event=self.Game.id_event
-        )
-        self.Game = game
+        self.Game = self.Game.update_miss()
         return PredictionRow(
             status=self.status,
             home=self.HomeTeam.name,

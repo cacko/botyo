@@ -29,6 +29,24 @@ class Game(DbModel):
     def save(self, force_insert=False, only=None):
         super().save(force_insert, only)
 
+    def update_miss(self):
+        try:
+            assert not self.result
+            home_score = self.game.homeCompetitor.score_int
+            away_score = self.game.awayCompetitor.score_int
+            status = self.game.shortStatusText
+            assert home_score is not None
+            assert away_score is not None
+            self.home_score = home_score
+            self.away_score = away_score
+            self.save(only=['home_score', 'away_score'])
+            assert status
+            self.status = status
+            self.save(only=['status'])
+        except AssertionError:
+            pass
+        return self
+
     @classmethod
     def on_livescore_event(cls, data: UpdateData):
         pass
@@ -42,29 +60,7 @@ class Game(DbModel):
 
         try:
             game: Game = query.get()
-            logging.warn(game)
-            logging.warn(game.game)
-            logging.warn(kwargs)
-            try:
-                assert game.result
-                home_score = kwargs.get(
-                    "home_score", game.game.homeCompetitor.score
-                )
-                away_score = kwargs.get(
-                    "away_score", game.game.awayCompetitor.score
-                )
-                status = kwargs.get("status", game.game.shortStatusText)
-                assert home_score is not None
-                assert away_score is not None
-                game.home_score = home_score
-                game.away_score = away_score
-                assert status
-                game.status = status
-            except AssertionError:
-                pass
-            game.save()
-            return game, False
-
+            return game.update_miss(), False
         except cls.DoesNotExist:
             try:
                 if defaults:
@@ -142,7 +138,9 @@ class Game(DbModel):
     @property
     def can_predict(self) -> bool:
         try:
-            assert self.start_time.astimezone(tz=timezone.utc) < datetime.now(tz=timezone.utc)
+            assert self.start_time.astimezone(tz=timezone.utc) < datetime.now(
+                tz=timezone.utc
+            )
             return True
         except AssertionError:
             raise PredictionNotAllow()
@@ -156,7 +154,9 @@ class Game(DbModel):
 
     @property
     def has_started(self) -> bool:
-        return self.start_time.astimezone(tz=timezone.utc) < datetime.now(tz=timezone.utc)
+        return self.start_time.astimezone(tz=timezone.utc) < datetime.now(
+            tz=timezone.utc
+        )
 
     class Meta:
         database = Database.db
