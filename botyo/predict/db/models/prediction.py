@@ -66,7 +66,9 @@ class DbPrediction(DbModel):
         user: DbUser = kwargs.get("User")
         # game = game.update_miss()
         query = (
-            cls.select().join_from(DbPrediction, DbGame).join_from(DbPrediction, DbUser)
+            cls.select(DbPrediction, DbGame, DbUser)
+            .join_from(DbPrediction, DbGame)
+            .join_from(DbPrediction, DbUser)
         )
         query = query.where(
             (DbGame.id_event == game.id_event) & (DbUser.phone == user.phone)
@@ -109,7 +111,6 @@ class DbPrediction(DbModel):
             & (DbUser.phone == user.phone)
         )
         yield from prefetch(query, DbGame, DbUser)
-        
 
     def save(self, force_insert=False, only=None):
         try:

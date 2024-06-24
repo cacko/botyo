@@ -303,3 +303,18 @@ def predict_command(context: Context):
     except Exception as e:
         logging.exception(e)
         return EmptyResult()
+    
+@bp.command(
+    method=ZMethod.FOOTY_PREDICT_STANDINGS,
+    desc="predicitons standings",
+    icon="scoreboard"
+)
+def predict_standing_command(context: Context):
+    try:
+        predict = Footy.predict(client=context.client, source=context.source)
+        message = predict.predict(query=context.query)
+        assert message
+        return RenderResult(message=message, method=ZMethod.FOOTY_PREDICT)
+    except Exception as e:
+        logging.exception(e)
+        return EmptyResult()
