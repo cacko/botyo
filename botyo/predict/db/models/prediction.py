@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
 import logging
 from typing import Any, Generator, Optional
+from venv import create
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.components import PredictionRow
 from botyo.threesixfive.item.models import Competitor, GameStatus, UpdateData
 from botyo.predict.db.database import Database
-from .base import DbModel
+from .base import DbModel, PredictionNotAllow
 from .user import DbUser
 from .game import DbGame
 from peewee import (
@@ -108,6 +109,7 @@ class DbPrediction(DbModel):
             & (DbUser.phone == user.phone)
         )
         yield from prefetch(query, DbGame, DbUser)
+        
 
     def save(self, force_insert=False, only=None):
         try:
@@ -119,6 +121,8 @@ class DbPrediction(DbModel):
             self.prediction = f"{home_score}:{away_score}"
         except AssertionError as e:
             logging.error(e)
+            only: list[str] = self.dirty_fields
+            only.remove("prediction")
         return super().save(force_insert, only)
 
     @property
