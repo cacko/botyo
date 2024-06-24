@@ -14,7 +14,9 @@ import signal
 import sys
 import corelog
 
-corelog.register(os.environ.get("BOTYO_LOG_LEVEL", "INFO"))
+corelog.register(
+    os.environ.get("BOTYO_LOG_LEVEL", "INFO"), handler_type=corelog.Handlers.RICH
+)
 ServiceAccount.register(Path(os.environ.get("BOTYO_SERVICE_ACCOUNT", "")))
 RedisStorage.register(os.environ.get("BOTYO_REDIS_URL", ""))
 FileStorage.register(Path(app_config.cachable.path))
@@ -41,6 +43,7 @@ def create_app():
     from botyo.api.text import bp as text_bp
     from botyo.api.translate import bp as translate_bp
     from botyo.api.image import bp as image_bp
+
     # from botyo.api.meme import bp as meme_bp
     from botyo.api.code import bp as code_bp
 

@@ -74,6 +74,7 @@ class Predict(object):
             pred_pred, _ = Prediction.get_or_create(
                 User=self.user, Game=pred_game, prediction=pred
             )
+            logging.warning(pred_pred)
             predictions.append(
                 PredictionRow(
                     status=game.displayStatus,
