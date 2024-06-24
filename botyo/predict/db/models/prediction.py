@@ -153,7 +153,7 @@ class DbPrediction(DbModel):
         
     @property
     def display_prediction(self) -> str:
-        return ":".join(DbPrediction.goals(self.prediction))
+        return ":".join(map(str, DbPrediction.goals(self.prediction)))
 
     @property
     def prediction_row(self) -> PredictionRow:
