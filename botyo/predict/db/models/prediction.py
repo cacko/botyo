@@ -44,6 +44,7 @@ class DbPrediction(DbModel):
 
     @classmethod
     def on_livescore_event(cls, data: UpdateData):
+        logging.warn(data)
         game: DbGame = DbGame.get(DbGame.id_event == data.message.event_id)
         home_score, away_score = cls.goals(data.score_message)
         game.home_score = home_score
