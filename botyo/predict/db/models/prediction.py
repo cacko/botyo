@@ -64,7 +64,9 @@ class DbPrediction(DbModel):
         game: DbGame = kwargs.get("Game")
         user: DbUser = kwargs.get("User")
         # game = game.update_miss()
-        query = cls.select().join_from(DbPrediction, DbGame).join_from(DbPrediction, DbUser)
+        query = (
+            cls.select().join_from(DbPrediction, DbGame).join_from(DbPrediction, DbUser)
+        )
         query = query.where(
             (DbGame.id_event == game.id_event) & (DbUser.phone == user.phone)
         )
@@ -115,10 +117,9 @@ class DbPrediction(DbModel):
                 self.prediction.strip()
             ).pop(0)
             self.prediction = f"{home_score}:{away_score}"
-            return super().save(force_insert, only)
         except AssertionError:
             pass
-        return None
+        return super().save(force_insert, only)
 
     @property
     def can_predict(self) -> bool:

@@ -71,6 +71,9 @@ class Predict(object):
                 client_id=SubscriptionClass.PREDICTION.value, group_id="on_livescore_event"
             )
             sub = Subscription.get(event=game, sc=sc)
+            logging.warn(self.user)
+            logging.warn(pred_game)
+            logging.warn(pred)
             pred_pred, _ = DbPrediction.get_or_create(
                 User=self.user, Game=pred_game, prediction=pred
             )
