@@ -116,7 +116,6 @@ class DbPrediction(DbModel):
             assert self.Game
             assert self.can_predict
         except AssertionError as e:
-            logging.exception(e)
             only: list[str] = self.dirty_fields
             only.remove("prediction")
         return super().save(force_insert, only)

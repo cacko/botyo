@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from psycopg2 import IntegrityError
 from botyo.threesixfive.item.team import Team
@@ -130,7 +131,7 @@ class DbGame(DbModel):
     @property
     def can_predict(self) -> bool:
         try:
-            assert self.start_time.astimezone(tz=timezone.utc) < datetime.now(
+            assert self.start_time.astimezone(tz=timezone.utc) > datetime.now(
                 tz=timezone.utc
             )
             return True
