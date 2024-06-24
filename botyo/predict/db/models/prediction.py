@@ -117,8 +117,8 @@ class DbPrediction(DbModel):
                 self.prediction.strip()
             ).pop(0)
             self.prediction = f"{home_score}:{away_score}"
-        except AssertionError:
-            pass
+        except AssertionError as e:
+            logging.error(e)
         return super().save(force_insert, only)
 
     @property
