@@ -1,2196 +1,2220 @@
 {
-    "lastUpdateId": 4438960647,
-    "requestedUpdateId": -1,
-    "ttl": 60,
-    "countries": [
-      {
-        "id": 185,
-        "name": "Afghanistan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "afghanistan",
-        "sportTypes": [
-          1,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 44,
-        "name": "Africa",
-        "totalGames": 15,
-        "liveGames": 5,
-        "nameForURL": "africa",
-        "sportTypes": [
-          1,
-          2,
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 76,
-        "name": "Albania",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "albania",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 139,
-        "name": "Algeria",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "algeria",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 303,
-        "name": "America",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "america",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 103,
-        "name": "Andorra",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "andorra",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 136,
-        "name": "Angola",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "angola",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 10,
-        "name": "Argentina",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "argentina",
-        "sportTypes": [
-          1,
-          2,
-          8,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 49,
-        "name": "Armenia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "armenia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 171,
-        "name": "Asia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "asia",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          7,
-          8,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 88,
-        "name": "ATP",
-        "totalGames": 17,
-        "liveGames": 4,
-        "nameForURL": "atp",
-        "sportTypes": [
-          3
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 301,
-        "name": "ATP Challenger",
-        "totalGames": 16,
-        "liveGames": 0,
-        "nameForURL": "atp-challenger",
-        "sportTypes": [
-          3
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 164,
-        "name": "ATP-D",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "atp-d",
-        "sportTypes": [
-          3
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 36,
-        "name": "Australia",
-        "totalGames": 6,
-        "liveGames": 0,
-        "nameForURL": "australia",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          9,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 20,
-        "name": "Austria",
-        "totalGames": 2,
-        "liveGames": 2,
-        "nameForURL": "austria",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          6,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 77,
-        "name": "Azerbaijan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "azerbaijan",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 186,
-        "name": "Bahamas",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "bahamas",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 116,
-        "name": "Bahrain",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "bahrain",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 219,
-        "name": "Bangladesh",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "bangladesh",
-        "sportTypes": [
-          1,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 104,
-        "name": "Belarus",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "belarus",
-        "sportTypes": [
-          1,
-          4,
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 16,
-        "name": "Belgium",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "belgium",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          8,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 194,
-        "name": "Bermuda",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "bermuda",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 113,
-        "name": "Bolivia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "bolivia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 57,
-        "name": "Bosnia Herzegovina",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "bosnia-herzegovina",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 63,
-        "name": "Botswana",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "botswana",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 21,
-        "name": "Brazil",
-        "totalGames": 12,
-        "liveGames": 2,
-        "nameForURL": "brazil",
-        "sportTypes": [
-          1,
-          2,
-          6,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 276,
-        "name": "Brunei Darussalam",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "brunei-darussalam",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 6
-      },
-      {
-        "id": 40,
-        "name": "Bulgaria",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "bulgaria",
-        "sportTypes": [
-          1,
-          2,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 192,
-        "name": "Burundi",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "burundi",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 73,
-        "name": "Cameroon",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "cameroon",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 66,
-        "name": "Canada",
-        "totalGames": 10,
-        "liveGames": 0,
-        "nameForURL": "canada",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          6,
-          9,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 28,
-        "name": "Chile",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "chile",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 35,
-        "name": "China",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "china",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 179,
-        "name": "Chinese Taipei",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "chinese-taipei",
-        "sportTypes": [
-          1,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 109,
-        "name": "Colombia",
-        "totalGames": 6,
-        "liveGames": 0,
-        "nameForURL": "colombia",
-        "sportTypes": [
-          1,
-          2,
-          7
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 153,
-        "name": "Costa Rica",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "costa-rica",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 38,
-        "name": "Croatia",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "croatia",
-        "sportTypes": [
-          1,
-          2,
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 175,
-        "name": "Cuba",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "cuba",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 39,
-        "name": "Cyprus",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "cyprus",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 22,
-        "name": "Czech Republic",
-        "totalGames": 3,
-        "liveGames": 1,
-        "nameForURL": "czech-republic",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          6,
-          7,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 23,
-        "name": "Denmark",
-        "totalGames": 3,
-        "liveGames": 2,
-        "nameForURL": "denmark",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 183,
-        "name": "Dominican Republic",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "dominican-republic",
-        "sportTypes": [
-          1,
-          7
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 51,
-        "name": "Ecuador",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "ecuador",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 131,
-        "name": "Egypt",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "egypt",
-        "sportTypes": [
-          1,
-          2,
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 147,
-        "name": "El Salvador",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "el-salvador",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 1,
-        "name": "England",
-        "totalGames": 5,
-        "liveGames": 3,
-        "nameForURL": "england",
-        "sportTypes": [
-          1,
-          4,
-          9,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 102,
-        "name": "Estonia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "estonia",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 70,
-        "name": "Ethiopia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "ethiopia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 19,
-        "name": "Europe",
-        "totalGames": 18,
-        "liveGames": 12,
-        "nameForURL": "europe",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 106,
-        "name": "Faroe Islands",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "faroe-islands",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 61,
-        "name": "Fiji",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "fiji",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 25,
-        "name": "Finland",
-        "totalGames": 6,
-        "liveGames": 0,
-        "nameForURL": "finland",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          7,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 5,
-        "name": "France",
-        "totalGames": 23,
-        "liveGames": 14,
-        "nameForURL": "france",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 143,
-        "name": "Gabon",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "gabon",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 78,
-        "name": "Georgia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "georgia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 4,
-        "name": "Germany",
-        "totalGames": 18,
-        "liveGames": 12,
-        "nameForURL": "germany",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 65,
-        "name": "Ghana",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "ghana",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 209,
-        "name": "Gibraltar",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "gibraltar",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 13,
-        "name": "Greece",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "greece",
-        "sportTypes": [
-          1,
-          2,
-          5,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 177,
-        "name": "Grenada",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "grenada",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 140,
-        "name": "Guatemala",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "guatemala",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 169,
-        "name": "Honduras",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "honduras",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 79,
-        "name": "Hong Kong",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "hong-kong",
-        "sportTypes": [
-          1,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 30,
-        "name": "Hungary",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "hungary",
-        "sportTypes": [
-          1,
-          2,
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 32,
-        "name": "Iceland",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "iceland",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 80,
-        "name": "India",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "india",
-        "sportTypes": [
-          1,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 75,
-        "name": "Indonesia",
-        "totalGames": 3,
-        "liveGames": 0,
-        "nameForURL": "indonesia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 54,
-        "name": "International",
-        "totalGames": 62,
-        "liveGames": 4,
-        "nameForURL": "international",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          7,
-          8,
-          9,
-          11,
-          13
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 378,
-        "name": "IOC",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "ioc",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 2
-      },
-      {
-        "id": 81,
-        "name": "Iran",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "iran",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 114,
-        "name": "Iraq",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "iraq",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 9,
-        "name": "Ireland",
-        "totalGames": 5,
-        "liveGames": 3,
-        "nameForURL": "ireland",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 6,
-        "name": "Israel",
-        "totalGames": 8,
-        "liveGames": 0,
-        "nameForURL": "israel",
-        "sportTypes": [
-          1,
-          2,
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 3,
-        "name": "Italy",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "italy",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          6,
-          7,
-          8,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 74,
-        "name": "Ivory Coast",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "ivory-coast",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 3
-      },
-      {
-        "id": 151,
-        "name": "Jamaica",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "jamaica",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 34,
-        "name": "Japan",
-        "totalGames": 6,
-        "liveGames": 0,
-        "nameForURL": "japan",
-        "sportTypes": [
-          1,
-          7
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 119,
-        "name": "Jordan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "jordan",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 105,
-        "name": "Kazakhstan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "kazakhstan",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 144,
-        "name": "Kenya",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "kenya",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 205,
-        "name": "Kosovo",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "kosovo",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 126,
-        "name": "Kuwait",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "kuwait",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 202,
-        "name": "Kyrgyzstan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "kyrgyzstan",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 41,
-        "name": "Latvia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "latvia",
-        "sportTypes": [
-          1,
-          2,
-          4
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 123,
-        "name": "Lebanon",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "lebanon",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 138,
-        "name": "Liberia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "liberia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 161,
-        "name": "Libya",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "libya",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 101,
-        "name": "Liechtenstein",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "liechtenstein",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 42,
-        "name": "Lithuania",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "lithuania",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 92,
-        "name": "Luxembourg",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "luxembourg",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 82,
-        "name": "Malaysia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "malaysia",
-        "sportTypes": [
-          1,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 93,
-        "name": "Malta",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "malta",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 190,
-        "name": "Mauritius",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "mauritius",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 31,
-        "name": "Mexico",
-        "totalGames": 4,
-        "liveGames": 0,
-        "nameForURL": "mexico",
-        "sportTypes": [
-          1,
-          2,
-          7
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 91,
-        "name": "Moldova",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "moldova",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 181,
-        "name": "Mongolia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "mongolia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 84,
-        "name": "Montenegro",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "montenegro",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 127,
-        "name": "Morocco",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "morocco",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 55,
-        "name": "Myanmar",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "myanmar",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 64,
-        "name": "Namibia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "namibia",
-        "sportTypes": [
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 188,
-        "name": "National Teams",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "national-teams",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 7,
-        "name": "Netherlands",
-        "totalGames": 4,
-        "liveGames": 4,
-        "nameForURL": "netherlands",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 159,
-        "name": "New Zealand",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "new-zealand",
-        "sportTypes": [
-          1,
-          2,
-          9,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 182,
-        "name": "Nicaragua",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "nicaragua",
-        "sportTypes": [
-          1,
-          2,
-          7
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 201,
-        "name": "Niger",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "niger",
-        "sportTypes": [
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 83,
-        "name": "Nigeria",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "nigeria",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 47,
-        "name": "North America",
-        "totalGames": 3,
-        "liveGames": 1,
-        "nameForURL": "north-america",
-        "sportTypes": [
-          1,
-          2,
-          7,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 180,
-        "name": "North Korea",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "north-korea",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 56,
-        "name": "North Macedonia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "north-macedonia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 99,
-        "name": "Northern Ireland",
-        "totalGames": 1,
-        "liveGames": 1,
-        "nameForURL": "northern-ireland",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 27,
-        "name": "Norway",
-        "totalGames": 2,
-        "liveGames": 1,
-        "nameForURL": "norway",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          6,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 208,
-        "name": "Oceania",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "oceania",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 176,
-        "name": "Olympics",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "olympics",
-        "sportTypes": [
-          1,
-          2,
-          3,
-          5,
-          7,
-          8,
-          9,
-          10
-        ],
-        "imageVersion": 5
-      },
-      {
-        "id": 117,
-        "name": "Oman",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "oman",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 172,
-        "name": "Pakistan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "pakistan",
-        "sportTypes": [
-          1,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 226,
-        "name": "Palestine",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "palestine",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 146,
-        "name": "Panama",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "panama",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 108,
-        "name": "Paraguay",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "paraguay",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 112,
-        "name": "Peru",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "peru",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 37,
-        "name": "Poland",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "poland",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          6,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 11,
-        "name": "Portugal",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "portugal",
-        "sportTypes": [
-          1,
-          2,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 178,
-        "name": "Puerto Rico",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "puerto-rico",
-        "sportTypes": [
-          2,
-          7
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 115,
-        "name": "Qatar",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "qatar",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 377,
-        "name": "ROC",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "roc",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 4
-      },
-      {
-        "id": 29,
-        "name": "Romania",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "romania",
-        "sportTypes": [
-          1,
-          2,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 14,
-        "name": "Russia",
-        "totalGames": 7,
-        "liveGames": 0,
-        "nameForURL": "russia",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 94,
-        "name": "San Marino",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "san-marino",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 122,
-        "name": "Saudi Arabia",
-        "totalGames": 3,
-        "liveGames": 2,
-        "nameForURL": "saudi-arabia",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 8,
-        "name": "Scotland",
-        "totalGames": 7,
-        "liveGames": 6,
-        "nameForURL": "scotland",
-        "sportTypes": [
-          1,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 133,
-        "name": "Senegal",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "senegal",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 85,
-        "name": "Serbia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "serbia",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 50,
-        "name": "Singapore",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "singapore",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 33,
-        "name": "Slovakia",
-        "totalGames": 3,
-        "liveGames": 0,
-        "nameForURL": "slovakia",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 46,
-        "name": "Slovenia",
-        "totalGames": 2,
-        "liveGames": 1,
-        "nameForURL": "slovenia",
-        "sportTypes": [
-          1,
-          2,
-          5
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 134,
-        "name": "South Africa",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "south-africa",
-        "sportTypes": [
-          1,
-          9,
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 17,
-        "name": "South America",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "south-america",
-        "sportTypes": [
-          1,
-          2,
-          8,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 86,
-        "name": "South Korea",
-        "totalGames": 8,
-        "liveGames": 0,
-        "nameForURL": "south-korea",
-        "sportTypes": [
-          1,
-          2,
-          7
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 2,
-        "name": "Spain",
-        "totalGames": 8,
-        "liveGames": 4,
-        "nameForURL": "spain",
-        "sportTypes": [
-          1,
-          2,
-          5,
-          8,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 314,
-        "name": "Stay Home",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "stay-home",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 130,
-        "name": "Sudan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "sudan",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 24,
-        "name": "Sweden",
-        "totalGames": 11,
-        "liveGames": 5,
-        "nameForURL": "sweden",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          7,
-          8,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 15,
-        "name": "Switzerland",
-        "totalGames": 5,
-        "liveGames": 5,
-        "nameForURL": "switzerland",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          5,
-          6
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 125,
-        "name": "Syria",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "syria",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 163,
-        "name": "Taiwan",
-        "totalGames": 4,
-        "liveGames": 0,
-        "nameForURL": "taiwan",
-        "sportTypes": [
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 184,
-        "name": "Tajikistan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "tajikistan",
-        "sportTypes": [
-          1,
-          2,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 141,
-        "name": "Tanzania",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "tanzania",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 53,
-        "name": "Tennis",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "tennis",
-        "sportTypes": [
-          3
-        ],
-        "imageVersion": 2
-      },
-      {
-        "id": 304,
-        "name": "TestCountry",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "testcountry",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          6
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 118,
-        "name": "Thailand",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "thailand",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 200,
-        "name": "The Phillipines",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "the-phillipines",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 71,
-        "name": "Togo",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "togo",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 148,
-        "name": "Trinidad And Tobago",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "trinidad-and-tobago",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 135,
-        "name": "Tunisia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "tunisia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 12,
-        "name": "Turkiye",
-        "totalGames": 7,
-        "liveGames": 0,
-        "nameForURL": "turkiye",
-        "sportTypes": [
-          1,
-          2,
-          8
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 120,
-        "name": "Turkmenistan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "turkmenistan",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 124,
-        "name": "UAE",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "uae",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 137,
-        "name": "Uganda",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "uganda",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 26,
-        "name": "Ukraine",
-        "totalGames": 1,
-        "liveGames": 0,
-        "nameForURL": "ukraine",
-        "sportTypes": [
-          1,
-          2,
-          4
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 166,
-        "name": "United Kingdom",
-        "totalGames": 1,
-        "liveGames": 1,
-        "nameForURL": "united-kingdom",
-        "sportTypes": [
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 111,
-        "name": "Uruguay",
-        "totalGames": 2,
-        "liveGames": 0,
-        "nameForURL": "uruguay",
-        "sportTypes": [
-          1,
-          2
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 18,
-        "name": "USA",
-        "totalGames": 49,
-        "liveGames": 2,
-        "nameForURL": "usa",
-        "sportTypes": [
-          1,
-          2,
-          4,
-          6,
-          7,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 121,
-        "name": "Uzbekistan",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "uzbekistan",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 110,
-        "name": "Venezuela",
-        "totalGames": 5,
-        "liveGames": 0,
-        "nameForURL": "venezuela",
-        "sportTypes": [
-          1,
-          2,
-          7
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 155,
-        "name": "Vietnam",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "vietnam",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 100,
-        "name": "Wales",
-        "totalGames": 1,
-        "liveGames": 1,
-        "nameForURL": "wales",
-        "sportTypes": [
-          1,
-          5,
-          9
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 225,
-        "name": "West Indies Federation",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "west-indies-federation",
-        "sportTypes": [
-          11
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 87,
-        "name": "WTA",
-        "totalGames": 17,
-        "liveGames": 2,
-        "nameForURL": "wta",
-        "sportTypes": [
-          3
-        ],
-        "imageVersion": 2
-      },
-      {
-        "id": 165,
-        "name": "WTA-D",
-        "totalGames": 5,
-        "liveGames": 1,
-        "nameForURL": "wta-d",
-        "sportTypes": [
-          3
-        ],
-        "imageVersion": 2
-      },
-      {
-        "id": 170,
-        "name": "Yemen",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "yemen",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      },
-      {
-        "id": 132,
-        "name": "Zambia",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "zambia",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 6
-      },
-      {
-        "id": 60,
-        "name": "Zimbabwe",
-        "totalGames": 0,
-        "liveGames": 0,
-        "nameForURL": "zimbabwe",
-        "sportTypes": [
-          1
-        ],
-        "imageVersion": 1
-      }
-    ],
-    "sports": [
-      {
-        "id": 1,
-        "name": "Football",
-        "nameForURL": "football",
-        "drawSupport": true,
-        "imageVersion": 1
-      },
-      {
-        "id": 2,
-        "name": "Basketball",
-        "nameForURL": "basketball",
-        "drawSupport": false,
-        "imageVersion": 1
-      },
-      {
-        "id": 3,
-        "name": "Tennis",
-        "nameForURL": "tennis",
-        "drawSupport": false,
-        "imageVersion": 1
-      },
-      {
-        "id": 4,
-        "name": "Hockey",
-        "nameForURL": "hockey",
-        "drawSupport": false,
-        "imageVersion": 1
-      },
-      {
-        "id": 5,
-        "name": "Handball",
-        "nameForURL": "handball",
-        "drawSupport": true,
-        "imageVersion": 1
-      },
-      {
-        "id": 6,
-        "name": "A. Football",
-        "nameForURL": "a.-football",
-        "drawSupport": false,
-        "imageVersion": 1
-      },
-      {
-        "id": 7,
-        "name": "Baseball",
-        "nameForURL": "baseball",
-        "drawSupport": false,
-        "imageVersion": 1
-      },
-      {
-        "id": 8,
-        "name": "Volleyball",
-        "nameForURL": "volleyball",
-        "drawSupport": false,
-        "imageVersion": 1
-      },
-      {
-        "id": 9,
-        "name": "Rugby",
-        "nameForURL": "rugby",
-        "drawSupport": true,
-        "imageVersion": 1
-      },
-      {
-        "id": 10,
-        "name": "Olympics",
-        "nameForURL": "olympics",
-        "drawSupport": false,
-        "imageVersion": 1
-      },
-      {
-        "id": 11,
-        "name": "Cricket",
-        "nameForURL": "cricket",
-        "drawSupport": false,
-        "imageVersion": 1
-      },
-      {
-        "id": 12,
-        "name": "Table Tennis",
-        "nameForURL": "table-tennis",
-        "drawSupport": false,
-        "imageVersion": 1
-      },
-      {
-        "id": 13,
-        "name": "eSports",
-        "nameForURL": "esports",
-        "drawSupport": true,
-        "imageVersion": 1
-      }
-    ]
-  }
+  "lastUpdateId": 4849069643,
+  "requestedUpdateId": -1,
+  "ttl": 60,
+  "countries": [
+    {
+      "id": 1,
+      "name": "England",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "england",
+      "sportTypes": [
+        1,
+        9,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 185,
+      "name": "Afghanistan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "afghanistan",
+      "sportTypes": [
+        1,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 44,
+      "name": "Africa",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "africa",
+      "sportTypes": [
+        1,
+        2,
+        5
+      ],
+      "imageVersion": 1,
+      "isInternational": true
+    },
+    {
+      "id": 76,
+      "name": "Albania",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "albania",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 139,
+      "name": "Algeria",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "algeria",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 303,
+      "name": "America",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "america",
+      "sportTypes": [
+        1,
+        2,
+        7,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": true
+    },
+    {
+      "id": 103,
+      "name": "Andorra",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "andorra",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 136,
+      "name": "Angola",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "angola",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 10,
+      "name": "Argentina",
+      "totalGames": 8,
+      "liveGames": 4,
+      "nameForURL": "argentina",
+      "imageVersion": 1
+    },
+    {
+      "id": 49,
+      "name": "Armenia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "armenia",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 171,
+      "name": "Asia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "asia",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5,
+        7,
+        8,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": true
+    },
+    {
+      "id": 88,
+      "name": "ATP",
+      "totalGames": 76,
+      "liveGames": 3,
+      "nameForURL": "atp",
+      "imageVersion": 2
+    },
+    {
+      "id": 301,
+      "name": "ATP Challenger",
+      "totalGames": 22,
+      "liveGames": 4,
+      "nameForURL": "atp-challenger",
+      "imageVersion": 1
+    },
+    {
+      "id": 164,
+      "name": "ATP-D",
+      "totalGames": 6,
+      "liveGames": 0,
+      "nameForURL": "atp-d",
+      "imageVersion": 1
+    },
+    {
+      "id": 36,
+      "name": "Australia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "australia",
+      "sportTypes": [
+        1,
+        2,
+        3,
+        4,
+        9,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 20,
+      "name": "Austria",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "austria",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5,
+        6,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 77,
+      "name": "Azerbaijan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "azerbaijan",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 186,
+      "name": "Bahamas",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "bahamas",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 116,
+      "name": "Bahrain",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "bahrain",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 219,
+      "name": "Bangladesh",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "bangladesh",
+      "sportTypes": [
+        1,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 104,
+      "name": "Belarus",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "belarus",
+      "sportTypes": [
+        1,
+        4,
+        5
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 16,
+      "name": "Belgium",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "belgium",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        8,
+        9
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 194,
+      "name": "Bermuda",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "bermuda",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 113,
+      "name": "Bolivia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "bolivia",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 57,
+      "name": "Bosnia Herzegovina",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "bosnia-herzegovina",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 63,
+      "name": "Botswana",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "botswana",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 21,
+      "name": "Brazil",
+      "totalGames": 9,
+      "liveGames": 2,
+      "nameForURL": "brazil",
+      "imageVersion": 1
+    },
+    {
+      "id": 276,
+      "name": "Brunei Darussalam",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "brunei-darussalam",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 6,
+      "isInternational": false
+    },
+    {
+      "id": 40,
+      "name": "Bulgaria",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "bulgaria",
+      "sportTypes": [
+        1,
+        2,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 192,
+      "name": "Burundi",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "burundi",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 73,
+      "name": "Cameroon",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "cameroon",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 66,
+      "name": "Canada",
+      "totalGames": 3,
+      "liveGames": 0,
+      "nameForURL": "canada",
+      "imageVersion": 1
+    },
+    {
+      "id": 28,
+      "name": "Chile",
+      "totalGames": 3,
+      "liveGames": 0,
+      "nameForURL": "chile",
+      "imageVersion": 1
+    },
+    {
+      "id": 35,
+      "name": "China",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "china",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 179,
+      "name": "Chinese Taipei",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "chinese-taipei",
+      "sportTypes": [
+        1,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 109,
+      "name": "Colombia",
+      "totalGames": 2,
+      "liveGames": 0,
+      "nameForURL": "colombia",
+      "imageVersion": 1
+    },
+    {
+      "id": 153,
+      "name": "Costa Rica",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "costa-rica",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 2,
+      "isInternational": false
+    },
+    {
+      "id": 38,
+      "name": "Croatia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "croatia",
+      "sportTypes": [
+        1,
+        2,
+        5
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 175,
+      "name": "Cuba",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "cuba",
+      "sportTypes": [
+        1,
+        7
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 39,
+      "name": "Cyprus",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "cyprus",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 22,
+      "name": "Czechia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "czech-republic",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        6,
+        7,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 23,
+      "name": "Denmark",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "denmark",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 183,
+      "name": "Dominican Republic",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "dominican-republic",
+      "sportTypes": [
+        1,
+        2,
+        7
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 51,
+      "name": "Ecuador",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "ecuador",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 131,
+      "name": "Egypt",
+      "totalGames": 3,
+      "liveGames": 0,
+      "nameForURL": "egypt",
+      "imageVersion": 1
+    },
+    {
+      "id": 147,
+      "name": "El Salvador",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "el-salvador",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 102,
+      "name": "Estonia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "estonia",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 70,
+      "name": "Ethiopia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "ethiopia",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 19,
+      "name": "Europe",
+      "totalGames": 2,
+      "liveGames": 0,
+      "nameForURL": "europe",
+      "imageVersion": 1,
+      "isInternational": true
+    },
+    {
+      "id": 106,
+      "name": "Faroe Islands",
+      "totalGames": 1,
+      "liveGames": 1,
+      "nameForURL": "faroe-islands",
+      "imageVersion": 1
+    },
+    {
+      "id": 61,
+      "name": "Fiji",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "fiji",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 25,
+      "name": "Finland",
+      "totalGames": 1,
+      "liveGames": 0,
+      "nameForURL": "finland",
+      "imageVersion": 1
+    },
+    {
+      "id": 5,
+      "name": "France",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "france",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 143,
+      "name": "Gabon",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "gabon",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 78,
+      "name": "Georgia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "georgia",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 4,
+      "name": "Germany",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "germany",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 65,
+      "name": "Ghana",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "ghana",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 209,
+      "name": "Gibraltar",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "gibraltar",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 13,
+      "name": "Greece",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "greece",
+      "sportTypes": [
+        1,
+        2,
+        5,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 177,
+      "name": "Grenada",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "grenada",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 140,
+      "name": "Guatemala",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "guatemala",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 2,
+      "isInternational": false
+    },
+    {
+      "id": 169,
+      "name": "Honduras",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "honduras",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 79,
+      "name": "Hong Kong",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "hong-kong",
+      "sportTypes": [
+        1,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 30,
+      "name": "Hungary",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "hungary",
+      "sportTypes": [
+        1,
+        2,
+        5
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 32,
+      "name": "Iceland",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "iceland",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 80,
+      "name": "India",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "india",
+      "sportTypes": [
+        1,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 75,
+      "name": "Indonesia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "indonesia",
+      "sportTypes": [
+        1,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 54,
+      "name": "International",
+      "totalGames": 3,
+      "liveGames": 1,
+      "nameForURL": "international",
+      "imageVersion": 1,
+      "isInternational": true
+    },
+    {
+      "id": 378,
+      "name": "IOC",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "ioc",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 2,
+      "isInternational": false
+    },
+    {
+      "id": 81,
+      "name": "Iran",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "iran",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 114,
+      "name": "Iraq",
+      "totalGames": 3,
+      "liveGames": 0,
+      "nameForURL": "iraq",
+      "imageVersion": 1
+    },
+    {
+      "id": 9,
+      "name": "Ireland",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "ireland",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 6,
+      "name": "Israel",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "israel",
+      "sportTypes": [
+        1,
+        2,
+        5
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 3,
+      "name": "Italy",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "italy",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 74,
+      "name": "Ivory Coast",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "ivory-coast",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 3,
+      "isInternational": false
+    },
+    {
+      "id": 151,
+      "name": "Jamaica",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "jamaica",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 34,
+      "name": "Japan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "japan",
+      "sportTypes": [
+        1,
+        7
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 119,
+      "name": "Jordan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "jordan",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 105,
+      "name": "Kazakhstan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "kazakhstan",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 144,
+      "name": "Kenya",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "kenya",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 205,
+      "name": "Kosovo",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "kosovo",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 126,
+      "name": "Kuwait",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "kuwait",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 202,
+      "name": "Kyrgyzstan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "kyrgyzstan",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 41,
+      "name": "Latvia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "latvia",
+      "sportTypes": [
+        1,
+        2,
+        4
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 123,
+      "name": "Lebanon",
+      "totalGames": 2,
+      "liveGames": 0,
+      "nameForURL": "lebanon",
+      "imageVersion": 1
+    },
+    {
+      "id": 138,
+      "name": "Liberia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "liberia",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 161,
+      "name": "Libya",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "libya",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 101,
+      "name": "Liechtenstein",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "liechtenstein",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 42,
+      "name": "Lithuania",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "lithuania",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 92,
+      "name": "Luxembourg",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "luxembourg",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 82,
+      "name": "Malaysia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "malaysia",
+      "sportTypes": [
+        1,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 128,
+      "name": "Mali",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "mali",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 93,
+      "name": "Malta",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "malta",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 190,
+      "name": "Mauritius",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "mauritius",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 31,
+      "name": "Mexico",
+      "totalGames": 10,
+      "liveGames": 0,
+      "nameForURL": "mexico",
+      "imageVersion": 1
+    },
+    {
+      "id": 91,
+      "name": "Moldova",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "moldova",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 181,
+      "name": "Mongolia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "mongolia",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 84,
+      "name": "Montenegro",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "montenegro",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 127,
+      "name": "Morocco",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "morocco",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 55,
+      "name": "Myanmar",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "myanmar",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 64,
+      "name": "Namibia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "namibia",
+      "sportTypes": [
+        5
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 188,
+      "name": "National Teams",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "national-teams",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 7,
+      "name": "Netherlands",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "netherlands",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 159,
+      "name": "New Zealand",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "new-zealand",
+      "sportTypes": [
+        1,
+        2,
+        9,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 182,
+      "name": "Nicaragua",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "nicaragua",
+      "sportTypes": [
+        1,
+        2,
+        7
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 201,
+      "name": "Niger",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "niger",
+      "sportTypes": [
+        1,
+        5
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 83,
+      "name": "Nigeria",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "nigeria",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 47,
+      "name": "North America",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "north-america",
+      "sportTypes": [
+        1,
+        2,
+        7,
+        8,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": true
+    },
+    {
+      "id": 180,
+      "name": "North Korea",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "north-korea",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 56,
+      "name": "North Macedonia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "north-macedonia",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 99,
+      "name": "Northern Ireland",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "northern-ireland",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 27,
+      "name": "Norway",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "norway",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5,
+        6,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 208,
+      "name": "Oceania",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "oceania",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": true
+    },
+    {
+      "id": 176,
+      "name": "Olympics",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "olympics",
+      "sportTypes": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        8,
+        9,
+        10
+      ],
+      "imageVersion": 5,
+      "isInternational": true
+    },
+    {
+      "id": 117,
+      "name": "Oman",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "oman",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 172,
+      "name": "Pakistan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "pakistan",
+      "sportTypes": [
+        1,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 226,
+      "name": "Palestine",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "palestine",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 146,
+      "name": "Panama",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "panama",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 108,
+      "name": "Paraguay",
+      "totalGames": 2,
+      "liveGames": 1,
+      "nameForURL": "paraguay",
+      "imageVersion": 1
+    },
+    {
+      "id": 112,
+      "name": "Peru",
+      "totalGames": 2,
+      "liveGames": 1,
+      "nameForURL": "peru",
+      "imageVersion": 1
+    },
+    {
+      "id": 37,
+      "name": "Poland",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "poland",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5,
+        6,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 11,
+      "name": "Portugal",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "portugal",
+      "sportTypes": [
+        1,
+        2,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 178,
+      "name": "Puerto Rico",
+      "totalGames": 1,
+      "liveGames": 0,
+      "nameForURL": "puerto-rico",
+      "imageVersion": 1
+    },
+    {
+      "id": 115,
+      "name": "Qatar",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "qatar",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 377,
+      "name": "ROC",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "roc",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 4,
+      "isInternational": false
+    },
+    {
+      "id": 29,
+      "name": "Romania",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "romania",
+      "sportTypes": [
+        1,
+        2,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 14,
+      "name": "Russia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "russia",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 94,
+      "name": "San Marino",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "san-marino",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 122,
+      "name": "Saudi Arabia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "saudi-arabia",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 8,
+      "name": "Scotland",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "scotland",
+      "sportTypes": [
+        1,
+        9
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 133,
+      "name": "Senegal",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "senegal",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 85,
+      "name": "Serbia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "serbia",
+      "sportTypes": [
+        1,
+        2,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 50,
+      "name": "Singapore",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "singapore",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 33,
+      "name": "Slovakia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "slovakia",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 46,
+      "name": "Slovenia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "slovenia",
+      "sportTypes": [
+        1,
+        2,
+        5
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 134,
+      "name": "South Africa",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "south-africa",
+      "sportTypes": [
+        1,
+        9,
+        11
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 17,
+      "name": "South America",
+      "totalGames": 2,
+      "liveGames": 0,
+      "nameForURL": "south-america",
+      "imageVersion": 1,
+      "isInternational": true
+    },
+    {
+      "id": 86,
+      "name": "South Korea",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "south-korea",
+      "sportTypes": [
+        1,
+        2,
+        7
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 2,
+      "name": "Spain",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "spain",
+      "sportTypes": [
+        1,
+        2,
+        5,
+        8,
+        9
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 314,
+      "name": "Stay Home",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "stay-home",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 130,
+      "name": "Sudan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "sudan",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 24,
+      "name": "Sweden",
+      "totalGames": 4,
+      "liveGames": 4,
+      "nameForURL": "sweden",
+      "imageVersion": 1
+    },
+    {
+      "id": 15,
+      "name": "Switzerland",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "switzerland",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        5,
+        6
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 125,
+      "name": "Syria",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "syria",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 163,
+      "name": "Taiwan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "taiwan",
+      "sportTypes": [
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 184,
+      "name": "Tajikistan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "tajikistan",
+      "sportTypes": [
+        1,
+        2,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 141,
+      "name": "Tanzania",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "tanzania",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 53,
+      "name": "Tennis",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "tennis",
+      "sportTypes": [
+        3
+      ],
+      "imageVersion": 2,
+      "isInternational": false
+    },
+    {
+      "id": 304,
+      "name": "TestCountry",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "testcountry",
+      "sportTypes": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "imageVersion": 1,
+      "isInternational": true
+    },
+    {
+      "id": 118,
+      "name": "Thailand",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "thailand",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 200,
+      "name": "The Phillipines",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "the-phillipines",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 71,
+      "name": "Togo",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "togo",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 148,
+      "name": "Trinidad And Tobago",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "trinidad-and-tobago",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 135,
+      "name": "Tunisia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "tunisia",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 12,
+      "name": "Turkiye",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "turkiye",
+      "sportTypes": [
+        1,
+        2,
+        8
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 120,
+      "name": "Turkmenistan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "turkmenistan",
+      "sportTypes": [
+        1,
+        2
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 124,
+      "name": "UAE",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "uae",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 137,
+      "name": "Uganda",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "uganda",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 26,
+      "name": "Ukraine",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "ukraine",
+      "sportTypes": [
+        1,
+        2,
+        4
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 166,
+      "name": "United Kingdom",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "united-kingdom",
+      "sportTypes": [
+        2,
+        4
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 111,
+      "name": "Uruguay",
+      "totalGames": 2,
+      "liveGames": 1,
+      "nameForURL": "uruguay",
+      "imageVersion": 1
+    },
+    {
+      "id": 18,
+      "name": "USA",
+      "totalGames": 9,
+      "liveGames": 0,
+      "nameForURL": "usa",
+      "imageVersion": 1
+    },
+    {
+      "id": 121,
+      "name": "Uzbekistan",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "uzbekistan",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 110,
+      "name": "Venezuela",
+      "totalGames": 1,
+      "liveGames": 0,
+      "nameForURL": "venezuela",
+      "imageVersion": 1
+    },
+    {
+      "id": 155,
+      "name": "Vietnam",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "vietnam",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 100,
+      "name": "Wales",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "wales",
+      "sportTypes": [
+        1,
+        5,
+        9
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 87,
+      "name": "WTA",
+      "totalGames": 15,
+      "liveGames": 2,
+      "nameForURL": "wta",
+      "imageVersion": 2
+    },
+    {
+      "id": 165,
+      "name": "WTA-D",
+      "totalGames": 4,
+      "liveGames": 0,
+      "nameForURL": "wta-d",
+      "imageVersion": 2
+    },
+    {
+      "id": 170,
+      "name": "Yemen",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "yemen",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    },
+    {
+      "id": 132,
+      "name": "Zambia",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "zambia",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 6,
+      "isInternational": false
+    },
+    {
+      "id": 60,
+      "name": "Zimbabwe",
+      "totalGames": 0,
+      "liveGames": 0,
+      "nameForURL": "zimbabwe",
+      "sportTypes": [
+        1
+      ],
+      "imageVersion": 1,
+      "isInternational": false
+    }
+  ],
+  "sports": [
+    {
+      "id": 1,
+      "name": "Football",
+      "nameForURL": "football",
+      "drawSupport": true,
+      "imageVersion": 1
+    },
+    {
+      "id": 2,
+      "name": "Basketball",
+      "nameForURL": "basketball",
+      "drawSupport": false,
+      "imageVersion": 1
+    },
+    {
+      "id": 3,
+      "name": "Tennis",
+      "nameForURL": "tennis",
+      "drawSupport": false,
+      "imageVersion": 1
+    },
+    {
+      "id": 4,
+      "name": "Hockey",
+      "nameForURL": "hockey",
+      "drawSupport": false,
+      "imageVersion": 1
+    },
+    {
+      "id": 5,
+      "name": "Handball",
+      "nameForURL": "handball",
+      "drawSupport": true,
+      "imageVersion": 1
+    },
+    {
+      "id": 6,
+      "name": "A. Football",
+      "nameForURL": "a.-football",
+      "drawSupport": false,
+      "imageVersion": 1
+    },
+    {
+      "id": 7,
+      "name": "Baseball",
+      "nameForURL": "baseball",
+      "drawSupport": false,
+      "imageVersion": 1
+    },
+    {
+      "id": 8,
+      "name": "Volleyball",
+      "nameForURL": "volleyball",
+      "drawSupport": false,
+      "imageVersion": 1
+    },
+    {
+      "id": 9,
+      "name": "Rugby",
+      "nameForURL": "rugby",
+      "drawSupport": true,
+      "imageVersion": 1
+    },
+    {
+      "id": 10,
+      "name": "Olympics",
+      "nameForURL": "olympics",
+      "drawSupport": false,
+      "imageVersion": 1
+    },
+    {
+      "id": 11,
+      "name": "Cricket",
+      "nameForURL": "cricket",
+      "drawSupport": false,
+      "imageVersion": 1
+    },
+    {
+      "id": 12,
+      "name": "Table Tennis",
+      "nameForURL": "table-tennis",
+      "drawSupport": false,
+      "imageVersion": 1
+    },
+    {
+      "id": 13,
+      "name": "eSports",
+      "nameForURL": "esports",
+      "drawSupport": true,
+      "imageVersion": 1
+    }
+  ]
+}
