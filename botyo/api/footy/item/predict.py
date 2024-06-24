@@ -25,6 +25,8 @@ class Predict(object):
             user, _ = DbUser.get_or_create(phone=self.source)
             self.__user = user
         return self.__user
+    
+    
 
     def getGame(self, **kwds) -> DbGame:
         game, _ = DbGame.get_or_create(**kwds)
@@ -81,7 +83,7 @@ class Predict(object):
                 PredictionRow(
                     status=game.displayStatus,
                     home=pred_game.home_team.name,
-                    score=pred_game.score,
+                    score=pred_game.result,
                     prediction=pred_pred.prediction,
                     away=pred_game.away_team.name,
                     points=pred_pred.points,
