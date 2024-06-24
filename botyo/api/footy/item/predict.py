@@ -5,7 +5,11 @@ from typing import Optional
 import re
 from botyo.api.footy.item.competitions import Competitions
 from botyo.api.footy.item.livescore import Livescore
-from botyo.api.footy.item.subscription import Subscription, SubscriptionClass, SubscriptionClient
+from botyo.api.footy.item.subscription import (
+    Subscription,
+    SubscriptionClass,
+    SubscriptionClient,
+)
 from botyo.predict.db.models import DbUser, DbGame, DbPrediction
 from botyo.server.output import TextOutput
 
@@ -17,7 +21,7 @@ class Predict(object):
     def __init__(self, client: str, source: str):
         self.client = client
         if not source.startswith("+"):
-            source = "+" + re.findall(r"^(\d+)", source).pop(0)
+            source = "+" + re.findall(r"^(\d+)", source).pop(0)[0]
         self.source = source
 
     @property
@@ -33,10 +37,11 @@ class Predict(object):
 
     def today_predictions(self) -> str:
         predictions = [
-            str(x.prediction_row) for x in DbPrediction.get_in_progress(User=self.user)
+            x.prediction_row for x in DbPrediction.get_in_progress(User=self.user)
         ]
-        predictions.insert(0, f"Predictions by {self.user.display_name}")
-        TextOutput.addRows(predictions)
+        TextOutput.addRows(
+            [[f"Predictions by {self.user.display_name}"], *map(str, predictions)]
+        )
         return TextOutput.render() if len(predictions) else None
 
     def predict(self, query: Optional[str] = None):
@@ -56,7 +61,7 @@ class Predict(object):
             assert len(preds) == len(games)
         except AssertionError:
             return ls.render(group_by_league=False)
-        predictions = [f"Predictions by {self.user.display_name}"]
+        predictions = []
         for pred, game in zip(preds, sorted(games, key=lambda x: x.sort)):
             pred_game = self.getGame(
                 id_event=game.idEvent,
@@ -69,7 +74,8 @@ class Predict(object):
                 away_score=game.intAwayScore,
             )
             sc = SubscriptionClient(
-                client_id=SubscriptionClass.PREDICTION.value, group_id="on_livescore_event"
+                client_id=SubscriptionClass.PREDICTION.value,
+                group_id="on_livescore_event",
             )
             _ = Subscription.get(event=game, sc=sc)
             pred_pred, is_created = DbPrediction.get_or_create(
@@ -78,9 +84,11 @@ class Predict(object):
             if not is_created:
                 pred_pred.prediction = pred
                 pred_pred.save(only=["prediction"])
-            predictions.append([str(pred_pred.prediction_row)])
+            predictions.append(pred_pred.prediction_row)
 
-        TextOutput.addRows(predictions)
+        TextOutput.addRows(
+            [[f"Predictions by {self.user.display_name}"], *map(str, predictions)]
+        )
         return TextOutput.render() if len(predictions) else None
 
     def process_query(self, query: str) -> tuple[list[str]]:
