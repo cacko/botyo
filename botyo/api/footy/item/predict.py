@@ -56,7 +56,7 @@ class Predict(object):
         except AssertionError:
             return ls.render(group_by_league=False)
         predictions = [f"Predictions by {self.user.display_name}"]
-        for pred, game in zip(preds, games):
+        for pred, game in zip(preds, sorted(games, key=lambda x: x.sort)):
             pred_game = self.getGame(
                 id_event=game.idEvent,
                 league_id=game.idLeague,
