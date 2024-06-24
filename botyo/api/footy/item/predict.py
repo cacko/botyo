@@ -33,7 +33,7 @@ class Predict(object):
 
     def today_predictions(self) -> str:
         predictions = [
-            x.prediction_row for x in DbPrediction.get_in_progress(User=self.user)
+            str(x.prediction_row) for x in DbPrediction.get_in_progress(User=self.user)
         ]
         predictions.insert(0, f"Predictions by {self.user.display_name}")
         TextOutput.addRows(predictions)
@@ -78,7 +78,7 @@ class Predict(object):
             if not is_created:
                 pred_pred.prediction = pred
                 pred_pred.save(only=["prediction"])
-            predictions.append(pred_pred.prediction_row)
+            predictions.append([str(pred_pred.prediction_row)])
 
         TextOutput.addRows(predictions)
         return TextOutput.render() if len(predictions) else None
