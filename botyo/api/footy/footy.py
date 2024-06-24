@@ -5,6 +5,7 @@ from botyo import cli
 from botyo.api.footy.item.h2h import H2H
 
 from botyo.api.footy.item.predict import Predict
+from botyo.api.footy.item.predict_standings import PredictStandings
 from botyo.server.scheduler import Scheduler
 from .item.subscription import Subscription, SubscriptionClient
 from fuzzelinho import Match, MatchMethod, Needle
@@ -72,6 +73,9 @@ class FootyMeta(type):
 
     def predict(cls, client, source) -> Predict:
         return cls().getPredict(client=client, source=source)
+
+    def predict_standings(cls, client, source) -> PredictStandings:
+        return cls().getPredictStandings(client=client, source=source)
 
     # def precache(cls):
     #     return cls().precacheLivegames()
@@ -154,10 +158,10 @@ class Footy(object, metaclass=FootyMeta):
         return []
 
     def getPredict(self, client: str, source: Optional[str] = None) -> Predict:
-        return Predict(
-            client=client,
-            source=source
-        )
+        return Predict(client=client, source=source)
+
+    def getPredictStandings(self, client: str, source: Optional[str] = None) -> Predict:
+        return PredictStandings(client=client, source=source)
 
     def getCompetition(self, query: str) -> CompetitionData:
         item = self.__queryCompetition(query)

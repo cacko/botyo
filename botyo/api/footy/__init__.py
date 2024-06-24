@@ -311,10 +311,10 @@ def predict_command(context: Context):
 )
 def predict_standing_command(context: Context):
     try:
-        predict = Footy.predict(client=context.client, source=context.source)
-        message = predict.predict(query=context.query)
+        predict = Footy.predict_standings(client=context.client, source=context.source)
+        message = predict.standings()
         assert message
-        return RenderResult(message=message, method=ZMethod.FOOTY_PREDICT)
+        return RenderResult(message=message, method=ZMethod.FOOTY_PREDICT_STANDINGS)
     except Exception as e:
         logging.exception(e)
         return EmptyResult()

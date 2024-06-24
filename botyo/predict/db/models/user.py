@@ -1,7 +1,8 @@
+from typing import Generator
 from psycopg2 import IntegrityError
 from botyo.predict.db.database import Database
 from .base import DbModel
-from peewee import CharField, IntegerField
+from peewee import CharField, IntegerField, prefetch
 
 
 class DbUser(DbModel):
@@ -11,6 +12,11 @@ class DbUser(DbModel):
     draws = IntegerField(default=0)
     losses = IntegerField(default=0)
     points = IntegerField(default=0)
+
+    @classmethod
+    def by_points(cls) -> Generator["DbUser", None, None]:
+        query = cls.select().order_by(cls.points.desc())
+        yield from query
 
     @classmethod
     def get_or_create(cls, **kwargs) -> tuple["DbUser", bool]:
@@ -31,7 +37,7 @@ class DbUser(DbModel):
                     return query.get(), False
                 except cls.DoesNotExist:
                     raise exc
-                
+
     def add_points(self, points: int):
         self.points += points
         match points:
@@ -41,7 +47,11 @@ class DbUser(DbModel):
                 self.draws += 1
             case 0:
                 self.losses += 1
-        self.save(only=['points', 'wins', 'draws', 'losses'])
+        self.save(only=["points", "wins", "draws", "losses"])
+
+    @property
+    def played(self):
+        return sum([self.wins, self.draws, self.losses])
 
     @property
     def display_name(self) -> str:
