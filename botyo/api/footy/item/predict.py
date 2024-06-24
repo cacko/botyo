@@ -70,14 +70,13 @@ class Predict(object):
             sc = SubscriptionClient(
                 client_id=SubscriptionClass.PREDICTION.value, group_id="on_livescore_event"
             )
-            sub = Subscription.get(event=game, sc=sc)
-            logging.warn(self.user)
-            logging.warn(pred_game)
-            logging.warn(pred)
-            pred_pred, _ = DbPrediction.get_or_create(
+            _ = Subscription.get(event=game, sc=sc)
+            pred_pred, is_created = DbPrediction.get_or_create(
                 User=self.user, Game=pred_game, prediction=pred
             )
-            logging.warning(pred_pred)
+            if not is_created:
+                pred_pred.prediction = pred
+                pred_pred.save(only=["prediction"])
             predictions.append(
                 PredictionRow(
                     status=game.displayStatus,

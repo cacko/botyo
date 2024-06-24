@@ -84,6 +84,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     ONTV_TV = "ontv:tv"
     HELP = "help"
     FOOTY_PREDICT = "ft:predict"
+    FOOTY_PREDICT_STANDINGS = "ft:prestandings"
     FOOTY_STANDINGS = "ft:standings"
     FOOTY_LEAGUES = "ft:leagues"
     FOOTY_FACTS = "ft:facts"
