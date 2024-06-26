@@ -22,7 +22,7 @@ from botyo.threesixfive.item.models import (
     ResponseGame,
     SubscriptionEvent,
     GoalEvent,
-    UpdateData
+    UpdateData,
 )
 from botyo.server.models import ZMethod
 from .player import Player
@@ -124,10 +124,18 @@ class Cache(RedisCachable):
             return None
         except GameNotFound:
             return None
-    
+
 
 class SubscriptionClass(StrEnum):
     PREDICTION = "prediction"
+
+    @classmethod
+    def _missing_(cls, value):
+        value = value.lower()
+        for member in cls:
+            if member.value == value:
+                return member
+        return None
 
 
 class SubscriptionClient:
@@ -153,6 +161,15 @@ class SubscriptionClient:
     @property
     def connection(self) -> Connection:
         return Connection.client(self.client_id)
+    
+    def sendPredictionUpdate(self):
+        try:
+            cls = SubscriptionClass(self.client_id)
+            match cls:
+                case SubscriptionClass.PREDICTION:
+                    getattr(DbPrediction, self.group_id)(data)
+        except Exception as e:
+            pass
 
     def sendUpdate(self, data: UpdateData):
         try:
@@ -243,6 +260,9 @@ class SubscriptionMeta(type):
 
     def clients(cls, event_id: str) -> QueueList:
         return QueueList(f"subscription.{event_id}.clients")
+
+    def predictionClients(cls, event_id: str) -> list[SubscriptionClient]:
+        return list(filter(lambda x: SubscriptionClass(x.client_id), cls.clients))
 
 
 class Subscription(metaclass=SubscriptionMeta):

@@ -86,29 +86,38 @@ class DbPrediction(DbModel):
 
     @classmethod
     def calculate_missing(cls, **kwargs) -> Generator["DbPrediction", None, None]:
-        query = (
-            DbPrediction.select(DbPrediction)
-            .join_from(DbPrediction, DbGame)
-            .join_from(DbPrediction, DbUser)
-        ).where(
-            (DbPrediction.calculated == False)
-            & (DbGame.status.in_([GameStatus.FT.value, GameStatus.AET.value]))
-        )
-        yield from prefetch(query, DbGame, DbUser)
+        try:
+            query = (
+                DbPrediction.select(DbPrediction)
+                .join_from(DbPrediction, DbGame)
+                .join_from(DbPrediction, DbUser)
+            ).where(
+                (DbPrediction.calculated == False)
+                & (DbGame.status.in_([GameStatus.FT.value, GameStatus.AET.value]))
+            )
+            yield from prefetch(query, DbGame, DbUser)            
+            
+        except Exception:
+            return None
+
 
     @classmethod
     def get_in_progress(cls, **kwargs) -> Generator["DbPrediction", None, None]:
-        user: DbUser = kwargs.get("User")
-        query = (
-            DbPrediction.select(DbPrediction)
-            .join_from(DbPrediction, DbGame)
-            .join_from(DbPrediction, DbUser)
-        )
-        query: Query = query.where(
-            (fn.date(DbGame.start_time) == datetime.now(tz=timezone.utc).date())
-            & (DbUser.phone == user.phone)
-        )
-        yield from prefetch(query, DbGame, DbUser)
+        try:
+            user: DbUser = kwargs.get("User")
+            query = (
+                DbPrediction.select(DbPrediction)
+                .join_from(DbPrediction, DbGame)
+                .join_from(DbPrediction, DbUser)
+            )
+            query: Query = query.where(
+                (fn.date(DbGame.start_time) == datetime.now(tz=timezone.utc).date())
+                & (DbUser.phone == user.phone)
+            )
+            yield from prefetch(query, DbGame, DbUser)
+        
+        except Exception:
+            return None\
 
     def save(self, force_insert=False, only=None):
         try:
