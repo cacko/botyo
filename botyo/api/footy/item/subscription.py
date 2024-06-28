@@ -486,7 +486,6 @@ class Subscription(metaclass=SubscriptionMeta):
                         try:
                             assert updated
                             details = ParserDetails(None, response=updated)
-                            logging.warning(details.home)
                             sc.sendUpdate(
                                 UpdateData(
                                     message="",
@@ -541,12 +540,14 @@ class Subscription(metaclass=SubscriptionMeta):
                                     )
                                 )
                             case PredictionClient():
+                                assert updated
+                                details = ParserDetails(None, response=updated)
                                 sc.sendUpdate(
                                     UpdateData(
                                         message=self.fulltimeAnnoucement,
-                                        score_message=updated.game.score,
+                                        score_message=details.score,
                                         start_time=self._event.startTime,
-                                        status=updated.game.shortStatusText,
+                                        status=details.game_status,
                                         event_id=self._event.idEvent,
                                     )
                                 )
