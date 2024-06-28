@@ -25,6 +25,7 @@ class EventStatus(Enum):
     CNL = "CNL"
     AET = "AET"
     NS = "NS"
+    JE = "Just Ended"
 
 
 STATUS_MAP = {
@@ -558,7 +559,7 @@ class Game(BaseModel):
         status = self.shortStatusText
         try:
             _status = GameStatus(status)
-            if _status in (GameStatus.FT, GameStatus.AET):
+            if _status in (GameStatus.FT, GameStatus.AET, GameStatus.JE):
                 return True
             return any(
                 [

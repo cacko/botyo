@@ -803,7 +803,7 @@ class Subscription(metaclass=SubscriptionMeta):
         status = self._event.strStatus
         try:
             _status = EventStatus(status)
-            if _status in (EventStatus.FT, EventStatus.AET, EventStatus.PPD):
+            if _status in (EventStatus.FT, EventStatus.AET, EventStatus.PPD, EventStatus.JE):
                 return True
             return any(
                 [_status == EventStatus.HT, re.match(r"^\d+", status) is not None]
