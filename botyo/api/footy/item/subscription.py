@@ -415,6 +415,7 @@ class Subscription(metaclass=SubscriptionMeta):
             scoreUpdate, game_status, chatUpdate, icon = self.updates(
                 updated
             )
+            logging.warn([scoreUpdate, game_status, chatUpdate])
             if not icon:
                 logo = LeagueImage(self._event.idLeague)
                 logo_path = logo.path
