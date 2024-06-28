@@ -411,7 +411,7 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            scoreUpdate, game_status, score_message, chatUpdate, icon = self.updates(
+            scoreUpdate, game_status, chatUpdate, icon = self.updates(
                 updated
             )
             if not icon:
@@ -485,13 +485,10 @@ class Subscription(metaclass=SubscriptionMeta):
                         try:
                             sc.sendUpdate(
                                 UpdateData(
-                                    message="",
-                                    score_message=score_message,
-                                    msgId=self.id,
+                                    score_message=scoreUpdate,
                                     start_time=self._event.startTime,
                                     status=game_status,
-                                    icon=icon,
-                                    event_id=self._event.idEvent
+                                    event_id=self._event.idEvent,
                                 )
                             )
                         except UnknownClientException as e:
@@ -545,7 +542,6 @@ class Subscription(metaclass=SubscriptionMeta):
                                         score_message=scoreUpdate,
                                         start_time=self._event.startTime,
                                         status=game_status,
-                                        icon=Emoji.b64(emojize(":chequered_flag:")),
                                         msgId=self.id,
                                     )
                                 )
@@ -579,9 +575,9 @@ class Subscription(metaclass=SubscriptionMeta):
                 league=self._event.strLeague,
             )
             icon = reduce(lambda r, x: x.icon64 if x.icon64 else r, details.events, "")
-            return str(res), f'{details.game_time}"', details.score, [*rows], icon
+            return str(res), f'{details.game_time}"', [*rows], icon
         except AssertionError:
-            return "", "", "", None, None
+            return "", "", None, None
 
     def client(self, client_id: str) -> Optional[Connection]:
         try:
@@ -671,7 +667,6 @@ class Subscription(metaclass=SubscriptionMeta):
                             sc.sendUpdate(
                                 UpdateData(
                                     message=self.startAnnouncement,
-                                    icon=Emoji.b64(emojize(":goal_net:")),
                                     score_message="",
                                     start_time=self._event.startTime,
                                     status=self._event.displayStatus,
