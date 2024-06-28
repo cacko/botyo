@@ -427,6 +427,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 pix.resize((64, 64))
                 icon = pix.base64
             for sc in self.subscriptions:
+                logging.warn(sc)
                 match sc:
                     case RESTClient():
                         try:
