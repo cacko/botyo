@@ -765,11 +765,11 @@ class Subscription(metaclass=SubscriptionMeta):
 
     @property
     def isValid(self) -> bool:
-        return not any([self.isCancelled, self.isPostponed, self.hasEnded])
+        return all([not self.isCancelled, not self.isPostponed, not self.hasEnded])
 
     @property
     def inProgress(self) -> bool:
-        return not any([self.notStarted, self.hasEnded])
+        return all([not self.notStarted, not self.hasEnded])
 
     @property
     def isPostponed(self) -> bool:
