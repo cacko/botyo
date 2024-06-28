@@ -560,7 +560,7 @@ class Subscription(metaclass=SubscriptionMeta):
         except ValueError as e:
             logging.error(e)
         except Exception as e:
-            logging.error(e)
+            logging.exception(e)
 
     def updates(
         self, updated: Optional[ResponseGame] = None
