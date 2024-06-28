@@ -139,9 +139,9 @@ class SubscriptionClass(StrEnum):
 
 
 class SubscriptionClient:
-    
+
     is_rest = False
-    
+
     def __init__(self, client_id: str, group_id: Optional[str]) -> None:
         self.client_id = client_id
         self.group_id = group_id
@@ -160,7 +160,7 @@ class SubscriptionClient:
     @property
     def connection(self) -> Connection:
         return Connection.client(self.client_id)
-    
+
     def sendUpdate(self, data: UpdateData):
         raise NotImplementedError
 
@@ -195,7 +195,7 @@ class ChatClient(SubscriptionClient):
         except UnknownClientException:
             pass
 
-        
+
 class PredictionClient(SubscriptionClient):
     def sendUpdate(self, data: UpdateData):
         try:
@@ -208,9 +208,9 @@ class PredictionClient(SubscriptionClient):
 
 
 class RESTClient(SubscriptionClient):
-    
+
     is_rest = True
-    
+
     def sendUpdate(self, updateData: UpdateData):
         data = updateData.message
         payload = []
@@ -230,6 +230,7 @@ class RESTClient(SubscriptionClient):
         except ConnectionError:
             logging.error(f"Cannot send update to f{self.client_id}")
             pass
+
 
 class SubscriptionMeta(type):
     __subs: dict[str, "Subscription"] = {}
@@ -258,6 +259,7 @@ class SubscriptionMeta(type):
 
     def clients(cls, event_id: str) -> QueueList:
         return QueueList(f"subscription.{event_id}.clients")
+
 
 class Subscription(metaclass=SubscriptionMeta):
     _event: Event
@@ -409,7 +411,9 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            scoreUpdate, game_status, chatUpdate, icon = self.updates(updated)
+            scoreUpdate, game_status, score_message, chatUpdate, icon = self.updates(
+                updated
+            )
             if not icon:
                 logo = LeagueImage(self._event.idLeague)
                 logo_path = logo.path
@@ -460,7 +464,7 @@ class Subscription(metaclass=SubscriptionMeta):
                                     status=game_status,
                                     msgId=self.id,
                                 )
-                                )
+                            )
                     case ChatClient():
                         TextOutput.clean()
                         TextOutput.addRows(chatUpdate)
@@ -482,7 +486,7 @@ class Subscription(metaclass=SubscriptionMeta):
                             sc.sendUpdate(
                                 UpdateData(
                                     message="",
-                                    score_message=scoreUpdate,
+                                    score_message=score_message,
                                     msgId=self.id,
                                     start_time=self._event.startTime,
                                     status=game_status,
@@ -543,7 +547,7 @@ class Subscription(metaclass=SubscriptionMeta):
                                         icon=Emoji.b64(emojize(":chequered_flag:")),
                                         msgId=self.id,
                                     )
-                                ) 
+                                )
                     except Exception as e:
                         logging.error(e)
                     self.cancel(sc)
@@ -563,7 +567,6 @@ class Subscription(metaclass=SubscriptionMeta):
             assert updated
             details = ParserDetails(None, response=updated)
             rows = details.rendered
-            assert len(rows)
             assert details.home
             assert details.away
             res = ScoreRow(
@@ -575,9 +578,9 @@ class Subscription(metaclass=SubscriptionMeta):
                 league=self._event.strLeague,
             )
             icon = reduce(lambda r, x: x.icon64 if x.icon64 else r, details.events, "")
-            return str(res), f'{details.game_time}"', [*rows], icon
+            return str(res), f'{details.game_time}"', details.score, [*rows], icon
         except AssertionError:
-            return "", "", None, None
+            return "", "", "", None, None
 
     def client(self, client_id: str) -> Optional[Connection]:
         try:
@@ -798,7 +801,12 @@ class Subscription(metaclass=SubscriptionMeta):
         status = self._event.strStatus
         try:
             _status = EventStatus(status)
-            if _status in (EventStatus.FT, EventStatus.AET, EventStatus.PPD, EventStatus.JE):
+            if _status in (
+                EventStatus.FT,
+                EventStatus.AET,
+                EventStatus.PPD,
+                EventStatus.JE,
+            ):
                 return True
             return any(
                 [_status == EventStatus.HT, re.match(r"^\d+", status) is not None]
