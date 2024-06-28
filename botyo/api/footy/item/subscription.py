@@ -478,12 +478,10 @@ class Subscription(metaclass=SubscriptionMeta):
                         except UnknownClientException as e:
                             logging.exception(e)
                     case PredictionClient():
-                        TextOutput.clean()
-                        TextOutput.addRows(chatUpdate)
                         try:
                             sc.sendUpdate(
                                 UpdateData(
-                                    message=TextOutput.render(),
+                                    message="",
                                     score_message=scoreUpdate,
                                     msgId=self.id,
                                     start_time=self._event.startTime,

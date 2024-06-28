@@ -91,8 +91,8 @@ class Predict(object):
                 client_id=SubscriptionClass.PREDICTION.value,
                 group_id="on_livescore_event",
             )
-            _ = Subscription(event=game)
-            _ = Subscription.get(event=game, sc=sc)
+            sub = Subscription.get(event=game, sc=sc)
+            sub.schedule(sc)
             pred_pred, is_created = DbPrediction.get_or_create(
                 User=self.user, Game=pred_game, prediction=pred
             )
