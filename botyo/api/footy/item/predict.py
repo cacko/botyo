@@ -69,6 +69,7 @@ class Predict(object):
             inprogress=True,
         )
         games = ls.items
+        logging.warn(games)
         try:
             assert len(preds) == len(games)
         except AssertionError:
