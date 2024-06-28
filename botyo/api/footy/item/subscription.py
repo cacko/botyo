@@ -485,6 +485,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         try:
                             sc.sendUpdate(
                                 UpdateData(
+                                    message="",
                                     score_message=scoreUpdate,
                                     start_time=self._event.startTime,
                                     status=game_status,

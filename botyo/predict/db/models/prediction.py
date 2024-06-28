@@ -34,7 +34,8 @@ class DbPrediction(DbModel):
     def on_ended(self):
         try:
             assert self.Game.ended
-            self.User.add_points(self.points)
+            logging.warning(f"on _ended {self.points} {self}")
+            # self.User.add_points(self.points)
             self.calculated = True
             self.save(only=["calculated"])
             return self
