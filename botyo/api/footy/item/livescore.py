@@ -72,7 +72,7 @@ class Livescore(LivescoreData):
         if self.inprogress:
             items = list(filter(lambda x: x.inProgress, items))
         if not_ended:
-            items = list(filter(lambda x: not x.hasEnded), items)
+            items = list(filter(lambda x: not x.hasEnded, items))
         items.reverse()
         filteredIds = (
             [
