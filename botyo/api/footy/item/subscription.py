@@ -488,7 +488,7 @@ class Subscription(metaclass=SubscriptionMeta):
                                     message="",
                                     score_message=updated.game.score,
                                     start_time=self._event.startTime,
-                                    status=updated.game.displayStatus,
+                                    status=updated.game.shortStatusText,
                                     event_id=self._event.idEvent,
                                 )
                             )
@@ -540,10 +540,10 @@ class Subscription(metaclass=SubscriptionMeta):
                                 sc.sendUpdate(
                                     UpdateData(
                                         message=self.fulltimeAnnoucement,
-                                        score_message=scoreUpdate,
+                                        score_message=updated.game.score,
                                         start_time=self._event.startTime,
-                                        status=game_status,
-                                        msgId=self.id,
+                                        status=updated.game.shortStatusText,
+                                        event_id=self._event.idEvent,
                                     )
                                 )
                     except Exception as e:
