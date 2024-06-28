@@ -259,10 +259,6 @@ class SubscriptionMeta(type):
     def clients(cls, event_id: str) -> QueueList:
         return QueueList(f"subscription.{event_id}.clients")
 
-    def predictionClients(cls, event_id: str) -> list[SubscriptionClient]:
-        return list(filter(lambda x: isinstance(x, PredictionClient), cls.clients))
-
-
 class Subscription(metaclass=SubscriptionMeta):
     _event: Event
     _announceLineups = False
@@ -310,8 +306,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         )
                     )
             self.subscriptions.remove(sc)
-            if not len(self.subscriptions):
-                Scheduler.cancel_jobs(self.id)
+            Scheduler.cancel_jobs(self.id)
         except JobLookupError:
             pass
 
@@ -426,6 +421,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 )
                 pix.resize((64, 64))
                 icon = pix.base64
+            logging.warn(self.subscriptions)
             for sc in self.subscriptions:
                 logging.warn(sc)
                 match sc:
