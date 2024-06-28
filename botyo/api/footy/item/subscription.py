@@ -491,6 +491,7 @@ class Subscription(metaclass=SubscriptionMeta):
                                     start_time=self._event.startTime,
                                     status=game_status,
                                     icon=icon,
+                                    event_id=self._event.idEvent
                                 )
                             )
                         except UnknownClientException as e:

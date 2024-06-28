@@ -992,6 +992,7 @@ class UpdateData(BaseModel):
     status: str
     msgId: Optional[str] = None
     icon: Optional[str] = None
+    event_id: Optional[int] = None
 
 # @dataclass_json(undefined=Undefined.EXCLUDE)
 # @dataclass
