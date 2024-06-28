@@ -107,7 +107,7 @@ class Predict(object):
     def process_query(self, query: str) -> tuple[list[str]]:
 
         def reduce_func(r: tuple, q: str):
-            if q[0].isdigit():
+            if all([q[0].isdigit(), len(q) == 3]):
                 r[1].append(q)
             else:
                 r[0].append(q)
