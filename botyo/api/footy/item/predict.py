@@ -60,13 +60,14 @@ class Predict(object):
         if not query:
             return self.today_predictions()
         qc, preds = self.process_query(query)
+        logging.warning(qc)
         comp = Competitions.search(" ".join(qc))
+        
         assert comp
         ls = Livescore(
             with_details=False,
             with_progress=False,
             leagues=[comp.id],
-            inprogress=True,
         )
         games = ls.items
         logging.warn(games)

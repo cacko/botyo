@@ -122,7 +122,7 @@ class DbPrediction(DbModel):
     def save(self, force_insert=False, only=None):
         try:
             assert self.Game
-            # assert self.can_predict
+            assert self.can_predict
         except AssertionError as e:
             only: list[str] = self.dirty_fields
             only.remove("prediction")
