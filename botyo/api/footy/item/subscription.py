@@ -484,8 +484,8 @@ class Subscription(metaclass=SubscriptionMeta):
                             logging.exception(e)
                     case PredictionClient():
                         try:
+                            assert updated
                             details = ParserDetails(None, response=updated)
-                            logging.warning(updated)
                             logging.warning(details.home)
                             sc.sendUpdate(
                                 UpdateData(

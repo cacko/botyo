@@ -586,7 +586,7 @@ class Game(BaseModel):
             return f"{time_hhmm(self.startTime,zone)}"
         status = GameStatus(self.shortStatusText)
         if self.ended:
-            return self.displayScore
+            return str(status)
         match status:
             case GameStatus.HT:
                 return "HT"
