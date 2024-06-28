@@ -316,8 +316,12 @@ class Subscription(metaclass=SubscriptionMeta):
             pass
 
     def cancel_all(self):
-        for sc in self.subscriptions:
-            self.cancel(sc)
+        try:
+            assert len(self.subscriptions)
+            for sc in self.subscriptions:
+                self.cancel(sc)
+        except AssertionError:
+            logging.warning(f"no subs to cancel {self.event_name}")
         # for gid in list(self.goals_queue.keys()):
         #     gq = self.goals_queue[gid]
         #     if gq.event_id == self._event.idEvent:
