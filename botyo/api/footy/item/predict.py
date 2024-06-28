@@ -66,7 +66,7 @@ class Predict(object):
             with_details=False,
             with_progress=False,
             leagues=[comp.id],
-            inprogress=False,
+            inprogress=True,
         )
         games = ls.items
         try:
