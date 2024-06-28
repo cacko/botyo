@@ -67,15 +67,17 @@ class Predict(object):
         ls = Livescore(
             with_details=False,
             with_progress=False,
-            leagues=[comp.id]
+            leagues=[comp.id],
         )
-        ls.items = list(filter(lambda i: not i.hasEnded, ls.items))
-        games = ls.items
-        logging.warn(games)
+        games = list(filter(lambda x: not x.hasEnded, ls.items))
+        try:
+            assert len(games)
+        except AssertionError:
+            return "No games to predict"
         try:
             assert len(preds) == len(games)
         except AssertionError:
-            return ls.render(group_by_league=False)
+            return ls.render(group_by_league=False, not_ended=True)
         predictions = []
         for pred, game in zip(preds, sorted(games, key=lambda x: x.sort)):
             pred_game = self.getGame(

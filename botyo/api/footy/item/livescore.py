@@ -40,22 +40,18 @@ def to_groups(res, row: ScoreRow):
 class Livescore(LivescoreData):
 
     def __init__(
-            self,
-            with_progress=False,
-            leagues:
-            list[int] = [],
-            with_details=False,
-            inprogress=False
+        self,
+        with_progress=False,
+        leagues: list[int] = [],
+        with_details=False,
+        inprogress=False,
     ):
         super().__init__(with_progress, leagues, with_details, inprogress)
 
     def precache(self):
         now = datetime.now(tz=timezone.utc)
         timeframe = timedelta(minutes=120)
-        items = filter(
-            lambda ev: (ev.startTime - now) < timeframe,
-            self.items
-        )
+        items = filter(lambda ev: (ev.startTime - now) < timeframe, self.items)
         for ev in items:
             try:
                 assert ev
@@ -71,19 +67,23 @@ class Livescore(LivescoreData):
                 logging.exception(e)
                 pass
 
-    def render(self, filt: str = "", group_by_league=True):
+    def render(self, filt: str = "", group_by_league=True, not_ended=False):
         items = self.items
         if self.inprogress:
             items = list(filter(lambda x: x.inProgress, items))
+        if not_ended:
+            items = list(filter(lambda x: not x.hasEnded), items)
         items.reverse()
-        filteredIds = [
-            x.id for x in
-            GameMatch(haystack=items).fuzzy(GameNeedle(
-                strHomeTeam=filt,
-                strAwayTeam=filt,
-                strLeague=filt
-            ))
-        ] if filt else []
+        filteredIds = (
+            [
+                x.id
+                for x in GameMatch(haystack=items).fuzzy(
+                    GameNeedle(strHomeTeam=filt, strAwayTeam=filt, strLeague=filt)
+                )
+            ]
+            if filt
+            else []
+        )
         logging.debug(f"filtered {filteredIds}")
         filtered: list[ScoreRow] = [
             ScoreRow(
@@ -93,7 +93,7 @@ class Livescore(LivescoreData):
                 away=x.strAwayTeam,
                 win=x.win,
                 league=x.strLeague,
-                is_international=x.is_international
+                is_international=x.is_international,
             )
             for x in sorted(items, key=lambda itm: itm.sort)
             if any(
@@ -109,11 +109,10 @@ class Livescore(LivescoreData):
             x.format = ScoreFormat.STANDALONE
             itm = next(
                 filter(
-                    lambda y: all([
-                        y.strHomeTeam == x.row.home,
-                        y.strAwayTeam == x.row.away
-                    ]),
-                    items
+                    lambda y: all(
+                        [y.strHomeTeam == x.row.home, y.strAwayTeam == x.row.away]
+                    ),
+                    items,
                 ),
                 None,
             )
@@ -121,24 +120,20 @@ class Livescore(LivescoreData):
                 assert itm
                 details = ParserDetails.get(itm.details)
                 if details:
-                    TextOutput.addRows([
-                        x,
-                        *map(str, details.rendered)
-                    ])
+                    TextOutput.addRows([x, *map(str, details.rendered)])
                     return TextOutput.render()
             except (GameNotFound, AssertionError) as e:
                 logging.exception(e)
                 return None
         if group_by_league:
             filtered = list(
-                chain.from_iterable([  # type: ignore
-                    [lg.upper(), *g]  # type: ignore
-                    for lg, g in reduce(to_groups, filtered, [])
-                ]))
+                chain.from_iterable(
+                    [  # type: ignore
+                        [lg.upper(), *g]  # type: ignore
+                        for lg, g in reduce(to_groups, filtered, [])
+                    ]
+                )
+            )
 
         TextOutput.addRows(filtered)
-        return (
-            TextOutput.render()
-            if len(filtered)
-            else None
-        )
+        return TextOutput.render() if len(filtered) else None
