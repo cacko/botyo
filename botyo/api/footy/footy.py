@@ -86,9 +86,9 @@ class FootyMeta(type):
     def competition(cls, query: str) -> CompetitionData:
         return cls().getCompetition(query)
 
-    def subscribe(cls, client, query: str, groupID) -> SubscriptionResult:
+    def subscribe(cls, client: SubscriptionClient, query: str) -> SubscriptionResult:
         try:
-            return cls().getSubscription(query=query, client=client, group=groupID)
+            return cls().getSubscription(query=query, client=client)
         except GameNotFound as e:
             raise e
 
@@ -193,25 +193,23 @@ class Footy(object, metaclass=FootyMeta):
         player = Player.find(query)
         return player
 
-    def removeSubscription(self, client: str, query: str, group) -> SubscriptionResult:
+    def removeSubscription(self, client: SubscriptionClient, query: str) -> SubscriptionResult:
         item = self.__queryGame(query)
-        sc = SubscriptionClient(client_id=client, group_id=group)
-        sub = Subscription.get(event=item, sc=sc)
+        sub = Subscription.get(event=item, sc=client)
         sub_id = sub.id
-        sub.cancel(sc)
+        sub.cancel(client)
         icon = emojize(":dango:")
         return SubscriptionResult(
             message=f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}", sub_id=sub_id
         )
 
-    def getSubscription(self, client: str, query: str, group) -> SubscriptionResult:
+    def getSubscription(self, client: SubscriptionClient, query: str) -> SubscriptionResult:
         try:
             item = self.__queryGame(query)
-            sc = SubscriptionClient(client_id=client, group_id=group)
-            sub = Subscription.get(event=item, sc=sc)
+            sub = Subscription.get(event=item, sc=client)
             if not sub.isValid:
                 return SubscriptionResult(message="Event has ended".upper())
-            sub.schedule(sc)
+            sub.schedule(client)
             return SubscriptionResult(
                 message=" ".join(
                     [

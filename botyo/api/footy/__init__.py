@@ -1,6 +1,7 @@
 from botyo import cli
 from botyo.api.footy.item.standings import Standings
 from fuzzelinho import Match, MatchMethod, Needle
+from botyo.api.footy.item.subscription import ChatClient, SubscriptionClient
 from botyo.server.blueprint import Blueprint
 from botyo.server.socket.connection import Context
 from botyo.server.models import Attachment, RenderResult, EmptyResult
@@ -67,8 +68,12 @@ def subscribe_command(context: Context):
         return EmptyResult()
     try:
         assert context.query
+        client = ChatClient(
+            client_id=context.client,
+            group_id=context.group
+        )
         result = Footy.subscribe(
-            client=context.client, groupID=context.group, query=context.query
+            client=client, query=context.query
         )
         return RenderResult(
             method=ZMethod.FOOTY_SUBSCRIBE,

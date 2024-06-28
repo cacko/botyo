@@ -10,7 +10,7 @@ from botyo.threesixfive.item.league import LeagueImagePixel
 from botyo.threesixfive.item.team import Team as DataTeam
 from botyo.threesixfive.item.models import CancelJobEvent
 from botyo.core.otp import OTP
-from botyo.api.footy.item.subscription import Subscription, SubscriptionClient
+from botyo.api.footy.item.subscription import RESTClient, Subscription, SubscriptionClient
 from botyo.api.footy.footy import Footy
 from fastapi import APIRouter, Body, File, Request, HTTPException, Form
 import logging
@@ -60,9 +60,12 @@ async def get_team_schedule(
 async def post_subscribe(request: Request):
     data = await request.json()
     assert isinstance(data, dict)
+    client = RESTClient(
+        client_id=f"{data.get('webhook')}",
+        group_id=f"{data.get('group')}"
+    )
     res = Footy.subscribe(
-        client=f"{data.get('webhook')}",
-        groupID=f"{data.get('group')}",
+        client=client,
         query=f"{data.get('id')}",
     )
     return {"message": res}
@@ -72,7 +75,7 @@ async def post_subscribe(request: Request):
 async def post_subscriptions(request: Request):
     data = await request.json()
     assert isinstance(data, dict)
-    sc = SubscriptionClient(data.get("webhook", ""), data.get("group"))
+    sc = RESTClient(data.get("webhook", ""), data.get("group"))
     jobs = Subscription.forGroup(sc)
     return [{"id": job.id, "text": job.name} for job in jobs]
 
@@ -81,7 +84,7 @@ async def post_subscriptions(request: Request):
 async def post_unsubscribe(request: Request):
     data = await request.json()
     assert isinstance(data, dict)
-    sc = SubscriptionClient(data.get("webhook", ""), data.get("group"))
+    sc = RESTClient(data.get("webhook", ""), data.get("group"))
     jobs = Subscription.forGroup(sc)
     id_parts = data.get("id", "").split(":")
     for job in jobs:

@@ -117,7 +117,7 @@ class DbPrediction(DbModel):
             yield from prefetch(query, DbGame, DbUser)
         
         except Exception:
-            return None\
+            return None
 
     def save(self, force_insert=False, only=None):
         try:

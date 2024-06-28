@@ -139,6 +139,9 @@ class SubscriptionClass(StrEnum):
 
 
 class SubscriptionClient:
+    
+    is_rest = False
+    
     def __init__(self, client_id: str, group_id: Optional[str]) -> None:
         self.client_id = client_id
         self.group_id = group_id
@@ -146,10 +149,6 @@ class SubscriptionClient:
     @property
     def id(self) -> str:
         return SubscriptionClient.get_id(self.client_id, self.group_id)
-
-    @property
-    def is_rest(self) -> bool:
-        return self.client_id.startswith("http")
 
     @classmethod
     def get_id(cls, client: str, group) -> str:
@@ -162,28 +161,12 @@ class SubscriptionClient:
     def connection(self) -> Connection:
         return Connection.client(self.client_id)
     
-    def sendPredictionUpdate(self):
-        try:
-            cls = SubscriptionClass(self.client_id)
-            match cls:
-                case SubscriptionClass.PREDICTION:
-                    getattr(DbPrediction, self.group_id)(data)
-        except Exception as e:
-            pass
-
     def sendUpdate(self, data: UpdateData):
-        try:
-            cls = SubscriptionClass(self.client_id)
-            match cls:
-                case SubscriptionClass.PREDICTION:
-                    getattr(DbPrediction, self.group_id)(data)
-        except Exception as e:
-            pass
-        if self.is_rest:
-            return self.updateREST(data)
-        return self.updateBotyo(data)
+        raise NotImplementedError
 
-    def updateBotyo(self, data: UpdateData):
+
+class ChatClient(SubscriptionClient):
+    def sendUpdate(self, data: UpdateData):
         result = RenderResult(
             method=ZMethod.FOOTY_SUBSCRIPTION_UPDATE,
             icon=data.icon,
@@ -212,7 +195,23 @@ class SubscriptionClient:
         except UnknownClientException:
             pass
 
-    def updateREST(self, updateData: UpdateData):
+        
+class PredictionClient(SubscriptionClient):
+    def sendUpdate(self, data: UpdateData):
+        try:
+            cls = SubscriptionClass(self.client_id)
+            match cls:
+                case SubscriptionClass.PREDICTION:
+                    getattr(DbPrediction, self.group_id)(data)
+        except Exception as e:
+            pass
+
+
+class RESTClient(SubscriptionClient):
+    
+    is_rest = True
+    
+    def sendUpdate(self, updateData: UpdateData):
         data = updateData.message
         payload = []
         if isinstance(data, list):
@@ -231,7 +230,6 @@ class SubscriptionClient:
         except ConnectionError:
             logging.error(f"Cannot send update to f{self.client_id}")
             pass
-
 
 class SubscriptionMeta(type):
     __subs: dict[str, "Subscription"] = {}
@@ -262,7 +260,7 @@ class SubscriptionMeta(type):
         return QueueList(f"subscription.{event_id}.clients")
 
     def predictionClients(cls, event_id: str) -> list[SubscriptionClient]:
-        return list(filter(lambda x: SubscriptionClass(x.client_id), cls.clients))
+        return list(filter(lambda x: isinstance(x, PredictionClient), cls.clients))
 
 
 class Subscription(metaclass=SubscriptionMeta):
@@ -300,16 +298,17 @@ class Subscription(metaclass=SubscriptionMeta):
 
     def cancel(self, sc: SubscriptionClient):
         try:
-            if sc.is_rest:
-                sc.sendUpdate(
-                    UpdateData(
-                        message=str(CancelJobEvent(job_id=self.id)),
-                        score_message="",
-                        start_time=datetime.now(),
-                        status="",
-                        msgId=self.id,
+            match sc:
+                case RESTClient():
+                    sc.sendUpdate(
+                        UpdateData(
+                            message=str(CancelJobEvent(job_id=self.id)),
+                            score_message="",
+                            start_time=datetime.now(),
+                            status="",
+                            msgId=self.id,
+                        )
                     )
-                )
             self.subscriptions.remove(sc)
             if not len(self.subscriptions):
                 Scheduler.cancel_jobs(self.id)
@@ -424,58 +423,59 @@ class Subscription(metaclass=SubscriptionMeta):
                 pix.resize((64, 64))
                 icon = pix.base64
             for sc in self.subscriptions:
-                if sc.is_rest:
-                    try:
-                        details = ParserDetails(None, response=updated)
-                        events = details.events_pixel
-                        sc.sendUpdate(
-                            UpdateData(
-                                message=events,
-                                score_message=scoreUpdate,
-                                start_time=self._event.startTime,
-                                status=game_status,
-                                msgId=self.id,
+                match sc:
+                    case RESTClient():
+                        try:
+                            details = ParserDetails(None, response=updated)
+                            events = details.events_pixel
+                            sc.sendUpdate(
+                                UpdateData(
+                                    message=events,
+                                    score_message=scoreUpdate,
+                                    start_time=self._event.startTime,
+                                    status=game_status,
+                                    msgId=self.id,
+                                )
                             )
-                        )
-                    except Exception:
-                        pass
-                    if cache.halftime:
-                        cache.halftime = False
-                        sc.sendUpdate(
-                            UpdateData(
-                                message=[self.halftimeAnnoucementPixel],
-                                score_message="",
-                                start_time=self._event.startTime,
-                                status=game_status,
-                                msgId=self.id,
+                        except Exception:
+                            pass
+                        if cache.halftime:
+                            cache.halftime = False
+                            sc.sendUpdate(
+                                UpdateData(
+                                    message=[self.halftimeAnnoucementPixel],
+                                    score_message="",
+                                    start_time=self._event.startTime,
+                                    status=game_status,
+                                    msgId=self.id,
+                                )
                             )
-                        )
-                    else:
-                        sc.sendUpdate(
-                            UpdateData(
-                                message=self.progressUpdatePixel,
-                                score_message="",
-                                start_time=self._event.startTime,
-                                status=game_status,
-                                msgId=self.id,
+                        else:
+                            sc.sendUpdate(
+                                UpdateData(
+                                    message=self.progressUpdatePixel,
+                                    score_message="",
+                                    start_time=self._event.startTime,
+                                    status=game_status,
+                                    msgId=self.id,
+                                )
+                                )
+                    case ChatClient():
+                        TextOutput.clean()
+                        TextOutput.addRows(chatUpdate)
+                        try:
+                            sc.sendUpdate(
+                                UpdateData(
+                                    message=TextOutput.render(),
+                                    score_message=scoreUpdate,
+                                    msgId=self.id,
+                                    start_time=self._event.startTime,
+                                    status=game_status,
+                                    icon=icon,
+                                )
                             )
-                        )
-                elif chatUpdate:
-                    TextOutput.clean()
-                    TextOutput.addRows(chatUpdate)
-                    try:
-                        sc.sendUpdate(
-                            UpdateData(
-                                message=TextOutput.render(),
-                                score_message=scoreUpdate,
-                                msgId=self.id,
-                                start_time=self._event.startTime,
-                                status=game_status,
-                                icon=icon,
-                            )
-                        )
-                    except UnknownClientException as e:
-                        logging.exception(e)
+                        except UnknownClientException as e:
+                            logging.exception(e)
             # self.checkGoals(updated)
             content = cache.content
             assert content
@@ -496,27 +496,28 @@ class Subscription(metaclass=SubscriptionMeta):
             ):
                 for sc in self.subscriptions:
                     try:
-                        if sc.is_rest:
-                            sc.sendUpdate(
-                                UpdateData(
-                                    message=[self.fulltimeAnnoucementPixel],
-                                    score_message=scoreUpdate,
-                                    start_time=self._event.startTime,
-                                    status=game_status,
-                                    msgId=self.id,
+                        match sc:
+                            case RESTClient():
+                                sc.sendUpdate(
+                                    UpdateData(
+                                        message=[self.fulltimeAnnoucementPixel],
+                                        score_message=scoreUpdate,
+                                        start_time=self._event.startTime,
+                                        status=game_status,
+                                        msgId=self.id,
+                                    )
                                 )
-                            )
-                        else:
-                            sc.sendUpdate(
-                                UpdateData(
-                                    message=self.fulltimeAnnoucement,
-                                    score_message=scoreUpdate,
-                                    start_time=self._event.startTime,
-                                    status=game_status,
-                                    icon=Emoji.b64(emojize(":chequered_flag:")),
-                                    msgId=self.id,
+                            case ChatClient():
+                                sc.sendUpdate(
+                                    UpdateData(
+                                        message=self.fulltimeAnnoucement,
+                                        score_message=scoreUpdate,
+                                        start_time=self._event.startTime,
+                                        status=game_status,
+                                        icon=Emoji.b64(emojize(":chequered_flag:")),
+                                        msgId=self.id,
+                                    )
                                 )
-                            )
                     except Exception as e:
                         logging.error(e)
                     self.cancel(sc)
@@ -533,12 +534,10 @@ class Subscription(metaclass=SubscriptionMeta):
         self, updated: Optional[ResponseGame] = None
     ) -> tuple[str, str, Optional[list[str]], Optional[str]]:
         try:
-            if not updated:
-                return "", "", None, None
+            assert updated
             details = ParserDetails(None, response=updated)
             rows = details.rendered
-            if not rows:
-                return "", "", None, None
+            assert len(rows)
             assert details.home
             assert details.away
             res = ScoreRow(
@@ -616,27 +615,39 @@ class Subscription(metaclass=SubscriptionMeta):
         if announceStart:
             for sc in self.subscriptions:
                 try:
-                    if sc.is_rest:
-                        sc.sendUpdate(
-                            UpdateData(
-                                message=[self.startAnnouncementPixel],
-                                score_message="",
-                                start_time=self._event.startTime,
-                                status=self._event.displayStatus,
-                                msgId=self.id,
+                    match sc:
+                        case RESTClient():
+                            sc.sendUpdate(
+                                UpdateData(
+                                    message=[self.startAnnouncementPixel],
+                                    score_message="",
+                                    start_time=self._event.startTime,
+                                    status=self._event.displayStatus,
+                                    msgId=self.id,
+                                )
                             )
-                        )
-                    else:
-                        sc.sendUpdate(
-                            UpdateData(
-                                message=self.startAnnouncement,
-                                icon=Emoji.b64(emojize(":goal_net:")),
-                                score_message="",
-                                start_time=self._event.startTime,
-                                status=self._event.displayStatus,
-                                msgId=self.id,
+                        case ChatClient():
+                            sc.sendUpdate(
+                                UpdateData(
+                                    message=self.startAnnouncement,
+                                    icon=Emoji.b64(emojize(":goal_net:")),
+                                    score_message="",
+                                    start_time=self._event.startTime,
+                                    status=self._event.displayStatus,
+                                    msgId=self.id,
+                                )
                             )
-                        )
+                        case PredictionClient():
+                            sc.sendUpdate(
+                                UpdateData(
+                                    message=self.startAnnouncement,
+                                    icon=Emoji.b64(emojize(":goal_net:")),
+                                    score_message="",
+                                    start_time=self._event.startTime,
+                                    status=self._event.displayStatus,
+                                    msgId=self.id,
+                                )
+                            )
                 except UnknownClientException:
                     pass
 

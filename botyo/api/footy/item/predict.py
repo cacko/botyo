@@ -6,9 +6,9 @@ import re
 from botyo.api.footy.item.competitions import Competitions
 from botyo.api.footy.item.livescore import Livescore
 from botyo.api.footy.item.subscription import (
+    PredictionClient,
     Subscription,
     SubscriptionClass,
-    SubscriptionClient,
 )
 from botyo.predict.db.models import DbUser, DbGame, DbPrediction
 from botyo.server.output import TextOutput
@@ -85,7 +85,7 @@ class Predict(object):
                 home_score=game.intHomeScore,
                 away_score=game.intAwayScore,
             )
-            sc = SubscriptionClient(
+            sc = PredictionClient(
                 client_id=SubscriptionClass.PREDICTION.value,
                 group_id="on_livescore_event",
             )
