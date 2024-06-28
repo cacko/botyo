@@ -67,10 +67,9 @@ class Predict(object):
         ls = Livescore(
             with_details=False,
             with_progress=False,
-            leagues=[comp.id],
-            notEnded=True
+            leagues=[comp.id]
         )
-        games = ls.items
+        games = list(filter(lambda i: not i.hasEnded, ls.items))
         logging.warn(games)
         try:
             assert len(preds) == len(games)

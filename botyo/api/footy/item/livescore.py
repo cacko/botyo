@@ -45,10 +45,8 @@ class Livescore(LivescoreData):
             leagues:
             list[int] = [],
             with_details=False,
-            inprogress=False,
-            notEnded=False
+            inprogress=False
     ):
-        self.not_ended = notEnded
         super().__init__(with_progress, leagues, with_details, inprogress)
 
     def precache(self):
@@ -58,11 +56,6 @@ class Livescore(LivescoreData):
             lambda ev: (ev.startTime - now) < timeframe,
             self.items
         )
-        if self.not_ended:
-            items = filter(
-                lambda ev: not ev.hasEnded,
-                self.items
-            )
         for ev in items:
             try:
                 assert ev
