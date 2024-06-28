@@ -69,7 +69,8 @@ class Predict(object):
             with_progress=False,
             leagues=[comp.id]
         )
-        games = list(filter(lambda i: not i.hasEnded, ls.items))
+        ls.items = list(filter(lambda i: not i.hasEnded, ls.items))
+        games = ls.items
         logging.warn(games)
         try:
             assert len(preds) == len(games)
