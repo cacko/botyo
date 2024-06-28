@@ -68,6 +68,7 @@ class Predict(object):
             with_details=False,
             with_progress=False,
             leagues=[comp.id],
+            notEnded=True
         )
         games = ls.items
         logging.warn(games)
@@ -105,9 +106,9 @@ class Predict(object):
         return TextOutput.render() if len(predictions) else None
 
     def process_query(self, query: str) -> tuple[list[str]]:
-
+        patt = re.compile(r"^\d+[^\d]\d+")
         def reduce_func(r: tuple, q: str):
-            if all([q[0].isdigit(), len(q) == 3]):
+            if patt.match(q):
                 r[1].append(q)
             else:
                 r[0].append(q)

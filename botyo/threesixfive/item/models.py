@@ -202,6 +202,11 @@ class Event(BaseModel):
     @property
     def inProgress(self) -> bool:
         return re.match(r"^\d+$", self.strStatus) is not None
+    
+    @property
+    def hasEnded(self) -> bool:
+        status = GameStatus(self.strStatus)
+        return status in [GameStatus.FT, GameStatus.JE, GameStatus.PPD]
 
     @property
     def win(self) -> str:
