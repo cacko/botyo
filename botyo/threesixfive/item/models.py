@@ -205,8 +205,8 @@ class Event(BaseModel):
     
     @property
     def hasEnded(self) -> bool:
-        status = GameStatus(self.strStatus)
-        return status in [GameStatus.FT, GameStatus.JE, GameStatus.PPD]
+        status = EventStatus(self.strStatus)
+        return status in [EventStatus.FT, EventStatus.JE, EventStatus.PPD]
 
     @property
     def win(self) -> str:
