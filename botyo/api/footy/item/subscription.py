@@ -411,6 +411,7 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
+            
             scoreUpdate, game_status, chatUpdate, icon = self.updates(
                 updated
             )
@@ -484,6 +485,8 @@ class Subscription(metaclass=SubscriptionMeta):
                     case PredictionClient():
                         try:
                             details = ParserDetails(None, response=updated)
+                            logging.warning(updated)
+                            logging.warning(details.home)
                             sc.sendUpdate(
                                 UpdateData(
                                     message="",

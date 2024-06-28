@@ -192,7 +192,7 @@ class ParserDetails(TimeCachable):
             assert self.away
             return f"{self.home.score_int:.0f}:{self.away.score_int:.0f}"
         except AssertionError as e:
-            logging.exception(e)
+            logging.error(e)
             return ""
 
     @property
