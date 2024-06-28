@@ -483,12 +483,13 @@ class Subscription(metaclass=SubscriptionMeta):
                             logging.exception(e)
                     case PredictionClient():
                         try:
+                            details = ParserDetails(None, response=updated)
                             sc.sendUpdate(
                                 UpdateData(
                                     message="",
-                                    score_message=updated.game.score,
+                                    score_message=details.score,
                                     start_time=self._event.startTime,
-                                    status=updated.game.shortStatusText,
+                                    status=details.game_status,
                                     event_id=self._event.idEvent,
                                 )
                             )
