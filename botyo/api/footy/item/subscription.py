@@ -476,6 +476,22 @@ class Subscription(metaclass=SubscriptionMeta):
                             )
                         except UnknownClientException as e:
                             logging.exception(e)
+                    case PredictionClient():
+                        TextOutput.clean()
+                        TextOutput.addRows(chatUpdate)
+                        try:
+                            sc.sendUpdate(
+                                UpdateData(
+                                    message=TextOutput.render(),
+                                    score_message=scoreUpdate,
+                                    msgId=self.id,
+                                    start_time=self._event.startTime,
+                                    status=game_status,
+                                    icon=icon,
+                                )
+                            )
+                        except UnknownClientException as e:
+                            logging.exception(e)
             # self.checkGoals(updated)
             content = cache.content
             assert content
@@ -518,6 +534,17 @@ class Subscription(metaclass=SubscriptionMeta):
                                         msgId=self.id,
                                     )
                                 )
+                            case PredictionClient():
+                                sc.sendUpdate(
+                                    UpdateData(
+                                        message=self.fulltimeAnnoucement,
+                                        score_message=scoreUpdate,
+                                        start_time=self._event.startTime,
+                                        status=game_status,
+                                        icon=Emoji.b64(emojize(":chequered_flag:")),
+                                        msgId=self.id,
+                                    )
+                                ) 
                     except Exception as e:
                         logging.error(e)
                     self.cancel(sc)
