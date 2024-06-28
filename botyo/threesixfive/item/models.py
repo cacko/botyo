@@ -205,8 +205,11 @@ class Event(BaseModel):
     
     @property
     def hasEnded(self) -> bool:
-        status = EventStatus(self.strStatus)
-        return status in [EventStatus.FT, EventStatus.JE, EventStatus.PPD]
+        try:
+            status = EventStatus(self.strStatus)
+            return status in [EventStatus.FT, EventStatus.JE, EventStatus.PPD]
+        except Exception:
+            return False
 
     @property
     def win(self) -> str:
