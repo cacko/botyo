@@ -60,6 +60,9 @@ class Predict(object):
     def exec(self, query: str):
         parser = self.parser
         namespace, _ = parser.parse_known_args(split_with_quotes(query))
+        logging.warning(query)
+        logging.warning(split_with_quotes(query))
+        logging.warning(namespace)
         args = PredictArguments(**namespace.__dict__)
         try:
             assert args.user
