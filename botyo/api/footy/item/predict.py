@@ -22,7 +22,7 @@ class PredictArguments(BaseModel):
     query: Optional[list[str]] = None
     user: Optional[str] = None
     all: Optional[bool] = None
-    
+
     @property
     def query_str(self) -> str:
         try:
@@ -42,8 +42,8 @@ class Predict(object):
         if not source.startswith("+"):
             source = "+" + re.findall(r"^(\d+)", source).pop(0)
         self.source = source
-        self.__all = False
-        
+        self.__args = PredictArguments(all=False)
+
     @property
     def parser(self):
         try:
@@ -52,29 +52,27 @@ class Predict(object):
             parser = ArgumentParser(description="Predict options", exit_on_error=False)
             parser.add_argument("query", nargs="*", help="league search string")
             parser.add_argument("-u", "--user", type=str, help="user to show")
-            parser.add_argument("--all", action="store_true", help="show all completed predictions")
+            parser.add_argument(
+                "--all", action="store_true", help="show all completed predictions"
+            )
             self.__parser = parser
         return self.__parser
 
-        
     def exec(self, query: str):
         try:
             parser = self.parser
             namespace, _ = parser.parse_known_args(split_with_quotes(query))
-            logging.warning(query)
-            logging.warning(split_with_quotes(query))
-            logging.warning(namespace)
-            args = PredictArguments(**namespace.__dict__)
-            assert args.user
-            return self.for_user(args.user)
+            self.__args = PredictArguments(**namespace.__dict__)
+            assert self.__args.user
+            return self.for_user(self.__args.user)
         except ArgumentError:
             return self.parser.usage()
         except AssertionError:
-            return self.predict(args.query_str)
-    
+            return self.predict(self.__args.query_str)
+
     @property
     def get_predictions(self):
-        if self.__all:
+        if self.__args.all:
             return DbPrediction.get_calculated
         return DbPrediction.get_in_progress
 
@@ -90,26 +88,26 @@ class Predict(object):
         return game
 
     def today_predictions(self) -> str:
-        
-        predictions = [
-            x.prediction_row for x in self.get_predictions(User=self.user)
-        ]
+        predictions = [x.prediction_row for x in self.get_predictions(User=self.user)]
         TextOutput.addRows([f"Predictions by {self.user.display_name}", *predictions])
-        return TextOutput.render() if len(predictions) else "No predictions"
+        try:
+            assert predictions
+            return TextOutput.render()
+        except AssertionError:
+            TextOutput.clean()
+            return f"{self.user.display_name} > No predictions"
 
     def for_user(self, username: str):
         try:
             user = DbUser.get(DbUser.name == username)
             assert user
-            predictions = [
-                x.prediction_row for x in self.get_predictions(User=user)
-            ]
-            TextOutput.addRows(
-                [f"Predictions by {user.display_name}", *predictions]
-            )
-            return TextOutput.render() if len(predictions) else "No predictions"
+            predictions = [x.prediction_row for x in self.get_predictions(User=user)]
+            TextOutput.addRows([f"Predictions by {user.display_name}", *predictions])
+            assert predictions
+            return TextOutput.render()
         except AssertionError:
-            return None
+            TextOutput.clean()
+            return f"{username} > No predictions"
 
     def predict(self, query: Optional[str] = None):
         if not query:
@@ -117,7 +115,7 @@ class Predict(object):
         qc, preds = self.process_query(query)
         logging.warning(qc)
         comp = Competitions.search(" ".join(qc))
-        
+
         assert comp
         ls = Livescore(
             with_details=False,
@@ -164,6 +162,7 @@ class Predict(object):
 
     def process_query(self, query: str) -> tuple[list[str]]:
         patt = re.compile(r"^\d+[^\d]\d+")
+
         def reduce_func(r: tuple, q: str):
             if patt.match(q):
                 r[1].append(q)
