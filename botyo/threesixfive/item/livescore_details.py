@@ -188,6 +188,7 @@ class ParserDetails(TimeCachable):
         except AssertionError:
             return ""
         try:
+            assert not self._struct.struct.game.ended
             gt = self.game_time
             assert gt
             return f'{gt}"'
