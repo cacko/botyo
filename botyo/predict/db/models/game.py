@@ -97,7 +97,12 @@ class DbGame(DbModel):
     
     @property
     def display_status(self):
-        return self.game.displayStatus
+        try:
+            gt = self.game.gameTime
+            assert gt > -1
+            return f'{gt}"'
+        except AssertionError:
+            return self.game.displayStatus
 
     @property
     def score(self) -> str:
