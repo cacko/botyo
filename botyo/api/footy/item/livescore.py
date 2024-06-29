@@ -67,12 +67,12 @@ class Livescore(LivescoreData):
                 logging.exception(e)
                 pass
 
-    def render(self, filt: str = "", group_by_league=True, not_ended=False):
+    def render(self, filt: str = "", group_by_league=True, not_started=False):
         items = self.items
         if self.inprogress:
             items = list(filter(lambda x: x.inProgress, items))
-        if not_ended:
-            items = list(filter(lambda x: not x.hasEnded, items))
+        if not_started:
+            items = list(filter(lambda x: x.hasNotStarted, items))
         items.reverse()
         filteredIds = (
             [

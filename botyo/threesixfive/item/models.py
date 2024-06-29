@@ -210,6 +210,14 @@ class Event(BaseModel):
             return status in [EventStatus.FT, EventStatus.JE, EventStatus.PPD]
         except Exception:
             return False
+        
+    @property
+    def hasNotStarted(self) -> bool:
+        try:
+            status = EventStatus(self.strStatus)
+            return status in [EventStatus.NS]
+        except Exception:
+            return False
 
     @property
     def win(self) -> str:

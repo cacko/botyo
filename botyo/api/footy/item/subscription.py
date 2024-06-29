@@ -411,11 +411,9 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
-            
             scoreUpdate, game_status, chatUpdate, icon = self.updates(
                 updated
             )
-            logging.warn([scoreUpdate, game_status, chatUpdate])
             if not icon:
                 logo = LeagueImage(self._event.idLeague)
                 logo_path = logo.path
@@ -427,9 +425,7 @@ class Subscription(metaclass=SubscriptionMeta):
                 )
                 pix.resize((64, 64))
                 icon = pix.base64
-            logging.warn(self.subscriptions)
             for sc in self.subscriptions:
-                logging.warn(sc)
                 match sc:
                     case RESTClient():
                         try:

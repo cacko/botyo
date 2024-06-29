@@ -69,7 +69,7 @@ class Predict(object):
             with_progress=False,
             leagues=[comp.id],
         )
-        games = list(filter(lambda x: not x.hasEnded, ls.items))
+        games = list(filter(lambda x: x.hasNotStarted, ls.items))
         try:
             assert len(games)
         except AssertionError:
@@ -77,7 +77,7 @@ class Predict(object):
         try:
             assert len(preds) == len(games)
         except AssertionError:
-            return ls.render(group_by_league=False, not_ended=True)
+            return ls.render(group_by_league=False, not_started=True)
         predictions = []
         for pred, game in zip(preds, sorted(games, key=lambda x: x.sort)):
             pred_game = self.getGame(
