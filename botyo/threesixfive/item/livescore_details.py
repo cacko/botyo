@@ -183,9 +183,16 @@ class ParserDetails(TimeCachable):
 
     @property
     def display_status(self) -> str:
-        if self._struct:
+        try:
+            assert self._struct
+        except AssertionError:
+            return ""
+        try:
+            gt = self.game_time
+            assert gt
+            return f'{gt}"'
+        except AssertionError:
             return self._struct.struct.game.displayStatus
-        return ""
 
     @property
     def score(self) -> str:
