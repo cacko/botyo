@@ -182,6 +182,12 @@ class ParserDetails(TimeCachable):
         return ""
 
     @property
+    def display_status(self) -> str:
+        if self._struct:
+            return self._struct.struct.game.displayStatus
+        return ""
+
+    @property
     def score(self) -> str:
         try:
             assert self.home

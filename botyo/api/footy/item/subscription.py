@@ -487,7 +487,7 @@ class Subscription(metaclass=SubscriptionMeta):
                                     message="",
                                     score_message=details.score,
                                     start_time=self._event.startTime,
-                                    status=details.game_status,
+                                    status=details.display_status,
                                     event_id=self._event.idEvent,
                                 )
                             )
@@ -542,7 +542,7 @@ class Subscription(metaclass=SubscriptionMeta):
                                 details = ParserDetails(None, response=updated)
                                 sc.sendUpdate(
                                     UpdateData(
-                                        message=self.fulltimeAnnoucement,
+                                        message="",
                                         score_message=content.game.score,
                                         start_time=self._event.startTime,
                                         status=content.game.shortStatusText,
