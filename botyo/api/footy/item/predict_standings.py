@@ -4,7 +4,7 @@ from botyo.server.output import Align, Column, TextOutput
 
 
 class PredictStandings(Predict):
-    
+
     def columns(self):
         return (
             Column(size=2, align=Align.LEFT, title="#"),
@@ -19,8 +19,7 @@ class PredictStandings(Predict):
             Column(size=2, align=Align.RIGHT, title="D"),
             Column(size=2, align=Align.RIGHT, title="L"),
         )
-    
-    
+
     def standings(self):
         rows = []
         pos = 1
@@ -33,7 +32,7 @@ class PredictStandings(Predict):
                     f"{user.played:.0f}",
                     f"{user.wins}",
                     f"{user.draws}",
-                    f"{user.losses}"
+                    f"{user.losses}",
                 ]
             )
             pos += 1

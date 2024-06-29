@@ -13,16 +13,12 @@ import logging
 from binascii import hexlify, unhexlify
 from socketserver import StreamRequestHandler
 import time
-from botyo.server.connection import (
-    Connection,
-    Context,
-    UnknownClientException
-)
+from botyo.server.connection import Connection, Context, UnknownClientException
 from typing import Optional
 from corefile import TempPath
 
 BYTEORDER = "little"
-CHUNKSIZE = 2 ** 13
+CHUNKSIZE = 2**13
 
 
 class SocketConnection(Connection, StreamRequestHandler):
@@ -67,22 +63,24 @@ class SocketConnection(Connection, StreamRequestHandler):
                         assert request.client
                         self.__clientId = request.client
                         SocketConnection.connections[self.__clientId] = self
-                        logging.debug(
-                            f">> Client registration {self.__clientId}")
+                        logging.debug(f">> Client registration {self.__clientId}")
                     elif request.attachment and any(
-                        [request.attachment.path, request.attachment.filename
-                         ]):
+                        [request.attachment.path, request.attachment.filename]
+                    ):
                         if not request.attachment.path:
                             assert request.attachment.filename
                             request.attachment.path = request.attachment.filename
                         download = self.__handleAttachment(
-                            Path(request.attachment.path).name)
-                        request.attachment.path = download.resolve().absolute().as_posix()
-                    
+                            Path(request.attachment.path).name
+                        )
+                        request.attachment.path = (
+                            download.resolve().absolute().as_posix()
+                        )
+
                     logging.debug(request)
                     self.onRequest(message=request)
                     continue
-            except (BrokenPipeError):
+            except BrokenPipeError:
                 return
             except UnknownClientException:
                 logging.error(f"!! unknown client {self.__clientId}")
@@ -100,21 +98,24 @@ class SocketConnection(Connection, StreamRequestHandler):
             method = message.method
             if method == CoreMethods.LOGIN:
                 return self.send(
-                    ZSONResponse(method=CoreMethods.LOGIN,
-                                 commands=CommandExec.definitions,
-                                 client=self.__clientId))
+                    ZSONResponse(
+                        method=CoreMethods.LOGIN,
+                        commands=CommandExec.definitions,
+                        client=self.__clientId,
+                    )
+                )
             assert method
             command = CommandExec.triggered(method, message)
             assert command
             context = Context(**message.model_dump())  # type: ignore
             self.server.queue.put_nowait(  # type: ignore
-                (command, context, time.perf_counter()))
-            logging.debug(
-                f"QUEUE: {command} {self.__clientId} done put in queue")
+                (command, context, time.perf_counter())
+            )
+            logging.debug(f"QUEUE: {command} {self.__clientId} done put in queue")
 
         except Exception as e:
             logging.exception(e)
-            
+
     def finish(self) -> None:
         logging.warning(f"{self.connection} finish")
         return super().finish()
@@ -147,8 +148,7 @@ class SocketConnection(Connection, StreamRequestHandler):
     def _request(self, method: Method):
         req = ZSONRequest(method=method, source="")
         data = req.model_dump_json()
-        self.wfile.write(
-            len(data).to_bytes(4, byteorder="little", signed=False))
+        self.wfile.write(len(data).to_bytes(4, byteorder="little", signed=False))
         self.wfile.write(data)
         self.wfile.flush()
 
@@ -167,7 +167,8 @@ class SocketConnection(Connection, StreamRequestHandler):
             assert p.exists()
             size = p.stat().st_size
             self.wfile.write(
-                size.to_bytes(4, byteorder="little", signed=False), )
+                size.to_bytes(4, byteorder="little", signed=False),
+            )
             sent = 0
             logging.debug(f">> SEND {size} ATTACHMENT")
             with p.open("rb") as f:

@@ -116,7 +116,6 @@ class Predict(object):
         if not query:
             return self.today_predictions()
         qc, preds = self.process_query(query)
-        logging.warning(qc)
         comp = Competitions.search(" ".join(qc))
 
         assert comp

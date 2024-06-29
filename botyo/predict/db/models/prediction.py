@@ -34,7 +34,7 @@ class DbPrediction(DbModel):
     def on_ended(self):
         try:
             assert self.Game.ended
-            logging.warning(f"on _ended {self.points} {self}")
+            logging.debug(f"on _ended {self.points} {self}")
             self.User.add_points(self.points)
             self.calculated = True
             self.save(only=["calculated"])
@@ -45,14 +45,14 @@ class DbPrediction(DbModel):
 
     @classmethod
     def on_livescore_event(cls, data: UpdateData):
-        logging.warn(data)
+        logging.debug(data)
         game: DbGame = DbGame.get(DbGame.id_event == data.event_id)
         home_score, away_score = cls.goals(data.score_message)
         game.home_score = home_score
         game.away_score = away_score
         game.status = data.status
         game.save()
-        logging.warning(f"ENDED -> {game.ended}")
+        logging.debug(f"ENDED -> {game.ended}")
         try:
             assert game.ended
             for pred in prefetch(
@@ -206,7 +206,7 @@ class DbPrediction(DbModel):
             points=self.points,
             league="",
             is_international=self.Game.league.is_international,
-            has_ended=self.Game.ended
+            has_ended=self.Game.ended,
         )
 
     @property

@@ -21,8 +21,7 @@ class Standings(StandingsData):
     def render(self, group_query=None) -> str:
         data: Standing = self.standing(True)
         if data.groups and data.rows:
-            data.rows = list(
-                filter(lambda x: x.groupNum is not None, data.rows))
+            data.rows = list(filter(lambda x: x.groupNum is not None, data.rows))
             data.rows.sort(key=lambda x: x.groupNum if x.groupNum else -1)
             for k, rows in groupby(data.rows, key=lambda x: x.groupNum):
                 group = next(filter(lambda g: g.num == k, data.groups), None)

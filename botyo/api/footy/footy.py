@@ -193,7 +193,9 @@ class Footy(object, metaclass=FootyMeta):
         player = Player.find(query)
         return player
 
-    def removeSubscription(self, client: SubscriptionClient, query: str) -> SubscriptionResult:
+    def removeSubscription(
+        self, client: SubscriptionClient, query: str
+    ) -> SubscriptionResult:
         item = self.__queryGame(query)
         sub = Subscription.get(event=item, sc=client)
         sub_id = sub.id
@@ -203,7 +205,9 @@ class Footy(object, metaclass=FootyMeta):
             message=f"{icon} {item.strHomeTeam} vs {item.strAwayTeam}", sub_id=sub_id
         )
 
-    def getSubscription(self, client: SubscriptionClient, query: str) -> SubscriptionResult:
+    def getSubscription(
+        self, client: SubscriptionClient, query: str
+    ) -> SubscriptionResult:
         try:
             item = self.__queryGame(query)
             sub = Subscription.get(event=item, sc=client)

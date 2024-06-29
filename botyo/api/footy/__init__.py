@@ -68,13 +68,8 @@ def subscribe_command(context: Context):
         return EmptyResult()
     try:
         assert context.query
-        client = ChatClient(
-            client_id=context.client,
-            group_id=context.group
-        )
-        result = Footy.subscribe(
-            client=client, query=context.query
-        )
+        client = ChatClient(client_id=context.client, group_id=context.group)
+        result = Footy.subscribe(client=client, query=context.query)
         return RenderResult(
             method=ZMethod.FOOTY_SUBSCRIBE,
             message=result.message,

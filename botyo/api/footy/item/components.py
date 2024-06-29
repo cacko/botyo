@@ -190,7 +190,7 @@ class PredictionRow(ScoreRow):
             pass
         
         try:
-            assert self.row.score == "va"
+            assert self.row.score == "vs"
             cols.pop()
             self.row.pop()
         except AssertionError:
