@@ -53,12 +53,24 @@ class DbPrediction(DbModel):
         game.status = data.status
         game.save()
         logging.warning(f"ENDED -> {game.ended}")
-        if not game.ended:
-            return
-        for pred in DbPrediction.select().where(
-            (DbPrediction.calculated == False) & (DbGame.id_event == game.id_event)
-        ):
-            pred.on_ended()
+        try:
+            assert game.ended
+            for pred in prefetch(
+                DbPrediction.select(DbPrediction)
+                .join_from(DbPrediction, DbGame)
+                .join_from(DbPrediction, DbUser)
+                .where(
+                    (DbPrediction.calculated == False)
+                    & (DbGame.id_event == game.id_event)
+                ),
+                DbGame,
+                DbUser,
+            ):
+                pred.on_ended()
+        except AssertionError:
+            pass
+        except Exception as e:
+            logging.exception(e)
 
     @classmethod
     def get_or_create(cls: "DbPrediction", **kwargs) -> tuple["DbPrediction", bool]:
@@ -97,11 +109,10 @@ class DbPrediction(DbModel):
                 (DbPrediction.calculated == False)
                 & (DbGame.status.in_([GameStatus.FT.value, GameStatus.AET.value]))
             )
-            yield from prefetch(query, DbGame, DbUser)            
-            
+            yield from prefetch(query, DbGame, DbUser)
+
         except Exception:
             return None
-
 
     @classmethod
     def get_in_progress(cls, **kwargs) -> Generator["DbPrediction", None, None]:
@@ -117,7 +128,7 @@ class DbPrediction(DbModel):
                 & (DbUser.phone == user.phone)
             )
             yield from prefetch(query, DbGame, DbUser)
-        
+
         except Exception:
             return None
 
@@ -162,7 +173,7 @@ class DbPrediction(DbModel):
                 PREDICTION_PATTERN.findall(prediction.strip()).pop(0),
             )
         )
-        
+
     @property
     def display_prediction(self) -> str:
         return ":".join(map(str, DbPrediction.goals(self.prediction)))
