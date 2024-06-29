@@ -151,7 +151,7 @@ class DbPrediction(DbModel):
 
     @property
     def display_status(self) -> str:
-        return self.Game.game.displayStatus
+        return self.Game.display_status
 
     @classmethod
     def goals(cls, prediction: str) -> tuple[int, int]:

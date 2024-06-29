@@ -93,7 +93,11 @@ class DbGame(DbModel):
 
     @property
     def Status(self) -> GameStatus:
-        return self.status
+        return GameStatus(self.status)
+    
+    @property
+    def display_status(self):
+        return self.game.displayStatus
 
     @property
     def score(self) -> str:
