@@ -42,7 +42,6 @@ from .goals import Goals
 from botyo.goals import Query as GoalQuery
 from pathlib import Path
 from botyo.core.store import QueueDict, QueueList
-from pydantic import BaseModel
 from botyo.core.store import RedisCachable
 from functools import reduce
 from botyo.unicode_text.emoji import Emoji
