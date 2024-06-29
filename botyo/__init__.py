@@ -15,7 +15,7 @@ import sys
 import corelog
 
 corelog.register(
-    os.environ.get("BOTYO_LOG_LEVEL", "INFO"), handler_type=corelog.Handlers.RICH
+    os.environ.get("BOTYO_LOG_LEVEL", "INFO"), handler_type=corelog.Handlers.DEFAULT
 )
 ServiceAccount.register(Path(os.environ.get("BOTYO_SERVICE_ACCOUNT", "")))
 RedisStorage.register(os.environ.get("BOTYO_REDIS_URL", ""))
