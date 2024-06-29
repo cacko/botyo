@@ -1,8 +1,12 @@
+from argparse import ArgumentParser
 from curses.ascii import US
 from functools import reduce
 import logging
 from typing import Optional
 import re
+
+from corestring import split_with_quotes
+from pydantic import BaseModel
 from botyo.api.footy.item.competitions import Competitions
 from botyo.api.footy.item.livescore import Livescore
 from botyo.api.footy.item.subscription import (
@@ -14,15 +18,62 @@ from botyo.predict.db.models import DbUser, DbGame, DbPrediction
 from botyo.server.output import TextOutput
 
 
+class PredictArguments(BaseModel):
+    query: Optional[list[str]] = None
+    user: Optional[str] = None
+    all: Optional[bool] = None
+    
+    @property
+    def query_str(self) -> str:
+        try:
+            assert self.query
+            return " ".join(self.query)
+        except AssertionError:
+            return ""
+
+
 class Predict(object):
 
     __user: Optional[DbUser] = None
+    __parser: Optional[ArgumentParser] = None
 
     def __init__(self, client: str, source: str):
         self.client = client
         if not source.startswith("+"):
             source = "+" + re.findall(r"^(\d+)", source).pop(0)
         self.source = source
+        self.__all = False
+        
+    @property
+    def parser(self):
+        try:
+            assert self.__parser
+        except AssertionError:
+            parser = ArgumentParser(description="Predict options", exit_on_error=False)
+            parser.add_argument("query", nargs="*")
+            parser.add_argument("-u", "--user", type=str)
+            parser.add_argument("--all", action="store_true")
+            self.__parser = parser
+        return self.__parser
+
+        
+    def exec(self, query: str):
+        parser = self.parser
+        namespace, _ = parser.parse_known_args(split_with_quotes(query))
+        args = PredictArguments(**namespace.__dict__)
+        try:
+            assert args.user
+            return self.for_user(args.user)
+        except:
+            pass
+        
+        return self.predict(args.query_str)
+    
+    @property
+    def get_predictions(self):
+        if self.__all:
+            return DbPrediction.get_calculated
+        return DbPrediction.get_in_progress
 
     @property
     def user(self) -> DbUser:
@@ -36,8 +87,9 @@ class Predict(object):
         return game
 
     def today_predictions(self) -> str:
+        
         predictions = [
-            x.prediction_row for x in DbPrediction.get_in_progress(User=self.user)
+            x.prediction_row for x in self.get_predictions(User=self.user)
         ]
         TextOutput.addRows([f"Predictions by {self.user.display_name}", *predictions])
         return TextOutput.render() if len(predictions) else None
@@ -47,7 +99,7 @@ class Predict(object):
             user = DbUser.get(DbUser.name == username)
             assert user
             predictions = [
-                x.prediction_row for x in DbPrediction.get_in_progress(User=user)
+                x.prediction_row for x in self.get_predictions(User=user)
             ]
             TextOutput.addRows(
                 [f"Predictions by {user.display_name}", *predictions]

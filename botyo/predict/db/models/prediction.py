@@ -132,6 +132,23 @@ class DbPrediction(DbModel):
         except Exception:
             return None
 
+    @classmethod
+    def get_calculated(cls, **kwargs) -> Generator["DbPrediction", None, None]:
+        try:
+            user: DbUser = kwargs.get("User")
+            query = (
+                DbPrediction.select(DbPrediction)
+                .join_from(DbPrediction, DbGame)
+                .join_from(DbPrediction, DbUser)
+            )
+            query: Query = query.where(
+                (DbPrediction.calculated == True) & (DbUser.phone == user.phone)
+            ).order_by(DbPrediction.timestamp.desc())
+            yield from prefetch(query, DbGame, DbUser)
+
+        except Exception:
+            return None
+
     def save(self, force_insert=False, only=None):
         try:
             assert self.Game
