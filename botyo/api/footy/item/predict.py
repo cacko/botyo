@@ -53,7 +53,10 @@ class Predict(object):
             parser.add_argument("query", nargs="*", help="league search string")
             parser.add_argument("-u", "--user", type=str, help="user to show")
             parser.add_argument(
-                "--all", action="store_true", help="show all completed predictions"
+                "-a",
+                "--all",
+                action="store_true",
+                help="show all completed predictions",
             )
             self.__parser = parser
         return self.__parser

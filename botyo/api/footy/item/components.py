@@ -188,6 +188,13 @@ class PredictionRow(ScoreRow):
             row.pop(0)
         except AssertionError:
             pass
+        
+        try:
+            assert self.row.score == "va"
+            cols.pop()
+            self.row.pop()
+        except AssertionError:
+            pass
 
 
         TextOutput.addColumns(cols, [row])
