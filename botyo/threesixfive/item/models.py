@@ -575,7 +575,7 @@ class Game(BaseModel):
         status = self.shortStatusText
         try:
             _status = GameStatus(status)
-            if _status in (GameStatus.FT, GameStatus.AET, GameStatus.JE):
+            if _status in [GameStatus.FT, GameStatus.AET, GameStatus.JE]:
                 return True
             return any(
                 [

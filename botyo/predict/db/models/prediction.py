@@ -52,6 +52,7 @@ class DbPrediction(DbModel):
         game.away_score = away_score
         game.status = data.status
         game.save()
+        logging.warning(f"ENDED -> {game.ended}")
         if not game.ended:
             return
         for pred in DbPrediction.select().where(

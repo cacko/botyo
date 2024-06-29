@@ -167,7 +167,8 @@ class DbGame(DbModel):
             game = self.game
             assert game
             return game.ended
-        except:
+        except AssertionError as e:
+            logging.exception(e)
             return False
 
     class Meta:
