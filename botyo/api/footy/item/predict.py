@@ -1,4 +1,4 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentError
 from curses.ascii import US
 from functools import reduce
 import logging
@@ -50,27 +50,27 @@ class Predict(object):
             assert self.__parser
         except AssertionError:
             parser = ArgumentParser(description="Predict options", exit_on_error=False)
-            parser.add_argument("query", nargs="*")
-            parser.add_argument("-u", "--user", type=str)
-            parser.add_argument("--all", action="store_true")
+            parser.add_argument("query", nargs="*", help="league search string")
+            parser.add_argument("-u", "--user", type=str, help="user to show")
+            parser.add_argument("--all", action="store_true", help="show all completed predictions")
             self.__parser = parser
         return self.__parser
 
         
     def exec(self, query: str):
-        parser = self.parser
-        namespace, _ = parser.parse_known_args(split_with_quotes(query))
-        logging.warning(query)
-        logging.warning(split_with_quotes(query))
-        logging.warning(namespace)
-        args = PredictArguments(**namespace.__dict__)
         try:
+            parser = self.parser
+            namespace, _ = parser.parse_known_args(split_with_quotes(query))
+            logging.warning(query)
+            logging.warning(split_with_quotes(query))
+            logging.warning(namespace)
+            args = PredictArguments(**namespace.__dict__)
             assert args.user
             return self.for_user(args.user)
-        except:
-            pass
-        
-        return self.predict(args.query_str)
+        except ArgumentError:
+            return self.parser.usage()
+        except AssertionError:
+            return self.predict(args.query_str)
     
     @property
     def get_predictions(self):
@@ -95,7 +95,7 @@ class Predict(object):
             x.prediction_row for x in self.get_predictions(User=self.user)
         ]
         TextOutput.addRows([f"Predictions by {self.user.display_name}", *predictions])
-        return TextOutput.render() if len(predictions) else None
+        return TextOutput.render() if len(predictions) else "No predictions"
 
     def for_user(self, username: str):
         try:
@@ -107,7 +107,7 @@ class Predict(object):
             TextOutput.addRows(
                 [f"Predictions by {user.display_name}", *predictions]
             )
-            return TextOutput.render() if len(predictions) else None
+            return TextOutput.render() if len(predictions) else "No predictions"
         except AssertionError:
             return None
 
