@@ -307,8 +307,12 @@ class Subscription(metaclass=SubscriptionMeta):
                         )
                     )
             self.subscriptions.remove(sc)
-            Scheduler.cancel_jobs(self.id)
-        except JobLookupError:
+            jobs = Scheduler.get_jobs()
+            assert jobs
+            raw_id = self.id.split(":")[0]
+            for job in filter(lambda j: j.id.startswith(raw_id), jobs):
+                Scheduler.cancel_jobs(job.id)
+        except AssertionError:
             pass
 
     def cancel_all(self):
@@ -556,7 +560,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         logging.error(e)
                     self.cancel(sc)
                     logging.debug(f"subscription {self.event_name} in done")
-                Scheduler.cancel_jobs(self.id)
+                self.cancel()
         except AssertionError as e:
             logging.error(e)
         except ValueError as e:
