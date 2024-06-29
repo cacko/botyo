@@ -500,7 +500,6 @@ class Subscription(metaclass=SubscriptionMeta):
                             logging.exception(e)
             # self.checkGoals(updated)
             content = cache.content
-            logging.warning(content)
             assert content
             # if not content:
             #     raise ValueError
@@ -559,9 +558,9 @@ class Subscription(metaclass=SubscriptionMeta):
                     logging.debug(f"subscription {self.event_name} in done")
                 Scheduler.cancel_jobs(self.id)
         except AssertionError as e:
-            logging.exception(e)
+            logging.error(e)
         except ValueError as e:
-            logging.ex(e)
+            logging.exception(e)
         except Exception as e:
             logging.exception(e)
 
