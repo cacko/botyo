@@ -496,6 +496,8 @@ class Subscription(metaclass=SubscriptionMeta):
                                     event_id=self._event.idEvent,
                                 )
                             )
+                        except AssertionError:
+                            pass
                         except UnknownClientException as e:
                             logging.exception(e)
             # self.checkGoals(updated)
@@ -546,9 +548,9 @@ class Subscription(metaclass=SubscriptionMeta):
                                 sc.sendUpdate(
                                     UpdateData(
                                         message=self.fulltimeAnnoucement,
-                                        score_message=details.score,
+                                        score_message=content.game.score,
                                         start_time=self._event.startTime,
-                                        status=details.game_status,
+                                        status=content.game.shortStatusText,
                                         event_id=self._event.idEvent,
                                     )
                                 )
