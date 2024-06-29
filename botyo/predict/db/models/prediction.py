@@ -206,6 +206,7 @@ class DbPrediction(DbModel):
             points=self.points,
             league="",
             is_international=self.Game.league.is_international,
+            has_ended=self.Game.ended
         )
 
     @property

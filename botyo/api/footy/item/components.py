@@ -145,12 +145,14 @@ class PredictionRow(ScoreRow):
         format: ScoreFormat = ScoreFormat.LIST,
         league: str = "",
         is_international: bool = False,
+        has_ended: bool = False,
     ):
         self.format = format
         if not score:
             score = "vs"
         self.league = league
         self.is_international = is_international
+        self.has_ended = has_ended
         self.row = PredictionData(
             status=status,
             score=score,
@@ -168,19 +170,22 @@ class PredictionRow(ScoreRow):
             Column(size=16, align=Align.RIGHT),
             Column(size=5, align=Align.CENTER),
             Column(size=16, align=Align.LEFT),
-            Column(size=7, align=Align.CENTER),
+            Column(size=5, align=Align.CENTER),
+            Column(size=3, align=Align.CENTER),
         ]
         row = [
             self.row.status,
             f" {self.home}",
             self.row.score,
             f"{self.away}",
-            f"{self.row.prediction}/{self.row.points}",
+            f"{self.row.prediction}",
+            f"{self.row.points}"
         ]
 
         try:
-            assert self.row.score == "vs"
-            row[-1] = self.row.prediction
+            assert self.has_ended
+            cols.pop(0)
+            row.pop(0)
         except AssertionError:
             pass
 
