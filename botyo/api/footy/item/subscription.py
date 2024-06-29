@@ -410,10 +410,12 @@ class Subscription(metaclass=SubscriptionMeta):
             assert self._event.details
             cache = Cache(url=self._event.details, jobId=self.id)
             updated = cache.update
+            logging.warning(updated)
             scoreUpdate, game_status, chatUpdate, icon = self.updates(
                 updated
             )
-            if not icon:
+            try:
+                assert not icon
                 logo = LeagueImage(self._event.idLeague)
                 logo_path = logo.path
                 assert logo_path
@@ -424,6 +426,8 @@ class Subscription(metaclass=SubscriptionMeta):
                 )
                 pix.resize((64, 64))
                 icon = pix.base64
+            except AssertionError:
+                pass
             for sc in self.subscriptions:
                 match sc:
                     case RESTClient():
@@ -496,6 +500,7 @@ class Subscription(metaclass=SubscriptionMeta):
                             logging.exception(e)
             # self.checkGoals(updated)
             content = cache.content
+            logging.warning(content)
             assert content
             # if not content:
             #     raise ValueError
@@ -554,9 +559,9 @@ class Subscription(metaclass=SubscriptionMeta):
                     logging.debug(f"subscription {self.event_name} in done")
                 Scheduler.cancel_jobs(self.id)
         except AssertionError as e:
-            logging.error(e)
+            logging.exception(e)
         except ValueError as e:
-            logging.error(e)
+            logging.ex(e)
         except Exception as e:
             logging.exception(e)
 
