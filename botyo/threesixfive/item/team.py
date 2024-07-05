@@ -7,7 +7,7 @@ from cachable.request import Request
 from cachable.models import TimeCache
 from hashlib import blake2s
 from botyo.threesixfive.url import Url
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from botyo.core.store import RedisCachable, TimeCachable
 from pydantic import BaseModel
@@ -65,16 +65,18 @@ class Team(TimeCachable):
     def __init__(self, competitor_id: int):
         self.__competitor_id = competitor_id
 
-    # def isExpired(self, *args, **kwargs) -> bool:
-    #     return True
+    def isExpired(self, t: datetime) -> bool:
+        return datetime.now(tz=timezone.utc) - t > self.cachetime
 
     def load(self) -> bool:
-        if self._struct is not None:
-            return True
-        if not self.isCached:
+        try:
+            assert self._struct
+            assert self.isCached
+            self._struct = self.fromcache()
+            assert self._struct
+        except AssertionError:
             return False
-        self._struct = self.fromcache()  # type: ignore
-        return True if self._struct else False
+        return True
 
     def __fetch(self):
         req = Request(Url.team_games(self.__competitor_id))
@@ -88,6 +90,12 @@ class Team(TimeCachable):
 
     @property
     def team(self) -> TeamStruct:
-        if not self.load():
-            self._struct = self.__fetch()  # type: ignore
-        return self._struct.struct if self._struct else None  # type: ignore
+        try:
+            assert self.load()
+        except AssertionError:
+            self._struct = self.__fetch()
+        try:
+            assert self._struct
+            return self._struct.struct
+        except AssertionError:
+            return None
