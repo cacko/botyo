@@ -99,6 +99,7 @@ class DbGame(DbModel):
     def display_status(self):
         try:
             assert not self.ended
+            assert self.game
             gt = self.game.gameTime
             assert gt > -1
             return f'{gt}"'
