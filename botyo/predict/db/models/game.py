@@ -104,7 +104,7 @@ class DbGame(DbModel):
             assert gt > -1
             return f'{gt}"'
         except AssertionError:
-            return self.game.displayStatus
+            return self.status
 
     @property
     def score(self) -> str:
