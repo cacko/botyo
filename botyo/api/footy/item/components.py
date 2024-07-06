@@ -164,6 +164,16 @@ class PredictionRow(ScoreRow):
         )
 
     def __str__(self) -> str:
+        
+        
+        def output(cols, row):
+            TextOutput.addColumns(cols, [row])
+            if self.row.win:
+                TextOutput.addColumns(
+                    [Column(size=sum([x.size for x in cols]), align=Align.CENTER)],
+                    [[self.row.win]],
+                )
+            return TextOutput.render()
 
         cols = [
             Column(size=5, align=Align.RIGHT),
@@ -186,6 +196,7 @@ class PredictionRow(ScoreRow):
             assert self.has_ended
             cols.pop(0)
             row.pop(0)
+            return output(cols, row)
         except AssertionError:
             pass
         
@@ -193,14 +204,11 @@ class PredictionRow(ScoreRow):
             assert self.row.score == "vs"
             cols.pop()
             row.pop()
+            return output(cols, row)
         except AssertionError:
             pass
 
+        return output(cols, row)
 
-        TextOutput.addColumns(cols, [row])
-        if self.row.win:
-            TextOutput.addColumns(
-                [Column(size=sum([x.size for x in cols]), align=Align.CENTER)],
-                [[self.row.win]],
-            )
-        return TextOutput.render()
+
+
