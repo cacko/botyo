@@ -203,4 +203,4 @@ class PredictionRow(ScoreRow):
                 [Column(size=sum([x.size for x in cols]), align=Align.CENTER)],
                 [[self.row.win]],
             )
-        return TextOutput.render() + "\n8======D"
+        return TextOutput.render()
