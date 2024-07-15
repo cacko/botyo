@@ -468,9 +468,10 @@ class Subscription(metaclass=SubscriptionMeta):
                                 )
                             )
                     case ChatClient():
-                        TextOutput.clean()
-                        TextOutput.addRows(chatUpdate)
                         try:
+                            assert chatUpdate
+                            TextOutput.clean()
+                            TextOutput.addRows(chatUpdate)
                             sc.sendUpdate(
                                 UpdateData(
                                     message=TextOutput.render(),
@@ -483,6 +484,8 @@ class Subscription(metaclass=SubscriptionMeta):
                             )
                         except UnknownClientException as e:
                             logging.exception(e)
+                        except AssertionError:
+                            pass
                     case PredictionClient():
                         try:
                             details = ParserDetails.get(str(self._event.details))
