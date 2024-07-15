@@ -560,7 +560,7 @@ class Subscription(metaclass=SubscriptionMeta):
                         logging.error(e)
                     self.cancel(sc)
                     logging.debug(f"subscription {self.event_name} in done")
-                self.cancel()
+                self.cancel(sc)
         except AssertionError as e:
             logging.error(e)
         except ValueError as e:
