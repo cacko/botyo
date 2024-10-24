@@ -2,223 +2,324 @@ name: botyo
 channels:
   - conda-forge
 dependencies:
-  - _openmp_mutex=4.5
+  - appdirs=1.4.4
+  - astroid=2.13.2
+  - black=22.12.0
+  - brotli=1.0.9
+  - brotli-bin=1.0.9
+  - brotlipy=0.7.0
   - bzip2=1.0.8
   - ca-certificates=2024.2.2
-  - ld_impl_linux-aarch64=2.40
+  - cairo=1.16.0
+  - cffi=1.15.1
+  - colorama=0.4.6
+  - cryptography=39.0.0
+  - cycler=0.11.0
+  - dataclasses=0.8
+  - decorator=5.1.1
+  - dill=0.3.6
+  - expat=2.5.0
+  - font-ttf-dejavu-sans-mono=2.37
+  - font-ttf-inconsolata=3.000
+  - font-ttf-source-code-pro=2.038
+  - font-ttf-ubuntu=0.83
+  - fontconfig=2.14.1
+  - fonts-conda-ecosystem=1
+  - fonts-conda-forge=1
+  - fonttools=4.38.0
+  - freetype=2.12.1
+  - gettext=0.21.1
+  - icu=70.1
+  - isort=5.11.4
+  - joblib=1.2.0
+  - jpeg=9e
+  - krb5=1.20.1
+  - lame=3.100
+  - lazy-object-proxy=1.9.0
+  - libbrotlicommon=1.0.9
+  - libbrotlidec=1.0.9
+  - libbrotlienc=1.0.9
+  - libcxx=16.0.6
+  - libdeflate=1.17
+  - libedit=3.1.20191231
   - libexpat=2.5.0
   - libffi=3.4.2
-  - libgcc-ng=13.2.0
-  - libgomp=13.2.0
-  - libnsl=2.0.1
+  - libglib=2.74.1
+  - libiconv=1.17
+  - libidn2=2.3.4
+  - libogg=1.3.4
+  - libopus=1.3.1
+  - libpng=1.6.39
+  - libpq=15.1
   - libsqlite=3.45.1
-  - libuuid=2.38.1
-  - libxcrypt=4.4.36
+  - libtasn1=4.19.0
+  - libunistring=0.9.10
+  - libuuid=2.32.1
+  - libwebp-base=1.2.4
+  - libxcb=1.13
+  - libxml2=2.10.3
+  - libxslt=1.1.37
   - libzlib=1.2.13
+  - lxml=4.9.2
+  - mccabe=0.7.0
+  - munkres=1.1.4
+  - mypy=1.3.0
+  - mypy_extensions=0.4.3
   - ncurses=6.4
+  - nettle=3.8.1
   - openssl=3.2.1
-  - pip=24.0
+  - p11-kit=0.24.1
+  - packaging=23.0
+  - pathspec=0.10.3
+  - pcre=8.45
+  - pcre2=10.40
+  - peewee=3.15.4
+  - pip=22.3.1
+  - pixman=0.40.0
+  - platformdirs=2.6.2
+  - pooch=1.6.0
+  - psutil=5.9.5
+  - psycopg2=2.9.3
+  - pthread-stubs=0.4
+  - pycparser=2.21
+  - pyopenssl=23.0.0
+  - pyparsing=3.0.9
+  - pysocks=1.7.1
   - python=3.11.7
+  - python-dateutil=2.8.2
+  - python_abi=3.11
   - readline=8.2
-  - setuptools=69.0.3
+  - six=1.16.0
+  - sqlite=3.45.1
+  - threadpoolctl=3.1.0
   - tk=8.6.13
-  - wheel=0.42.0
+  - tomli=2.0.1
+  - tomlkit=0.11.6
+  - typed-ast=1.5.4
+  - typing=3.10.0.0
+  - unicodedata2=15.0.0
+  - wheel=0.38.4
+  - wrapt=1.14.1
+  - x264=1!164.3095
+  - xorg-kbproto=1.0.7
+  - xorg-libice=1.0.10
+  - xorg-libsm=1.2.3
+  - xorg-libx11=1.8.4
+  - xorg-libxau=1.0.9
+  - xorg-libxdmcp=1.1.3
+  - xorg-libxext=1.3.4
+  - xorg-libxrender=0.9.10
+  - xorg-renderproto=0.11.1
+  - xorg-xextproto=7.3.0
+  - xorg-xproto=7.0.31
   - xz=5.2.6
+  - yapf=0.32.0
+  - zlib=1.2.13
   - pip:
+      - a-cv-imwrite-imread-plus==0.13
+      - a-cv2-easy-resize==0.10
       - absl-py==2.1.0
       - annotated-types==0.6.0
-      - anyio==4.2.0
-      - appdirs==1.4.4
-      - apscheduler==3.10.4
-      - arrow==1.3.0
+      - anyio==3.7.1
+      - apscheduler==3.10.3
+      - arrow==1.2.3
+      - async-timeout==4.0.2
       - attrs==23.2.0
-      - authlib==1.3.0
+      - audeer==1.19.0
+      - audiofile==1.2.1
+      - audmath==1.2.1
+      - authlib==0.15.6
+      - autoflake8==0.4.1
+      - autopep8==2.0.2
       - beautifulsoup4==4.12.3
       - beets==1.6.0
       - better-exceptions==0.3.3
-      - blis==0.7.11
-      - boto3==1.34.41
-      - botocore==1.34.41
-      - bs4==0.0.2
-      - build==1.0.3
-      - cachable==0.3.53
-      - cachecontrol==0.14.0
-      - cachetools==5.3.2
-      - cairocffi==1.6.1
-      - cairosvg==2.7.1
-      - catalogue==2.0.10
-      - certifi==2024.2.2
-      - cffi==1.16.0
+      - blis==0.7.9
+      - boto3==1.28.70
+      - botocore==1.31.70
+      - cachable==0.3.43
+      - cachecontrol==0.12.11
+      - cachetools==5.2.1
+      - cairocffi==1.4.0
+      - cairosvg==2.6.0
+      - catalogue==2.0.8
+      - certifi==2023.11.17
       - charset-normalizer==3.3.2
       - click==8.1.7
       - cloudpathlib==0.16.0
-      - colorama==0.4.6
-      - confection==0.1.4
-      - confuse==2.0.1
+      - commonmark==0.9.1
+      - confection==0.1.3
+      - confuse==2.0.0
       - contourpy==1.2.0
       - corefile==0.1.5
-      - coreimage==0.0.89
+      - coreimage==0.0.88
       - corelog==0.0.16
-      - corestring==0.3.9
+      - corestring==0.3.18
       - corethread==0.1.3
       - coretime==0.1.5
-      - cryptography==42.0.2
+      - create-empty-image==0.10
       - cssselect2==0.7.0
-      - cycler==0.12.1
-      - cymem==2.0.8
-      - cytoolz==0.12.3
-      - dataclasses-json==0.5.14
+      - cv2-collage-v2==0.11
+      - cymem==2.0.7
+      - cytoolz==0.12.1
+      - dataclasses-json==0.5.7
       - defusedxml==0.7.1
       - einops==0.7.0
-      - emoji==2.10.1
-      - emoji-country-flag==1.3.2
-      - fastapi==0.109.2
+      - emoji==2.10.0
+      - emoji-country-flag==1.3.1
+      - faker==17.6.0
+      - fastapi==0.103.1
       - filelock==3.13.1
       - filetype==1.2.0
-      - firebase-admin==6.4.0
+      - firebase-admin==6.1.0
       - flake8==7.0.0
       - flatbuffers==23.5.26
-      - floret==0.10.5
-      - fonttools==4.48.1
+      - floret==0.10.4
       - fs==2.4.16
-      - fsspec==2024.2.0
-      - futures==3.0.5
-      - fuzzelinho==0.2.8
-      - google-api-core==2.17.0
-      - google-api-python-client==2.118.0
-      - google-auth==2.27.0
-      - google-auth-httplib2==0.2.0
-      - google-cloud-core==2.4.1
-      - google-cloud-firestore==2.14.0
-      - google-cloud-storage==2.14.0
+      - fsspec==2023.12.2
+      - fuzzelinho==0.2.5
+      - google-api-core==2.11.0
+      - google-api-python-client==2.76.0
+      - google-auth==2.16.0
+      - google-auth-httplib2==0.1.0
+      - google-cloud-core==2.3.2
+      - google-cloud-firestore==2.9.1
+      - google-cloud-storage==2.7.0
       - google-crc32c==1.5.0
-      - google-resumable-media==2.7.0
-      - googleapis-common-protos==1.62.0
-      - goslate==1.5.4
-      - grpcio==1.60.1
-      - grpcio-status==1.60.1
+      - google-resumable-media==2.4.1
+      - googleapis-common-protos==1.58.0
+      - grpcio==1.51.1
       - h11==0.14.0
-      - httplib2==0.22.0
+      - h2==4.1.0
+      - hiredis==2.1.1
+      - hpack==4.0.0
+      - httplib2==0.21.0
+      - httptools==0.5.0
       - humanfriendly==10.0
+      - hypercorn==0.14.3
+      - hyperframe==6.0.1
       - idna==3.6
-      - jellyfish==1.0.3
+      - isiter==0.10
+      - jellyfish==0.9.0
       - jinja2==3.1.3
       - jmespath==1.0.1
-      - joblib==1.3.2
       - kiwisolver==1.4.5
       - langcodes==3.3.0
-      - levenshtein==0.25.0
-      - lxml==5.1.0
-      - markdown==3.5.2
+      - levenshtein==0.21.0
+      - markdown==3.4.1
       - markdown-it-py==3.0.0
-      - markupsafe==2.1.5
-      - marshmallow==3.20.2
+      - markupsafe==2.1.4
+      - marshmallow==3.19.0
+      - marshmallow-enum==1.5.1
       - matplotlib==3.8.2
-      - mccabe==0.7.0
       - mdurl==0.1.2
-      - mediafile==0.12.0
+      - mediafile==0.11.0
+      - mediainfo==0.0.9
       - mediapipe==0.10.9
       - mpmath==1.3.0
-      - msgpack==1.0.7
+      - msgpack==1.0.4
       - multiavatar==1.0.3
-      - munkres==1.1.4
-      - murmurhash==1.0.10
+      - murmurhash==1.0.9
       - musicbrainzngs==0.7.1
-      - mutagen==1.47.0
-      - mypy-extensions==1.0.0
+      - mutagen==1.46.0
       - networkx==3.2.1
-      - numpy==1.26.4
+      - numpy==1.26.3
       - opencv-contrib-python==4.9.0.80
       - opencv-python==4.9.0.80
-      - packaging==23.2
-      - pandas==2.2.0
-      - peewee==3.17.1
+      - pandas==1.5.3
+      - pathy==0.10.1
       - pillow==10.2.0
-      - pilmoji==2.0.4
-      - pip-tools==7.3.0
+      - pilmoji==2.0.2
       - pixelme==0.4.13
-      - preshed==3.0.9
+      - preshed==3.0.8
+      - priority==2.0.0
       - progressor==1.0.16
       - prompt-toolkit==3.0.36
-      - proto-plus==1.23.0
+      - proto-plus==1.22.2
       - protobuf==3.20.3
-      - psycopg2==2.9.9
       - py-avataaars==1.1.2
-      - pyasn1==0.5.1
-      - pyasn1-modules==0.3.0
+      - pyasn1==0.4.8
+      - pyasn1-modules==0.2.8
       - pycodestyle==2.11.1
-      - pycountry==23.12.11
-      - pycparser==2.21
-      - pydantic==2.6.1
-      - pydantic-core==2.16.2
-      - pydictionary==2.0.1
+      - pycountry==22.3.5
+      - pydantic==2.5.3
+      - pydantic-core==2.14.6
       - pyfiglet==1.0.2
       - pyflakes==3.2.0
       - pygments==2.17.2
-      - pyjwt==2.8.0
-      - pyotp==2.9.0
-      - pyparsing==3.1.1
-      - pyphen==0.14.0
-      - pyproject-hooks==1.0.0
-      - python-dateutil==2.8.2
-      - python-multipart==0.0.9
-      - python-twitter-v2==0.9.0
-      - pytz==2024.1
-      - pyyaml==6.0.1
+      - pyjwt==2.6.0
+      - pyotp==2.8.0
+      - pyphen==0.13.2
+      - pypng==0.20220715.0
+      - python-dotenv==0.21.0
+      - python-levenshtein==0.12.2
+      - python-multipart==0.0.6
+      - python-twitter-v2==0.8.1
+      - pytz==2022.7.1
+      - pytz-deprecation-shim==0.1.0.post0
+      - pyyaml==6.0
+      - qrcode==7.4.2
       - questionary==2.0.1
       - random-user-agent==1.0.1
-      - rapidfuzz==3.6.1
-      - redis==5.0.1
+      - rapidfuzz==3.1.0
+      - rectangle-packer==2.0.2
+      - redis==4.4.2
       - requests==2.31.0
       - requests-toolbelt==1.0.0
       - rich==13.7.0
       - rsa==4.9
-      - s3transfer==0.10.0
+      - s3transfer==0.7.0
       - safetensors==0.4.2
-      - scikit-learn==1.4.0
-      - scipy==1.12.0
-      - segno==1.6.1
+      - scikit-learn==1.2.0
+      - scipy==1.10.0
+      - segno==1.6.0
       - semver==3.0.2
-      - six==1.16.0
-      - smart-open==6.4.0
+      - setuptools==69.0.3
+      - smart-open==6.3.0
       - sniffio==1.3.0
       - sounddevice==0.4.6
-      - soupsieve==2.5
-      - spacy==3.7.2
-      - spacy-legacy==3.0.12
-      - spacy-loggers==1.0.5
-      - spandrel==0.2.2
-      - srsly==2.4.8
-      - starlette==0.36.3
+      - soundfile==0.12.1
+      - soupsieve==2.3.2.post1
+      - spacy-loggers==1.0.4
+      - spandrel==0.2.1
+      - srsly==2.4.5
+      - starlette==0.27.0
       - stringcase==1.2.0
       - structlog==24.1.0
       - sympy==1.12
       - tabulate==0.9.0
-      - term-image==0.8.0.1
-      - textacy==0.13.0
-      - texttable==1.7.0
-      - thinc==8.2.3
-      - threadpoolctl==3.2.0
+      - term-image==0.8.0
+      - texttable==1.6.7
+      - thefuzz==0.19.0
+      - thinc==8.2.1
       - tinycss2==1.2.1
-      - toolz==0.12.1
-      - torch==2.2.0
-      - torchvision==0.17.0
-      - tqdm==4.66.2
-      - typer==0.9.0
-      - types-python-dateutil==2.8.19.20240106
+      - tolerant-isinstance==0.10
+      - toml==0.10.2
+      - toolz==0.12.0
+      - torch==2.1.2
+      - torchvision==0.16.2
+      - touchtouch==0.11
+      - tqdm==4.64.1
+      - typer==0.7.0
       - typing-extensions==4.9.0
-      - typing-inspect==0.9.0
-      - tzdata==2024.1
-      - tzlocal==5.2
-      - unidecode==1.3.8
+      - typing-inspect==0.8.0
+      - tzdata==2022.7
+      - tzlocal==4.2
+      - unidecode==1.3.6
       - uritemplate==4.1.1
-      - urllib3==2.0.7
-      - uvicorn==0.27.1
-      - validators==0.22.0
-      - wasabi==1.1.2
+      - urllib3==2.1.0
+      - uvicorn==0.20.0
+      - uvloop==0.17.0
+      - validators==0.20.0
+      - wasabi==1.1.1
+      - watchfiles==0.18.1
       - wcwidth==0.2.13
-      - weasel==0.3.4
+      - weasel==0.3.3
       - webencodings==0.5.1
+      - websockets==10.4
       - wikipedia==1.4.0
+      - wsproto==1.2.0
       - you-get==0.4.1650
-prefix: /store/home/jago/miniforge3/envs/botyo
+variables:
+  allow_conda_downgrades: 'true'
+prefix: /Volumes/Devo/Users/jago/miniforge3/envs/botyo

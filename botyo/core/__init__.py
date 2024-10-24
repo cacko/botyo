@@ -2,7 +2,7 @@ from typing import Optional
 from contextlib import contextmanager
 import logging
 import time
-from textacy.preprocessing import pipeline, normalize
+from corestring import normalize
 
 
 def to_float(s: str) -> Optional[float]:
@@ -22,13 +22,7 @@ def to_int(s: str) -> Optional[int]:
 def normalize_prompt(input: str) -> str:
     try:
         assert input
-        clean_pipeline = pipeline.make_pipeline(
-            normalize.quotation_marks,
-            normalize.whitespace,
-            normalize.bullet_points,
-            lambda st: st.replace("\u8192", '--')
-        )
-        return clean_pipeline(input)
+        return normalize(input)
     except AssertionError:
         return ""
 

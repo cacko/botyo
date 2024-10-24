@@ -11,22 +11,14 @@ from markdown import markdown
 from PIL import Image, ImageDraw, ImageFont
 from tabulate import tabulate
 from texttable import Texttable
-from textacy.preprocessing import pipeline, remove, replace, normalize
 from .unicode_text import convert, STYLE_MONO
 from pydantic import BaseModel
+from corestring import clean_html
 
 
 def clean_markdown(s: str):
     html = markdown(s)
-    clean_pipeline = pipeline.make_pipeline(
-        remove.accents,
-        remove.brackets,
-        remove.html_tags,
-        replace.emojis,
-        replace.hashtags,
-        normalize.repeating_chars,
-    )
-    return clean_pipeline(html)
+    return clean_html(html)
 
 
 def truncate(value: str, size=200, ellipsis="..."):
