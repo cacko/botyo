@@ -67,5 +67,5 @@ def enel_command(context: Context):
 
 
 @bp.command(method=ZMethod.TRANSLATE_EL_EN, desc="el -> en")  # type: ignore
-def enel_command(context: Context):
-    return translate_cmd(ZMethod.TRANSLATE_EL_EN, context, ":gb=eng:")
+def elen_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_EL_EN, context, ":gb-eng:")
