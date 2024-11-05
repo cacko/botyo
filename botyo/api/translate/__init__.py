@@ -59,3 +59,13 @@ def plen_command(context: Context):
 @bp.command(method=ZMethod.TRANSLATE_EN_PL, desc="bg -> en")  # type: ignore
 def enpl_command(context: Context):
     return translate_cmd(ZMethod.TRANSLATE_EN_PL, context, "PL")
+
+
+@bp.command(method=ZMethod.TRANSLATE_EN_EL, desc="en -> el")  # type: ignore
+def enel_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_EN_EL, context, ":Greece:")
+
+
+@bp.command(method=ZMethod.TRANSLATE_EL_EN, desc="el -> en")  # type: ignore
+def enel_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_EL_EN, context, ":gb=eng:")
