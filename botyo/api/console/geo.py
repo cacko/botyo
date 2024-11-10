@@ -36,7 +36,7 @@ class GeoLookup(BaseModel):
         if not self.location:
             return None
         loc = self.location
-        return f"https://geo.cacko.net/#/location/?q={loc[0]:.6f},{loc[1]:.6f}"
+        return f"https://geo.cacko.net/#/location/{loc[0]:.6f},{loc[1]:.6f}"
 
     @property
     def isp(self):
@@ -65,7 +65,7 @@ class GeoLocation(BaseModel):
         if not self.location:
             return None
         loc = self.location
-        return f"https://geo.cacko.net/#/location/?q={loc[0]:.6f},{loc[1]:.6f}"
+        return f"https://geo.cacko.net/#/location/{loc[0]:.6f},{loc[1]:.6f}"
     @property
     def country_with_flag(self):
         if self.country:
