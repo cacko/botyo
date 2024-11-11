@@ -65,7 +65,7 @@ class Image2GeneratorParams(BaseModel):
     no_auto_caption: Optional[bool] = None
 
     @validator("prompt")
-    def static_prompt(cls, prompt: list[str]):
+    def static_prompt(cls, prompt: list[str] | str):
         try:
             assert prompt
             return " ".join(prompt)
