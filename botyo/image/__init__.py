@@ -26,7 +26,7 @@ from firebase_admin.db import Event
 
 
 class ImageGeneratorParams(BaseModel):
-    prompt: list[str]
+    prompt: list[str]|str
     height: Optional[int] = None
     width: Optional[int] = None
     guidance_scale: Optional[float] = None
