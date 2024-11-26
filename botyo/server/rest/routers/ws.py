@@ -279,8 +279,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 break
             except Exception as e:
                 logging.exception(e)
-            finally:
-                queue.task_done()
 
     await asyncio.gather(
         read_from_socket(websocket),
