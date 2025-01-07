@@ -66,6 +66,7 @@ class ZMethod(StrEnum, metaclass=MethodMeta):
     CONSOLE_WHOIS = "console:whois"
     CONSOLE_GEOIP = "console:geoip"
     CONSOLE_GEOCODER = "console:geocoder"
+    CODE_GENERAL = "code:general"
     CODE_PHP = "code:php"
     CODE_PYTHON = "code:python"
     CODE_JAVASCRIPT = "code:javascript"

@@ -1,5 +1,4 @@
 from botyo.chatyo import Payload, Response, getResponse
-from typing import Optional
 
 
 class CodeMeta(type):
@@ -19,6 +18,10 @@ class CodeMeta(type):
 
     def javascript(cls, text) -> Response:
         return cls().getResponse("code/instruct/javascript", text)
+    
+    def general(cls, text) -> Response:
+        return cls().getResponse("code/instruct/general", text)
+
 
 
 class Code(object, metaclass=CodeMeta):

@@ -53,3 +53,17 @@ def javascript_command(context: Context):
         plain=True,
     )
     return res
+
+
+@bp.command(
+    method=ZMethod.CODE_GENERAL,
+    desc="Generates general code by given instructions",
+    icon="php",
+)  # type: ignore
+def general_command(context: Context):
+    msg = context.query
+    if not msg:
+        return None
+    resp = Code.general(text=msg)
+    res = RenderResult(message=resp.response, method=ZMethod.CODE_GENERAL, plain=True)
+    return res
