@@ -41,31 +41,43 @@ def bgen_command(context: Context):
     return translate_cmd(ZMethod.TRANSLATE_BG_EN, context, ":gb-eng:")
 
 
-@bp.command(method=ZMethod.TRANSLATE_EN_CS, desc="bg -> en")  # type: ignore
+@bp.command(method=ZMethod.TRANSLATE_EN_CS, desc="en -> cs")  # type: ignore
 def encs_command(context: Context):
     return translate_cmd(ZMethod.TRANSLATE_EN_CS, context, "CZ")
 
 
-@bp.command(method=ZMethod.TRANSLATE_CS_EN, desc="bg -> en")  # type: ignore
+@bp.command(method=ZMethod.TRANSLATE_CS_EN, desc="cs -> en")  # type: ignore
 def csen_command(context: Context):
     return translate_cmd(ZMethod.TRANSLATE_CS_EN, context, ":gb-eng:")
 
 
-@bp.command(method=ZMethod.TRANSLATE_PL_EN, desc="bg -> en")  # type: ignore
-def plen_command(context: Context):
-    return translate_cmd(ZMethod.TRANSLATE_PL_EN, context, ":gb-eng:")
 
-
-@bp.command(method=ZMethod.TRANSLATE_EN_PL, desc="bg -> en")  # type: ignore
+@bp.command(method=ZMethod.TRANSLATE_EN_PL, desc="en -> pl")  # type: ignore
 def enpl_command(context: Context):
     return translate_cmd(ZMethod.TRANSLATE_EN_PL, context, "PL")
 
 
-@bp.command(method=ZMethod.TRANSLATE_EN_EL, desc="en -> el")  # type: ignore
-def enel_command(context: Context):
-    return translate_cmd(ZMethod.TRANSLATE_EN_EL, context, ":Greece:")
+@bp.command(method=ZMethod.TRANSLATE_PL_EN, desc="pl -> en")  # type: ignore
+def plen_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_PL_EN, context, ":gb-eng:")
 
 
-@bp.command(method=ZMethod.TRANSLATE_EL_EN, desc="el -> en")  # type: ignore
-def elen_command(context: Context):
-    return translate_cmd(ZMethod.TRANSLATE_EL_EN, context, ":gb-eng:")
+@bp.command(method=ZMethod.TRANSLATE_EN_FR, desc="en -> fr")  # type: ignore
+def enfr_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_EN_FR, context, "FR")
+
+
+@bp.command(method=ZMethod.TRANSLATE_FR_EN, desc="fr -> en")  # type: ignore
+def fren_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_FR_EN, context, ":gb-eng:")
+
+
+@bp.command(method=ZMethod.TRANSLATE_EN_IT, desc="en -> it")  # type: ignore
+def enit_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_EN_IT, context, "IT")
+
+
+@bp.command(method=ZMethod.TRANSLATE_IT_EN, desc="it -> en")  # type: ignore
+def iten_command(context: Context):
+    return translate_cmd(ZMethod.TRANSLATE_IT_EN, context, ":gb-eng:")
+
