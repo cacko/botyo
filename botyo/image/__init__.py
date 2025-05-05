@@ -135,6 +135,8 @@ class Action(Enum):
     TXT2QR = "image/txt2qr"
     FACE2IMG = "image/face2img"
     IMG2TXT = "image/img2txt"
+    ASK = "image/ask"
+    DOG= "image/dog"
 
 
 class ImageOptions(BaseModel):
@@ -168,6 +170,9 @@ class ImageMeta(type):
 
     def classify(cls, attachment: Attachment) -> tuple[Attachment, dict]:
         return cls(attachment).do_classify()
+    
+    def dog(cls, attachment: Attachment) -> tuple[Attachment, dict]:
+        return cls(attachment).do_dog()
 
     def to_text(cls, attachment: Attachment):
         return cls(attachment).do_img2txt()
@@ -370,6 +375,9 @@ class ImageMeta(type):
 
     def txt2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_txt2img(prompt)
+    
+    def ask(cls, attachment: Attachment, prompt: str) -> tuple[Attachment, str]:
+        return cls(attachment).do_ask(prompt)
 
     def qr2img(cls, prompt: str) -> tuple[Attachment, str]:
         return cls().do_qr2img(prompt)
@@ -414,6 +422,9 @@ class Image(object, metaclass=ImageMeta):
 
     def do_classify(self):
         return self.getResponse(Action.CLASSIFY)
+
+    def do_dog(self):
+        return self.getResponse(Action.DOG)
 
     def do_img2txt(self):
         return self.getResponse(Action.IMG2TXT)
