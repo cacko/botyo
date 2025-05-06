@@ -102,6 +102,7 @@ def image_Dog(context: Context):
         attachment, message = Image.dog(attachment)
         assert message
         return RenderResult(
+            attachment=attachment,
             message=message.get("response"),
             method=ZMethod.IMAGE_DOG,
         )
