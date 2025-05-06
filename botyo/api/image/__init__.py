@@ -103,7 +103,7 @@ def image_Dog(context: Context):
         assert message
         return RenderResult(
             attachment=attachment,
-            message=message.get("response"),
+            message=message,
             method=ZMethod.IMAGE_DOG,
         )
     except ApiError as e:
