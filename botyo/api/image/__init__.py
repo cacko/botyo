@@ -76,11 +76,9 @@ def image_classify(context: Context):
         logging.debug(attachment)
         attachment, message = Image.classify(attachment)
         assert message
-        results = [ClassifyResult(**x) for x in message.get("response", [])]
         return RenderResult(
-            message="\n".join(
-                [x.output() for x in results if x.score < 1]
-            ),
+            attachment=attachment,
+            message=message,
             method=ZMethod.IMAGE_CLASSIFY,
         )
     except ApiError as e:
@@ -88,29 +86,6 @@ def image_classify(context: Context):
     except AssertionError:
         return ErrorResult(method=ZMethod.IMAGE_CLASSIFY)
     
-@bp.command(
-    method=ZMethod.IMAGE_DOG,
-    desc="Classify dog breed of an image",
-    upload=True,
-    icon="pets",
-)  # type: ignore
-def image_Dog(context: Context):
-    try:
-        attachment = context.attachment
-        assert attachment
-        logging.debug(attachment)
-        attachment, message = Image.dog(attachment)
-        assert message
-        return RenderResult(
-            attachment=attachment,
-            message=message,
-            method=ZMethod.IMAGE_DOG,
-        )
-    except ApiError as e:
-        return ErrorResult(method=ZMethod.IMAGE_DOG, message=e.message)
-    except AssertionError:
-        return ErrorResult(method=ZMethod.IMAGE_DOG)
-
 
 @bp.command(
     method=ZMethod.IMAGE_PIXEL, desc="pixel image", upload=True, icon="pix"
