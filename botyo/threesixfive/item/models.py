@@ -505,6 +505,13 @@ class H2HGame(BaseModel):
     scores: list[int]
     roundNum: Optional[int] = None
     seasonNum: Optional[int] = None
+    stageNum: Optional[int] = None
+    groupNum: Optional[int] = None
+    competitionGroupByName: Optional[str] = None
+    gameTimeAndStatusDisplayType: Optional[int] = None
+    homeAwayTeamOrder:  Optional[int] = None
+    hasPointByPoint:  Optional[int] = None
+    hasVideo: Optional[bool] = None
 
 
 class Game(BaseModel):
@@ -517,7 +524,6 @@ class Game(BaseModel):
     statusText: str
     shortStatusText: str
     gameTimeAndStatusDisplayType: int
-
     homeCompetitor: GameCompetitor
     awayCompetitor: GameCompetitor
     h2hGames: Optional[list[H2HGame]] = None
@@ -760,7 +766,7 @@ class ResponseGame(BaseModel):
         if not self.game:
             return None
         return self.game.shortStatusText
-    
+
 class ResponseH2H(BaseModel):
     game: Game
 
@@ -998,7 +1004,6 @@ class OddBoomaker:
     nameForURL: str  # bet365",
     color: str  # 007B5B",
     imageVersion: int  # 1
-
 
 
 class UpdateData(BaseModel):
