@@ -17,8 +17,8 @@ class Lineups(LineupsData):
         try:
             cols = (
                 Column(size=2, align=Align.RIGHT),
-                Column(size=10, align=Align.LEFT),
-                Column(size=10, align=Align.RIGHT),
+                Column(size=13, align=Align.LEFT),
+                Column(size=13, align=Align.RIGHT),
                 Column(size=2, align=Align.LEFT),
             )
             rows = [
@@ -33,8 +33,8 @@ class Lineups(LineupsData):
             assert home.team.name
             assert away.team.name
             TextOutput.addColumns(
-                [Column(size=12, align=Align.LEFT),
-                 Column(size=12, align=Align.RIGHT)],
+                [Column(size=15, align=Align.LEFT),
+                 Column(size=15, align=Align.RIGHT)],
                 [[home.team.name.upper(), away.team.name.upper()]],
             )
             TextOutput.addColumns(list(cols), rows)
