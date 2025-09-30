@@ -9,12 +9,12 @@ tasks:
   default:
     desc: start dev
     cmds:
-      - mamba run --live-stream -n {{.PROJECT}} python -m botyo.cli  {{.CLI_ARGS}}
+      - mamba run -n {{.PROJECT}} python -m botyo.cli  {{.CLI_ARGS}}
 
   logs:
     desc: monitor logs
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;journalctl --user -u botyo -f --all'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;journalctl --user-unit botyo -f --all'
 
   start:
     desc: start the service
@@ -59,7 +59,7 @@ tasks:
   systemd-exec:
     desc: systemd exec
     cmds:
-      - direnv exec . mamba run --live-stream -n {{.PROJECT}} python -m botyo.cli serve
+      - direnv exec . mamba run -n {{.PROJECT}} python -m botyo.cli serve
 
   export:
     desc: export env
@@ -76,7 +76,7 @@ tasks:
   install:
     desc: update package
     cmds:
-      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/botyo;mamba run --live-stream -n {{.PROJECT}} pip install {{.CLI_ARGS}} -U'
+      - ssh $REMOTE_HOST 'source ~/.zshrc;cd /var/www/botyo;mamba run -n {{.PROJECT}} pip install {{.CLI_ARGS}} -U'
       - task: export-remote
       - task: deploy
 
