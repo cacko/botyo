@@ -1,23 +1,23 @@
-from cachable.storage.redis import RedisStorage
-from cachable.storage.file import FileStorage
-from botyo.firebase.service_account import ServiceAccount
-from botyo.core.config import Config as app_config
-from botyo.api.footy import Footy
-from botyo.server.server import Server
-import os
-from pathlib import Path
-from botyo.server.rest.server import APIServer
-import logging
-import signal
-import sys
+# from cachable.storage.redis import RedisStorage
+# from cachable.storage.file import FileStorage
+# from botyo.firebase.service_account import ServiceAccount
+# from botyo.core.config import Config as app_config
+# from botyo.api.footy import Footy
+# from botyo.server.server import Server
+# import os
+# from pathlib import Path
+# from botyo.server.rest.server import APIServer
+# import logging
+# import signal
+# import sys
 
-app = Server(Path(__file__).parent.parent)
-app.servers.append(APIServer())
+# app = Server(Path(__file__).parent.parent)
+# app.servers.append(APIServer())
 
-RedisStorage.register(os.environ.get("BOTYO_REDIS_URL", ""))
-FileStorage.register(Path(app_config.cachable.path))
-ServiceAccount.register(Path(os.environ.get("BOTYO_SERVICE_ACCOUNT", "")))
-Footy.register(app)
+# RedisStorage.register(os.environ.get("BOTYO_REDIS_URL", ""))
+# FileStorage.register(Path(app_config.cachable.path))
+# ServiceAccount.register(Path(os.environ.get("BOTYO_SERVICE_ACCOUNT", "")))
+# Footy.register(app)
 
 
 def create_app():
@@ -54,11 +54,11 @@ def create_app():
     return app
 
 
-def handler_stop_signals(signum, frame):
-    logging.info("Stopping app")
-    app.terminate()
-    sys.exit(0)
+# def handler_stop_signals(signum, frame):
+#     logging.info("Stopping app")
+#     app.terminate()
+#     sys.exit(0)
 
 
-signal.signal(signal.SIGINT, handler_stop_signals)
-signal.signal(signal.SIGTERM, handler_stop_signals)
+# signal.signal(signal.SIGINT, handler_stop_signals)
+# signal.signal(signal.SIGTERM, handler_stop_signals)
