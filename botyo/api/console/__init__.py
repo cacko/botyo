@@ -105,7 +105,6 @@ def geo_command(context: Context):
     icon="public")  # type: ignore
 def geocoder_command(context: Context):
     try:
-        assert context.query
         res = GeoCoder(context.query).lookup()
         if not res:
             return EmptyResult()

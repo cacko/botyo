@@ -23,6 +23,8 @@ def song_command(context: Context) -> RenderResult:
         song = Song(context.query)
         path = song.destination
         message = song.message
+        logging.warning(path)
+        logging.warning(song)
         res = RenderResult(
             message=message,
             attachment=Attachment(
