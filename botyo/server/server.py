@@ -70,6 +70,7 @@ class Server(object, metaclass=ServerMeta):
             while not self.tcpserver.is_closing:
                 try:
                     command, context, t = self.queue.get_nowait()
+                    logging.info(command, context)
                     Worker(
                         command=command,
                         context=context,
