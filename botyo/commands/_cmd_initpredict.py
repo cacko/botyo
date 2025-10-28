@@ -1,8 +1,7 @@
-import logging
 from botyo.cli import pass_environment, Environment
 import click
 from botyo.commands import coro
-from botyo.predict.db.models import DbPrediction, DbUser, DbGame
+from botyo.predict.db.models import DbPrediction
 
 
 @click.command("initpredict", short_help="init predict db")

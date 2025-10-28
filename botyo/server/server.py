@@ -1,13 +1,10 @@
 import logging
 import time
 from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
 from queue import Empty, Queue
 from typing import Optional
 from apscheduler.schedulers.background import BackgroundScheduler
-
 from .command import CommandExec, CommandMatch
-from .config import Config
 from .core import AppServer, StoppableThread
 from .models import JunkMessage, NoCommand, ErrorResult, EmptyResult
 from .scheduler import Scheduler
@@ -42,13 +39,11 @@ class Server(object, metaclass=ServerMeta):
     executor: ThreadPoolExecutor
     queue: Queue
     scheduler: Scheduler
-    config: Config
     groups: list[str] = []
     servers: list[AppServer] = []
     tcpserver: TCPReceiver
 
-    def __init__(self, root_path: Path):
-        self.config = Config(root_path)
+    def __init__(self):
         self.executor = ThreadPoolExecutor(5)
         self.queue = Queue()
 

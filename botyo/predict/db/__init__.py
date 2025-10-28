@@ -1,5 +1,7 @@
 from .database import Database
-from .models import DbUser, DbPrediction, DbGame
+from .models.user import DbUser
+from .models.prediction import DbPrediction
+from .models.game import DbGame
 
 
 def create_tables(drop=True):

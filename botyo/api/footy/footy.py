@@ -1,12 +1,9 @@
-import logging
 from typing import Optional
 from pydantic import BaseModel
-from botyo import cli
 from botyo.api.footy.item.h2h import H2H
 
 from botyo.api.footy.item.predict import Predict
 from botyo.api.footy.item.predict_standings import PredictStandings
-from botyo.server.scheduler import Scheduler
 from .item.subscription import Subscription, SubscriptionClient
 from fuzzelinho import Match, MatchMethod, Needle
 from botyo.threesixfive.data import LeagueItem
@@ -20,7 +17,7 @@ from .item.lineups import Lineups
 from .item.competitions import Competitions
 from .item.facts import Facts
 from .item.team import Team
-from botyo.threesixfive.exception import GameNotFound, TeamNotFound, CompetitionNotFound
+from botyo.threesixfive.exception import GameNotFound, TeamNotFound
 from botyo.core.config import Config
 from emoji import emojize
 from apscheduler.job import Job

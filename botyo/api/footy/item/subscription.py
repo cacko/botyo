@@ -1,7 +1,6 @@
 from numpy import mat
 from botyo.api.footy.item.lineups import Lineups
 from botyo.api.logo.team import TeamLogoPixel
-from botyo.predict.db.models.prediction import DbPrediction
 from botyo.threesixfive.exception import GameNotFound
 from botyo.threesixfive.item.league import LeagueImage
 from pixelme import Pixelate
@@ -9,7 +8,7 @@ from .components import ScoreFormat, ScoreRow
 from .livescore_details import ParserDetails
 from botyo.server.output import TextOutput
 from botyo.server.scheduler import Scheduler
-from apscheduler.schedulers.base import JobLookupError, Job
+from apscheduler.schedulers.base import Job
 from botyo.server.socket.connection import Connection, UnknownClientException
 from botyo.server.models import RenderResult, Attachment, ZSONMessage, ZSONResponse
 from botyo.threesixfive.item.models import (

@@ -2,6 +2,7 @@ import os
 import sys
 import click
 from pathlib import Path
+from importlib import import_module
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix="BOTYO")
 
@@ -61,17 +62,17 @@ class BotyoCLI(click.MultiCommand):
             cmd_file = f"cmd_{name}.py"
             mod = None
             if (server_commands_folder / cmd_file).exists():
-                sys.path.insert(
-                    0, app_commands_folder.parent.parent.absolute().as_posix())
-                __import__("botyo.server")
-                mod = __import__(
-                    f"botyo.server.commands.cmd_{name}", None, None, ["cli"])
+                # sys.path.insert(
+                #     0, app_commands_folder.parent.parent.absolute().as_posix())
+                # import_module("botyo.server")
+                mod = import_module(
+                    f"botyo.server.commands.cmd_{name}")
             elif (app_commands_folder / cmd_file).exists():
-                sys.path.insert(
-                    0, app_commands_folder.parent.parent.absolute().as_posix())
-                __import__("botyo")
-                mod = __import__(
-                    f"botyo.commands.cmd_{name}", None, None, ["cli"])
+                # sys.path.insert(
+                #     0, app_commands_folder.parent.parent.absolute().as_posix())
+                # import_module("botyo")
+                mod = import_module(
+                    f"botyo.commands.cmd_{name}")
             else:
                 raise NotValidCommand
         except ImportError as e:

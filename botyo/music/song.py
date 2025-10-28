@@ -5,9 +5,10 @@ from corestring import split_with_quotes, string_hash
 from cachable.storage.file import FileStorage
 from botyo.music.encoder import Encoder
 from typing import Optional
-from . import beets_library
 from beets.library import Item
-
+import beets
+from beets.ui import config as beets_config
+from botyo.core.config import Config as app_config
 
 class Song:
 
@@ -17,7 +18,12 @@ class Song:
 
     def __init__(self, query: str):
         self.__query = query
+        beets_config.set_file(app_config.music.beets_config)
+        self.__library = beets.ui._open_library(beets.config)
         self.load()
+        
+    def __exit__(self):
+        self.__library._close()
 
     def load(self):
         if not self.__search():
@@ -34,7 +40,7 @@ class Song:
             filt = split_with_quotes(query)
             if ":" not in query and len(filt) == 1:
                 filt = [f"title:{filt[0]}"]
-            items = list(beets_library.items(filt))
+            items = list(self.__library.items(filt))
             assert len(items) > 0
             item = items[0]
             logging.debug(item)
@@ -46,7 +52,7 @@ class Song:
     def __identify(self):
         if not self.__message:
             assert self.__found
-            items = list(beets_library.items(f'path:"{self.__found.as_posix()}"'))
+            items = list(self.__library.items(f'path:"{self.__found.as_posix()}"'))
             assert len(items) > 0
             item = items[0]
             assert item
@@ -97,7 +103,7 @@ class Song:
     def duration(self) -> int:
         try:
             logging.info(self.destination.as_posix())
-            items = list(beets_library.items(f'path:"{self.__found}"'))
+            items = list(self.__library.items(f'path:"{self.__found}"'))
             assert len(items) > 0
             item: Item = items[0]
             res = item.length

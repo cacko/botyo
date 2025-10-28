@@ -14,8 +14,11 @@ from botyo.api.footy.item.subscription import (
     Subscription,
     SubscriptionClass,
 )
-from botyo.predict.db.models import DbUser, DbGame, DbPrediction
 from botyo.server.output import TextOutput
+from botyo.predict.db.models.prediction import DbPrediction
+from botyo.predict.db.models.user import DbUser
+from botyo.predict.db.models.game import DbGame
+
 
 
 class PredictArguments(BaseModel):

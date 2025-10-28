@@ -1,8 +1,8 @@
 from typing import Generator
 from psycopg2 import IntegrityError
 from botyo.predict.db.database import Database
-from .base import DbModel
-from peewee import CharField, IntegerField, prefetch
+from botyo.predict.db.models.base import DbModel
+from peewee import CharField, IntegerField
 
 
 class DbUser(DbModel):

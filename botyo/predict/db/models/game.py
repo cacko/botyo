@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 from psycopg2 import IntegrityError
 from botyo.threesixfive.item.team import Team
@@ -10,7 +9,7 @@ from botyo.threesixfive.item.models import (
     GameStatus,
     Game as DataGame,
 )
-from .base import DbModel, PredictionNotAllow
+from botyo.predict.db.models.base import DbModel, PredictionNotAllow
 from peewee import CharField, DateTimeField, IntegerField
 from datetime import datetime, timezone
 

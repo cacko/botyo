@@ -1,14 +1,13 @@
 from datetime import datetime, timezone
 import logging
-from typing import Any, Generator, Optional
-from venv import create
+from typing import Generator, Optional
 from psycopg2 import IntegrityError
 from botyo.api.footy.item.components import PredictionRow
 from botyo.threesixfive.item.models import Competitor, GameStatus, UpdateData
 from botyo.predict.db.database import Database
-from .base import DbModel, PredictionNotAllow
-from .user import DbUser
-from .game import DbGame
+from botyo.predict.db.models.base import DbModel
+from botyo.predict.db.models.user import DbUser
+from botyo.predict.db.models.game import DbGame
 from peewee import (
     CharField,
     TimestampField,

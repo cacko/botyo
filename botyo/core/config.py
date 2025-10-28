@@ -3,7 +3,9 @@ from pathlib import Path
 from typing import Optional
 import yaml
 from pydantic import BaseModel
+from appdirs import user_config_dir
 
+USER_SETTINGS = Path(user_config_dir("botyo")) / "settings.yaml"
 
 class OntvConfig(BaseModel):
     api_url: str
@@ -143,7 +145,7 @@ class ConfigStruct(BaseModel):
 
 
 config_root = Path(
-    environ.get("SETTINGS_PATH", Path(__file__).parent.parent / "settings.yaml")
+    environ.get("SETTINGS_PATH", USER_SETTINGS.absolute().as_posix())
 )
 data = yaml.full_load(Path(config_root).read_text())
 Config = ConfigStruct(**data)

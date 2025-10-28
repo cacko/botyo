@@ -2,7 +2,6 @@ from botyo.cli import pass_environment, Environment
 import click
 from botyo.commands import coro
 from botyo.api.footy.item.livescore import GameMatch, GameNeedle
-from botyo.api.footy.footy import Footy
 
 
 @click.command("match", short_help="test avatar")
@@ -10,6 +9,7 @@ from botyo.api.footy.footy import Footy
 @pass_environment
 @coro
 def cli(ctx: Environment, filt):
+    from botyo.api.footy.footy import Footy
     livescores = Footy.livescore()
     items = livescores.items
     matcher = GameMatch(haystack=items)
