@@ -18,6 +18,7 @@ bp = Blueprint("music")
     icon="audiotrack")  # type: ignore
 def song_command(context: Context) -> RenderResult:
     try:
+        logging.warning(context.query)
         assert context.query
         assert len(context.query.strip()) > 4
         song = Song(context.query)
