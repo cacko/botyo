@@ -1,4 +1,3 @@
-from numpy import mat
 from botyo.api.footy.item.lineups import Lineups
 from botyo.api.logo.team import TeamLogoPixel
 from botyo.threesixfive.exception import GameNotFound
