@@ -9,7 +9,7 @@ tasks:
   default:
     desc: start dev
     cmds:
-      - mamba run -n {{.PROJECT}} python -m botyo.cli  {{.CLI_ARGS}}
+      - conda run --live-stream -n {{.PROJECT}} python -m botyo.cli  {{.CLI_ARGS}}
 
   logs:
     desc: monitor logs
