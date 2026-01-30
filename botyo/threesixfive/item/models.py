@@ -157,7 +157,7 @@ class Event(BaseModel):
             self.displayStatus = GameStatus(self.strStatus).value
             if delta < 0 and self.displayStatus in [GameStatus.NS.value]:
                 self.displayStatus = self.startTime.astimezone(
-                    ZoneInfo("Europe/London")
+                    ZoneInfo("Europe/Sofia")
                 ).strftime("%H:%M")
             else:
                 self.displayStatus = self.displayStatus.value
@@ -595,7 +595,7 @@ class Game(BaseModel):
 
     @property
     def displayStatus(self) -> str:
-        zone = ZoneInfo("Europe/London")
+        zone = ZoneInfo("Europe/Sofia")
         if self.not_started:
             return f"{time_hhmm(self.startTime,zone)}"
         status = GameStatus(self.shortStatusText)

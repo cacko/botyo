@@ -76,7 +76,7 @@ class TV:
         self,
         filt: str = "",
         group_by_league=True,
-        tz: ZoneInfo = ZoneInfo("Europe/London"),
+        tz: ZoneInfo = ZoneInfo("Europe/Sofia"),
     ) -> str:
         events = list(
             filter(

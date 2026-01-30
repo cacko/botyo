@@ -39,7 +39,7 @@ class Context(BaseModel):
     group: Optional[str] = None
     lang: Optional[str] = None
     source: Optional[str] = None
-    timezone: Optional[str] = "Europe/London"
+    timezone: Optional[str] = "Europe/Sofia"
     attachment: Optional[Attachment] = None
     id: Optional[str] = None
 

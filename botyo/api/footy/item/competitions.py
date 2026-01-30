@@ -35,7 +35,7 @@ class CompetitionItem(TimeCacheable):
         return CompetitionData(d.id)
 
     def render(
-            self, tz: ZoneInfo = ZoneInfo("Europe/London")
+            self, tz: ZoneInfo = ZoneInfo("Europe/Sofia")
     ) -> str:
         data = self.data
         if not data:

@@ -17,7 +17,7 @@ class Team:
         res = t.team
         return res
 
-    def render(self, tz: ZoneInfo = ZoneInfo("Europe/London")) -> str:
+    def render(self, tz: ZoneInfo = ZoneInfo("Europe/Sofia")) -> str:
         team = self.data
         if not team:
             return ""
