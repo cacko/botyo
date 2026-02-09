@@ -45,7 +45,7 @@ app_commands_folder = app_folder / "commands"
 server_commands_folder = app_folder / "server" / "commands"
 
 
-class BotyoCLI(click.MultiCommand):
+class BotyoCLI(click.Group):
     def list_commands(self, ctx):
         rv = []
         for filename in os.listdir(app_commands_folder.absolute().as_posix()):
