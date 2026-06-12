@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from pydantic import BaseModel
 from botyo.api.footy.item.h2h import H2H
@@ -113,6 +114,7 @@ class Footy(object, metaclass=FootyMeta):
         if not query.strip():
             raise GameNotFound
         items = self.getLivescore().items
+        logging.warning(items)
         try:
             idEvent = int(query)
             res = next(filter(lambda x: x.idEvent == idEvent, items), None)
