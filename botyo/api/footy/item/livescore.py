@@ -50,7 +50,7 @@ class Livescore(LivescoreData):
 
     def precache(self):
         now = datetime.now(tz=timezone.utc)
-        timeframe = timedelta(minutes=120)
+        timeframe = timedelta(minutes=360)
         items = filter(lambda ev: (ev.startTime - now) < timeframe, self.items)
         for ev in items:
             try:
