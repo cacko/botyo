@@ -6,6 +6,7 @@ from botyo.api.logo.team import TeamLogoPixel
 from botyo.image.koncat import Konkat
 from botyo.music.nowplay import Track
 from botyo.music.beats import Beats
+from botyo.threesixfive.exception import GameNotFound
 from botyo.threesixfive.item.league import LeagueImagePixel
 from botyo.threesixfive.item.team import Team as DataTeam
 from botyo.threesixfive.item.models import CancelJobEvent
@@ -64,11 +65,17 @@ async def post_subscribe(request: Request):
         client_id=f"{data.get('webhook')}",
         group_id=f"{data.get('group')}"
     )
-    res = Footy.subscribe(
-        client=client,
-        query=f"{data.get('id')}",
-    )
-    return {"message": res}
+    try:
+        res = Footy.subscribe(
+            client=client,
+            query=f"{data.get('id')}",
+        )
+        return {"message": res}
+    except GameNotFound:
+        raise HTTPException(status_code=404)
+    except Exception as e:
+        logging.exception(e)
+        raise HTTPException(status_code=500)
 
 
 @router.post("/api/subscriptions", tags=["api"])
