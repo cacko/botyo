@@ -103,7 +103,6 @@ class Livescore(LivescoreData):
                 ]
             )
         ]
-        logging.debug(f"filtered {filtered}")
         if len(filtered) == 1:
             x = filtered[0]
             x.format = ScoreFormat.STANDALONE

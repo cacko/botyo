@@ -114,7 +114,8 @@ class Footy(object, metaclass=FootyMeta):
         if not query.strip():
             raise GameNotFound
         items = self.getLivescore().items
-        logging.warning(items)
+        logging.warning(f"searching for {query} in {len(items)} items")
+        logging.info(f"items: {[f'{i.strHomeTeam} vs {i.strAwayTeam}' for i in items]}")
         try:
             idEvent = int(query)
             res = next(filter(lambda x: x.idEvent == idEvent, items), None)
