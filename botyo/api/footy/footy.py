@@ -209,6 +209,7 @@ class Footy(object, metaclass=FootyMeta):
     ) -> SubscriptionResult:
         try:
             item = self.__queryGame(query)
+            logging.warning(f"subscribing to {item}")
             sub = Subscription.get(event=item, sc=client)
             if not sub.isValid:
                 return SubscriptionResult(message="Event has ended".upper())
@@ -222,5 +223,6 @@ class Footy(object, metaclass=FootyMeta):
                 ),
                 sub_id=sub.id,
             )
-        except Exception:
+        except Exception as e:
+            logging.exception(e)
             raise GameNotFound
